@@ -4,7 +4,10 @@ export const addTodo = text => ({
   id: nextTodoId++,
   text
 })
-
+export const update_chart = data => ({
+  type: 'UPDATE_CHART',
+  data
+})
 
 export const toggleTodo = id => ({
   type: 'TOGGLE_TODO',

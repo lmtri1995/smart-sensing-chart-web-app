@@ -1,29 +1,29 @@
-/*
- * action types
- */
+import { FETCHING_DATA, FETCHING_DATA_SUCCESS, FETCHING_DATA_FAILURE } from '../constants/constants'
+import getPeople from '../api'
+export function getData() {
+  return {
+    type: FETCHING_DATA
+  }
+}
 
-export const ADD_TODO = 'ADD_TODO'
-export const TOGGLE_TODO = 'TOGGLE_TODO'
-export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
+export function getDataSuccess(data) {
+  return {
+    type: FETCHING_DATA_SUCCESS,
+    data,
+  }
+}
 
-/*
- * other constants
- */
+export function getDataFailure() {
+  return {
+    type: FETCHING_DATA_FAILURE
+  }
+}
 
-export const VisibilityFilters = {
-  SHOW_ALL: 'SHOW_ALL',
-  SHOW_COMPLETED: 'SHOW_COMPLETED',
-  SHOW_ACTIVE: 'SHOW_ACTIVE'
-}
-/*
- * action creators
- */
-export function addTodo(text) {
-  return { type: ADD_TODO, text }
-}
-export function toggleTodo(index) {
-  return { type: TOGGLE_TODO, index }
-}
-export function setVisibilityFilter(filter) {
-  return { type: SET_VISIBILITY_FILTER, filter }
-}
+export function fetchData() { return (dispatch) => {
+  dispatch(getData())
+  getPeople()
+    .then((data) => {
+      dispatch(getDataSuccess(data))
+    })
+    .catch((err) => console.log('err:', err))
+}}

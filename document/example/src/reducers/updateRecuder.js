@@ -27,7 +27,7 @@ const update_chart = (state = chart_data, action) => {
       case 'UPDATE_CHART':
         return action.data
       default:
-        return state
+        return chart_data
     }
   }
   

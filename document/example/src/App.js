@@ -4,70 +4,109 @@ import { connect } from 'react-redux'
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
-import {Bar,Line, Doughnut} from 'react-chartjs-2';
 import Download from './Download.excel';
 import i18n from './i18n';
 import { withNamespaces } from 'react-i18next';
 import AddTodo from './containers/AddTodo'
-import { fetchData } from './actions/action'
+import { fetchData } from './actions/action';
+import { saveGridLayoutToStore,getDataFailure_chart } from './actions/gridLayoutAction';
+import AddChart from "./components/Addchart";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { addTodo,update_chart } from './actions/'
 class App extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state={
       data:'0',
-      chart_data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
+      chart_data: {},
+      GridLayout:[],
+      modal: false,
+      optionValue:0
     }
-    }
-    //this.eventSource = new EventSource("http://localhost:5000/events");
+    this.eventSource = new EventSource("http://localhost:5000/events");
+    this.eventSource_chart = new EventSource("http://localhost:5001/chart_events");
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.toggle = this.toggle.bind(this);
+    this.addHandle = this.addHandle.bind(this)
+    this.onLayoutChange = this.onLayoutChange.bind(this);
   }
-  // componentDidMount() {
-  //   this.eventSource.onmessage = e =>
-  //     this.updateFlightState(JSON.parse(e.data));
-  // }
 
-  // updateFlightState(flightState) {
-  //   console.log(flightState);
-  //   this.setState({data:flightState});
+  componentWillMount(){
+    this.eventSource.onmessage = e =>
+          this.updateFlightState(JSON.parse(e.data));
+    this.eventSource_chart.onmessage = e =>
+          this.updateChartState(JSON.parse(e.data));
+    this.props.saveGridLayoutToStore()
+  }
 
-  // }
+  componentDidMount() {
+    
+  }
+
   componentWillReceiveProps(nexProps){
-    console.log(nexProps.todos)
-    this.setState({data:nexProps.todos[0].text,chart_data:nexProps.datasets})
+    console.log('componentWillReceiveProps',nexProps.dataGrid)
+    this.setState({
+      data:nexProps.todos[0].text,
+      chart_data:nexProps.datasets,
+      GridLayout:nexProps.dataGrid.data}
+      )}
+  
+  componentWillUpdate(nextProps, nextState) {
+
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+  }
+  updateFlightState(flightState) {
+    console.log(flightState);
+    this.props.addTodo(flightState.toString())
+
+  }
+  updateChartState(flightState) {
+    console.log(flightState);
+    this.props.update_chart(flightState)
+
+  }
+  toggle() {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
+  addHandle(){
+    var value = {i: this.props.dataGrid.data.length.toString(), x: 0, y: this.props.dataGrid.data.length, w: 3, h: 10,type:this.state.optionValue}
+    this.props.getDataFailure_chart(value)
+    //this.setState({GridLayout:[...this.state.GridLayout,value]})
+  }
+
+  handleChange(event) {
+    console.log('change')
+    this.setState({optionValue: event.target.value});
+  }
+
+  handleSubmit(event){
+    console.log('submit')
+    this.addHandle()
+    this.toggle()
+    event.preventDefault();
+  }
+  onLayoutChange(layout) {
+    console.log(layout)
   }
   render() {
-    console.log(this.props.appData.data)
+    console.log('<=>',this.state.GridLayout)
     // layout is an array of objects, see the demo for more complete usage
-    var layout = [
-      {i: 'a', x: 0, y: 0, w: 3, h: 10},
-      {i: 'b', x: 1, y: 0, w: 3, h: 10, minW: 2, maxW: 4},
-      {i: 'c', x: 4, y: 0, w: 3, h: 10}
-    ];
   const { t } = this.props;
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   }
+  const Grid = this.state.GridLayout.map( item =>{
+    return <div key={item.i}>
+             <AddChart type={item.type} data={this.state.chart_data}  />
+            </div>
+  })
     return (
       <div className="container-fluid">
         <div>
@@ -77,39 +116,13 @@ class App extends React.Component {
         <h2>{this.state.data}</h2>
       </div>
       <Download />
-        <GridLayout className="layout" layout={layout} cols={12} rowHeight={10} width={1920} height={1080}>
-          <div key="a">
-            <Bar
-              data={this.state.chart_data}
-              width={500}
-              height={500}
-              options={{
-                  maintainAspectRatio: false
-              }}
-            />
-          </div>
-          <div key="b">
-            <Line
-              data={this.state.chart_data}
-              width={500}
-              height={500}
-              options={{
-                  maintainAspectRatio: false
-              }}
-            />
-          </div>
-          <div key="c"><Doughnut
-              data={this.state.chart_data}
-              width={500}
-              height={500}
-              options={{
-                  maintainAspectRatio: false
-              }}
-            /></div>
+        <GridLayout className="layout" layout={this.state.GridLayout} cols={12} rowHeight={12} width={1920} height={1080} onLayoutChange={this.onLayoutChange}>
+        {Grid}
+  
         </GridLayout>
           <AddTodo />
           <div>
-          <button  onClick={() => this.props.fetchData()}>
+          <button  onClick={() => this.props.fetchData() }>
               getdata from API
           </button>
           {
@@ -127,19 +140,47 @@ class App extends React.Component {
           }
           </div>
           
+            <Button color="danger" onClick={this.toggle}> Add</Button>
+            <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className} >
+            <form onSubmit={this.handleSubmit} >
+              <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+              <ModalBody>
+              
+              <select type="select" name="select" id="exampleSelect" value={this.state.optionValue} onChange={this.handleChange}>
+                <option value="Doughnut">Doughnut</option>
+                <option  value="Line">Line</option>
+                <option  value="Bar">Bar</option>
+                <option  value="Radar">Radar</option>
+                <option  value="Pie">Pie</option>
+                <option  value="Polar">Polar</option>
+                <option  value="Bubble">Bubble</option>
+                <option  value="Scatter">Scatter</option>
+              </select>
+            
+              </ModalBody>
+              <ModalFooter>
+                <Button type="Submit" color="primary">Submit</Button>{' '}
+                <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+              </ModalFooter>
+              </form>
+            </Modal>
       </div>
-      
     )
   }
 }
-const mapStateToProps = state => ({
+const mapStateToProps = state => (console.log('map du lieu'),{
   todos: state.todos,
   appData: state.appData,
-  datasets:state.update_chart
+  datasets:state.update_chart,
+  dataGrid:state.dataGrid
 })
 function mapDispatchToProps (dispatch) {
   return {
-    fetchData: () => dispatch(fetchData())
+    fetchData: () => dispatch(fetchData()),
+    saveGridLayoutToStore: () => dispatch(saveGridLayoutToStore()),
+    getDataFailure_chart: (data) =>dispatch(getDataFailure_chart(data)),
+    addTodo: (value) => dispatch(addTodo(value)),
+    update_chart: (value) => dispatch(update_chart(value))
   }
 }
 export default connect(

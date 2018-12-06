@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 
 const {
-  string, shape,
+    string, shape,
 } = PropTypes;
 
 export const SidebarProps = shape({
-  show: PropTypes.bool,
-  collapse: PropTypes.bool,
+    show: PropTypes.bool,
+    collapse: PropTypes.bool,
 });
 
 export const ThemeProps = shape({
-  className: string,
+    className: string,
 });

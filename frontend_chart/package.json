@@ -1,9 +1,10 @@
 {
-  "name": "Easydev-seed",
+  "name": "easydev-seed",
   "version": "1.4.0",
   "private": true,
   "homepage": "http://previews.aspirity.com/easydev",
   "dependencies": {
+    "antd": "^3.11.2",
     "bfj": "6.1.1",
     "bootstrap": "^4.1.3",
     "case-sensitive-paths-webpack-plugin": "2.1.2",

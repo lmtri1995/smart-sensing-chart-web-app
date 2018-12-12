@@ -6,7 +6,7 @@ import TopbarTimePicker from './TopbarTimePicker';
 
 const Ava = `${process.env.PUBLIC_URL}/img/ava.png`;
 
-export default class TopbarProfile extends PureComponent {
+export default class TopbarGroupFilter extends PureComponent {
     toggle = () => {
         this.setState({collapse: !this.state.collapse});
     };
@@ -20,19 +20,19 @@ export default class TopbarProfile extends PureComponent {
 
     render() {
         return (
-            <div className="topbar__profile">
+            <div className="topbar__group-filter">
                 <button className="topbar__avatar" onClick={this.toggle}>
-                    <img className="topbar__avatar-img" src={Ava} alt="avatar"/>
-                    <p className="topbar__avatar-name">Roman Johanson</p>
-                    <DownIcon className="topbar__icon"/>
+                    <p className="topbar__time-current">9:30, 10/12 to 10:00, 15/12</p>
                 </button>
                 {this.state.collapse && <button className="topbar__back" onClick={this.toggle}/>}
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
-                    <div className="topbar__menu">
-                        <TopbarMenuLink title="Page one" icon="list" path="/pages/one"/>
-                        <TopbarMenuLink title="Page two" icon="inbox" path="/pages/two"/>
-                        <div className="topbar__menu-divider"/>
-                        <TopbarMenuLink title="Log Out" icon="exit" path="/"/>
+                    <div className="topbar__menu" style={{width: '300px'}}>
+                        <div className="topbar__menu-item">
+                            <TopbarTimePicker />
+                        </div>
+                        <div className="topbar__menu-item">
+                            <TopbarTimePicker />
+                        </div>
                     </div>
                 </Collapse>
             </div>

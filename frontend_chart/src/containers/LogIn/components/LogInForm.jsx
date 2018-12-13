@@ -6,8 +6,10 @@ import AccountOutlineIcon from 'mdi-react/AccountOutlineIcon';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
+import Socket from '../../../services/Socket';
 
 class LogInForm extends PureComponent {
+
     static propTypes = {
         handleSubmit: PropTypes.func.isRequired,
     };
@@ -23,6 +25,39 @@ class LogInForm extends PureComponent {
         this.state = {
             showPassword: false,
         };
+        /*
+        // Simple connection
+        var socket = io('http://10.3.1.12:8888',{path: '/api/chart/ip'});
+        console.log("socket: ", socket.disconnected);
+        if(socket.disconnected){
+            socket = io('http://10.3.1.12:8888',{
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax : 5000,
+                reconnectionAttempts: Infinity
+            });
+        }
+
+        socket.on( 'connect', function () {
+            console.log( 'connected to server' );
+        } );
+
+        socket.on( 'disconnect', function () {
+            console.log( 'disconnected from server' );
+        });
+
+        socket.emit('ipdata', "Please give us some data sample to test, Thanks");
+        socket.on('ipdata', function(data){
+            console.log('Server response: ',data);
+        });*/
+
+        // Use Socket class in /services folder
+        Socket.connect('http://10.3.1.12:8888', '/api/chart/ip');
+        Socket.keepConnection('http://10.3.1.12:8888');
+        Socket.emit('ipdata', "Please give us some data sample to test, Thanks");
+        Socket.on('ipdata', data => {
+            console.log('Server response: ', data);
+        });
     }
 
     render() {

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
 
-const ExampleCard = () => (
+const Dashboard= () => (
   <Col md={12}>
     <Card>
       <CardBody>
         <div className="card__title">
-          <h5 className="bold-text">Example title</h5>
-          <h5 className="subhead">Example subhead</h5>
+          <h5 className="bold-text">Dashboard title</h5>
+          <h5 className="subhead">Dashboard subhead</h5>
         </div>
         <p>Your content here</p>
       </CardBody>
@@ -15,4 +15,4 @@ const ExampleCard = () => (
   </Col>
 );
 
-export default ExampleCard;
+export default Dashboard;

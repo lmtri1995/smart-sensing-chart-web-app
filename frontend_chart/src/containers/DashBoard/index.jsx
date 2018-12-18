@@ -1,17 +1,17 @@
 import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
-import ExampleCard from './components/ExampleCard';
+import Dashboard from './components/Dashboard';
 
-const ExamplePage = () => (
+const DashboardPage = () => (
   <Container className="dashboard">
     <Row>
       <Col md={12}>
-        <h3 className="page-title">Example Page One</h3>
+        <h3 className="page-title"> Dashboard Page</h3>
       </Col>
     </Row>
     <Row>
-      <ExampleCard />
+      <Dashboard />
     </Row>
   </Container>
 );
-export default ExamplePage;
+export default DashboardPage;

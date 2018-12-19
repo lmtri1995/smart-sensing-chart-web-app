@@ -1,15 +1,13 @@
 import React from 'react';
-import {Card, CardBody, Col} from 'reactstrap';
+import {Card, CardBody} from 'reactstrap';
 import RandomAnimatedBarsShort from "../../Charts/ChartJS/components/RandomAnimatedBarsShort";
 
 const ExampleCardBarChartShort = () => (
-    <Col md={12}>
-        <Card>
-            <CardBody>
-                <RandomAnimatedBarsShort/>
-            </CardBody>
-        </Card>
-    </Col>
+    <Card>
+        <CardBody>
+            <RandomAnimatedBarsShort/>
+        </CardBody>
+    </Card>
 );
 
 export default ExampleCardBarChartShort;

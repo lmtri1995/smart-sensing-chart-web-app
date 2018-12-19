@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle,react/no-did-mount-set-state */
 import React, {PureComponent} from 'react';
-import {Card, CardBody, Col} from 'reactstrap';
 import {Bar} from 'react-chartjs-2';
 
 const initialState = {
@@ -48,7 +47,7 @@ const options = {
     },
 };
 
-class RandomAnimatedBars extends PureComponent {
+class RandomAnimatedBarsShort extends PureComponent {
     constructor() {
         super();
         this.state = {
@@ -94,15 +93,9 @@ class RandomAnimatedBars extends PureComponent {
 
     render() {
         return (
-            <Col md={12} lg={12} xl={6}>
-                <Card>
-                    <CardBody>
-                        <Bar data={this.state.data} options={options}/>
-                    </CardBody>
-                </Card>
-            </Col>
+            <Bar data={this.state.data} options={options}/>
         );
     }
 }
 
-export default RandomAnimatedBars;
+export default RandomAnimatedBarsShort;

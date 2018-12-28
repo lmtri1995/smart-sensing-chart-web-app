@@ -1,5 +1,4 @@
-import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 import DownIcon from 'mdi-react/ChevronDownIcon';
 import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
@@ -8,7 +7,7 @@ import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
 import {changeGlobalFilter} from '../../../redux/actions/globalFilterActions';
 import DateRangePicker from "../../DateTime/component/DateRangePicker";
 
-class TopbarFilter extends PureComponent {
+class TopbarFilter extends Component {
     static propTypes = {
         globalFilter: GlobalFilterProps.isRequired,
     };

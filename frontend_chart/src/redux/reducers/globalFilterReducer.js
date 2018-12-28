@@ -2,8 +2,20 @@ import {GLOBAL_FILTER} from '../actions/globalFilterActions';
 import moment from 'moment';
 
 const initialState = {
-    startDate: moment().subtract(12, "hours"),
-    endDate: moment()
+    startDate: new Date(
+        moment()
+            .subtract(6, "days")
+            .startOf("day")
+            .add(6, "hours")
+            .toISOString()
+    ),
+
+    endDate: new Date(
+        moment()
+            .startOf("day")
+            .add({hours: 5, minutes: 59, seconds: 59})
+            .toISOString()
+    )
 };
 
 export default function (state = initialState, action) {

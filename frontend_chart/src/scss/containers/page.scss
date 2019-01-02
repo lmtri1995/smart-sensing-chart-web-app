@@ -7,8 +7,22 @@
 .date-range-picker__day-cell {
   display: flex;
   background: #fff;
+  border-style: solid;
+  border-color: #a9aeb4;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
   justify-content: center;
   align-items: center;
+}
+
+.date-range-picker__cell-bottom-border {
+  border-bottom-width: 1px;
+}
+
+.date-range-picker__cell-right-border {
+  border-right-width: 1px;
 }
 
 .date-range-picker__weekday-cell {

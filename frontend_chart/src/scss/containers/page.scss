@@ -25,6 +25,22 @@
   border-right-width: 1px;
 }
 
+.date-range-picker__top-left-cell {
+  border-top-left-radius: 4px;
+}
+
+.date-range-picker__top-right-cell {
+  border-top-right-radius: 4px;
+}
+
+.date-range-picker__bottom-left-cell {
+  border-bottom-left-radius: 4px;
+}
+
+.date-range-picker__bottom-right-cell {
+  border-bottom-right-radius: 4px;
+}
+
 .date-range-picker__weekday-cell {
   display: flex;
   justify-content: center;

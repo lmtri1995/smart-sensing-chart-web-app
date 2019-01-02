@@ -26,19 +26,21 @@ export default class CustomDateRangePicker extends Component {
                     [...Array((7 * numWeeks) - (7 - moment().isoWeekday()) - 1).keys()].reverse()
                         .map(value => value + 1) // Make 0...10 index keys become 1...11 index keys.
                         .map(value =>
-                            <DayCell date={new Date(moment().subtract(value, "days").toISOString())}/>
+                            <DayCell numWeeks={numWeeks}
+                                     date={new Date(moment().subtract(value, "days").toISOString())}/>
                         )
                 }
 
                 {/*Today*/}
-                <DayCell date={new Date()}/>
+                <DayCell numWeeks={numWeeks} date={new Date()}/>
 
                 {/*Remaining Next Days until Sunday*/}
                 {
                     [...Array(7 - moment().isoWeekday()).keys()]
                         .map(value => value + 1)
                         .map(value =>
-                            <DayCell date={new Date(moment().add(value, "days").toISOString())}/>
+                            <DayCell numWeeks={numWeeks}
+                                     date={new Date(moment().add(value, "days").toISOString())}/>
                         )
                 }
             </div>

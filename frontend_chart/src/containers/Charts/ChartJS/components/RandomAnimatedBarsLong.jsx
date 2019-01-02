@@ -1,9 +1,12 @@
 /* eslint-disable no-underscore-dangle,react/no-did-mount-set-state */
 import React, {PureComponent} from 'react';
+import {connect} from 'react-redux';
 import {Bar} from 'react-chartjs-2';
+import {changeGlobalFilter} from "../../../../redux/actions/globalFilterActions";
+import Singleton from '../../../../services/Socket';
 
 const initialState = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: ['0', '1', '2', '3', '4', '5', '6'],
     datasets: [
         {
             label: 'My First dataset',
@@ -15,6 +18,7 @@ const initialState = {
             data: [65, 59, 80, 81, 56, 55, 45],
         },
     ],
+
 };
 
 const options = {
@@ -53,49 +57,55 @@ class RandomAnimatedBarsLong extends PureComponent {
         this.state = {
             data: initialState,
             intervalId: null,
+            startDate: null,
+            endDate: null,
         };
     }
 
-    componentDidMount() {
-        const _this = this;
-
-        const intervalId = setInterval(() => {
-            const oldDataSet = _this.state.data.datasets[0];
-            const newData = [];
-
-            for (let x = 0; x < _this.state.data.labels.length; x += 1) {
-                newData.push(Math.floor(Math.random() * 100));
-            }
-
-            const newDataSet = {
-                ...oldDataSet,
-            };
-
-            newDataSet.data = newData;
-
-            const newState = {
-                ...initialState,
-                data: {
-                    datasets: [newDataSet],
-                    labels: _this.state.data.labels,
-                },
-            };
-
-            _this.setState(newState);
-        }, 4000);
-
-        this.setState({intervalId});
+    changeGlobalFilter = (startDate, endDate) => {
+        this.props.dispatch(changeGlobalFilter(startDate, endDate));
     }
 
     componentWillUnmount() {
-        clearInterval(this.state.intervalId);
+        let socket = Singleton.getInstance();
+        socket.removeListener('truong');
+    }
+
+    componentDidMount() {
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
+        let token = loginData.token;
+        let socket = Singleton.getInstance(token);
+
+        socket.emit('ip', {msg: {event: 'truong', from_timedevice: "", to_timedevice: ""}});
+        socket.on('token', (data) => {
+            let tokenObject = JSON.parse(data);
+            if (!tokenObject.success) {
+                console.log('Token is expired');
+                window.location.href = ("/logout");
+            }
+        });
+
+
+        socket.on('truong', (data) => {
+            console.log("data 87: ", data);
+        });
     }
 
     render() {
+        console.log("props render: ", this.props);
         return (
             <Bar height={65} data={this.state.data} options={options}/>
         );
     }
 }
 
-export default RandomAnimatedBarsLong;
+const mapStateToProps = state => {
+    return {
+        globalFilter: state.globalFilter,
+        socket: state.login.socket,
+    }
+}
+
+export default connect(mapStateToProps, null)(
+    RandomAnimatedBarsLong
+)

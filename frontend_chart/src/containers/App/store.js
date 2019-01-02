@@ -1,4 +1,4 @@
-import {applyMiddleware, combineReducers, createStore} from 'redux';
+import {applyMiddleware, combineReducers, createStore, compose } from 'redux';
 import {reducer as reduxFormReducer} from 'redux-form';
 import {
     globalFilterReducer,

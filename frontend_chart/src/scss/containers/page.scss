@@ -7,15 +7,24 @@
 .date-range-picker__day-cell {
   display: flex;
   background: #fff;
+
   border-style: solid;
   border-color: #a9aeb4;
+
   border-top-width: 1px;
   border-left-width: 1px;
   border-right-width: 0px;
   border-bottom-width: 0px;
+
   justify-content: center;
   align-items: center;
 
+  font-family: Roboto, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
 }
 
 .date-range-picker__day-cell-disabled {
@@ -50,4 +59,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 14px;
+  font-size: 12px;
+  text-align: center;
+
+  color: #868D93;
 }

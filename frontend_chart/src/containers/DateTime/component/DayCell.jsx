@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 export default class DayCell extends PureComponent {
     render() {
-        let {numWeeks, date} = this.props;
+        let {disabled, numWeeks, date} = this.props;
 
         // (7 * numWeeks) - (7 - moment().isoWeekday()) - 1
         // For explanation,
@@ -50,6 +50,10 @@ export default class DayCell extends PureComponent {
                 // -> Rounded Bottom Right corner
                 'date-range-picker__bottom-right-cell': moment(date.toISOString()).startOf("day")
                     .isSame(moment().isoWeekday(7).startOf("day")),
+            },
+            // Day Cell Disabling
+            {
+                'date-range-picker__day-cell-disabled': disabled,
             }
         );
 

@@ -1,0 +1,41 @@
+.resultsTable {
+    border-radius: 25px !important;
+  }
+.boxstation{
+    background-color: #1C1C21;
+    border: 0.5px solid #464D54;
+    color: #fff
+}
+.temperature{
+    background-color:#1C1C21;
+    padding: 5px;
+    margin: 10px 0 15px 0;
+}
+.table-dark{
+    background-color:#1C1C21;
+} 
+.box{
+    padding: 5px;
+    text-align: center
+}
+.box p{
+    color: #fff
+}
+.box p span{
+    color: #fff
+}
+.box p i{
+    color: #ff4861;
+    font-size: 8px;
+    padding: 2px;
+}
+.box > span{
+    color: #646777;
+    font-weight: bold;
+}
+.theme-light .container__wrap{
+    background-color: #464D54 !important
+}
+.table-shift-current{
+    background-color:#2C3034 !important
+}

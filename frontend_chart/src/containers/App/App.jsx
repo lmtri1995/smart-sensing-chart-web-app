@@ -4,6 +4,7 @@ import { hot } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../../scss/app.scss';
 import Router from './Router';
 import store from './store';

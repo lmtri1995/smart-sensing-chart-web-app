@@ -8,6 +8,7 @@
 @import './base/typography';
 // base styles of h1-h6, p, span
 //components...
+@import 'component/style.scss';
 @import 'component/btn';
 @import './component/card';
 @import './component/check-box';
@@ -19,4 +20,5 @@
 @import 'containers/account';
 //objects...
 @import 'objects/layout.scss';
+
 

@@ -1,10 +1,10 @@
 import axios from "axios";
-import * as Config from "../constants/APIconfig";
+import {LOGIN_URL} from "../constants/config";
 export default function callAPI(endpoint,meThod = 'GET',body,headers = null){
     return axios({
         headers: headers,
         method:meThod,
-        url:`${Config.API_URL}/${endpoint}`,
+        url:`${LOGIN_URL}/${endpoint}`,
         data:body
 
     })

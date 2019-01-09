@@ -5,7 +5,7 @@ var Singleton = (function () {
     var instance;
 
     function createInstance(token = '') {
-        var socket = io(config.SERVER_IP,{path: '/api/chart',
+        var socket = io(config.SERVER_URL,{path: '/api/chart',
             resource : "totalCharts",
             query: {
                 token: token,
@@ -17,13 +17,12 @@ var Singleton = (function () {
             console.log("disconected");
             console.log('create connection');
 
-            socket = io(config.SERVER_IP,{
+            socket = io(config.SERVER_URL,{
                 reconnection: true,
                 reconnectionDelay: 1000,
                 reconnectionDelayMax : 5000,
                 reconnectionAttempts: Infinity
             });
-            console.log('create',socket)
         }
         return socket;
     }

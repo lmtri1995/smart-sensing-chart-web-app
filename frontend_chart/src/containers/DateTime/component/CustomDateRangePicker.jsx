@@ -3,6 +3,57 @@ import DayCell from "./DayCell";
 import moment from "moment";
 
 export default class CustomDateRangePicker extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            startDate: props.startDate || new Date(),
+            endDate: props.endDate || new Date(),
+            numClicks: 0,
+        }
+    }
+
+    handleRangeChange(selectedDate) {
+        let selectedMoment = moment(selectedDate.toISOString() || (new Date()).toISOString());
+        let startMoment = moment(this.state.startDate.toISOString());
+
+        let startDate, endDate;
+        switch (this.state.numClicks) {
+            case 0:
+                startDate = selectedDate || new Date();
+                endDate = selectedDate || new Date();
+                this.setState({
+                    ...this.state,
+                    startDate: startDate,
+                    endDate: endDate,
+                    numClicks: ++this.state.numClicks,
+                });
+                break;
+            case 1:
+                startDate = selectedMoment.isSameOrAfter(startMoment) ? this.state.startDate : selectedDate;
+                endDate = selectedMoment.isSameOrAfter(startMoment) ? selectedDate : this.state.startDate;
+                this.setState({
+                    ...this.state,
+                    startDate: startDate,
+                    endDate: endDate,
+                    numClicks: ++this.state.numClicks,
+                });
+                break;
+            case 2:
+                startDate = selectedDate || new Date();
+                endDate = selectedDate || new Date();
+                this.setState({
+                    ...this.state,
+                    startDate: startDate,
+                    endDate: endDate,
+                    numClicks: 1,
+                });
+                break;
+        }
+
+        this.props.changeGlobalFilter(startDate, endDate);
+    }
+
     render() {
         let {numWeeks} = this.props;
 
@@ -28,12 +79,22 @@ export default class CustomDateRangePicker extends Component {
                         .map(value =>
                             <DayCell disabled={value >= 10}
                                      numWeeks={numWeeks}
-                                     date={new Date(moment().subtract(value, "days").toISOString())}/>
+                                     date={new Date(moment().subtract(value, "days").toISOString())}
+                                     onRangeChange={this.handleRangeChange.bind(this)}
+                                     startDate={this.state.startDate}
+                                     endDate={this.state.endDate}
+                                     numClicks={this.state.numClicks}/>
                         )
                 }
 
                 {/*Today*/}
-                <DayCell disabled={false} numWeeks={numWeeks} date={new Date()}/>
+                <DayCell disabled={false}
+                         numWeeks={numWeeks}
+                         date={new Date()}
+                         onRangeChange={this.handleRangeChange.bind(this)}
+                         startDate={this.state.startDate}
+                         endDate={this.state.endDate}
+                         numClicks={this.state.numClicks}/>
 
                 {/*Remaining Next Days until Sunday*/}
                 {
@@ -42,7 +103,11 @@ export default class CustomDateRangePicker extends Component {
                         .map(value =>
                             <DayCell disabled={true}
                                      numWeeks={numWeeks}
-                                     date={new Date(moment().add(value, "days").toISOString())}/>
+                                     date={new Date(moment().add(value, "days").toISOString())}
+                                     onRangeChange={this.handleRangeChange.bind(this)}
+                                     startDate={this.state.startDate}
+                                     endDate={this.state.endDate}
+                                     numClicks={this.state.numClicks}/>
                         )
                 }
             </div>

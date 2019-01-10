@@ -1,10 +1,27 @@
 import React, {PureComponent} from "react";
 import moment from "moment";
 import classNames from 'classnames';
+import PropTypes from "prop-types";
 
 export default class DayCell extends PureComponent {
+    static propTypes = {
+        onRangeChange: PropTypes.func.isRequired,
+    };
+
+    constructor(props) {
+        super(props);
+        this.toggleClick = this.toggleClick.bind(this);
+    }
+
+    toggleClick() {
+        this.props.onRangeChange(this.props.date);
+    }
+
     render() {
-        let {disabled, numWeeks, date} = this.props;
+        let {
+            disabled, numWeeks, date,
+            startDate, endDate
+        } = this.props;
 
         // (7 * numWeeks) - (7 - moment().isoWeekday()) - 1
         // For explanation,
@@ -55,15 +72,27 @@ export default class DayCell extends PureComponent {
             // Day Cell Disabling
             {
                 'date-range-picker__day-cell-disabled': disabled,
-            }
+            },
+            // Selected Range
+            {
+                'date-range-picker__day-cell-selected': moment(date.toISOString()).startOf("day")
+                        .isSame(moment(startDate.toISOString()).startOf("day"))
+                    || moment(date.toISOString()).startOf("day")
+                        .isSame(moment(endDate.toISOString()).startOf("day")),
+
+                'date-range-picker__day-cell-in-between-selected-range': (moment(date.toISOString()).startOf("day")
+                        .isAfter(moment(startDate.toISOString()).endOf("day"))
+                    && moment(date.toISOString()).endOf("day")
+                        .isBefore(moment(endDate.toISOString()).startOf("day"))),
+            },
         );
 
-        return date.getDate() === (new Date()).getDate() ? (
+        return disabled ? (
             <div className={dayCellClassNames}>
                 {('0' + date.getDate()).slice(-2)} {/*Add leading 0 to Single Number Day 1->9*/}
             </div>
         ) : (
-            <div className={dayCellClassNames}>
+            <div className={dayCellClassNames} onClick={this.toggleClick}>
                 {('0' + date.getDate()).slice(-2)}
             </div>
         );

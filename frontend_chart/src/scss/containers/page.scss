@@ -36,6 +36,15 @@
   color: #d1d5da;
 }
 
+.date-range-picker__day-cell-selected {
+  background: #449aff;
+  color: #fff;
+}
+
+.date-range-picker__day-cell-in-between-selected-range {
+  background: #ebedf1;
+}
+
 .date-range-picker__cell-bottom-border {
   border-bottom-width: 1px;
 }

@@ -1,8 +1,13 @@
 import React, {Component} from 'react';
 import DayCell from "./DayCell";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 export default class CustomDateRangePicker extends Component {
+    static propTypes = {
+        changeGlobalDateFilter: PropTypes.func.isRequired,
+    };
+
     constructor(props) {
         super(props);
 
@@ -51,7 +56,7 @@ export default class CustomDateRangePicker extends Component {
                 break;
         }
 
-        this.props.changeGlobalFilter(startDate, endDate);
+        this.props.changeGlobalDateFilter(startDate, endDate);
     }
 
     render() {

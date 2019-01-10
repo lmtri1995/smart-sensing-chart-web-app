@@ -3,28 +3,28 @@ import {connect} from 'react-redux';
 import {Card, CardBody, Col} from 'reactstrap';
 
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
-import {changeGlobalFilter} from '../../../redux/actions/globalFilterActions';
+import {changeAnalysisDateFilter} from '../../../redux/actions/globalDateFilterActions';
 import CustomDateRangePicker from "../../DateTime/component/CustomDateRangePicker";
 
 class ExampleCard extends Component {
     static propTypes = {
-        globalFilter: GlobalFilterProps.isRequired,
+        globalDateFilter: GlobalFilterProps.isRequired,
     };
 
-    changeGlobalFilter(startDate, endDate) {
-        this.props.dispatch(changeGlobalFilter(startDate, endDate));
+    changeAnalysisDateFilter(startDate, endDate) {
+        this.props.dispatch(changeAnalysisDateFilter(startDate, endDate));
     }
 
     render() {
-        let {startDate, endDate} = this.props.globalFilter;
+        let {startDateAnalysis, endDateAnalysis} = this.props.globalDateFilter;
         return (
             <Col md={12}>
                 <Card>
                     <CardBody>
                         <CustomDateRangePicker numWeeks={3}
-                                               changeGlobalFilter={this.changeGlobalFilter.bind(this)}
-                                               startDate={startDate}
-                                               endDate={endDate}/>
+                                               changeGlobalDateFilter={this.changeAnalysisDateFilter.bind(this)}
+                                               startDate={startDateAnalysis}
+                                               endDate={endDateAnalysis}/>
                     </CardBody>
                 </Card>
             </Col>
@@ -33,7 +33,7 @@ class ExampleCard extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalFilter: state.globalFilter,
+    globalDateFilter: state.globalDateFilter,
 });
 
 export default connect(mapStateToProps)(ExampleCard);

@@ -4,15 +4,15 @@ import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
 
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
-import {changeGlobalFilter} from '../../../redux/actions/globalFilterActions';
+import {changeAnalysisDateFilter} from '../../../redux/actions/globalDateFilterActions';
 
 class TopbarFilter extends Component {
     static propTypes = {
-        globalFilter: GlobalFilterProps.isRequired,
+        globalDateFilter: GlobalFilterProps.isRequired,
     };
 
-    changeGlobalFilter = (startDate, endDate) => {
-        this.props.dispatch(changeGlobalFilter(startDate, endDate));
+    changeAnalysisDateFilter = (startDate, endDate) => {
+        this.props.dispatch(changeAnalysisDateFilter(startDate, endDate));
     }
 
     toggle = () => {
@@ -27,8 +27,8 @@ class TopbarFilter extends Component {
     }
 
     render() {
-        let {globalFilter} = this.props;
-        console.log("GLOBAL_FILTER", globalFilter);
+        let {startDateAnalysis, endDateAnalysis} = this.props.globalDateFilter;
+        console.log("ANALYSIS_DATE_FILTER", `startDate: ${startDateAnalysis} - endDate: ${endDateAnalysis}`);
         return (
             <div className="topbar__filter">
                 <button className="topbar__filter-button" onClick={this.toggle}>
@@ -47,7 +47,7 @@ class TopbarFilter extends Component {
 }
 
 const mapStateToProps = state => ({
-    globalFilter: state.globalFilter
+    globalDateFilter: state.globalDateFilter
 });
 
 export default connect(mapStateToProps)(TopbarFilter)

@@ -4,7 +4,7 @@
   grid-template-rows: repeat(4, 1fr);
 }
 
-.date-range-picker__day-cell {
+.date-range-picker__day-cell-hover, .date-range-picker__day-cell {
   display: flex;
   background: #fff;
 
@@ -25,6 +25,11 @@
   font-size: 16px;
   line-height: 20px;
   text-align: center;
+}
+
+.date-range-picker__day-cell-hover:hover {
+  background: #449aff;
+  color: #fff;
 }
 
 .date-range-picker__day-cell-disabled {

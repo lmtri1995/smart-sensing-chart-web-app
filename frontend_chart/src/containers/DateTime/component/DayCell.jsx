@@ -10,7 +10,8 @@ export default class DayCell extends PureComponent {
         // For explanation,
         // -> See: src/containers/DateTime/component/CustomDateRangePicker.jsx
         const dayCellClassNames = classNames(
-            'date-range-picker__day-cell',  // This only draws top & left border
+            // This only draws top & left border
+            disabled ? 'date-range-picker__day-cell' : 'date-range-picker__day-cell-hover',
             // Draw Day Cell borders
             {
                 // If current date is in the latest week (last line in calendar: Monday -> Sunday)

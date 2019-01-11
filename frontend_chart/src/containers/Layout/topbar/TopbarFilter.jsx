@@ -19,8 +19,8 @@ class TopbarFilter extends Component {
         this.setState({collapse: !this.state.collapse});
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             collapse: false,
         };

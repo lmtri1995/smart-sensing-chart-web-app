@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import StationStatus  from "./components/stationStatus";
-import Sheft  from "./components/Sheft";
-import Temperature from "./components/Temperature";
-import ProcessStatus from "./components/ProcessStatus";
-import DowntimeSheft from "./components/DowntimeSheft";
+import StationStatus  from "./components/StationStatus/StationStatus";
+import ShiftStatus  from "./components/ShiftStatus/ShiftStatus";
+import TemperatureTrend from "./components/TemperatureTrend/TemperatureTrend";
+import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
+import DowntimeShift from "./components/DowntimeShift/DowntimeShift";
 class DashboardPage extends Component {
   static propTypes = {
     prop: PropTypes
@@ -18,12 +18,12 @@ class DashboardPage extends Component {
           <StationStatus />
         </div>
         <div className="col">
-          <Sheft />
+          <ShiftStatus />
         </div>
       </div>
       <div className="row">
         <div className="col">
-              <Temperature />
+              <TemperatureTrend />
         </div>
       </div>
       <div className="row">
@@ -33,7 +33,7 @@ class DashboardPage extends Component {
       </div>
       <div className="row">
         <div className="col">
-         <DowntimeSheft />
+         <DowntimeShift />
         </div>
       </div>
   </div>

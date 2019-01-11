@@ -1,9 +1,10 @@
-/* eslint-disable no-underscore-dangle,react/no-did-mount-set-state */
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {Bar} from 'react-chartjs-2';
 import {changeGlobalFilter} from "../../../../redux/actions/globalFilterActions";
 import Singleton from '../../../../services/Socket';
+import moment from 'moment';
+import 'chartjs-plugin-zoom';
 
 const initialState = {
     labels: ['0', '1', '2', '3', '4', '5', '6'],
@@ -49,6 +50,10 @@ const options = {
             },
         ],
     },
+    zoom:{
+        enabled:true,
+        mode:'xy'
+    }
 };
 
 class RandomAnimatedBarsLong extends PureComponent {
@@ -68,7 +73,7 @@ class RandomAnimatedBarsLong extends PureComponent {
 
     componentWillUnmount() {
         let socket = Singleton.getInstance();
-        socket.removeListener('truong');
+        socket.removeListener('van');
     }
 
     componentDidMount() {
@@ -76,7 +81,24 @@ class RandomAnimatedBarsLong extends PureComponent {
         let token = loginData.token;
         let socket = Singleton.getInstance(token);
 
-        socket.emit('ip', {msg: {event: 'truong', from_timedevice: "", to_timedevice: ""}});
+        var mDateFrom = moment.utc([2019, 0 , 2, 10, 6, 40]);
+        var uDateFrom = mDateFrom.unix();
+        console.log("uDateFrom: ", uDateFrom);
+        var mDateTo = moment.utc([2019, 0 , 2, 10, 6, 43]);
+        var uDateTo = mDateTo.unix();
+        console.log("uDateTo: ", uDateTo);
+        socket.emit('ip', {msg: {event: 'van', from_timedevice: "", to_timedevice: "", minute: 30}});
+
+        socket.on('van', (data) => {
+            console.log("data 87: ====================================================", data);
+            console.log("typeof data: ", typeof(data));
+        });
+        /*socket.emit('ClientName','trile');
+        socket.on("FromAPI", data => {
+            console.log(data)
+           // this.setState({ response: data.toString() })
+        });*/
+
         socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
             if (!tokenObject.success) {
@@ -85,10 +107,6 @@ class RandomAnimatedBarsLong extends PureComponent {
             }
         });
 
-
-        socket.on('truong', (data) => {
-            console.log("data 87: ", data);
-        });
     }
 
     render() {

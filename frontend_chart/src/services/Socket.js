@@ -12,6 +12,13 @@ var Singleton = (function () {
             },
             forceNew: true
         });
+       /* var socket = io(config.SERVER_URL,{
+            resource : "totalCharts",
+            query: {
+                token: token,
+            },
+            forceNew: true
+        });*/
 
         if(socket.disconnected){
             console.log("disconected");

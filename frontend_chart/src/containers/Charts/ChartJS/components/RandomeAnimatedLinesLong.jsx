@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Line} from 'react-chartjs-2';
 import {changeGlobalFilter} from "../../../../redux/actions/globalFilterActions";
 import Singleton from '../../../../services/Socket';
+import 'chartjs-plugin-zoom';
 
 const initialState = {
     labels: ['0', '1', '2', '3', '4', '5', '6'],
@@ -50,6 +51,10 @@ const options = {
             },
         ],
     },
+    zoom:{
+        enabled:true,
+        mode:'xy'
+    }
 };
 
 class RandomAnimatedLinesLong extends PureComponent {
@@ -77,7 +82,7 @@ class RandomAnimatedLinesLong extends PureComponent {
         let token = loginData.token;
         let socket = Singleton.getInstance(token);
 
-        socket.emit('ip', {msg: {event: 'truong', from_timedevice: "", to_timedevice: ""}});
+        /*socket.emit('ip', {msg: {event: 'truong', from_timedevice: "", to_timedevice: ""}});
         socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
             if (!tokenObject.success) {
@@ -89,7 +94,7 @@ class RandomAnimatedLinesLong extends PureComponent {
 
         socket.on('truong', (data) => {
             console.log("data 87: ", data);
-        });
+        });*/
     }
 
     render() {

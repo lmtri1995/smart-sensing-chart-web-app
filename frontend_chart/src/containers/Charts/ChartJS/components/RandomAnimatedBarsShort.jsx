@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle,react/no-did-mount-set-state */
 import React, {PureComponent} from 'react';
 import {Bar} from 'react-chartjs-2';
+import Singleton from "../../../../services/Socket";
+import moment from "moment";
 
 const initialState = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -57,6 +59,41 @@ class RandomAnimatedBarsShort extends PureComponent {
     }
 
     componentDidMount() {
+
+    ////////////////////////////////////////////////
+        ////Test 2 diff emits
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
+        let token = loginData.token;
+        let socket = Singleton.getInstance(token);
+
+        var mDateFrom = moment.utc([2019, 0 , 2, 10, 6, 40]);
+        var uDateFrom = mDateFrom.unix();
+        console.log("uDateFrom: ", uDateFrom);
+        var mDateTo = moment.utc([2019, 0 , 2, 10, 6, 43]);
+        var uDateTo = mDateTo.unix();
+        console.log("uDateTo: ", uDateTo);
+        socket.emit('ip', {msg: {event: 'tri', from_timedevice: "", to_timedevice: "", minute: 30}});
+
+        socket.on('tri', (data) => {
+            console.log("data 112: ", data);
+            console.log("typeof data: ", typeof(data));
+        });
+        /*socket.emit('ClientName','trile');
+        socket.on("FromAPI", data => {
+            console.log(data)
+           // this.setState({ response: data.toString() })
+        });*/
+
+        socket.on('token', (data) => {
+            let tokenObject = JSON.parse(data);
+            if (!tokenObject.success) {
+                console.log('Token is expired');
+                window.location.href = ("/logout");
+            }
+        });
+        //End of testing
+        /////////////////////////
+
         const _this = this;
 
         const intervalId = setInterval(() => {

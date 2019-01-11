@@ -11,49 +11,10 @@ const ExamplePage = () => (
             </Col>
         </Row>
         <Row>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
             <Col md={6} lg={6} xl={6}>
                 <ExampleCardBarChartLong />
             </Col>
-        </Row>
-        <Row>
             <Col md={6} lg={6} xl={6}>
-                <ExampleCardBarChartLong />
-            </Col>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-        </Row>
-        <Row>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-        </Row>
-        <Row>
-            <Col md={3} lg={3} xl={3}>
-                <ExampleCardBarChartShort />
-            </Col>
-            <Col md={6} lg={6} xl={6}>
-                <ExampleCardBarChartLong />
-            </Col>
-            <Col md={3} lg={3} xl={3}>
                 <ExampleCardBarChartShort />
             </Col>
         </Row>

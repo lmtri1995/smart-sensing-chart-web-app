@@ -3,7 +3,7 @@ import DayCell from "./DayCell";
 import moment from "moment";
 import PropTypes from "prop-types";
 
-export default class CustomDateRangePicker extends Component {
+export default class DateRangePicker extends Component {
     static propTypes = {
         changeGlobalDateFilter: PropTypes.func.isRequired,
     };

@@ -25,7 +25,7 @@ export default class DayCell extends PureComponent {
 
         // (7 * numWeeks) - (7 - moment().isoWeekday()) - 1
         // For explanation,
-        // -> See: src/containers/DateTime/component/CustomDateRangePicker.jsx
+        // -> See: src/containers/DateTime/component/DateRangePicker.jsx
         const dayCellClassNames = classNames(
             // This only draws top & left border
             disabled ? 'date-range-picker__day-cell' : 'date-range-picker__day-cell-hover',

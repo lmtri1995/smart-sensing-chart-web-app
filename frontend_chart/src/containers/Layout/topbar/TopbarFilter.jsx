@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
 import {changeAnalysisDateFilter} from '../../../redux/actions/globalDateFilterActions';
+import DateRangePicker from "../../DateTime/component/DateRangePicker";
 
 class TopbarFilter extends Component {
     static propTypes = {
@@ -38,7 +39,10 @@ class TopbarFilter extends Component {
                 {this.state.collapse && <button className="topbar__back" onClick={this.toggle}/>}
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
                     <div className="topbar__menu">
-                        {/*TODO Add Date Range Picker Component*/}
+                        <DateRangePicker numWeeks={3}
+                                         changeGlobalDateFilter={this.changeAnalysisDateFilter.bind(this)}
+                                         startDate={startDateAnalysis}
+                                         endDate={endDateAnalysis}/>
                     </div>
                 </Collapse>
             </div>

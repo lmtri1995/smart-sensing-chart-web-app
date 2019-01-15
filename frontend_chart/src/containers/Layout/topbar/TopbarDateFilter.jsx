@@ -7,7 +7,7 @@ import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
 import {changeAnalysisDateFilter} from '../../../redux/actions/globalDateFilterActions';
 import DateRangePicker from "../../DateTime/component/DateRangePicker";
 
-class TopbarFilter extends Component {
+class TopbarDateFilter extends Component {
     static propTypes = {
         globalDateFilter: GlobalFilterProps.isRequired,
     };
@@ -54,4 +54,4 @@ const mapStateToProps = state => ({
     globalDateFilter: state.globalDateFilter
 });
 
-export default connect(mapStateToProps)(TopbarFilter)
+export default connect(mapStateToProps)(TopbarDateFilter)

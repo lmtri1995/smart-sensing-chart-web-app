@@ -5,7 +5,7 @@ export default class DowntimeShift extends Component {
   render() {
     return (
       <div>
-        <table class="table table-bordered table-dark">
+        <table className="table table-bordered table-dark">
             <thead>
                 <tr>
                 <th scope="col">Down Time By Shift</th>

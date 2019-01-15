@@ -5,7 +5,7 @@ import GeneralSummaryItem from './components/GeneralSummaryItem';
 export default class ProcessStatus extends Component {
     render() {
         return (
-            <table class="table table-bordered table-dark">
+            <table className="table table-bordered table-dark">
                 <thead>
                 <tr>
                     <th scope="col" rowSpan="2">Processing Status</th>

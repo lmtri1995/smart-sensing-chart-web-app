@@ -5,7 +5,7 @@ import ShiftStatusItem from './components/ShiftStatusItem';
 export default class ShiftStatus extends Component {
     render() {
         return (
-            <table class="table table-bordered table-dark">
+            <table className="table table-bordered table-dark">
                 <thead>
                 <tr>
                     <th scope="col">Shifts' Status</th>

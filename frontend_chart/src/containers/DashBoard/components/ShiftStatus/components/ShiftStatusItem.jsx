@@ -1,20 +1,21 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 
 
 export default class ShiftStatusItem extends Component {
-    render(){
+    render() {
+        let {shiftNo, total, count1, count2, count3, count4, count5, count6, count7, count8} = this.props;
         return (
             <tr>
-                <th scope="row">Shifts 1</th>
-                <td>100</td>
-                <td>200</td>
-                <td>300</td>
-                <td>400</td>
-                <td>500</td>
-                <td>600</td>
-                <td>700</td>
-                <td>800</td>
-                <td>900</td>
+                <th scope="row">{shiftNo}</th>
+                <td>{count1}</td>
+                <td>{count2}</td>
+                <td>{count3}</td>
+                <td>{count4}</td>
+                <td>{count5}</td>
+                <td>{count6}</td>
+                <td>{count7}</td>
+                <td>{count8}</td>
+                <td>{total}</td>
             </tr>
         );
     }

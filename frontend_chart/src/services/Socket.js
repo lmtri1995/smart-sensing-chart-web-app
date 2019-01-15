@@ -5,29 +5,24 @@ var Singleton = (function () {
     var instance;
 
     function createInstance(token = '') {
-        var socket = io(config.SERVER_URL,{path: '/api/chart',
-            resource : "totalCharts",
+        //var socket = io('http://10.2.13.223:8888/totalCharts');
+        var socket = io(config.SERVER_URL, {
+            path: "/api/chart",
+            resource: "totalCharts",
             query: {
                 token: token,
             },
             forceNew: true
         });
-       /* var socket = io(config.SERVER_URL,{
-            resource : "totalCharts",
-            query: {
-                token: token,
-            },
-            forceNew: true
-        });*/
 
-        if(socket.disconnected){
+        if (socket.disconnected) {
             console.log("disconected");
             console.log('create connection');
 
-            socket = io(config.SERVER_URL,{
+            socket = io(config.SERVER_URL, {
                 reconnection: true,
                 reconnectionDelay: 1000,
-                reconnectionDelayMax : 5000,
+                reconnectionDelayMax: 5000,
                 reconnectionAttempts: Infinity
             });
         }

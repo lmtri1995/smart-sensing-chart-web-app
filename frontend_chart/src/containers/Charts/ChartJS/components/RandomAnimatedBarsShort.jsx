@@ -3,6 +3,8 @@ import React, {PureComponent} from 'react';
 import {Bar} from 'react-chartjs-2';
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
+import 'chartjs-plugin-zoom';
+import 'hammerjs';
 
 const initialState = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -47,6 +49,10 @@ const options = {
             },
         ],
     },
+    zoom: {
+        enabled: true,
+        mode:'xy'
+    },
 };
 
 class RandomAnimatedBarsShort extends PureComponent {
@@ -72,7 +78,7 @@ class RandomAnimatedBarsShort extends PureComponent {
         var mDateTo = moment.utc([2019, 0 , 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();
         console.log("uDateTo: ", uDateTo);
-        socket.emit('ip', {msg: {event: 'tri', from_timedevice: "", to_timedevice: "", minute: 30}});
+        socket.emit('ip1', {msg: {event: 'tri', from_timedevice: 0, to_timedevice: 0, minute: 30}});
 
         socket.on('tri', (data) => {
             console.log("data 112: ", data);

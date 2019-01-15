@@ -50,9 +50,9 @@ const options = {
             },
         ],
     },
-    zoom:{
-        enabled:true,
-        mode:'xy'
+    zoom: {
+        enabled: true,
+        mode: 'xy'
     }
 };
 
@@ -71,12 +71,8 @@ class RandomAnimatedBarsLong extends PureComponent {
         this.props.dispatch(changeGlobalFilter(startDate, endDate));
     }
 
-    componentWillUnmount() {
-        let socket = Singleton.getInstance();
-        socket.removeListener('van');
-    }
-
     componentDidMount() {
+
         let loginData = JSON.parse(localStorage.getItem('logindata'));
         let token = loginData.token;
         let socket = Singleton.getInstance(token);
@@ -87,26 +83,21 @@ class RandomAnimatedBarsLong extends PureComponent {
         var mDateTo = moment.utc([2019, 0 , 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();
         console.log("uDateTo: ", uDateTo);
-        socket.emit('ip', {msg: {event: 'van', from_timedevice: "", to_timedevice: "", minute: 30}});
 
-        socket.on('van', (data) => {
-            console.log("data 87: ====================================================", data);
-            console.log("typeof data: ", typeof(data));
-        });
-        /*socket.emit('ClientName','trile');
-        socket.on("FromAPI", data => {
-            console.log(data)
-           // this.setState({ response: data.toString() })
-        });*/
-
-        socket.on('token', (data) => {
-            let tokenObject = JSON.parse(data);
-            if (!tokenObject.success) {
-                console.log('Token is expired');
-                window.location.href = ("/logout");
-            }
+        socket.on('token', function(data){
+            console.log(data);
         });
 
+        socket.emit('ip', {msg: {event: "1080",from_timedevice:0,to_timedevice:0,minute:30}});
+        socket.on('1080', function(data){
+            // // // console.log("ip");
+            console.log("1080:---------", data);
+        });
+    }
+
+    componentWillUnmount() {
+        let socket = Singleton.getInstance();
+        socket.removeListener('van');
     }
 
     render() {

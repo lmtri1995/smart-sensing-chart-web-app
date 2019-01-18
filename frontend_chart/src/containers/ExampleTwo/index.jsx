@@ -1,8 +1,7 @@
 import React from 'react';
 import {Col, Container, Row} from 'reactstrap';
 import ExampleCard from './components/ExampleCard';
-import {CSVLink} from "react-csv";
-import moment from "moment";
+import DataExporter, {ExportType} from "../DataExporter/component/DataExporter";
 
 const TestData = [
     {
@@ -258,10 +257,12 @@ const ExamplePage = () => (
             <ExampleCard/>
         </Row>
         <Row>
-            <CSVLink data={TestData}
-                     filename={`Data_Summary_${moment().format("YYYYMMDD_HHmmss").toString()}.csv`}>
-                Download Test Data
-            </CSVLink>
+            <DataExporter exportType={ExportType.EXCEL}
+                          data={TestData}/>
+            <DataExporter exportType={ExportType.PDF}
+                          data={TestData}/>
+            <DataExporter exportType={ExportType.PNG}
+                          data={TestData}/>
         </Row>
     </Container>
 );

@@ -8,7 +8,7 @@ var Singleton = (function () {
         //var socket = io('http://10.2.13.223:8888/totalCharts');
         var socket = io(config.SERVER_URL, {
             path: "/api/chart",
-            resource: "totalCharts",
+            //resource: "totalCharts",
             query: {
                 token: token,
             },

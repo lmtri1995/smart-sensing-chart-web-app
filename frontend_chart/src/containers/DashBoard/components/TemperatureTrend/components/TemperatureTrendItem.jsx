@@ -1,12 +1,13 @@
-import React, { Component } from 'react'
-import LineChart from "../../../../Charts/ChartJS/components/RandomeAnimatedLinesLong";
+import React, {Component} from 'react'
+import LineChart from "./TemperatureTrendLine";
 
 export default class TemperatureTrendItem extends Component {
-    render(){
+    render() {
+        let {tempData} = this.props;
         return (
             <div className="col">
                 <h4>USL/ Value/ LSL</h4>
-                <LineChart/>
+                <LineChart tempData={tempData}/>
             </div>
         );
     }

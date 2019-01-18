@@ -1,16 +1,7 @@
 import React, {Component} from 'react'
 import ShiftStatusItem from './components/ShiftStatusItem';
-import Singleton from "../../../../services/Socket";
 import moment from "moment";
-
-
-function compare(a, b) {
-    if (a.idStation < b.idStation)
-        return 1;
-    if (a.idStation > b.idStation)
-        return -1;
-    return 0;
-}
+import Singleton from "../../../../services/Socket";
 
 export default class ShiftStatus extends Component {
     constructor(props) {
@@ -27,20 +18,18 @@ export default class ShiftStatus extends Component {
 
         var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
         var uDateFrom = mDateFrom.unix();
-        console.log("uDateFrom: ", uDateFrom);
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();
-        console.log("uDateTo: ", uDateTo);
         socket.emit('shift_status', {
             msg: {
-                event: 'van',
+                event: 'sna_shift_status',
                 from_timedevice: "",
                 to_timedevice: "",
                 minute: 30
             }
         });
 
-        socket.on('van', (data) => {
+        socket.on('sna_shift_status', (data) => {
 
             let returnArray = JSON.parse(data);
             let dataArray = returnArray.data;
@@ -172,7 +161,6 @@ export default class ShiftStatus extends Component {
 
     render() {
         let dataArray = this.state.dataArray;
-        let currentShift = this.specifyCurrentShift(dataArray);
         return (
             <table className="table table-bordered table-dark">
                 <thead>

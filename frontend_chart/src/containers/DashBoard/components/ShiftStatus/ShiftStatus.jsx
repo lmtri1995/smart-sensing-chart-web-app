@@ -16,16 +16,17 @@ export default class ShiftStatus extends Component {
         let token = loginData.token;
         let socket = Singleton.getInstance(token);
 
-        var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
+        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();
+        var uDateTo = mDateTo.unix();*/
         socket.emit('shift_status', {
             msg: {
                 event: 'sna_shift_status',
-                from_timedevice: "",
-                to_timedevice: "",
-                minute: 30
+                from_timedevice: "1548122509",
+                to_timedevice: "1548122509",
+                minute: 0,
+                status: 'start'
             }
         });
 

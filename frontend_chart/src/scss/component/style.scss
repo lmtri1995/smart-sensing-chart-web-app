@@ -1,60 +1,77 @@
 .resultsTable {
-    border-radius: 25px !important;
-  }
-.boxstation{
-    background-color: #1C1C21;
-    border: 0.5px solid #464D54;
-    color: #fff
+  border-radius: 25px !important;
 }
-.temperature{
-    background-color:#1C1C21;
-    padding: 5px;
-    margin: 10px 0 15px 0;
+
+.boxstation {
+  background-color: #1C1C21;
+  border: 0.5px solid #464D54;
+  color: #fff
 }
-.table-dark{
-    background-color:#1C1C21;
-} 
-.box{
-    padding: 5px;
-    text-align: center
+
+.temperature {
+  background-color: #1C1C21;
+  padding: 5px;
+  margin: 10px 0 15px 0;
 }
-.box p{
-    color: #fff
+
+.table-dark {
+  background-color: #1C1C21;
 }
-.box p span{
-    color: #fff
+
+.box {
+  padding: 5px;
+  text-align: center
 }
-.box p i{
-    color: #ff4861;
-    font-size: 8px;
-    padding: 2px;
+
+.box p {
+  color: #fff
 }
-.box > span{
-    color: #646777;
-    font-weight: bold;
+
+.box p span {
+  color: #fff
 }
-.theme-light .container__wrap{
-    background-color: #464D54 !important
+
+.station-off {
+  color: #ff4861;
+  font-size: 8px;
+  padding: 2px;
 }
-.table-shift-current{
-    background-color:#2C3034 !important
+
+.station-on {
+  color: #30D4A4;
+  font-size: 8px;
+  padding: 2px;
 }
+
+.box > span {
+  color: #646777;
+  font-weight: bold;
+}
+
+.theme-light .container__wrap {
+  background-color: #464D54 !important
+}
+
+.table-shift-current {
+  background-color: #2C3034 !important
+}
+
 .oee-main{
-    background-color:#1C1C21;
-    padding: 20px 0;
-    min-height: 181px;
-    margin-top: 5px;
+  background-color:#1C1C21;
+  padding: 20px 0;
+  min-height: 181px;
+  margin-top: 5px;
 }
 .oee-box{
-    width: 100%;
+  width: 100%;
 }
 .oee-box .container .row{
-    height: 100px;
+  height: 100px;
 }
 .oee-box .container .row div{
-    text-align: center;
-    color:#fff;
+  text-align: center;
+  color:#fff;
 }
 .oee-box .container .row div i{
-    color: #30D4A4;
+  color: #30D4A4;
 }

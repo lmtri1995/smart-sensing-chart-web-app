@@ -3,7 +3,7 @@ import ExamplePageTwo from '../containers/ExampleTwo/index';
 import DashBoard from '../containers/DashBoard/index';
 
 const admin = [
-    {component: DashBoard, route: "/", title: "Page dashboard"},
+    {component: DashBoard, route: "/", title: "Dashboard"},
     {component: ExamplePageOne, route: "/pages/one", title: "Page one"},
     {component: ExamplePageTwo, route: "/pages/two", title: "Page two"},
 ];

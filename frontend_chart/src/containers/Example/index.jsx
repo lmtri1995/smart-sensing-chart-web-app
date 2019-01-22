@@ -1,23 +1,34 @@
 import React from 'react';
-import {Col, Container, Row} from 'reactstrap';
-import ExampleCardBarChartShort from "./components/ExampleCardBarChartShort";
-import ExampleCardBarChartLong from "./components/ExampleCardBarChartLong";
-
+import OEEChart from "./components/OOEChart";
+import OEEPre from "./components/OEEPre";
+import LossOfWork from "./components/LossOfWork";
+import StationComparison from "./components/StationComparison";
+import SwingArmMachine from "./components/SwingArmMachine";
 const ExamplePage = () => (
-    <Container className="dashboard">
-        <Row>
-            <Col md={12}>
-                <h3 className="page-title">Example Page One</h3>
-            </Col>
-        </Row>
-        <Row>
-            <Col md={6} lg={6} xl={6}>
-                <ExampleCardBarChartLong />
-            </Col>
-            <Col md={6} lg={6} xl={6}>
-                <ExampleCardBarChartShort />
-            </Col>
-        </Row>
-    </Container>
+    <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <div class="row">
+                            <div className="col-9"><OEEChart /></div>
+                            <div className="col-3"><OEEPre /></div>
+                        </div>
+                    </div>
+                    <div className="col">
+                        <div class="row">
+                            <div className="col-3"><LossOfWork /></div>
+                            <div className="col-9"><StationComparison /></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        <SwingArmMachine />
+                    </div>
+                    <div className="col">
+                        <SwingArmMachine />
+                    </div>
+                </div>
+                
+            </div>
 );
 export default ExamplePage;

@@ -1,17 +1,19 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import TopbarSidebarButton from './TopbarSidebarButton';
 import TopbarProfile from './TopbarProfile';
 import TopbarFilter from "./TopbarFilter";
+import Clock from 'react-live-clock';
 
-class Topbar extends PureComponent {
+class Topbar extends Component {
     static propTypes = {
         changeMobileSidebarVisibility: PropTypes.func.isRequired,
         changeSidebarVisibility: PropTypes.func.isRequired,
     };
 
     render() {
+
         const {changeMobileSidebarVisibility, changeSidebarVisibility} = this.props;
 
         return (
@@ -25,6 +27,7 @@ class Topbar extends PureComponent {
                         <Link className="topbar__logo" to="/dashboard_default"/>
                     </div>
                     <div className="topbar__right">
+                        <Clock format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000} />
                         <TopbarFilter/>
                         <TopbarProfile/>
                     </div>

@@ -38,6 +38,7 @@
     "react-date-range": "^1.0.0-beta",
     "react-dev-utils": "^6.0.3",
     "react-dom": "^16.5.2",
+    "react-live-clock": "^3.0.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",

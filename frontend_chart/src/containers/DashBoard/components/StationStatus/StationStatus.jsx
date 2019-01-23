@@ -68,7 +68,7 @@ export default class stationStatus extends Component {
             <StationStatusItem stationId={0} status={0} spaceTime={0}/>
             <StationStatusItem stationId={0} status={0} spaceTime={0}/>
         </div>
-        if (dataArray && dataArray.length >= 0){
+        if (dataArray && dataArray.length > 0){
             result = <div className="row">
                 <StationStatusItem stationId={1} status={dataArray[0].istatus} spaceTime={dataArray[0].space_time}/>
                 <StationStatusItem stationId={1} status={dataArray[0].istatus} spaceTime={dataArray[0].space_time}/>

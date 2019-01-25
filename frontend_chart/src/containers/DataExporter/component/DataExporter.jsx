@@ -1,17 +1,14 @@
-import React, {PureComponent} from 'react';
-import moment from "moment";
-import {CSVLink} from "react-csv";
+import React, {Component} from 'react';
 
-export default class DataExporter extends PureComponent {
+export default class DataExporter extends Component {
+
     render() {
         let {exportType, data} = this.props;
 
         switch (exportType) {
             case ExportType.EXCEL:
                 return (
-                    <CSVLink className="data-exporter__button"
-                             data={data}
-                             filename={`Data_Summary_${moment().format("YYYYMMDD_HHmmss").toString()}.csv`}>
+                    <div className="data-exporter__button">
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -23,7 +20,7 @@ export default class DataExporter extends PureComponent {
                         <span className="data-exporter__type">
                             {ExportType.EXCEL}
                         </span>
-                    </CSVLink>
+                    </div>
                 );
             case ExportType.PDF:
                 // TODO Add PDF Exporter

@@ -1,6 +1,252 @@
 import React, {Component} from 'react';
+import Excel from './../../../../node_modules/exceljs/dist/es5/exceljs.browser';
+import * as FileSaver from 'file-saver';
+import {standardDeviation} from "../../../shared/utils/dataCalculator";
 
 export default class DataExporter extends Component {
+
+    exportExcelFile(data) {
+        // Create new Workbook
+        let workbook = new Excel.Workbook();
+        workbook.creator = 'trile@snaglobal.net';
+        workbook.lastModifiedBy = 'trile@snaglobal.net';
+        workbook.created = new Date();
+        workbook.modified = new Date();
+
+        // Add new Worksheet
+        let worksheet = workbook.addWorksheet('Smart_Sensing_Chart_Data');
+
+        // ---------- Draw borders and define text alignments for every cell of the table ----------
+        let middleLeftAlignment = {vertical: 'middle', horizontal: 'left'};
+        let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+        // 2: 2 first rows for Processing Status section
+        // data.length: number of stations
+        // 6: 6 rows for Total section
+        for (let row = 1; row <= 2 + data.length + 6; ++row) {  // Number of rows
+
+            let currentRow = worksheet.getRow(row);
+
+            for (let col = 1; col <= 7; ++col) {  // Number of columns
+                currentRow.getCell(col).border = {
+                    top: {style: 'thin'},
+                    left: {style: 'thin'},
+                    bottom: {style: 'thin'},
+                    right: {style: 'thin'}
+                };
+                // Station [num] cells in column A => middle left alignment
+                if (row >= 3 && row <= 2 + data.length && col === 1) {
+                    currentRow.getCell(col).alignment = middleLeftAlignment;
+                } else {
+                    currentRow.getCell(col).alignment = middleCenterAlignment;
+                }
+                // Set bold for Processing Status Section, Total Section & Column A
+                if (row < 3
+                    || row > 2 + data.length && row <= 2 + data.length + 2
+                    || col === 1) {
+                    currentRow.getCell(col).font = {
+                        bold: true
+                    }
+                }
+            }
+        }
+
+        // ---------- Processing Status Section ----------
+        // Line column
+        worksheet.getColumn('A').width = 18;
+        worksheet.mergeCells('A1:A2');
+        worksheet.getCell('A1').value = "Processing Status\r\nLine";
+        worksheet.getCell('A1').alignment = {...middleLeftAlignment, wrapText: true};
+
+        // Temperature columns
+        worksheet.mergeCells('B1:C1');
+        worksheet.getCell('B1').value = 'Temperature';
+        worksheet.getCell('B2').value = 'AVG.';
+        worksheet.getCell('C2').value = 'STDEV';
+
+        // Preparing Time(s) columns
+        worksheet.mergeCells('D1:E1');
+        worksheet.getCell('D1').value = 'Preparing Time(s)';
+        worksheet.getCell('D2').value = 'AVG.';
+        worksheet.getCell('E2').value = 'STDEV';
+
+        // Curing Time(s) columns
+        worksheet.mergeCells('F1:G1');
+        worksheet.getCell('F1').value = 'Curing Time(s)';
+        worksheet.getCell('F2').value = 'AVG.';
+        worksheet.getCell('G2').value = 'STDEV';
+
+        let startStationRow = 3;
+        let endStationRow = startStationRow + data.length - 1;
+
+        let startTotalSectionRow = endStationRow + 1;
+
+        // Total column
+        worksheet.mergeCells(`A${startTotalSectionRow}:A${startTotalSectionRow + 1}`);
+        worksheet.getCell(`A${startTotalSectionRow}`).value = 'Total';
+        worksheet.getCell(`A${startTotalSectionRow}`).alignment = middleCenterAlignment;
+
+        worksheet.getCell(`A${startTotalSectionRow + 2}`).value = 'AVG.';
+        worksheet.getCell(`A${startTotalSectionRow + 2}`).alignment = middleLeftAlignment;
+
+        worksheet.getCell(`A${startTotalSectionRow + 3}`).value = 'MAX';
+        worksheet.getCell(`A${startTotalSectionRow + 3}`).alignment = middleLeftAlignment;
+
+        worksheet.getCell(`A${startTotalSectionRow + 4}`).value = 'MIN';
+        worksheet.getCell(`A${startTotalSectionRow + 4}`).alignment = middleLeftAlignment;
+
+        worksheet.getCell(`A${startTotalSectionRow + 5}`).value = 'STDEV';
+        worksheet.getCell(`A${startTotalSectionRow + 5}`).alignment = middleLeftAlignment;
+
+        // Temperature column
+        worksheet.mergeCells(`B${startTotalSectionRow}:C${startTotalSectionRow}`);
+        worksheet.getCell(`B${startTotalSectionRow}`).value = 'Temperature';
+        worksheet.getCell(`B${startTotalSectionRow + 1}`).value = 'AVG.';
+        worksheet.getCell(`C${startTotalSectionRow + 1}`).value = 'STDEV';
+
+        // Preparing Time(s) column
+        worksheet.mergeCells(`D${startTotalSectionRow}:E${startTotalSectionRow}`);
+        worksheet.getCell(`D${startTotalSectionRow}`).value = 'Preparing Time(s)';
+        worksheet.getCell(`D${startTotalSectionRow + 1}`).value = 'AVG.';
+        worksheet.getCell(`E${startTotalSectionRow + 1}`).value = 'STDEV';
+
+        // Curing Time(s) column
+        worksheet.mergeCells(`F${startTotalSectionRow}:G${startTotalSectionRow}`);
+        worksheet.getCell(`F${startTotalSectionRow}`).value = 'Curing Time(s)';
+        worksheet.getCell(`F${startTotalSectionRow + 1}`).value = 'AVG.';
+        worksheet.getCell(`G${startTotalSectionRow + 1}`).value = 'STDEV';
+
+        // ---------- Fill Data into Table ----------
+        // For AVG. Row of Total Section
+        let sumTempAvg = 0, sumTempStdev = 0,
+            sumPrepAvg = 0, sumPrepStdev = 0,
+            sumCurAvg = 0, sumCurStdev = 0;
+
+        // For Min-Max Row of Total Section
+        let tempAvgMin = Infinity, tempAvgMax = 0, tempStdevMin = Infinity, tempStdevMax = 0,
+            prepAvgMin = Infinity, prepAvgMax = 0, prepStdevMin = Infinity, prepStdevMax = 0,
+            curAvgMin = Infinity, curAvgMax = 0, curStdevMin = Infinity, curStdevMax = 0;
+
+        // For STDEV Row of Total Section
+        let tempAvgArray = [], tempStdevArray = [],
+            prepAvgArray = [], prepStdevArray = [],
+            curAvgArray = [], curStdevArray = [];
+        data.forEach((station, index) => {
+            // ---------- Fill Data into Table ----------
+            let currentRow = worksheet.getRow(startStationRow + index);
+            for (let col = 1; col <= 7; ++col) {
+                switch (col) {
+                    case 1:
+                        currentRow.getCell(col).value = 'Station ' + (+station.idStation);
+                        break;
+                    case 2:
+                        currentRow.getCell(col).value = +station.temp_avg;
+                        break;
+                    case 3:
+                        currentRow.getCell(col).value = +station.temp_stdev;
+                        break;
+                    case 4:
+                        currentRow.getCell(col).value = +station.pre_avg;
+                        break;
+                    case 5:
+                        currentRow.getCell(col).value = +station.pre_stdev;
+                        break;
+                    case 6:
+                        currentRow.getCell(col).value = +station.cur_avg;
+                        break;
+                    case 7:
+                        currentRow.getCell(col).value = +station.cur_stdev;
+                        break;
+                }
+            }
+
+            // ---------- Total for AVG. ----------
+            sumTempAvg += +station.temp_avg;
+            sumTempStdev += +station.temp_stdev;
+            sumPrepAvg += +station.pre_avg;
+            sumPrepStdev += +station.pre_stdev;
+            sumCurAvg += +station.cur_avg;
+            sumCurStdev += +station.cur_stdev;
+
+            // ---------- Min-Max ----------
+            // Temperature AVG.
+            if (station.temp_avg < tempAvgMin) tempAvgMin = +station.temp_avg;
+            if (station.temp_avg > tempAvgMax) tempAvgMax = +station.temp_avg;
+            // Temperature STDEV
+            if (station.temp_stdev < tempStdevMin) tempStdevMin = +station.temp_stdev;
+            if (station.temp_stdev > tempStdevMax) tempStdevMax = +station.temp_stdev;
+            // Preparing Time(s) AVG.
+            if (station.pre_avg < prepAvgMin) prepAvgMin = +station.pre_avg;
+            if (station.pre_avg > prepAvgMax) prepAvgMax = +station.pre_avg;
+            // Preparing Time(s) STDEV
+            if (station.pre_stdev < prepStdevMin) prepStdevMin = +station.pre_stdev;
+            if (station.pre_stdev > prepStdevMax) prepStdevMax = +station.pre_stdev;
+            // Curing Time(s) AVG.
+            if (station.cur_avg < curAvgMin) curAvgMin = +station.cur_avg;
+            if (station.cur_avg > curAvgMax) curAvgMax = +station.cur_avg;
+            // Curing Time(s) STDEV
+            if (station.cur_stdev < curStdevMin) curStdevMin = +station.cur_stdev;
+            if (station.cur_stdev > curStdevMax) curStdevMax = +station.cur_stdev;
+
+            // ---------- Array of data for STDEV ----------
+            tempAvgArray.push(+station.temp_avg);
+            tempStdevArray.push(+station.temp_stdev);
+            prepAvgArray.push(+station.pre_avg);
+            prepStdevArray.push(+station.pre_stdev);
+            curAvgArray.push(+station.cur_avg);
+            curStdevArray.push(+station.cur_stdev);
+        });
+
+        // ---------- Calculation ----------
+        let totalAVGTempAvg = sumTempAvg / tempAvgArray.length;
+        let totalAVGTempStdev = sumTempStdev / tempStdevArray.length;
+        let totalAVGPrepAvg = sumPrepAvg / prepAvgArray.length;
+        let totalAVGPrepStdev = sumPrepStdev / prepStdevArray.length;
+        let totalAVGCurAvg = sumCurAvg / curAvgArray.length;
+        let totalAVGCurStdev = sumCurStdev / curStdevArray.length;
+
+        let totalSTDEVTempAvg = standardDeviation(tempAvgArray, totalAVGTempAvg, true);
+        let totalSTDEVTempStdev = standardDeviation(tempStdevArray, totalAVGTempStdev, true);
+        let totalSTDEVPrepAvg = standardDeviation(prepAvgArray, totalAVGPrepAvg, true);
+        let totalSTDEVPrepStdev = standardDeviation(prepStdevArray, totalAVGPrepStdev, true);
+        let totalSTDEVCurAvg = standardDeviation(curAvgArray, totalAVGCurAvg, true);
+        let totalSTDEVCurStdev = standardDeviation(curStdevArray, totalAVGCurStdev, true);
+
+        // ---------- Total AVG Row ----------
+        worksheet.getCell(`B${startTotalSectionRow + 2}`).value = totalAVGTempAvg;
+        worksheet.getCell(`C${startTotalSectionRow + 2}`).value = totalAVGTempStdev;
+        worksheet.getCell(`D${startTotalSectionRow + 2}`).value = totalAVGPrepAvg;
+        worksheet.getCell(`E${startTotalSectionRow + 2}`).value = totalAVGPrepStdev;
+        worksheet.getCell(`F${startTotalSectionRow + 2}`).value = totalAVGCurAvg;
+        worksheet.getCell(`G${startTotalSectionRow + 2}`).value = totalAVGCurStdev;
+        // ---------- Total MAX Row ----------
+        worksheet.getCell(`B${startTotalSectionRow + 3}`).value = tempAvgMax;
+        worksheet.getCell(`C${startTotalSectionRow + 3}`).value = tempStdevMax;
+        worksheet.getCell(`D${startTotalSectionRow + 3}`).value = prepAvgMax;
+        worksheet.getCell(`E${startTotalSectionRow + 3}`).value = prepStdevMax;
+        worksheet.getCell(`F${startTotalSectionRow + 3}`).value = curAvgMax;
+        worksheet.getCell(`G${startTotalSectionRow + 3}`).value = curStdevMax;
+        // ---------- Total MIN Row ----------
+        worksheet.getCell(`B${startTotalSectionRow + 4}`).value = tempAvgMin;
+        worksheet.getCell(`C${startTotalSectionRow + 4}`).value = tempStdevMin;
+        worksheet.getCell(`D${startTotalSectionRow + 4}`).value = prepAvgMin;
+        worksheet.getCell(`E${startTotalSectionRow + 4}`).value = prepStdevMin;
+        worksheet.getCell(`F${startTotalSectionRow + 4}`).value = curAvgMin;
+        worksheet.getCell(`G${startTotalSectionRow + 4}`).value = curStdevMin;
+        // ---------- Total STDEV Row ----------
+        worksheet.getCell(`B${startTotalSectionRow + 5}`).value = totalSTDEVTempAvg;
+        worksheet.getCell(`C${startTotalSectionRow + 5}`).value = totalSTDEVTempStdev;
+        worksheet.getCell(`D${startTotalSectionRow + 5}`).value = totalSTDEVPrepAvg;
+        worksheet.getCell(`E${startTotalSectionRow + 5}`).value = totalSTDEVPrepStdev;
+        worksheet.getCell(`F${startTotalSectionRow + 5}`).value = totalSTDEVCurAvg;
+        worksheet.getCell(`G${startTotalSectionRow + 5}`).value = totalSTDEVCurStdev;
+
+        workbook.xlsx.writeBuffer()
+            .then(buffer => FileSaver.saveAs(
+                new Blob([buffer]),
+                'Smart_Sensing_Chart_Data.xlsx' // Excel File Name
+            ))
+            .catch(err => console.log('Error writing excel export', err));
+    }
 
     render() {
         let {exportType, data} = this.props;
@@ -8,7 +254,8 @@ export default class DataExporter extends Component {
         switch (exportType) {
             case ExportType.EXCEL:
                 return (
-                    <div className="data-exporter__button">
+                    <div className="data-exporter__button"
+                         onClick={() => this.exportExcelFile(data)}>
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">

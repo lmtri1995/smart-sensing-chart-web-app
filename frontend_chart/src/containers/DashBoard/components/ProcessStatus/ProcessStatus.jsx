@@ -4,23 +4,33 @@ import GeneralSummaryItem from './components/GeneralSummaryItem';
 import Singleton from "../../../../services/Socket";
 
 export default class ProcessStatus extends Component {
+    static socket = null;
+    static _isMounted = false;
+
     constructor(props) {
         super(props);
+
+        //initiate socket
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
+        let token = loginData.token;
+        this.socket = Singleton.getInstance(token);
+
         this.state = {
             dataArray: "",
         };
     }
 
-    componentDidMount() {
-        let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
-        let socket = Singleton.getInstance(token);
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
+    componentDidMount() {
+        this._isMounted = true;
         /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        socket.emit('process_status', {
+        this.socket.emit('process_status', {
             msg: {
                 event: 'sna_process_status',
                 from_timedevice: "1548122509",
@@ -30,31 +40,32 @@ export default class ProcessStatus extends Component {
             }
         });
 
-        socket.on('sna_process_status', (data) => {
-
-            let returnArray = JSON.parse(data);
-            let dataArray = returnArray.data;
-            dataArray.sort(function (a, b) {
-                if (parseInt(a.idStation) < parseInt(b.idStation)) {
-                    return -1;
-                }
-                if (parseInt(a.idStation) > parseInt(b.idStation)) {
-                    return 1;
-                }
-                return 0;
-            });
-            this.setState({
-                dataArray: dataArray,
-            });
+        this.socket.on('sna_process_status', (data) => {
+            if (this._isMounted) {
+                let returnArray = JSON.parse(data);
+                let dataArray = returnArray.data;
+                dataArray.sort(function (a, b) {
+                    if (parseInt(a.idStation) < parseInt(b.idStation)) {
+                        return -1;
+                    }
+                    if (parseInt(a.idStation) > parseInt(b.idStation)) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                this.setState({
+                    dataArray: dataArray,
+                });
+            }
         });
 
-        socket.on('token', (data) => {
+        /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
             if (!tokenObject.success) {
                 console.log('Token is expired');
                 window.location.href = ("/logout");
             }
-        });
+        });*/
 
     }
 

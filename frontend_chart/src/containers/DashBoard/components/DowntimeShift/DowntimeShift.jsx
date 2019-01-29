@@ -4,23 +4,34 @@ import Singleton from "../../../../services/Socket";
 import moment from "moment";
 
 export default class DowntimeShift extends Component {
+    static socket = null;
+    static _isMounted = false;
+
     constructor(props) {
+
         super(props);
+
+        //initiate socket
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
+        let token = loginData.token;
+        this.socket = Singleton.getInstance(token);
+
         this.state = {
             dataArray: "",
         }
     }
 
-    componentDidMount() {
-        let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
-        let socket = Singleton.getInstance(token);
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
+    componentDidMount() {
+        this._isMounted = true;
         /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        socket.emit('down_shift', {
+        this.socket.emit('down_shift', {
             msg: {
                 event: 'sna_down_shift',
                 from_timedevice: "1548122509",
@@ -30,31 +41,32 @@ export default class DowntimeShift extends Component {
             }
         });
 
-        socket.on('sna_down_shift', (data) => {
-
-            let returnArray = JSON.parse(data);
-            let dataArray = returnArray.data;
-            dataArray.sort(function (a, b) {
-                if (parseInt(a.idStation) < parseInt(b.idStation)) {
-                    return -1;
-                }
-                if (parseInt(a.idStation) > parseInt(b.idStation)) {
-                    return 1;
-                }
-                return 0;
-            });
-            this.setState({
-                dataArray: dataArray,
-            });
+        this.socket.on('sna_down_shift', (data) => {
+            if (this._isMounted) {
+                let returnArray = JSON.parse(data);
+                let dataArray = returnArray.data;
+                dataArray.sort(function (a, b) {
+                    if (parseInt(a.idStation) < parseInt(b.idStation)) {
+                        return -1;
+                    }
+                    if (parseInt(a.idStation) > parseInt(b.idStation)) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                this.setState({
+                    dataArray: dataArray,
+                });
+            }
         });
 
-        socket.on('token', (data) => {
+        /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
             if (!tokenObject.success) {
                 console.log('Token is expired');
                 window.location.href = ("/logout");
             }
-        });
+        });*/
     }
 
     specifyCurrentShift(dataArray) {
@@ -97,9 +109,9 @@ export default class DowntimeShift extends Component {
                     //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
                     //total = 0;
                     let tmpTime = dataArray[i].first_shift_off_sum;
-                    let hour    = tmpTime.substr(tmpTime.indexOf('h') - 2, tmpTime.indexOf('h'));
-                    let minute  = tmpTime.substr(tmpTime.indexOf('m') - 2, tmpTime.indexOf('m'));
-                    let second  = tmpTime.substr(tmpTime.indexOf('s') - 2, tmpTime.indexOf('s'));
+                    let hour = tmpTime.substr(tmpTime.indexOf('h') - 2, tmpTime.indexOf('h'));
+                    let minute = tmpTime.substr(tmpTime.indexOf('m') - 2, tmpTime.indexOf('m'));
+                    let second = tmpTime.substr(tmpTime.indexOf('s') - 2, tmpTime.indexOf('s'));
                     //let mTime = moment({h: hour, m: minute, s: second});
                     total = init.add(hour, 'hours', minute, 'minutes', second, 'seconds').format('HH:mm:ss');
                 }
@@ -169,7 +181,7 @@ export default class DowntimeShift extends Component {
         } else if (currentShift == 3) {
             result = <tbody>{shift1}{shift2}{shift3}</tbody>;
         }*/
-        result = shift1;
+        result = <tbody>{shift1}</tbody>;
         return result;
     }
 

@@ -28,9 +28,7 @@ class TemperatureTrendTable extends Component {
                 <TemperatureTrendItem/>
             </div>
         </div>);
-        console.log("dataArray: ", dataArray);
         if (dataArray && dataArray.length > 0) {
-            console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa");
             result = <div className="row" key={'1'}>
                 <div className="col">
                     <TemperatureTrendItem tempData={dataArray[1]}/>

@@ -4,19 +4,20 @@ import {connect} from 'react-redux';
 import {Line} from 'react-chartjs-2';
 import {changeGlobalFilter} from "../../../../redux/actions/globalFilterActions";
 import Singleton from '../../../../services/Socket';
-import 'chartjs-plugin-zoom';
 
 const initialState = {
     labels: ['0', '1', '2', '3', '4', '5', '6'],
     datasets: [
         {
             label: 'My First dataset',
-            backgroundColor: '#FF6384',
-            borderColor: '#FF6384',
+            backgroundColor: '#449AFF',
+            borderColor: '#449AFF',
             borderWidth: 1,
-            hoverBackgroundColor: '#FF6384',
-            hoverBorderColor: '#FF6384',
+            hoverBackgroundColor: '#FF00FF',
+            hoverBorderColor: '#FF00FF',
             data: [65, 59, 80, 81, 56, 55, 45],
+            fill: false,
+            tension: 0,
         },
     ],
 
@@ -50,10 +51,6 @@ const options = {
                 },
             },
         ],
-    },
-    zoom:{
-        enabled:true,
-        mode:'xy'
     }
 };
 

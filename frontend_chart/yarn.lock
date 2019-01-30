@@ -7961,7 +7961,7 @@ react-list@^0.8.8:
 
 react-live-clock@^3.0.0:
   version "3.0.0"
-  resolved "https://registry.yarnpkg.com/react-live-clock/-/react-live-clock-3.0.0.tgz#0fc9cd25d8adb7721edd8a02b77076f0319bf1f1"
+  resolved "http://13.209.77.15:8090/react-live-clock/-/react-live-clock-3.0.0.tgz#0fc9cd25d8adb7721edd8a02b77076f0319bf1f1"
   integrity sha512-O8RzHC928sejDKhguT/u//8nI4YcFZDmAGQUfG/jY+mbCPSYm2TiHdQWXe0QbxbCyioLddzgG2/JISeE6K66gA==
   dependencies:
     moment "2.19.3"

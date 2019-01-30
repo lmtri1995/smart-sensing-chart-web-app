@@ -5,6 +5,7 @@ export const FETCHING_DATA_SUCCESS = 'FETCHING_DATA_SUCCESS';
 export const FETCHING_DATA_FAILURE = 'FETCHING_DATA_FAILURE';
 
 export const IP_TEMP_TREND_ARRAY = 'IP_TEMP_TREND_ARRAY';
+export const OS_TEMP_TREND_ARRAY = 'OS_TEMP_TREND_ARRAY';
 export const IP_TEMP_STOCK_CAPACITY = 25000; //Maximum rows can be saved in the local storage
 export const IP_TEMP_ITEM_TO_GET    = 1000; //Number of items that will be gotten to show on grid
 export const IP_TEMP_TIME_SPACE_GET_FROM_STOCK    = 3000; //Time space to get an amount of data from
@@ -14,9 +15,20 @@ export const IP_TEMP_TIME_SPACE_PUSH_TO_STOCK   = 4000;
 
 export const LOCAL_IP_TEMP_TREND = {
     IP_TEMP_TREND_ARRAY,
+    OS_TEMP_TREND_ARRAY,
     IP_TEMP_STOCK_CAPACITY,
     IP_TEMP_ITEM_TO_GET,
     IP_TEMP_TIME_SPACE_GET_FROM_STOCK,
     IP_TEMP_TIME_SPACE_PUSH_TO_STOCK,
 }
 
+export const ROLE_ADMIN = 'admin';
+export const ROLE_IP = 'admin';
+export const ROLE_OS = 'os';
+export const ROLE_AS = 'as';
+export const ROLES = {
+    ROLE_ADMIN,
+    ROLE_IP,
+    ROLE_OS,
+    ROLE_AS,
+}

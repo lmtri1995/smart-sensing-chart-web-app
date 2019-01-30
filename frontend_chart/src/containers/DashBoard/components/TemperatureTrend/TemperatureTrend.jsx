@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {ButtonDropdown, ButtonGroup, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
 import TemperatureTrendTable from './components/TemperatureTrendTable';
 import Singleton from "../../../../services/Socket";
-import {LOCAL_IP_TEMP_TREND} from "../../../../constants/constants";
+import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../constants/constants";
 import {config} from "../../../../constants/config";
 
 
@@ -13,6 +13,7 @@ export default class TemperatureTrend extends Component {
     static getInverval = null;
     static loginData = null;
     static role = null;
+    static localTempArrayName = null;
 
     constructor(props) {
         super(props);
@@ -22,6 +23,20 @@ export default class TemperatureTrend extends Component {
         this.role = this.loginData.data.role;
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
+
+        //Specify which array in local storage to push data to and get data from
+        this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+        switch(this.role) {
+            case ROLES.ROLE_ADMIN:
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+                break;
+            case ROLES.ROLE_IP:
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+                break;
+            case ROLES.ROLE_OS:
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+                break;
+        }
 
         this.toggle = this.toggle.bind(this);
         this.state = {
@@ -51,7 +66,7 @@ export default class TemperatureTrend extends Component {
     pushToStock = (returnArray) => {
         if (returnArray && +returnArray.total > 0) {
             let capacity = LOCAL_IP_TEMP_TREND.IP_TEMP_STOCK_CAPACITY;
-            let stock = JSON.parse(localStorage.getItem(LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY));
+            let stock = JSON.parse(localStorage.getItem(this.localTempArrayName));
             let total = returnArray.total;
             //returnArray.data =
             // returnArray.data.concat(returnArray.data).concat(returnArray.data);////////////
@@ -63,7 +78,7 @@ export default class TemperatureTrend extends Component {
             //returnArray.total > stock
             if (returnArray.total >= capacity) {
                 console.log("case 1: return array length > capacity");
-                localStorage.setItem(LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY,
+                localStorage.setItem(this.localTempArrayName,
                     JSON.stringify(returnArray.data.slice(0, capacity)));
             } else if (total > capacity) {
                 console.log("case 2: total of return array and existing stock > capacity");
@@ -76,7 +91,7 @@ export default class TemperatureTrend extends Component {
                 } else {
                     stock = returnArray.data;
                 }
-                localStorage.setItem(LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY, JSON.stringify(stock));
+                localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
             } else {//total < capacity
                 console.log("case 3: total of return array and existing stock <= capacity");
                 if (stock) {
@@ -86,9 +101,9 @@ export default class TemperatureTrend extends Component {
                 } else {
                     stock = returnArray.data;
                 }
-                localStorage.setItem(LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY, JSON.stringify(stock));
+                localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
                 /*try {
-                    localStorage.setItem(LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY, JSON.stringify(stock));
+                    localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
                 } catch(exception){
                     console.log("quota exceeded");
                 }*/
@@ -98,7 +113,7 @@ export default class TemperatureTrend extends Component {
     }
 
     showDataToGrid = (quantity) => {
-        let stock = JSON.parse(localStorage.getItem(LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY));
+        let stock = JSON.parse(localStorage.getItem(this.localTempArrayName));
         let dataToShow = [];
         //Get data from Stock
         if (stock && stock.length > 0) {
@@ -110,7 +125,7 @@ export default class TemperatureTrend extends Component {
                 dataToShow = stock.slice(0, stockLength);
                 stock = [];
             }
-            localStorage.setItem(LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY, JSON.stringify(stock));
+            localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
         } else {
             console.log("Stock is empty");
         }

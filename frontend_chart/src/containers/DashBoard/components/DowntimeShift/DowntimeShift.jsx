@@ -6,14 +6,17 @@ import moment from "moment";
 export default class DowntimeShift extends Component {
     static socket = null;
     static _isMounted = false;
+    static loginData = null;
+    static role = null;
 
     constructor(props) {
 
         super(props);
 
         //initiate socket
-        let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
+        this.loginData = JSON.parse(localStorage.getItem('logindata'));
+        this.role = this.loginData.data.role;
+        let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
         this.state = {
@@ -31,18 +34,31 @@ export default class DowntimeShift extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
+        let process = 'os-Molding';
+        switch(this.role) {
+            case 'admin':
+                process = 'os-Molding';
+                break;
+            case 'ip':
+                process = 'os-Molding';
+                break;
+            case 'os':
+                process = 'os-Molding';
+                break;
+        }
         this.socket.emit('down_shift', {
             msg: {
                 event: 'sna_down_shift',
-                from_timedevice: "1548122509",
-                to_timedevice: "1548122509",
-                proccess: 'ip',
+                from_timedevice: 0,
+                to_timedevice: 0,
+                proccess: process,
                 status: 'start'
             }
         });
 
         this.socket.on('sna_down_shift', (data) => {
-            if (this._isMounted) {
+            console.log("sna_down_shift 45: ", data);
+                if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
                 dataArray.sort(function (a, b) {
@@ -109,9 +125,9 @@ export default class DowntimeShift extends Component {
                     //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
                     //total = 0;
                     let tmpTime = dataArray[i].first_shift_off_sum;
-                    let hour = tmpTime.substr(tmpTime.indexOf('h') - 2, tmpTime.indexOf('h'));
-                    let minute = tmpTime.substr(tmpTime.indexOf('m') - 2, tmpTime.indexOf('m'));
-                    let second = tmpTime.substr(tmpTime.indexOf('s') - 2, tmpTime.indexOf('s'));
+                    let hour = tmpTime?tmpTime.substr(tmpTime.indexOf('h') - 2, tmpTime.indexOf('h')):0;
+                    let minute = tmpTime?tmpTime.substr(tmpTime.indexOf('m') - 2, tmpTime.indexOf('m')):0;
+                    let second = tmpTime?tmpTime.substr(tmpTime.indexOf('s') - 2, tmpTime.indexOf('s')):0;
                     //let mTime = moment({h: hour, m: minute, s: second});
                     total = init.add(hour, 'hours', minute, 'minutes', second, 'seconds').format('HH:mm:ss');
                 }

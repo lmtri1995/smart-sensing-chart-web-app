@@ -6,13 +6,16 @@ import Singleton from "../../../../services/Socket";
 export default class ProcessStatus extends Component {
     static socket = null;
     static _isMounted = false;
+    static loginData = null;
+    static role = null;
 
     constructor(props) {
         super(props);
 
         //initiate socket
-        let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
+        this.loginData = JSON.parse(localStorage.getItem('logindata'));
+        this.role = this.loginData.data.role;
+        let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
         this.state = {
@@ -30,11 +33,24 @@ export default class ProcessStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        this.socket.emit('process_status', {
+
+        let emitEvent = 'process_status';
+        switch(this.role) {
+            case 'admin':
+                emitEvent = 'process_status';
+                break;
+            case 'ip':
+                emitEvent = 'process_status';
+                break;
+            case 'os':
+                emitEvent = 'os_process_status';
+                break;
+        }
+        this.socket.emit(emitEvent, {
             msg: {
                 event: 'sna_process_status',
-                from_timedevice: "1548122509",
-                to_timedevice: "1548122509",
+                from_timedevice: 0,
+                to_timedevice: 0,
                 minute: 0,
                 status: 'start'
             }
@@ -43,6 +59,7 @@ export default class ProcessStatus extends Component {
         this.socket.on('sna_process_status', (data) => {
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
+                console.log("process status: ", data);
                 let dataArray = returnArray.data;
                 dataArray.sort(function (a, b) {
                     if (parseInt(a.idStation) < parseInt(b.idStation)) {

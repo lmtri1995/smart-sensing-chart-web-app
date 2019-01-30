@@ -11,13 +11,16 @@ export default class TemperatureTrend extends Component {
     static socket = null;
     static pushInterval = null;
     static getInverval = null;
+    static loginData = null;
+    static role = null;
 
     constructor(props) {
         super(props);
 
         //initiate socket
-        let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
+        this.loginData = JSON.parse(localStorage.getItem('logindata'));
+        this.role = this.loginData.data.role;
+        let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
         this.toggle = this.toggle.bind(this);
@@ -248,8 +251,21 @@ export default class TemperatureTrend extends Component {
         /*let loginData = JSON.parse(localStorage.getItem('logindata'));
         let token = loginData.token;
         let socket = Singleton.getInstance(token);*/
+
+        let emitEvent = 'temp_trend';
+        switch(this.role) {
+            case 'admin':
+                emitEvent = 'temp_trend';
+                break;
+            case 'ip':
+                emitEvent = 'temp_trend';
+                break;
+            case 'os':
+                emitEvent = 'os_temp_trend';
+                break;
+        }
         let {tempTime} = this.state;
-        this.socket.emit('temp_trend', {
+        this.socket.emit(emitEvent, {
             msg: {
                 event: 'chart_temp_trend',
                 minute: tempTime,
@@ -293,7 +309,20 @@ export default class TemperatureTrend extends Component {
         let preTempTime = this.state.tempTime;
         let currentTempTime = parseInt(event.currentTarget.getAttribute("dropdownvalue"));
 
-        this.socket.emit('temp_trend', {
+        let emitEvent = 'temp_trend';
+        switch(this.role) {
+            case 'admin':
+                emitEvent = 'temp_trend';
+                break;
+            case 'ip':
+                emitEvent = 'temp_trend';
+                break;
+            case 'os':
+                emitEvent = 'os_temp_trend';
+                break;
+        }
+
+        this.socket.emit(emitEvent, {
             msg: {
                 event: 'chart_temp_trend',
                 minute: preTempTime,
@@ -301,7 +330,7 @@ export default class TemperatureTrend extends Component {
             }
         });
 
-        this.socket.emit('temp_trend', {
+        this.socket.emit(emitEvent, {
             msg: {
                 event: 'chart_temp_trend',
                 minute: currentTempTime,

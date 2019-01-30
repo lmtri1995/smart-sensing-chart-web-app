@@ -7,12 +7,17 @@ const admin = [
     {component: ExamplePageOne, route: "/pages/one", title: "Page one"},
     {component: ExamplePageTwo, route: "/pages/two", title: "Page two"},
 ];
-const writer = [
+const ip = [
+    {component: DashBoard, route: "/pages/", title: "Page dashboard"},
+    {component: ExamplePageTwo, route: '/pages/two', title: "Page two"},
+];
+const os = [
     {component: DashBoard, route: "/pages/", title: "Page dashboard"},
     {component: ExamplePageTwo, route: '/pages/two', title: "Page two"},
 ];
 export const RoleList = {
     admin,
-    writer
+    ip,
+    os,
 };
 

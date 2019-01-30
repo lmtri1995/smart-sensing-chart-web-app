@@ -6,13 +6,16 @@ import Singleton from "../../../../services/Socket";
 export default class ShiftStatus extends Component {
     static socket = null;
     static _isMounted = false;
+    static loginData = null;
+    static role = null;
 
     constructor(props) {
         super(props);
 
         //initiate socket
-        let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
+        this.loginData = JSON.parse(localStorage.getItem('logindata'));
+        this.role = this.loginData.data.role;
+        let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
         this.state = {
@@ -30,11 +33,23 @@ export default class ShiftStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        this.socket.emit('shift_status', {
+        let emitEvent = 'shift_status';
+        switch(this.role) {
+            case 'admin':
+                process = 'shift_status';
+                break;
+            case 'ip':
+                process = 'shift_status';
+                break;
+            case 'os':
+                process = 'os_shift_status';
+                break;
+        }
+        this.socket.emit(emitEvent, {
             msg: {
-                event: 'sna_shift_status',
-                from_timedevice: "1548122509",
-                to_timedevice: "1548122509",
+                event: 'shift_status',
+                from_timedevice: 0,
+                to_timedevice: 0,
                 minute: 0,
                 status: 'start'
             }
@@ -43,6 +58,7 @@ export default class ShiftStatus extends Component {
         this.socket.on('sna_shift_status', (data) => {
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
+                console.log("shift status: ", returnArray);
                 let dataArray = returnArray.data;
                 dataArray.sort(function (a, b) {
                     if (parseInt(a.idStation) < parseInt(b.idStation)) {
@@ -67,6 +83,41 @@ export default class ShiftStatus extends Component {
             }
         });*/
 
+    }
+
+    configureOptions = () => {
+        let result = '';
+        console.log("login data: ", this.loginData.data.role);
+        let role = this.loginData.data.role;
+
+        let event = 'sna_machine_status';
+        let from_timedevice = 0;
+        let to_timedevice = 0;
+        let proccess = 'os-Molding';
+        let status = 'start';
+
+        switch (role) {
+            case 'admin':
+                proccess = 'os-Molding';
+                break;
+            case 'os':
+                proccess = 'os-Molding';
+                break;
+            case 'ip':
+                proccess = 'os-Molding';
+                break;
+            case 'as':
+                proccess = 'os-Molding';
+                break;
+        }
+        result = {
+            'event': event,
+            'from_timedevice': from_timedevice,
+            'to_timedevice': to_timedevice,
+            'proccess': proccess,
+            'status': status
+        };
+        return result;
     }
 
     specifyCurrentShift(dataArray) {

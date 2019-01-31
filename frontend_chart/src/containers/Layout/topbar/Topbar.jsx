@@ -27,7 +27,11 @@ class Topbar extends Component {
                         <Link className="topbar__logo" to="/dashboard_default"/>
                     </div>
                     <div className="topbar__right">
-                        <Clock format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000} />
+                    <div className="topbar__filter-button" >
+                        <div className="clock">
+                            <Clock  format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000} />
+                        </div>
+                    </div>
                         <TopbarFilter/>
                         <TopbarProfile/>
                     </div>

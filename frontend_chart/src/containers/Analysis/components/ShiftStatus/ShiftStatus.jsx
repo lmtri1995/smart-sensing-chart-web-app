@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import ShiftStatusItem from './components/ShiftStatusItem';
 import moment from "moment";
 import Singleton from "../../../../services/Socket";
+import API from '../../../../services/api';
 
 export default class ShiftStatus extends Component {
     static socket = null;
@@ -33,7 +34,7 @@ export default class ShiftStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        let emitEvent = 'shift_status';
+        /*let emitEvent = 'shift_status';
         switch(this.role) {
             case 'admin':
                 process = 'shift_status';
@@ -72,7 +73,7 @@ export default class ShiftStatus extends Component {
                     dataArray: dataArray,
                 });
             }
-        });
+        });*/
 
         /*this.socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
@@ -81,41 +82,22 @@ export default class ShiftStatus extends Component {
                 window.location.href = ("/logout");
             }
         });*/
-
-    }
-
-    configureOptions = () => {
-        let result = '';
-        let role = this.loginData.data.role;
-
-        let event = 'sna_machine_status';
-        let from_timedevice = 0;
-        let to_timedevice = 0;
-        let proccess = 'os-Molding';
-        let status = 'start';
-
-        switch (role) {
-            case 'admin':
-                proccess = 'os-Molding';
-                break;
-            case 'os':
-                proccess = 'os-Molding';
-                break;
-            case 'ip':
-                proccess = 'os-Molding';
-                break;
-            case 'as':
-                proccess = 'os-Molding';
-                break;
+        /*let param = {
+            "article_no": "",
+            "model_name": "100"
+        }*/
+        let param = {
+            "article_no": "",
+            "model_name": "100"
         }
-        result = {
-            'event': event,
-            'from_timedevice': from_timedevice,
-            'to_timedevice': to_timedevice,
-            'proccess': proccess,
-            'status': status
-        };
-        return result;
+        API('api/ip/shiftStatus', 'POST', param)
+            .then((data) => {
+                console.log("=================");
+                console.log("data: ", data);
+                console.log("=================");
+            })
+            .catch((err) => console.log('err:', err))
+
     }
 
     specifyCurrentShift(dataArray) {

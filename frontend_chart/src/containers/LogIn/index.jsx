@@ -13,11 +13,11 @@ class LogIn extends Component {
       login:[],
       message:''
     }
-    this.test = this.test.bind(this)
+    this.login = this.login.bind(this)
     this.responseData = this.responseData.bind(this)
   }
 
-  test(values){
+  login(values){
     let user={
       username:values.name,
       password:values.password
@@ -33,7 +33,7 @@ class LogIn extends Component {
     this.setState({login:nextProps.datalogin.data})
   }
 
-  
+
   render() {
     //console.log('LogIn state',this.state.login)
     //console.log('LogIn localstore',JSON.parse(localStorage.getItem('logindata')))
@@ -53,7 +53,7 @@ class LogIn extends Component {
         <div>
         <h4  className="account__subhead text-danger">{this.state.message}</h4>
         </div>
-        <LogInForm onSubmit={this.test} />
+        <LogInForm onSubmit={this.login} />
         <div className="account__or">
           <p>Or Easily Using</p>
         </div>

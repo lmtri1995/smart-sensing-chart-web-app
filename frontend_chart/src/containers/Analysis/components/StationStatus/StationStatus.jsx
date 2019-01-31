@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import StationStatusItem from './components/StationStatusItem';
 import Singleton from "../../../../services/Socket";
-import {ClipLoader} from 'react-spinners';
 
 const override = `
     display: block;
@@ -75,7 +74,7 @@ export default class stationStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        let process = 'os-Molding';
+        /*let process = 'os-Molding';
         switch(this.role) {
             case 'admin':
                 process = 'os-Molding';
@@ -118,7 +117,7 @@ export default class stationStatus extends Component {
                     dataArray: dataArray,
                 });
             }
-        });
+        });*/
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
@@ -166,28 +165,8 @@ export default class stationStatus extends Component {
 
     render() {
         let {dataArray} = this.state;
-        let dataShow = <div className="loader"><ClipLoader
-            css={override}
-            sizeUnit={"px"}
-            size={100}
-            color={'#30D4A4'}
-            loading={true}
-            margin-left={300}
-        />
 
-        </div>
-        if (dataArray && dataArray.length > 0) {
-            dataShow = <div className="container">
-                <div className="row">
-                    <div className="col boxstation">
-                        <h4>On/Off</h4>
-                    </div>
-                </div>
-                {this.showStationStatusItem(dataArray)}
-            </div>
-        }
-
-        /*return (
+        return (
             <div className="container">
                 <div className="row">
                     <div className="col boxstation">
@@ -196,9 +175,6 @@ export default class stationStatus extends Component {
                 </div>
                 {this.showStationStatusItem(dataArray)}
             </div>
-        )*/
-        return (
-            dataShow
-        );
+        )
     }
 }

@@ -23,7 +23,10 @@ export default class TopbarProfile extends PureComponent {
     };
 
     render() {
-        let username = this.loginData.data.username;
+        let username = '';
+        if (this.loginData){
+            this.loginData.data.username;
+        }
 
         return (
             <div className="topbar__profile">

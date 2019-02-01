@@ -5,6 +5,7 @@ import TopbarSidebarButton from './TopbarSidebarButton';
 import TopbarProfile from './TopbarProfile';
 import TopbarFilter from "./TopbarFilter";
 import Clock from 'react-live-clock';
+import DataExporter, {ExportType} from "../../DataExporter/component/DataExporter";
 
 class Topbar extends Component {
     static propTypes = {
@@ -27,6 +28,9 @@ class Topbar extends Component {
                         <Link className="topbar__logo" to="/dashboard_default"/>
                     </div>
                     <div className="topbar__right">
+                        <DataExporter exportType={ExportType.EXCEL}/>
+                        <DataExporter exportType={ExportType.PDF}/>
+                        <DataExporter exportType={ExportType.PNG}/>
                         <Clock format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000} />
                         <TopbarFilter/>
                         <TopbarProfile/>

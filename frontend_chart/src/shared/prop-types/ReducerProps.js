@@ -11,8 +11,8 @@ export const SidebarProps = shape({
 });
 
 export const GlobalFilterProps = shape({
-    startDate: PropTypes.instanceOf(moment),
-    endDate: PropTypes.instanceOf(moment),
+    startDate: PropTypes.instanceOf(Date),
+    endDate: PropTypes.instanceOf(Date),
 });
 
 export const ThemeProps = shape({

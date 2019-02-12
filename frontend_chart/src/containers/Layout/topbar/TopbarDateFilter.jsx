@@ -1,36 +1,35 @@
-import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from 'react';
 import DownIcon from 'mdi-react/ChevronDownIcon';
 import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
 
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
-import {changeGlobalFilter} from '../../../redux/actions/globalFilterActions';
+import {changeAnalysisDateFilter} from '../../../redux/actions/globalDateFilterActions';
 import DateRangePicker from "../../DateTime/component/DateRangePicker";
 
-class TopbarFilter extends PureComponent {
+class TopbarDateFilter extends Component {
     static propTypes = {
-        globalFilter: GlobalFilterProps.isRequired,
+        globalDateFilter: GlobalFilterProps.isRequired,
     };
 
-    changeGlobalFilter = (startDate, endDate) => {
-        this.props.dispatch(changeGlobalFilter(startDate, endDate));
+    changeAnalysisDateFilter = (startDate, endDate) => {
+        this.props.dispatch(changeAnalysisDateFilter(startDate, endDate));
     }
 
     toggle = () => {
         this.setState({collapse: !this.state.collapse});
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             collapse: false,
         };
     }
 
     render() {
-        let {globalFilter} = this.props;
-        console.log("GLOBAL_FILTER", globalFilter);
+        let {startDateAnalysis, endDateAnalysis} = this.props.globalDateFilter;
+        console.log("ANALYSIS_DATE_FILTER", `startDate: ${startDateAnalysis} - endDate: ${endDateAnalysis}`);
         return (
             <div className="topbar__filter">
                 <button className="topbar__filter-button" onClick={this.toggle}>
@@ -40,11 +39,10 @@ class TopbarFilter extends PureComponent {
                 {this.state.collapse && <button className="topbar__back" onClick={this.toggle}/>}
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
                     <div className="topbar__menu">
-                        <DateRangePicker
-                            changeGlobalFilter={this.changeGlobalFilter}
-                            startDate={globalFilter.startDate}
-                            endDate={globalFilter.endDate}
-                        />
+                        <DateRangePicker numWeeks={3}
+                                         changeGlobalDateFilter={this.changeAnalysisDateFilter.bind(this)}
+                                         startDate={startDateAnalysis}
+                                         endDate={endDateAnalysis}/>
                     </div>
                 </Collapse>
             </div>
@@ -53,7 +51,7 @@ class TopbarFilter extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-    globalFilter: state.globalFilter
+    globalDateFilter: state.globalDateFilter
 });
 
-export default connect(mapStateToProps)(TopbarFilter)
+export default connect(mapStateToProps)(TopbarDateFilter)

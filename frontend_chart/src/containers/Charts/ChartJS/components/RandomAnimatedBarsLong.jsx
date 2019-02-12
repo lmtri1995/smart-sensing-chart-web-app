@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {Bar} from 'react-chartjs-2';
-import {changeGlobalFilter} from "../../../../redux/actions/globalFilterActions";
+import {changeAnalysisDateFilter} from "../../../../redux/actions/globalDateFilterActions";
 import Singleton from '../../../../services/Socket';
 import moment from 'moment';
 import 'chartjs-plugin-zoom';
@@ -67,8 +67,8 @@ class RandomAnimatedBarsLong extends PureComponent {
         };
     }
 
-    changeGlobalFilter = (startDate, endDate) => {
-        this.props.dispatch(changeGlobalFilter(startDate, endDate));
+    changeAnalysisDateFilter = (startDate, endDate) => {
+        this.props.dispatch(changeAnalysisDateFilter(startDate, endDate));
     }
 
     componentDidMount() {

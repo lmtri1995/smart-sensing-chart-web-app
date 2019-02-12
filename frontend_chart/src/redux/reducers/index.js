@@ -1,11 +1,11 @@
 import themeReducer from './themeReducer';
 import sidebarReducer from './sidebarReducer';
 import LoginReducer from './loginReducer';
-import globalFilterReducer from './globalFilterReducer';
+import globalDateFilterReducer from './globalDateFilterReducer';
 
 export {
     themeReducer,
     sidebarReducer,
-    globalFilterReducer,
+    globalDateFilterReducer,
     LoginReducer,
 };

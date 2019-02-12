@@ -20,7 +20,7 @@ export const LOCAL_IP_TEMP_TREND = {
     IP_TEMP_ITEM_TO_GET,
     IP_TEMP_TIME_SPACE_GET_FROM_STOCK,
     IP_TEMP_TIME_SPACE_PUSH_TO_STOCK,
-}
+};
 
 export const ROLE_ADMIN = 'admin';
 export const ROLE_IP = 'admin';
@@ -31,4 +31,14 @@ export const ROLES = {
     ROLE_IP,
     ROLE_OS,
     ROLE_AS,
-}
+};
+
+// Data Export Type
+export const ExportType = {
+    EXCEL: 'Excel',
+    PDF: 'PDF',
+    PNG: 'PNG',
+};
+
+// ID for HTML elements to generate canvas of the elements thru html2canvas library
+export const DashboardContainerID = 'dashboardContainerID';

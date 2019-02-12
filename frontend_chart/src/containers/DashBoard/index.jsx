@@ -4,7 +4,7 @@ import ShiftStatus from "./components/ShiftStatus/ShiftStatus";
 import TemperatureTrend from "./components/TemperatureTrend/TemperatureTrend";
 import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
 import DowntimeShift from "./components/DowntimeShift/DowntimeShift";
-import {DashboardContainerID} from "../DataExporter/component/DataExporter";
+import {DashboardContainerID} from "../../constants/constants";
 
 class DashboardPage extends Component {
 

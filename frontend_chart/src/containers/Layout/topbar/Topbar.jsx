@@ -5,7 +5,8 @@ import TopbarSidebarButton from './TopbarSidebarButton';
 import TopbarProfile from './TopbarProfile';
 import TopbarFilter from "./TopbarFilter";
 import Clock from 'react-live-clock';
-import DataExporter, {ExportType} from "../../DataExporter/component/DataExporter";
+import DataExporter from "../../DataExporter/component/DataExporter";
+import {ExportType} from "../../../constants/constants";
 
 class Topbar extends Component {
     static propTypes = {

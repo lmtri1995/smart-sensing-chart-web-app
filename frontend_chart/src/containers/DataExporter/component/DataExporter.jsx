@@ -5,6 +5,7 @@ import {standardDeviation} from "../../../shared/utils/dataCalculator";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
+import {DashboardContainerID, ExportType} from "../../../constants/constants";
 
 export default class DataExporter extends Component {
 
@@ -803,11 +804,3 @@ const TestData = [
         timedevice: 1547715177,
     },
 ];
-
-export const ExportType = {
-    EXCEL: 'Excel',
-    PDF: 'PDF',
-    PNG: 'PNG',
-};
-
-export const DashboardContainerID = 'dashboardContainerID';

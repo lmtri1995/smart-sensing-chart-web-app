@@ -34,8 +34,8 @@ export default class DowntimeShift extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        let process = 'os-Molding';
-        switch (this.role) {
+        /*let process = 'os-Molding';
+        switch(this.role) {
             case 'admin':
                 process = 'os-Molding';
                 break;
@@ -57,7 +57,7 @@ export default class DowntimeShift extends Component {
         });
 
         this.socket.on('sna_down_shift', (data) => {
-            if (this._isMounted) {
+                if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
                 dataArray.sort(function (a, b) {
@@ -73,7 +73,7 @@ export default class DowntimeShift extends Component {
                     dataArray: dataArray,
                 });
             }
-        });
+        });*/
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
@@ -99,25 +99,24 @@ export default class DowntimeShift extends Component {
         let shift3From = shift2To;
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 
-        let result = 1;
+        let result = 0;
         if (dataArray.length > 0) {
-            if (dataArray[7]) {
-                let timeReceived = dataArray[7].timeRecieved;
-                if (timeReceived >= shift1From && timeReceived < shift1To) {
-                    result = 1;
-                } else if (timeReceived >= shift2From && timeReceived < shift2To) {
-                    result = 2;
-                } else if (timeReceived >= shift3From && timeReceived < shift3To) {
-                    result = 3;
-                }
+            let timeReceived = dataArray[7].timeRecieved;
+            if (timeReceived >= shift1From && timeReceived < shift1To) {
+                result = 1;
+            } else if (timeReceived >= shift2From && timeReceived < shift2To) {
+                result = 2;
+            } else if (timeReceived >= shift3From && timeReceived < shift3To) {
+                result = 3;
             }
         }
+        result = 3;
         return result;
     }
 
     showDowntimeShiftItem(dataArray, shiftNo) {
         let result = "";
-        if (dataArray && dataArray.length > 7) {
+        if (dataArray && dataArray.length > 0) {
             if (shiftNo == 1) {
                 let init = moment({h: '0', m: '0', s: '0'});
                 let total = 0;
@@ -125,9 +124,9 @@ export default class DowntimeShift extends Component {
                     //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
                     //total = 0;
                     let tmpTime = dataArray[i].first_shift_off_sum;
-                    let hour = tmpTime ? tmpTime.substr(tmpTime.indexOf('h') - 2, tmpTime.indexOf('h')) : 0;
-                    let minute = tmpTime ? tmpTime.substr(tmpTime.indexOf('m') - 2, tmpTime.indexOf('m')) : 0;
-                    let second = tmpTime ? tmpTime.substr(tmpTime.indexOf('s') - 2, tmpTime.indexOf('s')) : 0;
+                    let hour = tmpTime?tmpTime.substr(tmpTime.indexOf('h') - 2, tmpTime.indexOf('h')):0;
+                    let minute = tmpTime?tmpTime.substr(tmpTime.indexOf('m') - 2, tmpTime.indexOf('m')):0;
+                    let second = tmpTime?tmpTime.substr(tmpTime.indexOf('s') - 2, tmpTime.indexOf('s')):0;
                     //let mTime = moment({h: hour, m: minute, s: second});
                     total = init.add(hour, 'hours', minute, 'minutes', second, 'seconds').format('HH:mm:ss');
                 }

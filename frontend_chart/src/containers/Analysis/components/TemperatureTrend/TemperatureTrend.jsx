@@ -267,7 +267,7 @@ export default class TemperatureTrend extends Component {
         let token = loginData.token;
         let socket = Singleton.getInstance(token);*/
 
-        let emitEvent = 'temp_trend';
+        /*let emitEvent = 'temp_trend';
         switch(this.role) {
             case 'admin':
                 emitEvent = 'temp_trend';
@@ -300,7 +300,7 @@ export default class TemperatureTrend extends Component {
             this.getInverval = setInterval(this.showDataToGrid(quantity), timeSpaceFromStock);
             this.pushInterval = setInterval(this.pushToStock(returnArray), timeSpacePushToStock);
 
-        });
+        });*/
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
@@ -324,7 +324,7 @@ export default class TemperatureTrend extends Component {
         let preTempTime = this.state.tempTime;
         let currentTempTime = parseInt(event.currentTarget.getAttribute("dropdownvalue"));
 
-        let emitEvent = 'temp_trend';
+        /*let emitEvent = 'temp_trend';
         switch(this.role) {
             case 'admin':
                 emitEvent = 'temp_trend';
@@ -351,7 +351,7 @@ export default class TemperatureTrend extends Component {
                 minute: currentTempTime,
                 status: 'start'
             }
-        });
+        });*/
         this.setState({
             tempTime: currentTempTime,
         });

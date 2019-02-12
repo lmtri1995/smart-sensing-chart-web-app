@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle,react/no-did-mount-set-state */
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {Chart,Line} from 'react-chartjs-2';
-import zoom from "chartjs-plugin-zoom";
+import {Line} from 'react-chartjs-2';
+
 const initialState = {
     labels: ['0', '1', '2', '3', '4', '5', '6'],
     datasets: [
@@ -99,20 +99,14 @@ const options = {
     scales: {
         xAxes: [
             {
-                type: "time",
-                time: {
-                    format: 'HH:mm',
-                    // round: 'day'
-                    tooltipFormat: 'h:mm:ss'
-                },
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Date'
+                gridLines: {
+                    color: 'rgb(204, 204, 204)',
+                    borderDash: [3, 3],
                 },
                 ticks: {
-                    maxRotation: 0
-                }
-            }
+                    fontColor: 'rgb(204, 204, 204)',
+                },
+            },
         ],
         yAxes: [
             {
@@ -125,15 +119,6 @@ const options = {
                 },
             },
         ],
-    },
-    zoom: {
-        enabled: true,
-        drag: true,
-        mode: 'x',
-        limits: {
-            max: 10,
-            min: 0.5
-        }
     }
 };
 
@@ -144,10 +129,7 @@ class TemperatureTrendLine extends PureComponent {
             data: initialState,
         };
     }
-    static getDerivedStateFromProps(props, state){
-        Chart.plugins.register(zoom)
-        return null;
-    }
+
     render() {
         let {tempData} = this.props;
         let {data} = this.state;

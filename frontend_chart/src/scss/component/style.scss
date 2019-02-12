@@ -75,3 +75,30 @@
 .oee-box .container .row div i{
   color: #30D4A4;
 }
+
+// report page
+.report .row h3{
+  color:#fff;
+}
+.report-main{
+  background-color:#1C1C21;
+  padding: 20px 0;
+  min-height: 181px;
+  margin-top: 5px;
+  border-radius: 5px
+}
+.report-main div h4{
+  color:#fff;
+  margin-bottom: 20px;
+}
+.report-item{
+  min-height: 500px;
+}
+.loader{
+  position: absolute;
+  left: 40%;
+  top: 20%;
+}
+.clock{
+  padding: 20px 15px
+}

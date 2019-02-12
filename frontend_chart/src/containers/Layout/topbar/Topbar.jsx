@@ -31,7 +31,9 @@ class Topbar extends Component {
                         <DataExporter exportType={ExportType.EXCEL}/>
                         <DataExporter exportType={ExportType.PDF}/>
                         <DataExporter exportType={ExportType.PNG}/>
-                        <Clock format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000} />
+                        <div className="clock">
+                            <Clock format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000}/>
+                        </div>
                         <TopbarFilter/>
                         <TopbarProfile/>
                     </div>

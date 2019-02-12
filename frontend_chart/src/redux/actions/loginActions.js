@@ -28,11 +28,11 @@ export function getDataFailure() {
 export function fetchData(user, responseData) {
     return (dispatch) => {
         dispatch(getData())
-        let headers = {
+        /*let headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-        }
-        API('api/author/login', 'POST', user, headers)
+        }*/
+        API('api/author/login', 'POST', user)
             .then((data) => {
                 var value = data.data
                 responseData(value)

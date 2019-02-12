@@ -34,7 +34,7 @@ export default class ProcessStatus extends Component {
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
 
-        let emitEvent = 'process_status';
+        /*let emitEvent = 'process_status';
         switch(this.role) {
             case 'admin':
                 emitEvent = 'process_status';
@@ -73,7 +73,7 @@ export default class ProcessStatus extends Component {
                     dataArray: dataArray,
                 });
             }
-        });
+        });*/
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);

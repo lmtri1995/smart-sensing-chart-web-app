@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import Excel from './../../../../node_modules/exceljs/dist/es5/exceljs.browser';
 import * as FileSaver from 'file-saver';
 import {standardDeviation} from "../../../shared/utils/dataCalculator";
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
 
 export default class DataExporter extends Component {
 
@@ -248,6 +250,307 @@ export default class DataExporter extends Component {
             .catch(err => console.log('Error writing excel export', err));
     }
 
+    exportPDFFile(data) {
+        // paper orientation -> landscape, unit -> pt: point, paper type -> A3
+        let doc = new jsPDF('landscape', 'pt', 'a3');
+        doc.setFontSize(12);
+        // doc.setTextColor('#000');
+        doc.setProperties({
+            title: 'Smart Sensing Chart Data',
+            subject: 'Table of Data & Data Visualization Sheet',
+            author: 'trile@snaglobal.net',
+            creator: 'trile@snaglobal.net',
+        });
+
+        let middleLeftStyle = {
+            font: 'helvetica',
+            halign: 'left',
+            valign: 'middle',
+            cellWidth: 'wrap',
+        };
+        let middleCenterStyle = {
+            font: 'helvetica',
+            halign: 'center',
+            valign: 'middle',
+            cellWidth: 'wrap',
+        };
+
+        // ---------- Processing Status Line Section ----------
+        let body = [
+            {
+                col1: {
+                    content: 'Processing Status\r\nLine',
+                    rowSpan: 2,
+                    styles: {
+                        ...middleLeftStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col2: {
+                    content: 'Temperature',
+                    colSpan: 2,
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col3: '',
+                col4: {
+                    content: 'Preparing Time(s)',
+                    colSpan: 2,
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col5: '',
+                col6: {
+                    content: 'Curing Time(s)',
+                    colSpan: 2,
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col7: '',
+            },
+            {
+                col1: '',
+                col2: {
+                    content: 'AVG.',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col3: {
+                    content: 'STDEV',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col4: {
+                    content: 'AVG.',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col5: {
+                    content: 'STDEV',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col6: {
+                    content: 'AVG.',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col7: {
+                    content: 'STDEV',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+            },
+        ];
+
+        // ---------- Fill Processing Status Line Section Data into table ----------
+        data.processingStatusLine.forEach((station, index) => {
+            body.push({
+                col1: {
+                    content: `Station ${index + 1}`,
+                    styles: {
+                        ...middleLeftStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col2: {
+                    content: station[0],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col3: {
+                    content: station[1],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col4: {
+                    content: station[2],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col5: {
+                    content: station[3],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col6: {
+                    content: station[4],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col7: {
+                    content: station[5],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+            });
+        });
+
+        // ---------- General Section ----------
+        body.push(
+            {
+                col1: {
+                    content: 'General',
+                    rowSpan: 2,
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col2: {
+                    content: 'Temperature',
+                    colSpan: 2,
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col3: '',
+                col4: {
+                    content: 'Preparing Time(s)',
+                    colSpan: 2,
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col5: '',
+                col6: {
+                    content: 'Curing Time(s)',
+                    colSpan: 2,
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col7: '',
+            },
+            {
+                col1: '',
+                col2: {
+                    content: 'AVG.',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col3: {
+                    content: 'STDEV',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col4: {
+                    content: 'AVG.',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col5: {
+                    content: 'STDEV',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col6: {
+                    content: 'AVG.',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col7: {
+                    content: 'STDEV',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+            },
+        );
+
+        // ---------- Fill General Data into table ----------
+        data.general.forEach((generalData, index) => {
+            body.push({
+                col1: {
+                    content: index === 0 ? 'AVG.' : index === 1 ? 'MAX' : index === 2 ? 'MIN' : 'STDEV',
+                    styles: {
+                        ...middleLeftStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col2: {
+                    content: generalData[0],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col3: {
+                    content: generalData[1],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col4: {
+                    content: generalData[2],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col5: {
+                    content: generalData[3],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col6: {
+                    content: generalData[4],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+                col7: {
+                    content: generalData[5],
+                    styles: {
+                        ...middleCenterStyle,
+                    },
+                },
+            });
+        });
+        doc.autoTable({
+            body: body,
+            theme: 'grid',
+        });
+        doc.save('Smart_Sensing_Chart_Data.pdf');
+    }
+
     render() {
         let {exportType} = this.props;
 
@@ -270,9 +573,9 @@ export default class DataExporter extends Component {
                     </div>
                 );
             case ExportType.PDF:
-                // TODO Add PDF Exporter
                 return (
-                    <div className="data-exporter__button">
+                    <div className="data-exporter__button"
+                         onClick={() => this.exportPDFFile(DummyTableData)}>
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -308,6 +611,25 @@ export default class DataExporter extends Component {
         }
     }
 }
+
+const DummyTableData = {
+    processingStatusLine: [
+        [591.65, 171.76, 0, 0, 390.81, 217.65],
+        [568.17, 178.87, 0, 0, 354.01, 237.16],
+        [555.82, 202.67, 0, 0, 352.94, 236.53],
+        [662.03, 26.47, 0, 0, 353.65, 237.12],
+        [657.39, 24.85, 0, 0, 352.72, 236.56],
+        [659.37, 26.96, 0, 0, 351.88, 236.08],
+        [658.71, 23.67, 0, 0, 351.92, 236.08],
+        [657.94, 24.55, 0, 0, 350.69, 235.05,],
+    ],
+    general: [
+        [626.385, 84.975, 0, 0, 357.3275, 234.02875],
+        [662.03, 202.67, 0, 0, 390.81, 237.16],
+        [555.82, 23.67, 0, 0, 350.69, 217.65],
+        [43.20797901, 77.47023202, 0, 0, 12.69379548, 6.222395916],
+    ],
+};
 
 const TestData = [
     {

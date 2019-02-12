@@ -4,12 +4,13 @@ import ShiftStatus from "./components/ShiftStatus/ShiftStatus";
 import TemperatureTrend from "./components/TemperatureTrend/TemperatureTrend";
 import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
 import DowntimeShift from "./components/DowntimeShift/DowntimeShift";
+import {DashboardContainerID} from "../DataExporter/component/DataExporter";
 
 class DashboardPage extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container" id={DashboardContainerID}>
                 <div className="row">
                     <div className="col">
                         <StationStatus/>

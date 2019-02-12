@@ -4,6 +4,7 @@ import * as FileSaver from 'file-saver';
 import {standardDeviation} from "../../../shared/utils/dataCalculator";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
+import html2canvas from 'html2canvas';
 
 export default class DataExporter extends Component {
 
@@ -544,11 +545,28 @@ export default class DataExporter extends Component {
                 },
             });
         });
-        doc.autoTable({
-            body: body,
-            theme: 'grid',
+
+        const dashboardContainer = document.getElementById(DashboardContainerID);
+
+        html2canvas(dashboardContainer).then((canvas) => {
+            const screenShotData = canvas.toDataURL('image/png');
+
+            var width = doc.internal.pageSize.getWidth();
+            var height = doc.internal.pageSize.getHeight();
+
+            // Add snapshot of full page
+            doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+            doc.addPage();  // Add new page
+
+            // Add Table of Data
+            doc.autoTable({
+                body: body,
+                theme: 'grid',
+            });
+
+            doc.save('Smart_Sensing_Chart_Data.pdf');
         });
-        doc.save('Smart_Sensing_Chart_Data.pdf');
     }
 
     render() {
@@ -791,3 +809,5 @@ export const ExportType = {
     PDF: 'PDF',
     PNG: 'PNG',
 };
+
+export const DashboardContainerID = 'dashboardContainerID';

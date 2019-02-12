@@ -8,6 +8,7 @@
 @import './base/typography';
 // base styles of h1-h6, p, span
 //components...
+@import "component/data-exporter/data-exporter.scss";
 @import 'component/style.scss';
 @import 'component/filter/date-range-picker';
 @import 'component/btn';

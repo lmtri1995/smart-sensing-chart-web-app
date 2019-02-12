@@ -1,0 +1,29 @@
+.data-exporter__button {
+  background: #D1D5DA;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 6px;
+
+  padding: 8px;
+}
+
+.data-exporter__icon {
+  padding-left: 8px;
+  padding-right: 4px;
+}
+
+.data-exporter__type {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 20px;
+  font-size: 16px;
+  text-align: center;
+
+  padding-left: 4px;
+  padding-right: 8px;
+
+  color: #171A1C;
+}

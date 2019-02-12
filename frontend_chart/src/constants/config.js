@@ -11,7 +11,4 @@ export const config = {
     LOGIN_URL,
     SERVER_URL,
     NUMBER_OF_STATION,
-}
-
-
-
+};

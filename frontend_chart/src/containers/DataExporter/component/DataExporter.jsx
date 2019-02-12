@@ -570,6 +570,32 @@ export default class DataExporter extends Component {
         });
     }
 
+    exportPNGFile() {
+        const dashboardContainer = document.getElementById(DashboardContainerID);
+
+        html2canvas(dashboardContainer).then((canvas) => {
+            const screenShotData = canvas.toDataURL('image/png');
+
+            let link = document.createElement('a');
+
+            if (typeof link.download === 'string') {
+                link.href = screenShotData;
+                link.download = 'Smart_Sensing_Chart_Data';
+
+                //Firefox requires the link to be in the body
+                document.body.appendChild(link);
+
+                //simulate click
+                link.click();
+
+                //remove the link when done
+                document.body.removeChild(link);
+            } else {
+                window.open(screenShotData);
+            }
+        });
+    }
+
     render() {
         let {exportType} = this.props;
 
@@ -609,9 +635,9 @@ export default class DataExporter extends Component {
                     </div>
                 );
             case ExportType.PNG:
-                // TODO Add PNG Exporter
                 return (
-                    <div className="data-exporter__button">
+                    <div className="data-exporter__button"
+                         onClick={() => this.exportPNGFile()}>
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">

@@ -2,7 +2,7 @@ import React from 'react';
 import ProductionRate from './components/ProductionRate';
 import ProductionRateOverview from './components/ProductionRateOverview';
 
-const ExamplePage = () => (
+const ReportPage = () => (
   <div className="container report">
         <div className="row">
             <h3>Line 1111</h3>
@@ -19,4 +19,4 @@ const ExamplePage = () => (
   </div>
 );
 
-export default ExamplePage;
+export default ReportPage;

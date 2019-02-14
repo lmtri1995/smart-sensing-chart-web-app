@@ -1,22 +1,22 @@
 import ExamplePageOne from '../containers/Example/index';
-import ExamplePageTwo from '../containers/ExampleTwo/index';
+import Report from '../containers/Report/index';
 import DashBoard from '../containers/DashBoard/index';
 import Analysis from '../containers/Analysis/index';
 
 const admin = [
     {component: DashBoard, route: "/", title: "Dashboard"},
     {component: ExamplePageOne, route: "/pages/one", title: "Page one"},
-    {component: ExamplePageTwo, route: "/pages/two", title: "Page two"},
+    {component: Report, route: "/pages/report", title: "Report"},
     {component: Analysis, route: "/pages/analysis", title: "Analysis"},
 ];
 const ip = [
     {component: DashBoard, route: "/pages/", title: "Page dashboard"},
-    {component: ExamplePageTwo, route: '/pages/two', title: "Page two"},
+    {component: Report, route: '/pages/report', title: "Report"},
     {component: Analysis, route: "/pages/analysis", title: "Analysis"},
 ];
 const os = [
     {component: DashBoard, route: "/pages/", title: "Page dashboard"},
-    {component: ExamplePageTwo, route: '/pages/two', title: "Page two"},
+    {component: Report, route: '/pages/report', title: "Report"},
     {component: Analysis, route: "/pages/analysis", title: "Analysis"},
 ];
 export const RoleList = {

@@ -4,7 +4,7 @@ import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
 import LogIn from '../LogIn/index';
 import ExamplePageOne from '../Example/index';
-import ExamplePageTwo from '../ExampleTwo/index';
+import Report from '../Report/index';
 import LogOut from '../LogOut/index';
 import DashBoard from "../DashBoard/index";
 import Analysis from "../Analysis/index";
@@ -19,7 +19,7 @@ const Pages = () => (
                     <PrivateRoute exact path="/" component={DashBoard}/>
                     <PrivateRoute path="/pages/analysis" component={Analysis}/>
                     <PrivateRoute path="/pages/one" component={ExamplePageOne}/>
-                    <PrivateRoute path="/pages/two" component={ExamplePageTwo}/>
+                    <PrivateRoute path="/pages/report" component={Report}/>
                 </Switch>
             </div>
         </div>

@@ -1,25 +1,57 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {Bar} from 'react-chartjs-2';
 import {changeGlobalDateFilter} from "../../../../redux/actions/globalDateFilterActions";
-import Singleton from '../../../../services/Socket';
-import moment from 'moment';
 import 'chartjs-plugin-zoom';
+import Chart from 'chart.js';
+import moment from 'moment';
 
-const initialState = {
-    labels: ['0', '1', '2', '3', '4', '5', '6'],
+const initialData = {
+    labels: [
+        moment().subtract(6, "days").format('YYYY/MM/DD'),
+        moment().subtract(5, "days").format('YYYY/MM/DD'),
+        moment().subtract(4, "days").format('YYYY/MM/DD'),
+        moment().subtract(3, "days").format('YYYY/MM/DD'),
+        moment().subtract(2, "days").format('YYYY/MM/DD'),
+        moment().subtract(1, "days").format('YYYY/MM/DD'),
+        moment().format('YYYY/MM/DD'),
+    ],
     datasets: [
         {
-            label: 'My First dataset',
-            backgroundColor: '#FF6384',
-            borderColor: '#FF6384',
-            borderWidth: 1,
-            hoverBackgroundColor: '#FF6384',
-            hoverBorderColor: '#FF6384',
-            data: [65, 59, 80, 81, 56, 55, 45],
+            label: "Type 1",
+            backgroundColor: "#FF9C64",
+            data: [48, 26, 43, 18, 30, 34, 33]
         },
-    ],
+        {
+            label: "Type 2",
+            backgroundColor: "#46D6EA",
+            data: [42, 40, 40, 48, 18, 50, 28]
+        },
+        {
+            label: "Type 3",
+            backgroundColor: "#F575F7",
+            data: [9, 33, 39, 35, 32, 53, 30]
+        },
+        {
+            label: "Type 4",
+            backgroundColor: "#8C67F6",
+            data: [30, 26, 28, 27, 24, 31, 40]
+        },
+        {
+            label: "Total Defect",
+            borderColor: '#EB6A91',
+            borderWidth: 2,
+            pointRadius: 0,
+            pointBorderWidth: 2,
+            pointBackgroundColor: '#EBEDF1',
+            pointBorderColor: '#EB6A91',
+            data: [129, 125, 150, 128, 104, 168, 131],
 
+            // Changes this dataset to become a line
+            type: 'line',
+            fill: false,
+            tension: 0,
+        }
+    ]
 };
 
 const options = {
@@ -29,10 +61,6 @@ const options = {
     scales: {
         xAxes: [
             {
-                gridLines: {
-                    color: 'rgb(204, 204, 204)',
-                    borderDash: [3, 3],
-                },
                 ticks: {
                     fontColor: 'rgb(204, 204, 204)',
                 },
@@ -41,10 +69,13 @@ const options = {
         yAxes: [
             {
                 gridLines: {
-                    color: 'rgb(204, 204, 204)',
-                    borderDash: [3, 3],
+                    color: '#696F76',
+                    display: true,
+                    drawBorder: false,
+                    zeroLineColor: '#696F76',
                 },
                 ticks: {
+                    beginAtZero: true,
                     fontColor: 'rgb(204, 204, 204)',
                 },
             },
@@ -52,69 +83,54 @@ const options = {
     },
     zoom: {
         enabled: true,
-        mode: 'xy'
+        mode: 'x'
     }
 };
 
 class RandomAnimatedBarsLong extends PureComponent {
-    constructor() {
-        super();
-        this.state = {
-            data: initialState,
-            intervalId: null,
-            startDate: null,
-            endDate: null,
-        };
-    }
 
     changeGlobalDateFilter = (startDate, endDate) => {
         this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
-    }
+    };
 
     componentDidMount() {
-
-        let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
-        let socket = Singleton.getInstance(token);
-
-        var mDateFrom = moment.utc([2019, 0 , 2, 10, 6, 40]);
-        var uDateFrom = mDateFrom.unix();
-        console.log("uDateFrom: ", uDateFrom);
-        var mDateTo = moment.utc([2019, 0 , 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();
-        console.log("uDateTo: ", uDateTo);
-
-        /*socket.on('token', function(data){
-            console.log(data);
+        const ctx = this.refs.canvas.getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: initialData,
+            options: options
         });
+        setInterval(() => {
+            let random, totalDefect;
+            for (let i = 0, length = initialData.datasets[0].data.length; i < length; ++i) {
+                totalDefect = 0;
+                for (let j = 0, datasetLength = initialData.datasets.length - 1; j < datasetLength; ++j) {
+                    random = Math.floor(Math.random() * 100) + 1;
+                    initialData.datasets[j].data[i] = random;
 
-        socket.emit('ip', {msg: {event: "1080",from_timedevice:0,to_timedevice:0,minute:30}});
-        socket.on('1080', function(data){
-            // // // console.log("ip");
-            console.log("1080:---------", data);
-        });*/
-    }
-
-    componentWillUnmount() {
-        let socket = Singleton.getInstance();
-        socket.removeListener('van');
+                    totalDefect += random;
+                }
+                initialData.datasets[initialData.datasets.length - 1].data[i] = totalDefect;
+            }
+            new Chart(ctx, {
+                type: 'bar',
+                data: initialData,
+                options: options
+            });
+        }, 5000);
     }
 
     render() {
-        console.log("props render: ", this.props);
         return (
-            <Bar height={65} data={this.state.data} options={options}/>
+            <canvas ref="canvas"/>
         );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         globalFilter: state.globalFilter,
-        socket: state.login.socket,
     }
-}
+};
 
-export default connect(mapStateToProps, null)(
-    RandomAnimatedBarsLong
-)
+export default connect(mapStateToProps, null)(RandomAnimatedBarsLong)

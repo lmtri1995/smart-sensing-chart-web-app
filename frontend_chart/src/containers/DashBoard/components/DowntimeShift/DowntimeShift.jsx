@@ -26,6 +26,17 @@ export default class DowntimeShift extends Component {
 
     componentWillUnmount() {
         this._isMounted = false;
+
+        //Unregister event
+        this.socket.emit('down_shift', {
+            msg: {
+                event: 'sna_down_shift',
+                from_timedevice: 0,
+                to_timedevice: 0,
+                proccess: 'os-Molding',
+                status: 'stop'
+            }
+        });
     }
 
     componentDidMount() {
@@ -34,24 +45,13 @@ export default class DowntimeShift extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        let process = 'os-Molding';
-        switch (this.role) {
-            case 'admin':
-                process = 'os-Molding';
-                break;
-            case 'ip':
-                process = 'os-Molding';
-                break;
-            case 'os':
-                process = 'os-Molding';
-                break;
-        }
+
         this.socket.emit('down_shift', {
             msg: {
                 event: 'sna_down_shift',
                 from_timedevice: 0,
                 to_timedevice: 0,
-                proccess: process,
+                proccess: 'os-Molding',
                 status: 'start'
             }
         });
@@ -120,17 +120,33 @@ export default class DowntimeShift extends Component {
         if (dataArray && dataArray.length > 7) {
             if (shiftNo == 1) {
                 let init = moment({h: '0', m: '0', s: '0'});
-                let total = 0;
+                let initHour = 0;
+                let initMinute = 0;
+                let initSecond = 0;
+                //let total = 0;
                 for (let i = 0; i < 8; i++) {
                     //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
                     //total = 0;
                     let tmpTime = dataArray[i].first_shift_off_sum;
-                    let hour = tmpTime ? tmpTime.substr(tmpTime.indexOf('h') - 2, tmpTime.indexOf('h')) : 0;
-                    let minute = tmpTime ? tmpTime.substr(tmpTime.indexOf('m') - 2, tmpTime.indexOf('m')) : 0;
-                    let second = tmpTime ? tmpTime.substr(tmpTime.indexOf('s') - 2, tmpTime.indexOf('s')) : 0;
-                    //let mTime = moment({h: hour, m: minute, s: second});
-                    total = init.add(hour, 'hours', minute, 'minutes', second, 'seconds').format('HH:mm:ss');
+                    let hour = tmpTime ? tmpTime.substr(tmpTime.indexOf('h') - 2, 2) : 0;
+                    let minute = tmpTime ? tmpTime.substr(tmpTime.indexOf('m') - 2, 2) : 0;
+                    let second = tmpTime ? tmpTime.substr(tmpTime.indexOf('s') - 2, 2) : 0;
+                    initHour = +hour + initHour;
+                    initMinute = +minute + initMinute;
+                    initSecond = +second + initSecond;
                 }
+                if (initSecond >= 60) {
+                    initMinute = (initSecond % 60) + initMinute;
+                    initSecond = Math.floor(initSecond / 60);
+                    if (initMinute >= 60) {
+                        initHour = (initMinute % 60) + initHour;
+                        initMinute = Math.floor(initMinute / 60);
+                    }
+                }
+                initSecond = (initSecond >= 10) ? initSecond : '0' + initSecond;
+                initMinute = (initMinute >= 10) ? initMinute : '0' + initMinute;
+                initHour = (initHour >= 10) ? initHour : '0' + initHour;
+                let total = initHour + 'h:' + initMinute + "m:" + initSecond + "s";
                 result = <DowntimeShiftItem shiftNo={shiftNo} total={total}
                                             count1={dataArray[0].first_shift_off_sum}
                                             count2={dataArray[1].first_shift_off_sum}

@@ -11,6 +11,7 @@ class TemperatureTrendTable extends Component {
         }
     }
     componentDidMount() {
+        console.log("dataArray: ", this.props.dataArray);
     }
 
     showTempTable = (dataArray) => {

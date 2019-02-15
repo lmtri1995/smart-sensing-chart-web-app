@@ -5,6 +5,7 @@ import MainWrapper from './MainWrapper';
 import LogIn from '../LogIn/index';
 import ExamplePageOne from '../Example/index';
 import Report from '../Report/index';
+import ExamplePageThree from '../ExampleThree/index';
 import LogOut from '../LogOut/index';
 import DashBoard from "../DashBoard/index";
 import Analysis from "../Analysis/index";
@@ -20,6 +21,7 @@ const Pages = () => (
                     <PrivateRoute path="/pages/analysis" component={Analysis}/>
                     <PrivateRoute path="/pages/one" component={ExamplePageOne}/>
                     <PrivateRoute path="/pages/report" component={Report}/>
+                    <PrivateRoute path="/pages/three" component={ExamplePageThree}/>
                 </Switch>
             </div>
         </div>

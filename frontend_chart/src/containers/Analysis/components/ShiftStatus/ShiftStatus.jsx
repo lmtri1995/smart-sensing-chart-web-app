@@ -87,14 +87,17 @@ export default class ShiftStatus extends Component {
             "model_name": "100"
         }*/
         let param = {
-            "article_no": "",
-            "model_name": "100"
+            from_timedevice: 0,
+            to_timedevice: 0,
         }
         API('api/ip/shiftStatus', 'POST', param)
-            .then((data) => {
-                console.log("=================");
-                console.log("data: ", data);
-                console.log("=================");
+            .then((response) => {
+                if (response.data.success){
+                    let dataArray = response.data.data;
+                    this.setState({
+                        dataArray: dataArray,
+                    });
+                }
             })
             .catch((err) => console.log('err:', err))
 

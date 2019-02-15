@@ -13,7 +13,7 @@ class DashboardPage extends Component {
             <div className="container" id={DashboardContainerID}>
                 <div className="row">
                     <div className="col">
-                        <StationStatus/>
+                       <StationStatus/>
                     </div>
                     <div className="col">
                         <ShiftStatus/>

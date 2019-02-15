@@ -14,6 +14,7 @@ export default class TemperatureTrend extends Component {
     static loginData = null;
     static role = null;
     static localTempArrayName = null;
+    static emitEvent = 'temp_trend';
 
     constructor(props) {
         super(props);
@@ -25,13 +26,13 @@ export default class TemperatureTrend extends Component {
         this.socket = Singleton.getInstance(token);
 
         //Specify which array in local storage to push data to and get data from
-        this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+        this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
         switch(this.role) {
             case ROLES.ROLE_ADMIN:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
                 break;
             case ROLES.ROLE_IP:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
                 break;
             case ROLES.ROLE_OS:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
@@ -43,6 +44,18 @@ export default class TemperatureTrend extends Component {
             dropdownOpen: false,
             dataArray: "",
             tempTime: 30, //choosen time for temperature
+        }
+
+        switch(this.role) {
+            case 'admin':
+                this.emitEvent = 'temp_trend';
+                break;
+            case 'ip':
+                this.emitEvent = 'temp_trend';
+                break;
+            case 'os':
+                this.emitEvent = 'os_temp_trend';
+                break;
         }
     }
 
@@ -59,13 +72,18 @@ export default class TemperatureTrend extends Component {
 
         //Clear emit: chart_temp_trend
         console.log("clear on chart_temp_trend");
-        this.socket.removeListener('chart_temp_trend');
-
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: 'chart_temp_trend',
+                minute: 0,
+                status: 'stop'
+            }
+        });
     }
 
     pushToStock = (returnArray) => {
         if (returnArray && +returnArray.total > 0) {
-            let capacity = LOCAL_IP_TEMP_TREND.IP_TEMP_STOCK_CAPACITY;
+            let capacity = LOCAL_IP_TEMP_TREND.IP_TEMP_STOCK_CAPACITY;//capacity of IP, OS
             let stock = JSON.parse(localStorage.getItem(this.localTempArrayName));
             let total = returnArray.total;
             //returnArray.data =
@@ -74,6 +92,8 @@ export default class TemperatureTrend extends Component {
             if (stock) {
                 total = returnArray.total + stock.length;
             }
+            console.log("total: ", total, "capacity: ", capacity, " - returnArray: ", returnArray.total, " -" +
+                " stock.length: ", stock.length);
 
             //returnArray.total > stock
             if (returnArray.total >= capacity) {
@@ -101,12 +121,12 @@ export default class TemperatureTrend extends Component {
                 } else {
                     stock = returnArray.data;
                 }
-                localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
-                /*try {
+                //localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
+                try {
                     localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
                 } catch(exception){
                     console.log("quota exceeded");
-                }*/
+                }
 
             }
         }
@@ -267,20 +287,8 @@ export default class TemperatureTrend extends Component {
         let token = loginData.token;
         let socket = Singleton.getInstance(token);*/
 
-        let emitEvent = 'temp_trend';
-        switch(this.role) {
-            case 'admin':
-                emitEvent = 'temp_trend';
-                break;
-            case 'ip':
-                emitEvent = 'temp_trend';
-                break;
-            case 'os':
-                emitEvent = 'os_temp_trend';
-                break;
-        }
         let {tempTime} = this.state;
-        this.socket.emit(emitEvent, {
+        this.socket.emit(this.emitEvent, {
             msg: {
                 event: 'chart_temp_trend',
                 minute: tempTime,
@@ -324,20 +332,8 @@ export default class TemperatureTrend extends Component {
         let preTempTime = this.state.tempTime;
         let currentTempTime = parseInt(event.currentTarget.getAttribute("dropdownvalue"));
 
-        let emitEvent = 'temp_trend';
-        switch(this.role) {
-            case 'admin':
-                emitEvent = 'temp_trend';
-                break;
-            case 'ip':
-                emitEvent = 'temp_trend';
-                break;
-            case 'os':
-                emitEvent = 'os_temp_trend';
-                break;
-        }
 
-        this.socket.emit(emitEvent, {
+        this.socket.emit(this.emitEvent, {
             msg: {
                 event: 'chart_temp_trend',
                 minute: preTempTime,
@@ -345,7 +341,7 @@ export default class TemperatureTrend extends Component {
             }
         });
 
-        this.socket.emit(emitEvent, {
+        this.socket.emit(this.emitEvent, {
             msg: {
                 event: 'chart_temp_trend',
                 minute: currentTempTime,

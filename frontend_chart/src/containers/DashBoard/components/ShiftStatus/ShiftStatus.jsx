@@ -8,6 +8,7 @@ export default class ShiftStatus extends Component {
     static _isMounted = false;
     static loginData = null;
     static role = null;
+    static emitEvent = 'shift_status';
 
     constructor(props) {
         super(props);
@@ -21,10 +22,31 @@ export default class ShiftStatus extends Component {
         this.state = {
             dataArray: "",
         };
+
+        switch(this.role) {
+            case 'admin':
+                this.emitEvent = 'shift_status';
+                break;
+            case 'ip':
+                this.emitEvent = 'shift_status';
+                break;
+            case 'os':
+                this.emitEvent = 'os_shift_status';
+                break;
+        }
     }
 
     componentWillUnmount() {
         this._isMounted = false;
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: 'shift_status',
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop'
+            }
+        });
     }
 
     componentDidMount() {
@@ -33,21 +55,10 @@ export default class ShiftStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        let emitEvent = 'shift_status';
-        switch(this.role) {
-            case 'admin':
-                process = 'shift_status';
-                break;
-            case 'ip':
-                process = 'shift_status';
-                break;
-            case 'os':
-                process = 'os_shift_status';
-                break;
-        }
-        this.socket.emit(emitEvent, {
+
+        this.socket.emit(this.emitEvent, {
             msg: {
-                event: 'shift_status',
+                event: 'sna_shift_status',
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
@@ -56,6 +67,7 @@ export default class ShiftStatus extends Component {
         });
 
         this.socket.on('sna_shift_status', (data) => {
+            console.log("data: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -84,40 +96,6 @@ export default class ShiftStatus extends Component {
 
     }
 
-    configureOptions = () => {
-        let result = '';
-        let role = this.loginData.data.role;
-
-        let event = 'sna_machine_status';
-        let from_timedevice = 0;
-        let to_timedevice = 0;
-        let proccess = 'os-Molding';
-        let status = 'start';
-
-        switch (role) {
-            case 'admin':
-                proccess = 'os-Molding';
-                break;
-            case 'os':
-                proccess = 'os-Molding';
-                break;
-            case 'ip':
-                proccess = 'os-Molding';
-                break;
-            case 'as':
-                proccess = 'os-Molding';
-                break;
-        }
-        result = {
-            'event': event,
-            'from_timedevice': from_timedevice,
-            'to_timedevice': to_timedevice,
-            'proccess': proccess,
-            'status': status
-        };
-        return result;
-    }
-
     specifyCurrentShift(dataArray) {
         let today = new Date();
         let dd = today.getDate();
@@ -134,7 +112,7 @@ export default class ShiftStatus extends Component {
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 
         let result = 0;
-        if (dataArray.length > 0) {
+        if (dataArray.length > 7) {
             let timeReceived = dataArray[7].timeRecieved;
             if (timeReceived >= shift1From && timeReceived < shift1To) {
                 result = 1;
@@ -150,7 +128,7 @@ export default class ShiftStatus extends Component {
 
     showShiftItem(dataArray, shiftNo) {
         let result = "";
-        if (dataArray.length > 0) {
+        if (dataArray.length > 7) {
             if (shiftNo == 1) {
                 let total = 0;
                 for (let i = 0; i < 8; i++) {

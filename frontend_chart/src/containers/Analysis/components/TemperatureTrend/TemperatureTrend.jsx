@@ -4,6 +4,7 @@ import TemperatureTrendTable from './components/TemperatureTrendTable';
 import Singleton from "../../../../services/Socket";
 import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../constants/constants";
 import {config} from "../../../../constants/config";
+import API from "../../../../services/api";
 
 
 export default class TemperatureTrend extends Component {
@@ -309,6 +310,18 @@ export default class TemperatureTrend extends Component {
                 window.location.href = ("/logout");
             }
         });*/
+        API('api/ip/tempTrend', 'POST')
+            .then((response) => {
+                //console.log("response: ", response);
+                if (response.data.success){
+                    let dataArray = response.data.data;
+                    console.log("dataArray: ", dataArray);
+                    this.setState({
+                        dataArray: dataArray,
+                    });
+                }
+            })
+            .catch((err) => console.log('err:', err))
 
     }
 

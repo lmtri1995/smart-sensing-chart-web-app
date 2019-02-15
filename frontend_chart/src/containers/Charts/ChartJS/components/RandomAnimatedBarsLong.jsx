@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {Bar} from 'react-chartjs-2';
-import {changeAnalysisDateFilter} from "../../../../redux/actions/globalDateFilterActions";
+import {changeGlobalDateFilter} from "../../../../redux/actions/globalDateFilterActions";
 import Singleton from '../../../../services/Socket';
 import moment from 'moment';
 import 'chartjs-plugin-zoom';
@@ -67,8 +67,8 @@ class RandomAnimatedBarsLong extends PureComponent {
         };
     }
 
-    changeAnalysisDateFilter = (startDate, endDate) => {
-        this.props.dispatch(changeAnalysisDateFilter(startDate, endDate));
+    changeGlobalDateFilter = (startDate, endDate) => {
+        this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
     }
 
     componentDidMount() {
@@ -84,7 +84,7 @@ class RandomAnimatedBarsLong extends PureComponent {
         var uDateTo = mDateTo.unix();
         console.log("uDateTo: ", uDateTo);
 
-        socket.on('token', function(data){
+        /*socket.on('token', function(data){
             console.log(data);
         });
 
@@ -92,7 +92,7 @@ class RandomAnimatedBarsLong extends PureComponent {
         socket.on('1080', function(data){
             // // // console.log("ip");
             console.log("1080:---------", data);
-        });
+        });*/
     }
 
     componentWillUnmount() {

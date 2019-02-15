@@ -8,6 +8,7 @@ export default class ProcessStatus extends Component {
     static _isMounted = false;
     static loginData = null;
     static role = null;
+    static emitEvent = 'process_status';
 
     constructor(props) {
         super(props);
@@ -18,6 +19,18 @@ export default class ProcessStatus extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
+        switch(this.role) {
+            case 'admin':
+                this.emitEvent = 'process_status';
+                break;
+            case 'ip':
+                this.emitEvent = 'process_status';
+                break;
+            case 'os':
+                this.emitEvent = 'os_process_status';
+                break;
+        }
+
         this.state = {
             dataArray: "",
         };
@@ -25,6 +38,18 @@ export default class ProcessStatus extends Component {
 
     componentWillUnmount() {
         this._isMounted = false;
+
+        //Unregister event
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: 'sna_process_status',
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop'
+            }
+        });
+        //this.socket.removeListener('sna_process_status');
     }
 
     componentDidMount() {
@@ -34,19 +59,8 @@ export default class ProcessStatus extends Component {
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
 
-        let emitEvent = 'process_status';
-        switch(this.role) {
-            case 'admin':
-                emitEvent = 'process_status';
-                break;
-            case 'ip':
-                emitEvent = 'process_status';
-                break;
-            case 'os':
-                emitEvent = 'os_process_status';
-                break;
-        }
-        this.socket.emit(emitEvent, {
+
+        this.socket.emit(this.emitEvent, {
             msg: {
                 event: 'sna_process_status',
                 from_timedevice: 0,
@@ -95,6 +109,11 @@ export default class ProcessStatus extends Component {
 
     showGeneralItem(dataArray, spec) {
         let result = <GeneralSummaryItem spec={spec}/>
+        return result;
+    }
+
+    checkNull(number){
+        let result = (number===null||number===NaN) ? 0: number;
         return result;
     }
 
@@ -153,35 +172,39 @@ export default class ProcessStatus extends Component {
             let numbersOfStation = 8;
             let totalAvgTemp = 0, totalStddevTemp = 0, totalAvgPrep = 0, totalStddevPrep = 0,
                 totalAvgCuringTime = 0, totalStddevCurringTime = 0;
-            let avgAvgTemp = parseInt(dataArray[0].temp_avg),
-                avgStddevTemp = parseInt(dataArray[0].temp_stdev),
-                avgAvgPrep = parseInt(dataArray[0].pre_avg),
-                avgStddevPrep = parseInt(dataArray[0].pre_stdev),
-                avgAvgCuringTime = parseInt(dataArray[0].cur_avg),
-                avgStddevCurringTime = parseInt(dataArray[0].cur_stdev);
+            console.log("dataArray[0]: ", dataArray[0], " - temp: ", dataArray[0].temp_avg);
+            let avgAvgTemp = parseInt(this.checkNull(dataArray[0].temp_avg)),
+                avgStddevTemp = parseInt(this.checkNull(dataArray[0].temp_stdev)),
+                avgAvgPrep = parseInt(this.checkNull(dataArray[0].pre_avg)),
+                avgStddevPrep = parseInt(this.checkNull(dataArray[0].pre_stdev)),
+                avgAvgCuringTime = parseInt(this.checkNull(dataArray[0].cur_avg)),
+                avgStddevCurringTime = parseInt(this.checkNull(dataArray[0].cur_stdev));
 
-            let maxAvgTemp = parseInt(dataArray[0].temp_avg),
-                maxStddevTemp = parseInt(dataArray[0].temp_stdev),
-                maxAvgPrep = parseInt(dataArray[0].pre_avg),
-                maxStddevPrep = parseInt(dataArray[0].pre_stdev),
-                maxAvgCuringTime = parseInt(dataArray[0].cur_avg),
-                maxStddevCurringTime = parseInt(dataArray[0].cur_stdev);
+            let maxAvgTemp = parseInt(this.checkNull(dataArray[0].temp_avg)),
+                maxStddevTemp = parseInt(this.checkNull(dataArray[0].temp_stdev)),
+                maxAvgPrep = parseInt(this.checkNull(dataArray[0].pre_avg)),
+                maxStddevPrep = parseInt(this.checkNull(dataArray[0].pre_stdev)),
+                maxAvgCuringTime = parseInt(this.checkNull(dataArray[0].cur_avg)),
+                maxStddevCurringTime = parseInt(this.checkNull(dataArray[0].cur_stdev));
 
-            let minAvgTemp = parseInt(dataArray[0].temp_avg),
-                minStddevTemp = parseInt(dataArray[0].temp_stdev),
-                minAvgPrep = parseInt(dataArray[0].pre_avg),
-                minStddevPrep = parseInt(dataArray[0].pre_stdev),
-                minAvgCuringTime = parseInt(dataArray[0].cur_avg),
-                minStddevCurringTime = parseInt(dataArray[0].cur_stdev);
+            let minAvgTemp = parseInt(this.checkNull(dataArray[0].temp_avg)),
+                minStddevTemp = parseInt(this.checkNull(dataArray[0].temp_stdev)),
+                minAvgPrep = parseInt(this.checkNull(dataArray[0].pre_avg)),
+                minStddevPrep = parseInt(this.checkNull(dataArray[0].pre_stdev)),
+                minAvgCuringTime = parseInt(this.checkNull(dataArray[0].cur_avg)),
+                minStddevCurringTime = parseInt(this.checkNull(dataArray[0].cur_stdev));
 
             for (let i = 0; i < numbersOfStation; i++) {
                 //for average line
-                totalAvgTemp += parseInt(dataArray[i].temp_avg);
-                totalStddevTemp += parseInt(dataArray[i].temp_stdev);
-                totalAvgPrep += parseInt(dataArray[i].pre_avg);
-                totalStddevPrep += parseInt(dataArray[i].pre_stdev);
-                totalAvgCuringTime += parseInt(dataArray[i].cur_avg);
-                totalStddevCurringTime += parseInt(dataArray[i].cur_stdev);
+                totalAvgTemp += parseInt(this.checkNull(dataArray[i].temp_avg));
+                totalStddevTemp += parseInt(this.checkNull(dataArray[i].temp_stdev));
+                totalAvgPrep += parseInt(this.checkNull(dataArray[i].pre_avg));
+                totalStddevPrep += parseInt(this.checkNull(dataArray[i].pre_stdev));
+                totalAvgCuringTime += parseInt(this.checkNull(dataArray[i].cur_avg));
+                totalStddevCurringTime += parseInt(this.checkNull(dataArray[i].cur_stdev));
+                console.log("totalStddevPrep: ", totalStddevPrep);
+                console.log("this.checkNull(dataArray[i].pre_stdev): ", this.checkNull(dataArray[i].pre_stdev));
+                console.log("dataArray[i].pre_stdev: ", dataArray[i].pre_stdev);
 
                 //for max line
                 maxAvgTemp = (maxAvgTemp < parseInt(dataArray[i].temp_avg)) ? parseInt(dataArray[i].temp_avg) : maxAvgTemp;
@@ -201,12 +224,15 @@ export default class ProcessStatus extends Component {
 
                 //for stddev line
             }
-            avgAvgTemp = totalAvgTemp / numbersOfStation;
-            avgStddevTemp = totalStddevTemp / numbersOfStation;
-            avgAvgPrep = totalAvgPrep / numbersOfStation;
-            avgStddevPrep = totalStddevPrep / numbersOfStation;
-            avgAvgCuringTime = totalAvgCuringTime / numbersOfStation;
-            avgStddevCurringTime = totalStddevCurringTime / numbersOfStation;
+            if (numbersOfStation > 0){
+                avgAvgTemp = totalAvgTemp / numbersOfStation;
+                avgStddevTemp = totalStddevTemp / numbersOfStation;
+                avgAvgPrep = totalAvgPrep / numbersOfStation;
+                avgStddevPrep = totalStddevPrep / numbersOfStation;
+                avgAvgCuringTime = totalAvgCuringTime / numbersOfStation;
+                avgStddevCurringTime = totalStddevCurringTime / numbersOfStation;
+                console.log("avgStddevPrep: ", avgStddevPrep, "totalStddevPrep: ", totalStddevPrep, "numbersOfStation: ", numbersOfStation);
+            }
 
             //count standard deviation
             let stdAvgTemp = 0,
@@ -222,20 +248,25 @@ export default class ProcessStatus extends Component {
                 totalSqrStddevPrep = 0,
                 totalSqrAvgCuringTime = 0,
                 totalSqrStddevCurringTime = 0;
+            console.log("numbersOfStation: ", numbersOfStation);
             for (let i = 0; i < numbersOfStation; i++) {
-                totalSqrDiffAvgTemp += (parseInt(dataArray[i].temp_avg) - avgAvgTemp) ** 2;
-                totalSqrStddevTemp += (parseInt(dataArray[i].temp_stdev) - avgStddevTemp) ** 2;
-                totalSqrAvgPrep += (parseInt(dataArray[i].pre_avg) - avgAvgPrep) ** 2;
-                totalSqrStddevPrep += (parseInt(dataArray[i].pre_stdev) - avgStddevPrep) ** 2;
-                totalSqrAvgCuringTime += (parseInt(dataArray[i].cur_avg) - avgAvgCuringTime) ** 2;
-                totalSqrStddevCurringTime += (parseInt(dataArray[i].cur_stdev) - avgStddevCurringTime) ** 2;
+                totalSqrDiffAvgTemp += (parseInt(this.checkNull(dataArray[i].temp_avg)) - avgAvgTemp) ** 2;
+                totalSqrStddevTemp += (parseInt(this.checkNull(dataArray[i].temp_stdev)) - avgStddevTemp) ** 2;
+                totalSqrAvgPrep += (parseInt(this.checkNull(dataArray[i].pre_avg)) - avgAvgPrep) ** 2;
+                totalSqrStddevPrep += (parseInt(this.checkNull(dataArray[i].pre_stdev)) - avgStddevPrep) ** 2;
+                totalSqrAvgCuringTime += (parseInt(this.checkNull(dataArray[i].cur_avg)) - avgAvgCuringTime) ** 2;
+                totalSqrStddevCurringTime += (parseInt(this.checkNull(dataArray[i].cur_stdev)) - avgStddevCurringTime) ** 2;
+                console.log("totalSqrStddevPrep: ", totalSqrStddevPrep, "pre_stdev: ", dataArray[i].pre_stdev, "avgstdev: ", avgStddevPrep);
             }
-            stdAvgTemp = (Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation)).toFixed(3);
-            stdStddevTemp = (Math.sqrt(totalSqrStddevTemp / numbersOfStation)).toFixed(3);
-            stdAvgPrep = (Math.sqrt(totalSqrAvgPrep / numbersOfStation)).toFixed(3);
-            stdStddevPrep = (Math.sqrt(totalSqrStddevPrep / numbersOfStation)).toFixed(3);
-            stdAvgCuringTime = (Math.sqrt(totalSqrAvgCuringTime / numbersOfStation)).toFixed(3);
-            stdStddevCurringTime = (Math.sqrt(totalSqrStddevCurringTime / numbersOfStation)).toFixed(3);
+            if (numbersOfStation > 0){
+                stdAvgTemp = (Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation)).toFixed(3);
+                stdStddevTemp = (Math.sqrt(totalSqrStddevTemp / numbersOfStation)).toFixed(3);
+                stdAvgPrep = (Math.sqrt(totalSqrAvgPrep / numbersOfStation)).toFixed(3);
+                stdStddevPrep = (Math.sqrt(totalSqrStddevPrep / numbersOfStation)).toFixed(3);
+                stdAvgCuringTime = (Math.sqrt(totalSqrAvgCuringTime / numbersOfStation)).toFixed(3);
+                stdStddevCurringTime = (Math.sqrt(totalSqrStddevCurringTime / numbersOfStation)).toFixed(3);
+                console.log("totalSqrStddevPrep: ", totalSqrStddevPrep, "numbersOfStation: ", numbersOfStation, "stdStddevPrep: ", stdStddevPrep);
+            }
 
             result = <tbody>
             <tr>

@@ -27,10 +27,25 @@ export default class stationStatus extends Component {
         this.state = {
             dataArray: "",
         };
+
+
     }
 
     componentWillUnmount() {
         this._isMounted = false;
+
+        //Unregister event
+        this.socket.emit('machine_status', {
+            msg: {
+                'event': 'sna_machine_status',
+                'from_timedevice': 0,
+                'to_timedevice': 0,
+                'proccess': '',
+                'status': 'stop',
+            }
+        });
+
+        this.socket.removeListener('sna_machine_status');
     }
 
     /*configureOptions = () => {
@@ -75,28 +90,28 @@ export default class stationStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        let process = 'os-Molding';
-        switch(this.role) {
+
+        let proccess = 'os-Molding';
+        switch (this.role) {
             case 'admin':
-                process = 'os-Molding';
-                break;
-            case 'ip':
-                process = 'os-Molding';
+                proccess = 'os-Molding';
                 break;
             case 'os':
-                process = 'os-Molding';
+                proccess = 'os-Molding';
+                break;
+            case 'ip':
+                proccess = 'os-Molding';
                 break;
             case 'as':
-                process = 'os-Molding';
+                proccess = 'os-Molding';
                 break;
         }
-
         this.socket.emit('machine_status', {
             msg: {
                 'event': 'sna_machine_status',
                 'from_timedevice': 0,
                 'to_timedevice': 0,
-                'proccess': process,
+                'proccess': proccess,
                 'status': 'start',
             }
         });

@@ -1,8 +1,8 @@
-import {ANALYSIS_DATE_FILTER} from '../actions/globalDateFilterActions';
+import {GLOBAL_DATE_FILTER} from '../actions/globalDateFilterActions';
 import moment from 'moment';
 
 const initialState = {
-    startDateAnalysis: new Date(
+    startDate: new Date(
         moment()
             .subtract(6, "days")
             .startOf("day")
@@ -10,7 +10,7 @@ const initialState = {
             .toISOString()
     ),
 
-    endDateAnalysis: new Date(
+    endDate: new Date(
         moment()
             .startOf("day")
             .add({hours: 5, minutes: 59, seconds: 59})
@@ -20,11 +20,11 @@ const initialState = {
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        case ANALYSIS_DATE_FILTER:
+        case GLOBAL_DATE_FILTER:
             return {
                 ...state,
-                startDateAnalysis: action.startDate,
-                endDateAnalysis: action.endDate,
+                startDate: action.startDate,
+                endDate: action.endDate,
             };
         default:
             return state;

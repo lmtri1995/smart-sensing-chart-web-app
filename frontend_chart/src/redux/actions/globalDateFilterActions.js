@@ -1,8 +1,8 @@
-export const ANALYSIS_DATE_FILTER = 'ANALYSIS_DATE_FILTER';
+export const GLOBAL_DATE_FILTER = 'GLOBAL_DATE_FILTER';
 
-export function changeAnalysisDateFilter(startDate, endDate) {
+export function changeGlobalDateFilter(startDate, endDate) {
     return {
-        type: ANALYSIS_DATE_FILTER,
+        type: GLOBAL_DATE_FILTER,
         startDate: startDate,
         endDate: endDate,
     };

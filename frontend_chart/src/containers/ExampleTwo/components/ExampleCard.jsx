@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Card, CardBody, Col} from 'reactstrap';
 
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
-import {changeAnalysisDateFilter} from '../../../redux/actions/globalDateFilterActions';
+import {changeGlobalDateFilter} from '../../../redux/actions/globalDateFilterActions';
 import DateRangePicker from "../../DateTime/component/DateRangePicker";
 
 class ExampleCard extends Component {
@@ -11,20 +11,20 @@ class ExampleCard extends Component {
         globalDateFilter: GlobalFilterProps.isRequired,
     };
 
-    changeAnalysisDateFilter(startDate, endDate) {
-        this.props.dispatch(changeAnalysisDateFilter(startDate, endDate));
+    changeGlobalDateFilter(startDate, endDate) {
+        this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
     }
 
     render() {
-        let {startDateAnalysis, endDateAnalysis} = this.props.globalDateFilter;
+        let {startDate, endDate} = this.props.globalDateFilter;
         return (
             <Col md={12}>
                 <Card>
                     <CardBody>
                         <DateRangePicker numWeeks={3}
-                                         changeGlobalDateFilter={this.changeAnalysisDateFilter.bind(this)}
-                                         startDate={startDateAnalysis}
-                                         endDate={endDateAnalysis}/>
+                                         changeGlobalDateFilter={this.changeGlobalDateFilter.bind(this)}
+                                         startDate={startDate}
+                                         endDate={endDate}/>
                     </CardBody>
                 </Card>
             </Col>

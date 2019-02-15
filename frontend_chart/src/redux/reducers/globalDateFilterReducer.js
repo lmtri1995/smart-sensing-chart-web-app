@@ -1,4 +1,4 @@
-import {GLOBAL_DATE_FILTER} from '../actions/globalDateFilterActions';
+import {GLOBAL_DATE_FILTER, RESET_GLOBAL_DATE_FILTER} from '../actions/globalDateFilterActions';
 import moment from 'moment';
 
 const initialState = {
@@ -21,6 +21,12 @@ const initialState = {
 export default function (state = initialState, action) {
     switch (action.type) {
         case GLOBAL_DATE_FILTER:
+            return {
+                ...state,
+                startDate: action.startDate,
+                endDate: action.endDate,
+            };
+        case RESET_GLOBAL_DATE_FILTER:
             return {
                 ...state,
                 startDate: action.startDate,

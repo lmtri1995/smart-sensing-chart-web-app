@@ -1,18 +1,32 @@
-export const REPORT_DATE_FILTER = 'REPORT_DATE_FILTER';
-export const ANALYSIS_DATE_FILTER = 'ANALYSIS_DATE_FILTER';
+import moment from "../reducers/globalDateFilterReducer";
 
-export function changeReportDateFilter(startDate, endDate) {
+export const GLOBAL_DATE_FILTER = 'GLOBAL_DATE_FILTER';
+export const RESET_GLOBAL_DATE_FILTER = 'RESET_GLOBAL_DATE_FILTER';
+
+export function changeGlobalDateFilter(startDate, endDate) {
     return {
-        type: REPORT_DATE_FILTER,
+        type: GLOBAL_DATE_FILTER,
         startDate: startDate,
         endDate: endDate,
     };
 }
 
-export function changeAnalysisDateFilter(startDate, endDate) {
+export function resetGlobalDateFilter() {
     return {
-        type: ANALYSIS_DATE_FILTER,
-        startDate: startDate,
-        endDate: endDate,
+        type: RESET_GLOBAL_DATE_FILTER,
+        startDate: new Date(
+            moment()
+                .subtract(6, "days")
+                .startOf("day")
+                .add(6, "hours")
+                .toISOString()
+        ),
+
+        endDate: new Date(
+            moment()
+                .startOf("day")
+                .add({hours: 5, minutes: 59, seconds: 59})
+                .toISOString()
+        ),
     };
 }

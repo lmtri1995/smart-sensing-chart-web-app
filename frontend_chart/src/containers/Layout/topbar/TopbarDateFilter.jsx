@@ -4,7 +4,7 @@ import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
 
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
-import {changeAnalysisDateFilter} from '../../../redux/actions/globalDateFilterActions';
+import {changeGlobalDateFilter} from '../../../redux/actions/globalDateFilterActions';
 import DateRangePicker from "../../DateTime/component/DateRangePicker";
 
 class TopbarDateFilter extends Component {
@@ -12,8 +12,8 @@ class TopbarDateFilter extends Component {
         globalDateFilter: GlobalFilterProps.isRequired,
     };
 
-    changeAnalysisDateFilter = (startDate, endDate) => {
-        this.props.dispatch(changeAnalysisDateFilter(startDate, endDate));
+    changeGlobalDateFilter = (startDate, endDate) => {
+        this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
     }
 
     toggle = () => {
@@ -28,8 +28,8 @@ class TopbarDateFilter extends Component {
     }
 
     render() {
-        let {startDateAnalysis, endDateAnalysis} = this.props.globalDateFilter;
-        console.log("ANALYSIS_DATE_FILTER", `startDate: ${startDateAnalysis} - endDate: ${endDateAnalysis}`);
+        let {startDate, endDate} = this.props.globalDateFilter;
+        console.log("GLOBAL_DATE_FILTER", `startDate: ${startDate} - endDate: ${endDate}`);
         return (
             <div className="topbar__filter">
                 <button className="topbar__filter-button" onClick={this.toggle}>
@@ -40,9 +40,9 @@ class TopbarDateFilter extends Component {
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
                     <div className="topbar__menu">
                         <DateRangePicker numWeeks={3}
-                                         changeGlobalDateFilter={this.changeAnalysisDateFilter.bind(this)}
-                                         startDate={startDateAnalysis}
-                                         endDate={endDateAnalysis}/>
+                                         changeGlobalDateFilter={this.changeGlobalDateFilter.bind(this)}
+                                         startDate={startDate}
+                                         endDate={endDate}/>
                     </div>
                 </Collapse>
             </div>

@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import RamdomAnimatedDoughnut from "../../Charts/ChartJS/components/RamdomAnimatedDoughnut";
-export class ProductionRateOverview extends Component {
+
+export default class DefectRateOverview extends Component {
   render() {
     return (
         <div className="report-main">
@@ -12,6 +13,4 @@ export class ProductionRateOverview extends Component {
     )
   }
 }
-
-export default ProductionRateOverview
 

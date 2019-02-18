@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import RandomAnimatedBarsLong from "../../Charts/ChartJS/components/RandomAnimatedBarsLong";
-export class ProductionRate extends Component {
+
+export default class DefectRate extends Component {
   render() {
     return (
             <div className="report-main">
@@ -12,5 +13,3 @@ export class ProductionRate extends Component {
     )
   }
 }
-
-export default ProductionRate

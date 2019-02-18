@@ -1,6 +1,6 @@
 import React from 'react';
-import ProductionRate from './components/ProductionRate';
-import ProductionRateOverview from './components/ProductionRateOverview';
+import DefectRate from './components/DefectRate';
+import DefectRateOverview from './components/DefectRateOverview';
 
 const ReportPage = () => (
   <div className="container report">
@@ -10,10 +10,10 @@ const ReportPage = () => (
         <div className="row">
 
             <div className="col-9">
-               <ProductionRate />
+               <DefectRate />
             </div>
             <div className="col-3">
-               <ProductionRateOverview />
+               <DefectRateOverview />
             </div>
         </div>
   </div>

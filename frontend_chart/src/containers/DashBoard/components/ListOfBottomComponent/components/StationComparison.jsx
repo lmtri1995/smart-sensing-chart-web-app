@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import RandomAnimatedBarsLong from "../../Charts/ChartJS/components/RandomAnimatedBarsLong";
+import RandomAnimatedBarsLong from "../../../../Charts/ChartJS/components/RandomAnimatedBarsLong";
 export class StationComparison extends Component {
   render() {
     return (

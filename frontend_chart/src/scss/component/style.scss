@@ -95,9 +95,8 @@
   min-height: 500px;
 }
 .loader{
-  position: absolute;
-  left: 40%;
-  top: 20%;
+  width: 100%;
+  opacity: 0.1;
 }
 .clock{
   padding: 20px 15px

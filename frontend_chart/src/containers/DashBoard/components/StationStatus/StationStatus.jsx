@@ -4,9 +4,10 @@ import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
 
 const override = `
-    display: block;
-    margin: 0 auto;
-    border-color: red;
+    position: absolute;
+    display:block;
+    left:45%;
+    z-index: 100000;
 `;
 
 export default class stationStatus extends Component {
@@ -26,6 +27,7 @@ export default class stationStatus extends Component {
 
         this.state = {
             dataArray: "",
+            loading :true
         };
 
 
@@ -181,26 +183,30 @@ export default class stationStatus extends Component {
 
     render() {
         let {dataArray} = this.state;
-        let dataShow = <div className="loader"><ClipLoader
-            css={override}
-            sizeUnit={"px"}
-            size={100}
-            color={'#30D4A4'}
-            loading={true}
-            margin-left={300}
-        />
-
-        </div>
-        if (dataArray && dataArray.length > 0) {
-            dataShow = <div className="container">
-                <div className="row">
-                    <div className="col boxstation">
-                        <h4>On/Off</h4>
+        if (dataArray && dataArray.length > 0 && this.state.loading === true) {
+            this.setState({loading:false})
+        }
+        let dataShow = <div>
+            <ClipLoader
+                css={override}
+                sizeUnit={"px"}
+                size={100}
+                color={'#30D4A4'}
+                loading={this.state.loading}
+                margin-left={300}
+            />
+                <div className={(this.state.loading)?"loader":""}>
+                    <div className="container">
+                        <div className="row">
+                            <div className="col boxstation">
+                                <h4>On/Off</h4>
+                            </div>
+                        </div>
+                        {this.showStationStatusItem(dataArray)}
                     </div>
                 </div>
-                {this.showStationStatusItem(dataArray)}
-            </div>
-        }
+                
+        </div>
 
         /*return (
             <div className="container">

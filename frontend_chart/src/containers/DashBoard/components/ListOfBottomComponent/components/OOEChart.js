@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Doughtnut from "../../Charts/ChartJS/components/RamdomAnimatedDoughnut";
+import Doughtnut from "../../../../Charts/ChartJS/components/RamdomAnimatedDoughnut";
 export class OOEChart extends Component {
   render() {
     return (

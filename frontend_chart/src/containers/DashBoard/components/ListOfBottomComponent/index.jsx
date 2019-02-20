@@ -5,7 +5,7 @@ import LossOfWork from "./components/LossOfWork";
 import StationComparison from "./components/StationComparison";
 import SwingArmMachine from "./components/SwingArmMachine";
 
-const ExamplePage = () => (
+const listBottomCom = () => (
     <div className="container">
         <div className="row">
             <div className="col">
@@ -32,4 +32,4 @@ const ExamplePage = () => (
 
     </div>
 );
-export default ExamplePage;
+export default listBottomCom;

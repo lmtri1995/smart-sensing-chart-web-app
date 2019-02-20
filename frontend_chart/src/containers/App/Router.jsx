@@ -3,7 +3,7 @@ import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
 import LogIn from '../LogIn/index';
-import ExamplePageOne from '../Example/index';
+// import ExamplePageOne from '../Example/index';
 import Report from '../Report/index';
 import ExamplePageThree from '../ExampleThree/index';
 import LogOut from '../LogOut/index';
@@ -19,7 +19,7 @@ const Pages = () => (
                 <Switch>
                     <PrivateRoute exact path="/" component={DashBoard}/>
                     <PrivateRoute path="/pages/analysis" component={Analysis}/>
-                    <PrivateRoute path="/pages/one" component={ExamplePageOne}/>
+                    {/* <PrivateRoute path="/pages/one" component={ExamplePageOne}/> */}
                     <PrivateRoute path="/pages/report" component={Report}/>
                     <PrivateRoute path="/pages/three" component={ExamplePageThree}/>
                 </Switch>

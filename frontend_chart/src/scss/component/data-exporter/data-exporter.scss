@@ -1,12 +1,11 @@
 .data-exporter__button {
   background: #D1D5DA;
   border-radius: 4px;
-  display: flex;
-  flex-direction: row;
   align-items: center;
   margin: 6px;
-
   padding: 8px;
+  width: 58px;
+  float: left;
 }
 
 .data-exporter__icon {

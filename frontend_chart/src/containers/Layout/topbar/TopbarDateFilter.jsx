@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import DownIcon from 'mdi-react/ChevronDownIcon';
 import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
-
+import Clock from 'react-live-clock';
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
 import {changeGlobalDateFilter} from '../../../redux/actions/globalDateFilterActions';
 import DateRangePicker from "../../DateTime/component/DateRangePicker";
@@ -16,27 +16,45 @@ class TopbarDateFilter extends Component {
         this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
     }
 
-    toggle = () => {
-        this.setState({collapse: !this.state.collapse});
-    };
 
     constructor(props) {
         super(props);
         this.state = {
             collapse: false,
         };
+        this.setWrapperRef = this.setWrapperRef.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
     }
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+      }
+    
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+      }
+    toggle = () => {
+        this.setState({collapse: !this.state.collapse});
+    };
+    setWrapperRef(node) {
+        this.wrapperRef = node;
+      }
 
+      handleClickOutside(event) {
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+            this.setState({collapse: false});
+        }
+      }
     render() {
         let {startDate, endDate} = this.props.globalDateFilter;
-        console.log("GLOBAL_DATE_FILTER", `startDate: ${startDate} - endDate: ${endDate}`);
         return (
-            <div className="topbar__filter">
+            <div className="topbar__filter" ref={this.setWrapperRef}>
                 <button className="topbar__filter-button" onClick={this.toggle}>
-                    <p className="topbar__filter-name">Global Filter</p>
-                    <DownIcon className="topbar__icon"/>
+                    <p className="topbar__filter-name">
+                        <div className="clock">
+                            <Clock format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000}/>
+                        </div>
+                    </p>
                 </button>
-                {this.state.collapse && <button className="topbar__back" onClick={this.toggle}/>}
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
                     <div className="topbar__menu">
                         <DateRangePicker numWeeks={3}

@@ -5,7 +5,17 @@ import DefectRateOverview from './components/DefectRateOverview';
 const ReportPage = () => (
   <div className="container report">
         <div className="row">
-            <h3>Line 1111</h3>
+            
+            <div className="col-10">
+                <h3>Line 1111</h3>
+            </div>
+            <div className="col-2">
+                <div class="btn-group" >
+                    <button type="button" class="btn btn-primary">Productivity</button>
+                    <button type="button" class="btn btn-secondary">Defect</button>
+                </div>
+            </div>
+            
         </div>
         <div className="row">
 

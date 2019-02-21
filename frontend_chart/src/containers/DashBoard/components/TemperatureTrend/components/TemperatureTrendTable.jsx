@@ -15,13 +15,13 @@ class TemperatureTrendTable extends Component {
 
     showTempTable = (dataArray) => {
         let result = (<div className="row" key={'2'}>
-            <div className="col">
+            <div className="col-md-6">
                 <TemperatureTrendItem/>
                 <TemperatureTrendItem/>
                 <TemperatureTrendItem/>
                 <TemperatureTrendItem/>
             </div>
-            <div className="col">
+            <div className="col-md-6">
                 <TemperatureTrendItem/>
                 <TemperatureTrendItem/>
                 <TemperatureTrendItem/>
@@ -30,13 +30,13 @@ class TemperatureTrendTable extends Component {
         </div>);
         if (dataArray && dataArray.length > 0) {
             result = <div className="row" key={'1'}>
-                <div className="col">
+                <div className="col-md-6">
                     <TemperatureTrendItem tempData={dataArray[1]}/>
                     <TemperatureTrendItem tempData={dataArray[2]}/>
                     <TemperatureTrendItem tempData={dataArray[3]}/>
                     <TemperatureTrendItem tempData={dataArray[4]}/>
                 </div>
-                <div className="col">
+                <div className="col-md-6">
                     <TemperatureTrendItem tempData={dataArray[5]}/>
                     <TemperatureTrendItem tempData={dataArray[6]}/>
                     <TemperatureTrendItem tempData={dataArray[7]}/>

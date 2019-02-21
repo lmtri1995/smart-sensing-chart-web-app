@@ -1,8 +1,7 @@
 import React, {PureComponent} from 'react';
-import DownIcon from 'mdi-react/ChevronDownIcon';
 import {Collapse} from 'reactstrap';
 import TopbarMenuLink from './TopbarMenuLink';
-
+import Setting from "../../../shared/img/Setting.svg";
 const Ava = `${process.env.PUBLIC_URL}/img/ava.png`;
 
 export default class TopbarProfile extends PureComponent {
@@ -31,7 +30,7 @@ export default class TopbarProfile extends PureComponent {
         return (
             <div className="topbar__profile">
                 <button className="topbar__avatar" onClick={this.toggle}>
-                <i class="fas fa-cog"></i>
+                <img src={Setting} />
                 </button>
                 {this.state.collapse && <button className="topbar__back" onClick={this.toggle}/>}
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">

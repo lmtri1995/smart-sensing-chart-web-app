@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Collapse} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
 import {ExportType} from "../../../constants/constants";
+import Filter from "../../../shared/img/Filter.svg";
 class TopbarFilter extends Component {
     constructor() {
         super();
@@ -38,7 +39,7 @@ class TopbarFilter extends Component {
         return (
             <div className="topbar__profile" ref={this.setWrapperRef}>
                 <button className="topbar__avatar" onClick={this.toggle}>
-                <i className="fas fa-filter"></i>
+                <img src={Filter} />
                 </button>
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
                     <div className="topbar_filter_menu">

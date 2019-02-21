@@ -91,28 +91,24 @@ class RandomAnimatedBarsLong extends PureComponent {
 
     componentDidMount() {
         const ctx = this.refs.canvas.getContext('2d');
-        new Chart(ctx, {
+        let myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
             options: options
         });
         setInterval(() => {
             let random, totalDefect;
-            for (let i = 0, length = initialData.datasets[0].data.length; i < length; ++i) {
+            for (let i = 0, length = myChart.data.datasets[0].data.length; i < length; ++i) {
                 totalDefect = 0;
-                for (let j = 0, datasetLength = initialData.datasets.length - 1; j < datasetLength; ++j) {
+                for (let j = 0, datasetLength = myChart.data.datasets.length - 1; j < datasetLength; ++j) {
                     random = Math.floor(Math.random() * 100) + 1;
-                    initialData.datasets[j].data[i] = random;
+                    myChart.data.datasets[j].data[i] = random;
 
                     totalDefect += random;
                 }
-                initialData.datasets[initialData.datasets.length - 1].data[i] = totalDefect;
+                myChart.data.datasets[myChart.data.datasets.length - 1].data[i] = totalDefect;
+                myChart.update();
             }
-            new Chart(ctx, {
-                type: 'bar',
-                data: initialData,
-                options: options
-            });
         }, 5000);
     }
 

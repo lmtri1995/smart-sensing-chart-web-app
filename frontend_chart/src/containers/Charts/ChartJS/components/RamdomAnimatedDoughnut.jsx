@@ -55,9 +55,18 @@ const options = {
 
 class RandomAnimatedDoughnutLong extends Component {
 
+    componentDidMount() {
+        const ctx = this.refs.canvas.getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: options
+        });
+    }
+
     render() {
         return (
-            <Doughnut height={200} data={data} options={options}/>
+            <canvas ref="canvas" width={35} height={30}/>
         );
     }
 }

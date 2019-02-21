@@ -1,59 +1,93 @@
 import React, {Component} from 'react';
-import {Doughnut} from 'react-chartjs-2';
+import Chart from "chart.js";
 
-// some of this code is a variation on https://jsfiddle.net/cmyker/u6rr5moq/
-var originalDoughnutDraw = Chart.controllers.doughnut.prototype.draw;
-Chart.helpers.extend(Chart.controllers.doughnut.prototype, {
-    draw: function () {
-        originalDoughnutDraw.apply(this, arguments);
+Chart.plugins.register({
+    beforeDraw: function (chart) {
+        if (chart.config.options.elements.center) {
+            //Get ctx from string
+            let ctx = chart.chart.ctx;
 
-        var chart = this.chart.chart;
-        var ctx = chart.ctx;
-        var width = chart.width;
-        var height = chart.height;
+            //Get options from the center object in options
+            let centerConfig = chart.config.options.elements.center;
+            let fontSize = centerConfig.fontSize || 32;
+            let fontFamily = centerConfig.fontFamily || 'arial, sans-serif';
+            let txt = centerConfig.text;
+            let color = centerConfig.color || '#000';
+            let sidePadding = centerConfig.sidePadding || 20;   // padding percentage of text in inner circle
+            let sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2);
+            //Start with a base font of 20px
+            ctx.font = `${fontSize}px ${fontFamily}`;
 
-        var fontSize = (height / 114).toFixed(2);
-        ctx.font = fontSize + "em Verdana";
-        ctx.textBaseline = "middle";
+            //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+            let stringWidth = ctx.measureText(txt).width;
+            let elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
 
-        var text = chart.config.data.text,
-            textX = Math.round((width - ctx.measureText(text).width) / 2),
-            textY = height / 2;
+            // Find out how much the font can grow in width.
+            let widthRatio = elementWidth / stringWidth;
+            let newFontSize = Math.floor(fontSize * widthRatio);
+            let elementHeight = (chart.innerRadius * 2);    // equals diameter of inner circle
 
-        ctx.fillText(text, textX, textY);
+            // Pick a new font size so it will not be larger than the diameter of inner circle.
+            let fontSizeToUse = Math.min(newFontSize, elementHeight);
+
+            //Set font settings to draw it correctly.
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            let centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+            let centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+            ctx.font = `${fontSizeToUse}px ${fontFamily}`;
+            ctx.fillStyle = color;
+
+            //Draw text in center
+            ctx.fillText(txt, centerX, centerY);
+        }
     }
 });
 
 const data = {
     labels: [
-        'Red',
-        'Yellow'
+        "Type 1",
+        "Type 2",
+        "Type 3",
+        "Type 4",
     ],
     datasets: [{
-        data: [50, 100],
+        data: [138, 127, 92, 92],
         backgroundColor: [
-            '#36A2EB',
-            '#FFCE56'
+            "#FF9C64",
+            "#46D6EA",
+            "#F575F7",
+            "#8C67F6",
         ],
         hoverBackgroundColor: [
-            '#36A2EB',
-            '#FFCE56'
+            "#FF9C64",
+            "#46D6EA",
+            "#F575F7",
+            "#8C67F6",
         ]
-    }],
-    text: '23%'
+    }]
 };
+
 const options = {
-    cutoutPercentage: 80,
-    legend: {
-        display: false
+    cutoutPercentage: 62,
+    elements: {
+        arc: {
+            borderWidth: 0, // No outline
+        },
+        center: {
+            text: '439',
+            color: '#FFFFFF', // Default is #000000
+            fontSize: 32,   // Default is 32px
+            fontFamily: 'Roboto', // Default is Arial, sans-serif
+            sidePadding: 70, // Default is 20 (as a percentage)
+        }
     },
-    zoom: {
-        enabled: true,
-        mode: 'xy'
+    legend: {
+        display: false,
     }
 };
 
-class RandomAnimatedDoughnutLong extends Component {
+export default class RandomAnimatedDoughnutLong extends Component {
 
     componentDidMount() {
         const ctx = this.refs.canvas.getContext('2d');
@@ -70,5 +104,3 @@ class RandomAnimatedDoughnutLong extends Component {
         );
     }
 }
-
-export default RandomAnimatedDoughnutLong;

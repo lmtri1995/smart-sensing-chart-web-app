@@ -81,10 +81,6 @@ const options = {
             },
         ],
     },
-    zoom: {
-        enabled: true,
-        mode: 'x'
-    }
 };
 
 class RandomAnimatedBarsLong extends PureComponent {

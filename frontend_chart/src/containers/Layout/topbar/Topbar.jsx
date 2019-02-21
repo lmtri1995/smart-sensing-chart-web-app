@@ -12,7 +12,9 @@ class Topbar extends Component {
         changeMobileSidebarVisibility: PropTypes.func.isRequired,
         changeSidebarVisibility: PropTypes.func.isRequired,
     };
-
+    click=()=>{
+        this.props.goFull()
+    }
     render() {
 
         const {changeMobileSidebarVisibility, changeSidebarVisibility} = this.props;
@@ -32,8 +34,8 @@ class Topbar extends Component {
                         <TopbarDateFilter/>
                         <TopbarFilter />
                         <TopbarNotification />
-                        <TopbarProfile/>
-                        <TopbarFullScreen />
+                        <TopbarProfile />
+                        <TopbarFullScreen goFull={this.click} />
                     </div>
                 </div>
             </div>

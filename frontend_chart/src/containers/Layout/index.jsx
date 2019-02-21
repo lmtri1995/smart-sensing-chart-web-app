@@ -31,7 +31,9 @@ class Layout extends Component {
   changeToLight = () => {
     this.props.dispatch(changeThemeToLight());
   };
-
+    click = () =>{
+        this.props.goFull()
+    }
   render() {
     const layoutClass = classNames({
       layout: true,
@@ -43,6 +45,7 @@ class Layout extends Component {
         <Topbar
           changeMobileSidebarVisibility={this.changeMobileSidebarVisibility}
           changeSidebarVisibility={this.changeSidebarVisibility}
+          goFull={this.click}
         />
         <Sidebar
           sidebar={this.props.sidebar}

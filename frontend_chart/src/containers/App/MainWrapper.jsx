@@ -21,7 +21,6 @@ class MainWrapper extends PureComponent {
     );
   }
 }
-
 export default connect(state => ({
   theme: state.theme,
 }))(MainWrapper);

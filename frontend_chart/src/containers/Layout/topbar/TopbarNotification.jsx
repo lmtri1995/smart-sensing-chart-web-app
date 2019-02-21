@@ -5,7 +5,7 @@ export default class TopbarNotification extends Component {
     return (
         <div className="topbar__profile" ref={this.setWrapperRef}>
             <button className="topbar__avatar" onClick={this.toggle}>
-            <img src={Notification} />
+                <img src={Notification} />
             </button>
         </div>
     )

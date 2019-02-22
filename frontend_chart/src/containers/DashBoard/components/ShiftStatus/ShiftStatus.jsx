@@ -2,7 +2,14 @@ import React, {Component} from 'react'
 import ShiftStatusItem from './components/ShiftStatusItem';
 import moment from "moment";
 import Singleton from "../../../../services/Socket";
-
+import {ClipLoader} from 'react-spinners';
+const override = `
+    position: absolute;
+    display:block;
+    left:45%;
+    top :25%;
+    z-index: 100000;
+`;
 export default class ShiftStatus extends Component {
     static socket = null;
     static _isMounted = false;
@@ -21,6 +28,7 @@ export default class ShiftStatus extends Component {
 
         this.state = {
             dataArray: "",
+            loading :true
         };
 
         switch(this.role) {
@@ -208,24 +216,42 @@ export default class ShiftStatus extends Component {
 
     render() {
         let dataArray = this.state.dataArray;
+        if (dataArray && dataArray.length > 0 && this.state.loading === true) {
+            this.setState({loading:false})
+        }
         return (
-            <table className="table table-bordered table-dark">
-                <thead>
-                <tr>
-                    <th scope="col">Shifts' Status</th>
-                    <th scope="col"> 1</th>
-                    <th scope="col"> 2</th>
-                    <th scope="col"> 3</th>
-                    <th scope="col"> 4</th>
-                    <th scope="col"> 5</th>
-                    <th scope="col"> 6</th>
-                    <th scope="col"> 7</th>
-                    <th scope="col"> 8</th>
-                    <th scope="col"> Total</th>
-                </tr>
-                </thead>
-                {this.showShiftTable(dataArray)}
-            </table>
+            <div>
+                <ClipLoader
+                    css={override}
+                    sizeUnit={"px"}
+                    size={100}
+                    color={'#30D4A4'}
+                    fadeIn="half"
+                    fadeOut="half"
+                    loading={this.state.loading}
+                    margin-left={300}
+                />
+                <div className={(this.state.loading)?"loader":""}>
+                    <table className="table table-bordered table-dark">
+                        <thead>
+                        <tr>
+                            <th scope="col">Shifts' Status</th>
+                            <th scope="col"> 1</th>
+                            <th scope="col"> 2</th>
+                            <th scope="col"> 3</th>
+                            <th scope="col"> 4</th>
+                            <th scope="col"> 5</th>
+                            <th scope="col"> 6</th>
+                            <th scope="col"> 7</th>
+                            <th scope="col"> 8</th>
+                            <th scope="col"> Total</th>
+                        </tr>
+                        </thead>
+                        {this.showShiftTable(dataArray)}
+                    </table>
+                </div>
+            </div>
+            
         )
     }
 }

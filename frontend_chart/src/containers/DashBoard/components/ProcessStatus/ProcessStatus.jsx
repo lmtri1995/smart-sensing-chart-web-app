@@ -2,7 +2,14 @@ import React, {Component} from 'react';
 import LineSummaryItem from './components/LineSummaryItem';
 import GeneralSummaryItem from './components/GeneralSummaryItem';
 import Singleton from "../../../../services/Socket";
-
+import {ClipLoader} from 'react-spinners';
+const override = `
+    position: absolute;
+    display:block;
+    left:45%;
+    top :45%;
+    z-index: 100000;
+`;
 export default class ProcessStatus extends Component {
     static socket = null;
     static _isMounted = false;
@@ -33,6 +40,7 @@ export default class ProcessStatus extends Component {
 
         this.state = {
             dataArray: "",
+            loading :true
         };
     }
 
@@ -319,18 +327,34 @@ export default class ProcessStatus extends Component {
 
     render() {
         let dataArray = this.state.dataArray;
+        if (dataArray && dataArray.length > 0 && this.state.loading === true) {
+            this.setState({loading:false})
+        }
         return (
-            <table className="table table-bordered table-dark">
-                <thead>
-                <tr>
-                    <th scope="col" rowSpan="2">Processing Status</th>
-                    <th scope="col" colSpan="2">Temperature</th>
-                    <th scope="col" colSpan="2">Preparing (s)</th>
-                    <th scope="col" colSpan="2">Curing Time (s)</th>
-                </tr>
-                </thead>
-                {this.showLineTable(dataArray)}
-            </table>
+            <div>
+                 <ClipLoader
+                    css={override}
+                    sizeUnit={"px"}
+                    size={100}
+                    color={'#30D4A4'}
+                    loading={this.state.loading}
+                    margin-left={300}
+                />
+                <div className={(this.state.loading)?"loader":""}>
+                    <table className="table table-bordered table-dark">
+                        <thead>
+                        <tr>
+                            <th scope="col" rowSpan="2">Processing Status</th>
+                            <th scope="col" colSpan="2">Temperature</th>
+                            <th scope="col" colSpan="2">Preparing (s)</th>
+                            <th scope="col" colSpan="2">Curing Time (s)</th>
+                        </tr>
+                        </thead>
+                        {this.showLineTable(dataArray)}
+                    </table>
+                </div>
+            </div>
+            
         )
     }
 }

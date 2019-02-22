@@ -116,13 +116,13 @@ export default class TemperatureTrend extends Component {
 
     showTemperatureTrendTable = () => {
         let result = (<div className="row" key={'2'}>
-            <div className="col">
+            <div className="col-6">
                 <TemperatureTrendItem stationId={1}/>
                 <TemperatureTrendItem stationId={2}/>
                 <TemperatureTrendItem stationId={3}/>
                 <TemperatureTrendItem stationId={4}/>
             </div>
-            <div className="col">
+            <div className="col-6">
                 <TemperatureTrendItem stationId={5}/>
                 <TemperatureTrendItem stationId={6}/>
                 <TemperatureTrendItem stationId={7}/>

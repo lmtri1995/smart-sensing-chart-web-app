@@ -82,8 +82,8 @@ class LogInForm extends PureComponent {
                 <button className="btn btn-primary account__btn account__btn--small"
                         to="/pages/one">Sign In
                 </button>
-                <Link className="btn btn-outline-primary account__btn account__btn--small"
-                      to="/log_in">Create Account</Link>
+                {/* <Link className="btn btn-outline-primary account__btn account__btn--small"
+                      to="/log_in">Create Account</Link> */}
             </form>
         );
     }

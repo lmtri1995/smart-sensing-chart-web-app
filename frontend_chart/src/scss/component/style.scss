@@ -101,6 +101,123 @@
 .clock{
   padding: 20px 15px
 }
+
 .topbar__filter-background-clock{
     background-color: #868D93;
+}
+
+#station1 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station1 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station1 .dygraph-legend {
+  color: white;
+}
+
+#station2 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station2 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station2 .dygraph-legend {
+  color: white;
+}
+
+#station3 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station3 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station3 .dygraph-legend {
+  color: white;
+}
+
+#station4 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station4 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station4 .dygraph-legend {
+  color: white;
+}
+
+#station5 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station5 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station5 .dygraph-legend {
+  color: white;
+}
+
+#station6 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station6 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station6 .dygraph-legend {
+  color: white;
+}
+
+#station7 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station7 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station7 .dygraph-legend {
+  color: white;
+}
+
+#station8 .dygraph-axis-label-x {
+  color: white;
+}
+
+#station8 .dygraph-axis-label-y {
+  color: white;
+}
+
+#station8 .dygraph-legend {
+  color: white;
+}
+
+#chart2 .dygraph-legend {
+  //padding-top: 320px !important;
+  //padding-left: 200px;
+  //padding-top: 200px;
+  //margin-left:300px;
+  color: white;
+  border: 1px solid black;
+  background-color: #16131333;
+  //padding: 4px;
+  border: 1px solid black;
+  border-radius: 10px;
+  width: 100px;
+}
+
+#div_g .dygraph-label {
+  /* This applies to the title, x-axis label and y-axis label */
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
 }

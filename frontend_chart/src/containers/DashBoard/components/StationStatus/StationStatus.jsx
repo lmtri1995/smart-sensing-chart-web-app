@@ -205,7 +205,7 @@ export default class stationStatus extends Component {
                         {this.showStationStatusItem(dataArray)}
                     </div>
                 </div>
-                
+
         </div>
 
         /*return (

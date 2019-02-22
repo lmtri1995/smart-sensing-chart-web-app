@@ -1,7 +1,7 @@
 import axios from "axios";
 import {SERVER_URL} from "../constants/config";
 
-export default function callAPI(endpoint, method = 'GET', body) {
+export default function callAPI(endpoint, method = 'GET', param) {
     let headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -10,7 +10,7 @@ export default function callAPI(endpoint, method = 'GET', body) {
         headers: headers,
         method: method,
         url: `${SERVER_URL}/${endpoint}`,
-        data: body
+        data: param
 
     })
         .catch(err => {

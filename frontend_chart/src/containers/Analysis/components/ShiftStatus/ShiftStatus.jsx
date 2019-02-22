@@ -87,8 +87,8 @@ export default class ShiftStatus extends Component {
             "model_name": "100"
         }*/
         let param = {
-            from_timedevice: 0,
-            to_timedevice: 0,
+            "from_timedevice": 0,
+            "to_timedevice": 0,
         }
         API('api/ip/shiftStatus', 'POST', param)
             .then((response) => {

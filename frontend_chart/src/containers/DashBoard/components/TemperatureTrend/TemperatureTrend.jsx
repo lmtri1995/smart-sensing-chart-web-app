@@ -151,6 +151,7 @@ export default class TemperatureTrend extends Component {
 
         //Show data to Grid
         if (dataToShow.length > 0) {
+            console.log("dataToShow: ", dataToShow);
             let temp11 = [], temp12 = [], temp13 = [], temp14 = [], temp15 = [],
                 temp16 = [],
                 temp17 = [], temp18 = [];
@@ -299,6 +300,7 @@ export default class TemperatureTrend extends Component {
         this.showDataToGrid(quantity);
 
         this.socket.on('chart_temp_trend', (data) => {
+            console.log("data: ", data);
             let returnArray = JSON.parse(data);
             let timeSpacePushToStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_PUSH_TO_STOCK;
             let timeSpaceFromStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_GET_FROM_STOCK;

@@ -3,11 +3,11 @@ import LineChart from "./TemperatureTrendLine";
 
 export default class TemperatureTrendItem extends Component {
     render() {
-        let {tempData} = this.props;
+        let {stationId} = this.props;
         return (
             <div className="col">
                 <h4>USL/ Value/ LSL</h4>
-                <LineChart tempData={tempData}/>
+                <LineChart stationId={stationId}/>
             </div>
         );
     }

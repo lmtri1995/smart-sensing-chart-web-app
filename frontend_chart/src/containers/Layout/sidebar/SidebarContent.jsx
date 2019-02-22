@@ -35,7 +35,7 @@ class SidebarContent extends Component {
           </SidebarCategory>
         </ul> */}
         <ul className="sidebar__block">
-          <SidebarCategory title="Example Pages" icon="diamond">
+          <SidebarCategory title="Category" icon="diamond">
             {
               (this.state.roles != null)? RoleList['admin'].map((item,index) =>{
                 return <SidebarLink key={index} title={item.title} route={item.route} onClick={this.hideSidebar} />

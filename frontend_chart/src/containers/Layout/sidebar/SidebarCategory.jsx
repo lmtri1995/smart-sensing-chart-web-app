@@ -19,7 +19,7 @@ export default class SidebarCategory extends Component {
   constructor() {
     super();
     this.state = {
-      collapse: false,
+      collapse: true,
     };
   }
 

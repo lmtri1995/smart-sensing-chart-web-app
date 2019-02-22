@@ -92,8 +92,6 @@ export default class TemperatureTrend extends Component {
             if (stock) {
                 total = returnArray.total + stock.length;
             }
-            console.log("total: ", total, "capacity: ", capacity, " - returnArray: ", returnArray.total, " -" +
-                " stock.length: ", stock.length);
 
             //returnArray.total > stock
             if (returnArray.total >= capacity) {

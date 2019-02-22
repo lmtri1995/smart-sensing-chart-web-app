@@ -66,9 +66,9 @@ class LogInForm extends PureComponent {
                         ><EyeIcon/>
                         </button>
                     </div>
-                    <div className="account__forgot-password">
+                    {/* <div className="account__forgot-password">
                         <a href="/">Forgot a password?</a>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="form__form-group">
                     <div className="form__form-group-field">

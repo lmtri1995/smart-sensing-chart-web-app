@@ -44,21 +44,21 @@ class LogIn extends Component {
       <div className="account__card">
         <div className="account__head">
           <h3 className="account__title">Welcome to
-            <span className="account__logo"> Easy
-              <span className="account__logo-accent">DEV</span>
+            <span className="account__logo"> 
+              <span className="account__logo-accent"> HSVINA</span>
             </span>
           </h3>
-          <h4 className="account__subhead subhead">Start your business easily</h4>
+          <h4 className="account__subhead subhead">Login form</h4>
         </div>
         <div>
         <h4  className="account__subhead text-danger">{this.state.message}</h4>
         </div>
         <LogInForm onSubmit={this.login} />
         <div className="account__or">
-          <p>Or Easily Using</p>
+          <p>HSVINA company</p>
         </div>
         <div className="account__social">
-          <Link
+          {/* <Link
             className="account__social-btn account__social-btn--facebook"
             to="/pages/one"
           ><FacebookIcon />
@@ -67,7 +67,7 @@ class LogIn extends Component {
             className="account__social-btn account__social-btn--google"
             to="/pages/one"
           ><GooglePlusIcon />
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>

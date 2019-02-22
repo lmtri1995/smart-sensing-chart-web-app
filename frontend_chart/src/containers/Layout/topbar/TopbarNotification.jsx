@@ -24,7 +24,7 @@ export default class TopbarNotification extends Component {
                 <Collapse isOpen={this.state.collapse} className="topbar__setting-wrap">
                     <div className="topbar__notification">
                     </div>
-            </Collapse>
+                </Collapse>
             </div>
             
         

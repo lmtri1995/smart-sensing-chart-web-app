@@ -22,10 +22,10 @@ const listBottomCom = () => (
             </div>
         </div>
         <div className="row">
-            <div className="col">
+            <div className="col-6">
                 <SwingArmMachine/>
             </div>
-            <div className="col">
+            <div className="col-6">
                 <SwingArmMachine/>
             </div>
         </div>

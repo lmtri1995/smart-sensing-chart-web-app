@@ -47,7 +47,8 @@ class TemperatureTrendLine extends PureComponent {
                             legend: 'always',
                             animatedZooms: true,
                             showLabelsOnHighlight: false,
-                            width: '100%',
+                            width: 720,
+                            height:200,
                             labels: ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"],
                             colors: ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"],
                             axes : {
@@ -76,8 +77,8 @@ class TemperatureTrendLine extends PureComponent {
                             //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                             legend: 'always',
                             animatedZooms: true,
-                            width: '100%',
-                            height: '65px',
+                            width: 720,
+                            height:200,
                             colors: ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"],
                             axes : {
                                 x: {
@@ -99,7 +100,13 @@ class TemperatureTrendLine extends PureComponent {
     render() {
         let {stationId} = this.props;
         return (
-            <div id={'station' + stationId}></div>
+                <div className="container">
+                    <div className="row">
+                        <div className="col" style={{marginBottom:38}} id={'station' + stationId}></div>
+                    </div>
+                </div>
+                
+            
         );
     }
 }

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import DownIcon from 'mdi-react/ChevronDownIcon';
 import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
 import Clock from 'react-live-clock';
@@ -12,11 +11,6 @@ class TopbarDateFilter extends Component {
         globalDateFilter: GlobalFilterProps.isRequired,
     };
 
-    changeGlobalDateFilter = (startDate, endDate) => {
-        this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
-    }
-
-
     constructor(props) {
         super(props);
         this.state = {
@@ -25,25 +19,33 @@ class TopbarDateFilter extends Component {
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
+
+    changeGlobalDateFilter = (startDate, endDate) => {
+        this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
+    };
+
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
-      }
-    
+    }
+
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
-      }
+    }
+
     toggle = () => {
         this.setState({collapse: !this.state.collapse});
     };
+
     setWrapperRef(node) {
         this.wrapperRef = node;
-      }
+    }
 
-      handleClickOutside(event) {
+    handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             this.setState({collapse: false});
         }
-      }
+    }
+
     render() {
         let {startDate, endDate} = this.props.globalDateFilter;
         return (

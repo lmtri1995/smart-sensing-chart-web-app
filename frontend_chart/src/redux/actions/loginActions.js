@@ -1,8 +1,4 @@
-import {
-    FETCHING_DATA,
-    FETCHING_DATA_FAILURE,
-    FETCHING_DATA_SUCCESS
-} from '../../constants/constants';
+import {FETCHING_DATA, FETCHING_DATA_FAILURE, FETCHING_DATA_SUCCESS} from '../../constants/constants';
 import API from '../../services/api';
 import Singleton from "../../services/Socket";
 
@@ -27,15 +23,15 @@ export function getDataFailure() {
 
 export function fetchData(user, responseData) {
     return (dispatch) => {
-        dispatch(getData())
+        dispatch(getData());
         /*let headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         }*/
         API('api/author/login', 'POST', user)
             .then((data) => {
-                var value = data.data
-                responseData(value)
+                var value = data.data;
+                responseData(value);
                 if (value.success === true) {
                     localStorage.setItem('logindata', JSON.stringify(value));
                     var instance1 = Singleton.getInstance(value.token);

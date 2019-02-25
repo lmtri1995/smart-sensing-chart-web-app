@@ -84,23 +84,23 @@ export default class DateRangePicker extends Component {
                             .map(value => value + 1) // Make 0...10 index keys become 1...11 index keys.
                             .map(value =>
                                 <DayCell disabled={value >= 10}
-                                        numWeeks={numWeeks}
-                                        date={new Date(moment().subtract(value, "days").toISOString())}
-                                        onRangeChange={this.handleRangeChange.bind(this)}
-                                        startDate={this.state.startDate}
-                                        endDate={this.state.endDate}
-                                        numClicks={this.state.numClicks}/>
+                                         numWeeks={numWeeks}
+                                         date={new Date(moment().subtract(value, "days").toISOString())}
+                                         onRangeChange={this.handleRangeChange.bind(this)}
+                                         startDate={this.state.startDate}
+                                         endDate={this.state.endDate}
+                                         numClicks={this.state.numClicks}/>
                             )
                     }
 
                     {/*Today*/}
                     <DayCell disabled={false}
-                            numWeeks={numWeeks}
-                            date={new Date()}
-                            onRangeChange={this.handleRangeChange.bind(this)}
-                            startDate={this.state.startDate}
-                            endDate={this.state.endDate}
-                            numClicks={this.state.numClicks}/>
+                             numWeeks={numWeeks}
+                             date={new Date()}
+                             onRangeChange={this.handleRangeChange.bind(this)}
+                             startDate={this.state.startDate}
+                             endDate={this.state.endDate}
+                             numClicks={this.state.numClicks}/>
 
                     {/*Remaining Next Days until Sunday*/}
                     {
@@ -108,15 +108,14 @@ export default class DateRangePicker extends Component {
                             .map(value => value + 1)
                             .map(value =>
                                 <DayCell disabled={true}
-                                        numWeeks={numWeeks}
-                                        date={new Date(moment().add(value, "days").toISOString())}
-                                        onRangeChange={this.handleRangeChange.bind(this)}
-                                        startDate={this.state.startDate}
-                                        endDate={this.state.endDate}
-                                        numClicks={this.state.numClicks}/>
+                                         numWeeks={numWeeks}
+                                         date={new Date(moment().add(value, "days").toISOString())}
+                                         onRangeChange={this.handleRangeChange.bind(this)}
+                                         startDate={this.state.startDate}
+                                         endDate={this.state.endDate}
+                                         numClicks={this.state.numClicks}/>
                             )
                     }
-                    
                 </div>
                 <div className="container date-range-picker-config">
                     <div className="row">
@@ -128,11 +127,9 @@ export default class DateRangePicker extends Component {
                                 <button type="button" className="btn btn-secondary">Cancel</button>
                                 <button type="button" className="btn btn-primary">Set</button>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
-                
             </div>
         );
     }

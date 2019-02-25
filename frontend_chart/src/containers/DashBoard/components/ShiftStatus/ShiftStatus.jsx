@@ -3,6 +3,7 @@ import ShiftStatusItem from './components/ShiftStatusItem';
 import moment from "moment";
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
+
 const override = `
     position: absolute;
     display:block;
@@ -28,10 +29,10 @@ export default class ShiftStatus extends Component {
 
         this.state = {
             dataArray: "",
-            loading :true
+            loading: true
         };
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.emitEvent = 'shift_status';
                 break;
@@ -217,7 +218,7 @@ export default class ShiftStatus extends Component {
     render() {
         let dataArray = this.state.dataArray;
         if (dataArray && dataArray.length > 0 && this.state.loading === true) {
-            this.setState({loading:false})
+            this.setState({loading: false})
         }
         return (
             <div>
@@ -231,7 +232,7 @@ export default class ShiftStatus extends Component {
                     loading={this.state.loading}
                     margin-left={300}
                 />
-                <div className={(this.state.loading)?"loader":""}>
+                <div className={(this.state.loading) ? "loader" : ""}>
                     <table className="table table-bordered table-dark">
                         <thead>
                         <tr>
@@ -251,7 +252,7 @@ export default class ShiftStatus extends Component {
                     </table>
                 </div>
             </div>
-            
+
         )
     }
 }

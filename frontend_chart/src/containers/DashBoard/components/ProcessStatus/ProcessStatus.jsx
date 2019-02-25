@@ -3,6 +3,7 @@ import LineSummaryItem from './components/LineSummaryItem';
 import GeneralSummaryItem from './components/GeneralSummaryItem';
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
+
 const override = `
     position: absolute;
     display:block;
@@ -26,7 +27,7 @@ export default class ProcessStatus extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.emitEvent = 'process_status';
                 break;
@@ -40,7 +41,7 @@ export default class ProcessStatus extends Component {
 
         this.state = {
             dataArray: "",
-            loading :true
+            loading: true
         };
     }
 
@@ -111,17 +112,17 @@ export default class ProcessStatus extends Component {
         let result = <LineSummaryItem stationId={stationId} avgTemp={data.temp_avg}
                                       stddevTemp={data.temp_stdev} avgPreparing={data.pre_avg}
                                       stddevPreparing={data.pre_stdev} avgCuringTime={data.cur_avg}
-                                      stddevCurringTime={data.cur_stdev}/>
+                                      stddevCurringTime={data.cur_stdev}/>;
         return result;
     }
 
     showGeneralItem(dataArray, spec) {
-        let result = <GeneralSummaryItem spec={spec}/>
+        let result = <GeneralSummaryItem spec={spec}/>;
         return result;
     }
 
-    checkNull(number){
-        let result = (number===null||number===NaN) ? 0: number;
+    checkNull(number) {
+        let result = (number === null || number === NaN) ? 0 : number;
         return result;
     }
 
@@ -174,7 +175,7 @@ export default class ProcessStatus extends Component {
                             data6={0}/>
         <GeneralSummaryItem spec={'STDEV'} data1={0} data2={0} data3={0} data4={0} data5={0}
                             data6={0}/>
-        </tbody>
+        </tbody>;
         //If there is returned data
         if (dataArray.length > 0) {
             let numbersOfStation = 8;
@@ -232,7 +233,7 @@ export default class ProcessStatus extends Component {
 
                 //for stddev line
             }
-            if (numbersOfStation > 0){
+            if (numbersOfStation > 0) {
                 avgAvgTemp = totalAvgTemp / numbersOfStation;
                 avgStddevTemp = totalStddevTemp / numbersOfStation;
                 avgAvgPrep = totalAvgPrep / numbersOfStation;
@@ -266,7 +267,7 @@ export default class ProcessStatus extends Component {
                 totalSqrStddevCurringTime += (parseInt(this.checkNull(dataArray[i].cur_stdev)) - avgStddevCurringTime) ** 2;
                 console.log("totalSqrStddevPrep: ", totalSqrStddevPrep, "pre_stdev: ", dataArray[i].pre_stdev, "avgstdev: ", avgStddevPrep);
             }
-            if (numbersOfStation > 0){
+            if (numbersOfStation > 0) {
                 stdAvgTemp = (Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation)).toFixed(3);
                 stdStddevTemp = (Math.sqrt(totalSqrStddevTemp / numbersOfStation)).toFixed(3);
                 stdAvgPrep = (Math.sqrt(totalSqrAvgPrep / numbersOfStation)).toFixed(3);
@@ -328,11 +329,11 @@ export default class ProcessStatus extends Component {
     render() {
         let dataArray = this.state.dataArray;
         if (dataArray && dataArray.length > 0 && this.state.loading === true) {
-            this.setState({loading:false})
+            this.setState({loading: false})
         }
         return (
             <div>
-                 <ClipLoader
+                <ClipLoader
                     css={override}
                     sizeUnit={"px"}
                     size={100}
@@ -340,7 +341,7 @@ export default class ProcessStatus extends Component {
                     loading={this.state.loading}
                     margin-left={300}
                 />
-                <div className={(this.state.loading)?"loader":""}>
+                <div className={(this.state.loading) ? "loader" : ""}>
                     <table className="table table-bordered table-dark">
                         <thead>
                         <tr>
@@ -354,7 +355,7 @@ export default class ProcessStatus extends Component {
                     </table>
                 </div>
             </div>
-            
+
         )
     }
 }

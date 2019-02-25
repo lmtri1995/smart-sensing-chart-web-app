@@ -56,54 +56,63 @@
   background-color: #2C3034 !important
 }
 
-.oee-main{
-  background-color:#1C1C21;
+.oee-main {
+  background-color: #1C1C21;
   padding: 20px 0;
   min-height: 181px;
   margin-top: 5px;
 }
-.oee-box{
+
+.oee-box {
   width: 100%;
 }
-.oee-box .container .row{
+
+.oee-box .container .row {
   height: 100px;
 }
-.oee-box .container .row div{
+
+.oee-box .container .row div {
   text-align: center;
-  color:#fff;
+  color: #fff;
 }
-.oee-box .container .row div i{
+
+.oee-box .container .row div i {
   color: #30D4A4;
 }
 
 // report page
-.report .row h3{
-  color:#fff;
+.report .row h3 {
+  color: #fff;
 }
-.report-main{
-  background-color:#1C1C21;
+
+.report-main {
+  background-color: #1C1C21;
   padding: 20px 0;
   min-height: 181px;
   margin-top: 5px;
   border-radius: 5px
 }
-.report-main div h4{
-  color:#fff;
+
+.report-main div h4 {
+  color: #fff;
   margin-bottom: 20px;
 }
-.report-item{
+
+.report-item {
   min-height: 500px;
 }
-.loader{
+
+.loader {
   width: 100%;
   opacity: 0.1;
 }
-.clock{
+
+.clock {
   padding: 20px 15px
 }
 
-.topbar__filter-background-clock{
-    background-color: #868D93;
+.topbar__filter-background-clock {
+  background-color: #868D93;
 }
 
 #station1 .dygraph-axis-label-x {

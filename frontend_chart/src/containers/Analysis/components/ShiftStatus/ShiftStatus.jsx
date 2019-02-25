@@ -89,10 +89,10 @@ export default class ShiftStatus extends Component {
         let param = {
             "from_timedevice": 0,
             "to_timedevice": 0,
-        }
+        };
         API('api/ip/shiftStatus', 'POST', param)
             .then((response) => {
-                if (response.data.success){
+                if (response.data.success) {
                     let dataArray = response.data.data;
                     this.setState({
                         dataArray: dataArray,

@@ -5,11 +5,12 @@ import TemperatureTrendItem from "./TemperatureTrendItem";
 class TemperatureTrendTable extends Component {
 
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             dataArray: null
         }
     }
+
     componentDidMount() {
     }
 
@@ -49,7 +50,7 @@ class TemperatureTrendTable extends Component {
 
     render() {
         return (
-            <div >
+            <div>
                 {this.showTempTable(this.props.dataArray)}
             </div>
         )

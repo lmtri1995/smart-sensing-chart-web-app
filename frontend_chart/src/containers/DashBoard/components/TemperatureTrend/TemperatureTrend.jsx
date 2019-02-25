@@ -27,7 +27,7 @@ export default class TemperatureTrend extends Component {
 
         //Specify which array in local storage to push data to and get data from
         this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
-        switch(this.role) {
+        switch (this.role) {
             case ROLES.ROLE_ADMIN:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
                 break;
@@ -44,9 +44,9 @@ export default class TemperatureTrend extends Component {
             dropdownOpen: false,
             dataArray: "",
             tempTime: 30, //choosen time for temperature
-        }
+        };
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.emitEvent = 'temp_trend';
                 break;
@@ -122,13 +122,13 @@ export default class TemperatureTrend extends Component {
                 //localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
                 try {
                     localStorage.setItem(this.localTempArrayName, JSON.stringify(stock));
-                } catch(exception){
+                } catch (exception) {
                     console.log("quota exceeded");
                 }
 
             }
         }
-    }
+    };
 
     showDataToGrid = (quantity) => {
         let stock = JSON.parse(localStorage.getItem(this.localTempArrayName));
@@ -279,7 +279,7 @@ export default class TemperatureTrend extends Component {
             });
 
         }
-    }
+    };
 
     componentDidMount() {
         /*let loginData = JSON.parse(localStorage.getItem('logindata'));
@@ -351,7 +351,7 @@ export default class TemperatureTrend extends Component {
         this.setState({
             tempTime: currentTempTime,
         });
-    }
+    };
 
 
     render() {

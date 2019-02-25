@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 
 export default class GeneralSummaryItem extends Component {
-    render(){
+    render() {
         let {spec, data1, data2, data3, data4, data5, data6} = this.props;
 
         return (

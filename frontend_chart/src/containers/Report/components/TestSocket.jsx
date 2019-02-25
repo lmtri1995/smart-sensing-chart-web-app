@@ -1,6 +1,4 @@
 import React, {PureComponent} from "react";
-import customSocket from "../../../services/Socket";
-import * as config from "../../../constants/config";
 import Singleton from "../../../services/Socket";
 
 class TestSocket extends PureComponent {
@@ -23,7 +21,7 @@ class TestSocket extends PureComponent {
         socket.on('token', (data) => {
             console.log("Return Token: ", data);
             let tokenObject = JSON.parse(data);
-            if (!tokenObject.success){
+            if (!tokenObject.success) {
                 console.log('vantran!!!!');
                 window.location.href = ("/logout");
             }

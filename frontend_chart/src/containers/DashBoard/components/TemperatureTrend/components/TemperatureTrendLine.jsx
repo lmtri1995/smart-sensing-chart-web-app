@@ -1,8 +1,9 @@
 /* eslint-disable no-underscore-dangle,react/no-did-mount-set-state */
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {Chart,Line} from 'react-chartjs-2';
+import {Chart, Line} from 'react-chartjs-2';
 import zoom from "chartjs-plugin-zoom";
+
 const initialState = {
     labels: ['0', '1', '2', '3', '4', '5', '6'],
     datasets: [
@@ -144,10 +145,12 @@ class TemperatureTrendLine extends PureComponent {
             data: initialState,
         };
     }
-    static getDerivedStateFromProps(props, state){
-        Chart.plugins.register(zoom)
+
+    static getDerivedStateFromProps(props, state) {
+        Chart.plugins.register(zoom);
         return null;
     }
+
     render() {
         let {tempData} = this.props;
         let {data} = this.state;
@@ -251,7 +254,7 @@ const mapStateToProps = state => {
         globalFilter: state.globalFilter,
         socket: state.login.socket,
     }
-}
+};
 
 export default connect(mapStateToProps, null)(
     TemperatureTrendLine

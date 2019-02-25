@@ -137,6 +137,7 @@
   margin-left: 20px;
   position: relative;
 }
+
 .topbar_filter_menu {
   width: 345px;
   height: 180px;
@@ -147,12 +148,14 @@
   margin-top: 0;
   background: #ebedf1;
 }
+
 .topbar_filter_menu .btn {
   border-radius: 5px;
   padding: 5px 5px;
   margin-bottom: 20px;
   margin-right: 4px;
 }
+
 .topbar__filter-button {
   height: 100%;
   display: flex;
@@ -198,63 +201,69 @@
   margin-top: auto;
   fill: #b1c3c8;
 }
+
 .topbar__setting {
-    width: 182px;
-    height: 200px;
-    border-radius: 4px;
-    border: none;
-    padding: 24px;
-    box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
-    margin-top: 0;
-    background: #ebedf1;
-  
-    button {
-      padding: 0;
-  
-      &:hover {
-        @include themify($themes) {
-          background-color: themed('colorHover');
-        }
+  width: 182px;
+  height: 200px;
+  border-radius: 4px;
+  border: none;
+  padding: 24px;
+  box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
+  margin-top: 0;
+  background: #ebedf1;
+
+  button {
+    padding: 0;
+
+    &:hover {
+      @include themify($themes) {
+        background-color: themed('colorHover');
       }
-    }
-  
-    *:focus {
-      outline: none;
     }
   }
-  .topbar__notification {
-    width: 182px;
-    height: 200px;
-    border-radius: 4px;
-    border: none;
-    padding: 24px;
-    box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
-    margin-top: 0;
-    background: #ebedf1;
-  
-    button {
-      padding: 0;
-  
-      &:hover {
-        @include themify($themes) {
-          background-color: themed('colorHover');
-        }
+
+  *:focus {
+    outline: none;
+  }
+}
+
+.topbar__notification {
+  width: 182px;
+  height: 200px;
+  border-radius: 4px;
+  border: none;
+  padding: 24px;
+  box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
+  margin-top: 0;
+  background: #ebedf1;
+
+  button {
+    padding: 0;
+
+    &:hover {
+      @include themify($themes) {
+        background-color: themed('colorHover');
       }
     }
-  
-    *:focus {
-      outline: none;
-    }
-  }  
-.topbar__setting p{
-    color: #343a40;
+  }
+
+  *:focus {
+    outline: none;
+  }
 }
-.topbar__setting  p:hover{
-    color: #dddddd;
+
+.topbar__setting p {
+  color: #343a40;
 }
-.topbar__setting  a:hover p{
-    color: #dddddd;
+
+.topbar__setting p:hover {
+  color: #dddddd;
 }
+
+.topbar__setting a:hover p {
+  color: #dddddd;
+}
+
 .topbar__menu {
   width: 300px;
   height: 340px;
@@ -279,12 +288,14 @@
     outline: none;
   }
 }
+
 .topbar__setting-wrap {
-    z-index: 101;
-    position: absolute;
-    padding: 0 10px;
-    right: 0;
-  }
+  z-index: 101;
+  position: absolute;
+  padding: 0 10px;
+  right: 0;
+}
+
 .topbar__menu-wrap {
   z-index: 101;
   position: absolute;
@@ -907,6 +918,7 @@
     .topbar__profile {
       margin-left: 0;
     }
+
     .topbar__filter {
       margin-left: 0;
     }
@@ -920,6 +932,7 @@
     .topbar__avatar-name {
       display: block;
     }
+
     .topbar__filter-name {
       display: block;
     }

@@ -52,7 +52,7 @@ export default class TemperatureTrend extends Component {
             from_timedevice: 0,
             to_timedevice: 0,
             minute: 0,
-        }
+        };
         API('api/os/tempTrend', 'POST', param)
             .then((response) => {
                 console.log("response fsdafasdf: ", response);
@@ -111,7 +111,7 @@ export default class TemperatureTrend extends Component {
         this.setState({
             tempTime: currentTempTime,
         });
-    }
+    };
 
 
     showTemperatureTrendTable = () => {
@@ -128,7 +128,7 @@ export default class TemperatureTrend extends Component {
                 <TemperatureTrendItem stationId={7}/>
                 <TemperatureTrendItem stationId={8}/>
             </div>
-        </div>)
+        </div>);
         /*for (let i = 1; i < 9; i++) {
             this["tempItem" + i] = <TemperatureTrendItem tempData=""/>;
             let param = {
@@ -164,7 +164,7 @@ export default class TemperatureTrend extends Component {
         </div>*/
 
         return result;
-    }
+    };
 
     render() {
         this.showTemperatureTrendTable();

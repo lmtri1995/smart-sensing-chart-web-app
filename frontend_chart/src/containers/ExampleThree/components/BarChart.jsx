@@ -5,7 +5,7 @@ import {select} from 'd3-selection'
 
 class BarChart extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.createBarChart = this.createBarChart.bind(this)
     }
 
@@ -18,22 +18,22 @@ class BarChart extends Component {
     }
 
     createBarChart() {
-        const node = this.node
-        const dataMax = max(this.props.data)
+        const node = this.node;
+        const dataMax = max(this.props.data);
         const yScale = scaleLinear()
             .domain([0, dataMax])
-            .range([0, this.props.size[1]])
+            .range([0, this.props.size[1]]);
         select(node)
             .selectAll('rect')
             .data(this.props.data)
             .enter()
-            .append('rect')
+            .append('rect');
 
         select(node)
             .selectAll('rect')
             .data(this.props.data)
             .exit()
-            .remove()
+            .remove();
 
         select(node)
             .selectAll('rect')

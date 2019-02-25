@@ -89,12 +89,12 @@ export default class ProcessStatus extends Component {
         let result = <LineSummaryItem stationId={stationId} avgTemp={data.temp_avg}
                                       stddevTemp={data.temp_stdev} avgPreparing={data.pre_avg}
                                       stddevPreparing={data.pre_stdev} avgCuringTime={data.cur_avg}
-                                      stddevCurringTime={data.cur_stdev}/>
+                                      stddevCurringTime={data.cur_stdev}/>;
         return result;
     }
 
     showGeneralItem(dataArray, spec) {
-        let result = <GeneralSummaryItem spec={spec}/>
+        let result = <GeneralSummaryItem spec={spec}/>;
         return result;
     }
 
@@ -147,7 +147,7 @@ export default class ProcessStatus extends Component {
                             data6={0}/>
         <GeneralSummaryItem spec={'STDEV'} data1={0} data2={0} data3={0} data4={0} data5={0}
                             data6={0}/>
-        </tbody>
+        </tbody>;
         //If there is returned data
         if (dataArray.length > 0) {
             let numbersOfStation = 8;

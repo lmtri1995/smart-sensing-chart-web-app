@@ -49,15 +49,14 @@ class MyReactComponent extends React.Component {
 
 export default withFauxDOM(MyReactComponent)
 */
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import Dygraph from 'dygraphs';
-import temperatures from './temperatures.csv';
-import fs from 'fs';
-import csvWriter from 'csv-write-stream';
 import API from "../../services/api";
 import moment from 'moment';
+
 class App extends Component {
     static garph = null;
+
     /*resetZoomForGarph = _ => {
         if (this.garph){
             this.garph.resetZoom();
@@ -76,11 +75,11 @@ class App extends Component {
     downloadCSV = (args) => {
         let inputData, filename, link;
 
-        if (args){
-            inputData = args.data  || null;
+        if (args) {
+            inputData = args.data || null;
         }
 
-        if (!inputData){
+        if (!inputData) {
             console.log("Data is null");
         } else {
             let csv = this.convertArrayOfObjectsToCSV({
@@ -101,7 +100,7 @@ class App extends Component {
             link.click();
         }
 
-    }
+    };
 
 
     // change array of object to String
@@ -127,9 +126,9 @@ class App extends Component {
         result += keys.join(columnDelimiter);
         result += lineDelimiter;
 
-        data.forEach(function(item) {
+        data.forEach(function (item) {
             ctr = 0;
-            keys.forEach(function(key) {
+            keys.forEach(function (key) {
                 if (ctr > 0) result += columnDelimiter;
 
                 result += item[key];
@@ -139,9 +138,9 @@ class App extends Component {
         });
 
         return result;
-    }
+    };
 
-    componentDidMount () {
+    componentDidMount() {
 
 
         /*this.garph = new Dygraph(
@@ -159,24 +158,24 @@ class App extends Component {
             minute: 0,
         };
 
-        let legendFormatter = (data) =>  {
+        let legendFormatter = (data) => {
             console.log("legend formatter: ================================, data: ", data, "data.xHTML: ", data.xHTML);
             if (data.x == null) return '';  // no selection
             return data.xHTML +
                 data.series
-                    .map(v => "a"+ "fdsafs" + v.labelHTML + ': ' + "b" + v.yHTML)  // modify as
-            // needed
+                    .map(v => "a" + "fdsafs" + v.labelHTML + ': ' + "b" + v.yHTML)  // modify as
+                    // needed
                     .join(' ');
         };
         API('api/os/tempTrend', 'POST', param)
             .then((response) => {
                 console.log("response: ", response);
-                if (response.data.success){
+                if (response.data.success) {
                     let dataArray = response.data.data;
-                    console.log("dataArray: ", dataArray, "typeof: ", typeof(dataArray));
+                    console.log("dataArray: ", dataArray, "typeof: ", typeof (dataArray));
                     let displayData = JSON.parse(dataArray[0].data);
                     displayData = displayData.slice(0, 10000);//1300 - 1500
-                    console.log("displayData: ", displayData, "typeof: ", typeof(displayData));
+                    console.log("displayData: ", displayData, "typeof: ", typeof (displayData));
 
                     /*
                     OK
@@ -211,7 +210,7 @@ class App extends Component {
                             // options go here. See http://dygraphs.com/options.html
                             //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                             animatedZooms: true,
-                            width:1000,
+                            width: 1000,
                             height: 500,
                             colors: ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"],
                             labels: ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"],
@@ -219,13 +218,13 @@ class App extends Component {
 
                             labelsSeparateLines: true,
                             //labels: ["a", "b", "c", "d", "e", "f", "g"],
-                            axes : {
+                            axes: {
                                 x: {
                                     drawGrid: false,
-                                    valueFormatter: function(x) {
-                                        return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");;
+                                    valueFormatter: function (x) {
+                                        return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
                                     },
-                                    axisLabelFormatter: function(x) {
+                                    axisLabelFormatter: function (x) {
                                         return moment.unix(x).format("YYYY/MM/DD  hh:mm:ss");
                                     },
                                 },
@@ -247,4 +246,5 @@ class App extends Component {
             .catch((err) => console.log('err:', err))
     }
 }
+
 export default App

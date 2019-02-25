@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 
 export default class DowntimeShiftItem extends Component {
-    render(){
+    render() {
         let {shiftNo, total, count1, count2, count3, count4, count5, count6, count7, count8} = this.props;
         return (
             <tr>

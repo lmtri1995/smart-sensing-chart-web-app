@@ -7,14 +7,16 @@ import TopbarDateFilter from "./TopbarDateFilter";
 import TopbarFilter from "./TopbarFilter";
 import TopbarNotification from "./TopbarNotification";
 import TopbarFullScreen from "./TopbarFullScreen";
+
 class Topbar extends Component {
     static propTypes = {
         changeMobileSidebarVisibility: PropTypes.func.isRequired,
         changeSidebarVisibility: PropTypes.func.isRequired,
     };
-    click=()=>{
+    click = () => {
         this.props.goFull()
-    }
+    };
+
     render() {
 
         const {changeMobileSidebarVisibility, changeSidebarVisibility} = this.props;
@@ -30,12 +32,12 @@ class Topbar extends Component {
                         <Link className="topbar__logo" to='/'/>
                     </div>
                     <div className="topbar__right">
-                        
+
                         <TopbarDateFilter/>
-                        <TopbarFilter />
-                        <TopbarNotification />
-                        <TopbarProfile />
-                        <TopbarFullScreen goFull={this.click} />
+                        <TopbarFilter/>
+                        <TopbarNotification/>
+                        <TopbarProfile/>
+                        <TopbarFullScreen goFull={this.click}/>
                     </div>
                 </div>
             </div>

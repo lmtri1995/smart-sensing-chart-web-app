@@ -6,6 +6,7 @@ import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
 import DowntimeShift from "./components/DowntimeShift/DowntimeShift";
 import {DashboardContainerID} from "../../constants/constants";
 import ListBottomCom from "./components/ListOfBottomComponent/index";
+
 class DashboardPage extends Component {
 
     render() {
@@ -13,7 +14,7 @@ class DashboardPage extends Component {
             <div className="container" id={DashboardContainerID}>
                 <div className="row">
                     <div className="col">
-                       <StationStatus/>
+                        <StationStatus/>
                     </div>
                     <div className="col">
                         <ShiftStatus/>
@@ -36,7 +37,7 @@ class DashboardPage extends Component {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <ListBottomCom />
+                        <ListBottomCom/>
                     </div>
                 </div>
             </div>

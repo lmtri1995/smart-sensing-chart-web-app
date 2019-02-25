@@ -17,7 +17,7 @@ export default class stationStatus extends Component {
     static _isMounted = null;//to check if the component is still mounted
 
     constructor(props) {
-        super(props)
+        super(props);
 
         //initiate socket
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
@@ -27,7 +27,7 @@ export default class stationStatus extends Component {
 
         this.state = {
             dataArray: "",
-            loading :true
+            loading: true
         };
 
 
@@ -157,7 +157,7 @@ export default class stationStatus extends Component {
             <StationStatusItem stationId={0} status={0} spaceTime={0}/>
             <StationStatusItem stationId={0} status={0} spaceTime={0}/>
             <StationStatusItem stationId={0} status={0} spaceTime={0}/>
-        </div>
+        </div>;
         if (dataArray && dataArray.length > 0) {
             result = <div className="row">
                 <StationStatusItem stationId={1} status={dataArray[0].istatus}
@@ -184,7 +184,7 @@ export default class stationStatus extends Component {
     render() {
         let {dataArray} = this.state;
         if (dataArray && dataArray.length > 0 && this.state.loading === true) {
-            this.setState({loading:false})
+            this.setState({loading: false})
         }
         let dataShow = <div>
             <ClipLoader
@@ -195,18 +195,18 @@ export default class stationStatus extends Component {
                 loading={this.state.loading}
                 margin-left={300}
             />
-                <div className={(this.state.loading)?"loader":""}>
-                    <div className="container">
-                        <div className="row">
-                            <div className="col boxstation">
-                                <h4>On/Off</h4>
-                            </div>
+            <div className={(this.state.loading) ? "loader" : ""}>
+                <div className="container">
+                    <div className="row">
+                        <div className="col boxstation">
+                            <h4>On/Off</h4>
                         </div>
-                        {this.showStationStatusItem(dataArray)}
                     </div>
+                    {this.showStationStatusItem(dataArray)}
                 </div>
+            </div>
 
-        </div>
+        </div>;
 
         /*return (
             <div className="container">

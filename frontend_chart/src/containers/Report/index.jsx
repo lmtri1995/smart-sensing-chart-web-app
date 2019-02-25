@@ -53,8 +53,8 @@ class ReportPage extends Component {
                             <h3>Line 1111</h3>
                         </div>
                         <div className="col-2">
-                            <div class="btn-group" >
-                                <button type="button" 
+                            <div className="btn-group">
+                                <button type="button"
                                     className={(this.state.activeTab === '1')?"btn btn-primary active":"btn btn-secondary"}
                                     onClick={() => { this.toggle('1'); }}
                                 >Productivity</button>

@@ -45,7 +45,7 @@ class TopbarFilter extends Component {
                     <div className="topbar_filter_menu">
                         <button className="btn btn-secondary">Filter: Model</button>
                         <button  className="btn btn-secondary">Filter: Shift</button>
-                        <button className="btn btn-secondary" onClick={this.toggle1}>Dropdown link <i class="fas fa-caret-down"></i></button>
+                        <button className="btn btn-secondary" onClick={this.toggle1}>Dropdown link <i className="fas fa-caret-down"></i></button>
                         <Collapse isOpen={this.state.collapse1} className="topbar__menu-wrap">
                         <div className="col-12">
                             <DataExporter exportType={ExportType.EXCEL}/>

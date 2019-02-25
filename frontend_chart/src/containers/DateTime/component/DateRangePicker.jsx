@@ -125,8 +125,8 @@ export default class DateRangePicker extends Component {
                             <p>06:00:00--07:00:00</p>
                             <h4><span>2019/02/19</span>--<span>2019/02/20</span></h4>
                             <div className="float-right">
-                                <button type="button" class="btn btn-secondary">Cancel</button>
-                                <button type="button" class="btn btn-primary">Set</button>
+                                <button type="button" className="btn btn-secondary">Cancel</button>
+                                <button type="button" className="btn btn-primary">Set</button>
                             </div>
                             
                         </div>

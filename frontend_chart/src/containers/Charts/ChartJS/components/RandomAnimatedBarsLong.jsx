@@ -85,12 +85,19 @@ const options = {
 
 class RandomAnimatedBarsLong extends PureComponent {
 
+    constructor(props) {
+        super(props);
+
+        this.canvas = null;
+    }
+
+
     changeGlobalDateFilter = (startDate, endDate) => {
         this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
     };
 
     componentDidMount() {
-        const ctx = this.refs.canvas.getContext('2d');
+        const ctx = this.canvas.getContext('2d');
         let myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
@@ -114,7 +121,7 @@ class RandomAnimatedBarsLong extends PureComponent {
 
     render() {
         return (
-            <canvas ref="canvas"/>
+            <canvas ref={(element) => this.canvas = element}/>
         );
     }
 }

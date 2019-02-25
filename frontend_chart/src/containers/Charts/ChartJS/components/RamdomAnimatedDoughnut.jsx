@@ -89,18 +89,29 @@ const options = {
 
 export default class RandomAnimatedDoughnutLong extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.canvas = null;
+    }
+
+
     componentDidMount() {
-        const ctx = this.refs.canvas.getContext('2d');
-        let myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: data,
-            options: options
-        });
+        if (this.canvas) {
+            const ctx = this.canvas.getContext('2d');
+            let myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: options
+            });
+        }
     }
 
     render() {
         return (
-            <canvas ref="canvas" width={35} height={30}/>
+            <canvas width={35} height={30}
+                    ref={(element) => this.canvas = element}
+            />
         );
     }
 }

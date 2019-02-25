@@ -49,11 +49,11 @@ class TopbarDateFilter extends Component {
         return (
             <div className="topbar__filter" ref={this.setWrapperRef}>
                 <button className="topbar__filter-button" onClick={this.toggle}>
-                    <p className="topbar__filter-name topbar__filter-background-clock">
+                    <div className="topbar__filter-name topbar__filter-background-clock">
                         <div className="clock">
                             <Clock format="DD/MM/YYYY | HH:mm:ss" ticking={true} interval={1000}/>
                         </div>
-                    </p>
+                    </div>
                 </button>
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
                     <div className="topbar__menu">

@@ -83,7 +83,8 @@ export default class DateRangePicker extends Component {
                         [...Array((7 * numWeeks) - (7 - moment().isoWeekday()) - 1).keys()].reverse()
                             .map(value => value + 1) // Make 0...10 index keys become 1...11 index keys.
                             .map(value =>
-                                <DayCell disabled={value >= 10}
+                                <DayCell key={value}
+                                         disabled={value >= 10}
                                          numWeeks={numWeeks}
                                          date={new Date(moment().subtract(value, "days").toISOString())}
                                          onRangeChange={this.handleRangeChange.bind(this)}
@@ -107,7 +108,8 @@ export default class DateRangePicker extends Component {
                         [...Array(7 - moment().isoWeekday()).keys()]
                             .map(value => value + 1)
                             .map(value =>
-                                <DayCell disabled={true}
+                                <DayCell key={value}
+                                         disabled={true}
                                          numWeeks={numWeeks}
                                          date={new Date(moment().add(value, "days").toISOString())}
                                          onRangeChange={this.handleRangeChange.bind(this)}

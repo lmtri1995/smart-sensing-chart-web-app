@@ -6,7 +6,7 @@ export default class TemperatureTrendItem extends Component {
         let {stationId} = this.props;
         return (
             <div className="col">
-                <h4>USL/ Value/ LSL</h4>
+                <h4>STATION {stationId}: USL/ Value/ LSL</h4>
                 <LineChart stationId={stationId}/>
             </div>
         );

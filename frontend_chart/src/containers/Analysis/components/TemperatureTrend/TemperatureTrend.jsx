@@ -8,13 +8,6 @@ import TemperatureTrendItem from "./components/TemperatureTrendItem";
 
 export default class TemperatureTrend extends Component {
 
-    static socket = null;
-    static pushInterval = null;
-    static getInverval = null;
-    static loginData = null;
-    static role = null;
-    static localTempArrayName = null;
-
     constructor(props) {
         super(props);
         //initiate socket
@@ -23,55 +16,12 @@ export default class TemperatureTrend extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        //Specify which array in local storage to push data to and get data from
-        this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
-        switch (this.role) {
-            case ROLES.ROLE_ADMIN:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
-                break;
-            case ROLES.ROLE_IP:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
-                break;
-            case ROLES.ROLE_OS:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
-                break;
-        }
-
-        this.toggle = this.toggle.bind(this);
         this.state = {
             dropdownOpen: false,
             dataArray: "",
             tempTime: 30, //choosen time for temperature
         }
     }
-
-
-    componentDidMount() {
-        let param = {
-            idStation: 1,
-            from_timedevice: 0,
-            to_timedevice: 0,
-            minute: 0,
-        };
-        API('api/os/tempTrend', 'POST', param)
-            .then((response) => {
-                console.log("response fsdafasdf: ", response);
-                if (response.data.success) {
-                    let dataArray = response.data.data;
-                    let displayData = JSON.parse(dataArray[0].data);
-                    /*this.setState({
-                        dataArray: dataArray,
-                    });*/
-                }
-            })
-            .catch((err) => console.log('err:', err))
-
-    }
-
-    toggle() {
-        this.setState({dropdownOpen: !this.state.dropdownOpen})
-    }
-
 
     changeTempTime = (event) => {
         /*let loginData = JSON.parse(localStorage.getItem('logindata'));
@@ -182,21 +132,6 @@ export default class TemperatureTrend extends Component {
                 <div className="row">
                     <div className="col">
                         <h4 className="float-left">temperature Trend</h4>
-                        <ButtonGroup className="float-right">
-                            <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-                                <DropdownToggle caret>
-                                    Monitoring Time: {choosenTime}
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem onClick={this.changeTempTime} dropdownvalue="30">30
-                                        Minutes</DropdownItem>
-                                    <DropdownItem onClick={this.changeTempTime} dropdownvalue="60">1
-                                        Hour</DropdownItem>
-                                    <DropdownItem onClick={this.changeTempTime} dropdownvalue="180">3
-                                        Hour</DropdownItem>
-                                </DropdownMenu>
-                            </ButtonDropdown>
-                        </ButtonGroup>
                     </div>
                 </div>
                 {this.showTemperatureTrendTable()}

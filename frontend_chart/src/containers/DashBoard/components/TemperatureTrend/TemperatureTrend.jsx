@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {ButtonDropdown, ButtonGroup, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
 import TemperatureTrendTable from './components/TemperatureTrendTable';
+import TemperatureTrendItem from './components/TemperatureTrendItem';
 import Singleton from "../../../../services/Socket";
 import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../constants/constants";
 import {config} from "../../../../constants/config";
@@ -59,7 +60,7 @@ export default class TemperatureTrend extends Component {
         }
     }
 
-    componentWillUnmount() {
+    /*componentWillUnmount() {
         //Clear 2 intervals
         if (this.pushInterval) {
             console.log("clear push interval");
@@ -79,7 +80,7 @@ export default class TemperatureTrend extends Component {
                 status: 'stop'
             }
         });
-    }
+    }*/
 
     pushToStock = (returnArray) => {
         if (returnArray && +returnArray.total > 0) {
@@ -286,7 +287,38 @@ export default class TemperatureTrend extends Component {
         let token = loginData.token;
         let socket = Singleton.getInstance(token);*/
 
-        let {tempTime} = this.state;
+            //////////////test
+        /*let {tempTime, stationIdNo} = this.props;
+        this.socket.emit('os_temp_trend', {
+            msg: {
+                event: 'chart_temp_trend',
+                minute: 30,
+                status: 'start',
+                idStation:'1'
+            }
+        });
+
+        //Show data to grid for the first time after GUI rendered
+        let quantity = LOCAL_IP_TEMP_TREND.IP_TEMP_ITEM_TO_GET;
+        //this.showDataToGrid(quantity);
+
+        this.socket.on('chart_temp_trend', (data) => {
+            console.log("data raw: ", data);
+            let returnArray = JSON.parse(data);
+            console.log("=====================================");
+            console.log("=====================================");console.log("=====================================");
+            console.log("=====================================");
+            console.log("station: ", stationIdNo, "data: ", returnArray);
+            let timeSpacePushToStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_PUSH_TO_STOCK;
+            let timeSpaceFromStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_GET_FROM_STOCK;
+
+            //this.getInverval = setInterval(this.showDataToGrid(quantity), timeSpaceFromStock);
+            //this.pushInterval = setInterval(this.pushToStock(returnArray), timeSpacePushToStock);
+
+        });*/
+
+        ///end test
+        /*let {tempTime} = this.state;
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: 'chart_temp_trend',
@@ -310,13 +342,13 @@ export default class TemperatureTrend extends Component {
 
         });
 
-        /*socket.on('token', (data) => {
+        /!*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
             if (!tokenObject.success) {
                 console.log('Token is expired');
                 window.location.href = ("/logout");
             }
-        });*/
+        });*!/*/
 
     }
 
@@ -329,30 +361,47 @@ export default class TemperatureTrend extends Component {
         /*let loginData = JSON.parse(localStorage.getItem('logindata'));
         let token = loginData.token;
         let socket = Singleton.getInstance(token);*/
-        let preTempTime = this.state.tempTime;
         let currentTempTime = parseInt(event.currentTarget.getAttribute("dropdownvalue"));
 
-
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: 'chart_temp_trend',
-                minute: preTempTime,
-                status: 'stop'
-            }
-        });
-
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: 'chart_temp_trend',
-                minute: currentTempTime,
-                status: 'start'
-            }
-        });
         this.setState({
             tempTime: currentTempTime,
         });
     };
 
+
+    showTempTable = (dataArray) => {
+        let result = (<div className="row" key={'2'}>
+            <div className="col-md-6">
+                <TemperatureTrendItem stationIdNo={1} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={2} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={3} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={4} tempTime={this.state.tempTime}/>
+            </div>
+            <div className="col-md-6">
+                <TemperatureTrendItem stationIdNo={5} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={6} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={7} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={8} tempTime={this.state.tempTime}/>
+            </div>
+        </div>);
+        /*if (dataArray && dataArray.length > 0) {
+            result = <div className="row" key={'1'}>
+                <div className="col-md-6">
+                    <TemperatureTrendItem tempData={dataArray[1]}/>
+                    <TemperatureTrendItem tempData={dataArray[2]}/>
+                    <TemperatureTrendItem tempData={dataArray[3]}/>
+                    <TemperatureTrendItem tempData={dataArray[4]}/>
+                </div>
+                <div className="col-md-6">
+                    <TemperatureTrendItem tempData={dataArray[5]}/>
+                    <TemperatureTrendItem tempData={dataArray[6]}/>
+                    <TemperatureTrendItem tempData={dataArray[7]}/>
+                    <TemperatureTrendItem tempData={dataArray[8]}/>
+                </div>
+            </div>
+        }*/
+        return result;
+    };
 
     render() {
         let {dataArray} = this.state;
@@ -386,7 +435,7 @@ export default class TemperatureTrend extends Component {
                         </ButtonGroup>
                     </div>
                 </div>
-                <TemperatureTrendTable dataArray={dataArray}/>
+                {this.showTempTable()}
             </div>
         )
     }

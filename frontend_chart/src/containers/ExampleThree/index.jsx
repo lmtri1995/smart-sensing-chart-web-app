@@ -167,7 +167,7 @@ class App extends Component {
                     // needed
                     .join(' ');
         };
-        API('api/os/tempTrend', 'POST', param)
+        /*API('api/os/tempTrend', 'POST', param)
             .then((response) => {
                 console.log("response: ", response);
                 if (response.data.success) {
@@ -175,9 +175,8 @@ class App extends Component {
                     console.log("dataArray: ", dataArray, "typeof: ", typeof (dataArray));
                     let displayData = JSON.parse(dataArray[0].data);
                     displayData = displayData.slice(0, 10000);//1300 - 1500
-                    console.log("displayData: ", displayData, "typeof: ", typeof (displayData));
 
-                    /*
+                    /!*
                     OK
                     this.garph = new Dygraph(
                         document.getElementById('chart'),
@@ -197,35 +196,31 @@ class App extends Component {
                                 }
                             }
                         }
-                    );*/
-                    /*var data = [
+                    );*!/
+                    /!*var data = [
                         [1342507745, 100], [1342507746, 25], [1342507747, 200], [1342507748, 25], [1342507749, 300]
-                    ];*/
+                    ];*!/
 
                     this.garph = new Dygraph(
                         document.getElementById('chart2'),
                         displayData,
                         {
                             legend: 'follow',
-                            // options go here. See http://dygraphs.com/options.html
-                            //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                             animatedZooms: true,
-                            width: 1000,
+                            width:'20%',
                             height: 500,
                             colors: ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"],
                             labels: ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"],
                             //legendFormatter,
-
-                            labelsSeparateLines: true,
-                            //labels: ["a", "b", "c", "d", "e", "f", "g"],
-                            axes: {
+                            //labelsSeparateLines: true,
+                            axes : {
                                 x: {
                                     drawGrid: false,
-                                    valueFormatter: function (x) {
-                                        return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
+                                    valueFormatter: function(x) {
+                                        return moment.unix(x).format("YYYY/MM/DD hh:mm");;
                                     },
-                                    axisLabelFormatter: function (x) {
-                                        return moment.unix(x).format("YYYY/MM/DD  hh:mm:ss");
+                                    axisLabelFormatter: function(x) {
+                                        return moment.unix(x).format("YYYY/MM/DD  hh:mm");
                                     },
                                 },
                                 y: {
@@ -237,13 +232,13 @@ class App extends Component {
                     );
 
                     //localStorage.setItem('test', JSON.stringify(dataArray));
-                    /*this.setState({
+                    /!*this.setState({
                         dataArray: dataArray,
-                    });*/
+                    });*!/
                     //this.downloadCSV({data:dataArray, filename: 'stockData.csv'});
                 }
             })
-            .catch((err) => console.log('err:', err))
+            .catch((err) => console.log('err:', err))*/
     }
 }
 

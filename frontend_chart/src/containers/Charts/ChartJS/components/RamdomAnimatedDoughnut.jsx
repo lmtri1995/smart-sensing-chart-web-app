@@ -44,7 +44,7 @@ Chart.plugins.register({
     }
 });
 
-const data = {
+const initialData = {
     labels: [
         "Type 1",
         "Type 2",
@@ -95,13 +95,22 @@ export default class RandomAnimatedDoughnutLong extends Component {
         this.canvas = null;
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let data = this.props.data;
+        if (data && this.canvas) {
+            for (let i = 0; i < 4; ++i) {
+                this.myChart.data.datasets[0].data[i] = data[0][`DEFECT_COUNT${i + 1}`];
+            }
+            this.myChart.update();
+        }
+    }
 
     componentDidMount() {
         if (this.canvas) {
             const ctx = this.canvas.getContext('2d');
-            let myChart = new Chart(ctx, {
+            this.myChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: data,
+                data: initialData,
                 options: options
             });
         }

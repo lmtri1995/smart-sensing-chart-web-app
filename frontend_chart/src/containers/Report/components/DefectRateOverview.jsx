@@ -19,8 +19,14 @@ export default class DefectRateOverview extends Component {
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
+
+                    let dataToShow = [];
+                    for (let i = 1; i <= 4; ++i) {
+                        dataToShow.push(dataArray[0][`DEFECT_COUNT${i}`]);
+                    }
+                    
                     this.setState({
-                        dataArray: dataArray,
+                        dataArray: dataToShow,
                     });
                 }
             })

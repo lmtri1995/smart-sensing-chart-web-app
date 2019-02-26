@@ -98,9 +98,7 @@ export default class DoughnutChart extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         let data = this.props.data;
         if (data && this.canvas) {
-            for (let i = 0; i < 4; ++i) {
-                this.myChart.data.datasets[0].data[i] = data[0][`DEFECT_COUNT${i + 1}`];
-            }
+            this.myChart.data.datasets[0].data = data;
             this.myChart.update();
         }
     }

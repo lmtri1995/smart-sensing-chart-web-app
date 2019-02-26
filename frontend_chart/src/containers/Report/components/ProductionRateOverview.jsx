@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import RamdomAnimatedDoughnut from "../../Charts/ChartJS/components/RamdomAnimatedDoughnut";
+import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
 
 export default class ProductionRateOverview extends Component {
     render() {
@@ -7,7 +7,7 @@ export default class ProductionRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <RamdomAnimatedDoughnut/>
+                    <DoughnutChart/>
                 </div>
             </div>
         )

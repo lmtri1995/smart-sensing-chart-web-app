@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import Doughtnut from "../../../../Charts/ChartJS/components/RamdomAnimatedDoughnut";
+import DoughnutChart from "../../../../Charts/ChartJS/components/DoughnutChart";
 
 export class OOEChart extends Component {
     render() {
@@ -8,9 +8,9 @@ export class OOEChart extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-12"><h4>OEE</h4></div>
-                        <div className="col-4 align-self-center"><Doughtnut/></div>
-                        <div className="col-4 align-self-center"><Doughtnut/></div>
-                        <div className="col-4 align-self-center"><Doughtnut/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart/></div>
                     </div>
                 </div>
             </div>

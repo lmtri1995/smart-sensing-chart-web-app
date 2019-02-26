@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import RamdomAnimatedDoughnut from "../../Charts/ChartJS/components/RamdomAnimatedDoughnut";
+import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
 import API from "../../../services/api";
 
 export default class DefectRateOverview extends Component {
@@ -32,7 +32,7 @@ export default class DefectRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Defect Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <RamdomAnimatedDoughnut data={this.state.dataArray}/>
+                    <DoughnutChart data={this.state.dataArray}/>
                 </div>
             </div>
         )

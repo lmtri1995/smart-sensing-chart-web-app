@@ -87,7 +87,7 @@ const options = {
     }
 };
 
-export default class RandomAnimatedDoughnutLong extends Component {
+export default class DoughnutChart extends Component {
 
     constructor(props) {
         super(props);

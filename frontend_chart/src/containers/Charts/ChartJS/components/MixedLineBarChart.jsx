@@ -1,6 +1,4 @@
 import React, {PureComponent} from 'react';
-import {connect} from 'react-redux';
-import {changeGlobalDateFilter} from "../../../../redux/actions/globalDateFilterActions";
 import 'chartjs-plugin-zoom';
 import Chart from 'chart.js';
 import moment from 'moment';
@@ -83,18 +81,13 @@ const options = {
     },
 };
 
-class MixedLineBarChart extends PureComponent {
+export default class MixedLineBarChart extends PureComponent {
 
     constructor(props) {
         super(props);
 
         this.canvas = null;
     }
-
-
-    changeGlobalDateFilter = (startDate, endDate) => {
-        this.props.dispatch(changeGlobalDateFilter(startDate, endDate));
-    };
 
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
@@ -125,11 +118,3 @@ class MixedLineBarChart extends PureComponent {
         );
     }
 }
-
-const mapStateToProps = (state) => {
-    return {
-        globalFilter: state.globalFilter,
-    }
-};
-
-export default connect(mapStateToProps, null)(MixedLineBarChart)

@@ -83,7 +83,7 @@ const options = {
     },
 };
 
-class RandomAnimatedBarsLong extends PureComponent {
+class MixedLineBarChart extends PureComponent {
 
     constructor(props) {
         super(props);
@@ -132,4 +132,4 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps, null)(RandomAnimatedBarsLong)
+export default connect(mapStateToProps, null)(MixedLineBarChart)

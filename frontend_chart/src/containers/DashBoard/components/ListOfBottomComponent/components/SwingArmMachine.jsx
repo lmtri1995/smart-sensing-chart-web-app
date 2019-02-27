@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
-import RandomAnimatedBarsLong from "../../../../Charts/ChartJS/components/RandomAnimatedBarsLong";
+import MixedLineBarChart from "../../../../Charts/ChartJS/components/MixedLineBarChart";
 
 export class SwingArmMachine extends Component {
     render() {
         return (
             <div className="oee-main">
-                <RandomAnimatedBarsLong/>
+                <MixedLineBarChart/>
             </div>
         )
     }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import RandomAnimatedBarsLong from "../../../../Charts/ChartJS/components/RandomAnimatedBarsLong";
+import MixedLineBarChart from "../../../../Charts/ChartJS/components/MixedLineBarChart";
 
 export class StationComparison extends Component {
     render() {
@@ -8,7 +8,7 @@ export class StationComparison extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-12"><h4>Station Comparison</h4></div>
-                        <div className="col-12 align-self-center"><RandomAnimatedBarsLong/></div>
+                        <div className="col-12 align-self-center"><MixedLineBarChart/></div>
                     </div>
                 </div>
             </div>

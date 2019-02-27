@@ -2,12 +2,17 @@ import React, {Component} from 'react';
 import DowntimeShiftItem from './components/DowntimeShiftItem';
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
+import {ClipLoader} from 'react-spinners';
+
+const override = `
+    position: absolute;
+    display:block;
+    left:45%;
+    top :25%;
+    z-index: 100000;
+`;
 
 export default class DowntimeShift extends Component {
-    static socket = null;
-    static _isMounted = false;
-    static loginData = null;
-    static role = null;
 
     constructor(props) {
 
@@ -21,6 +26,7 @@ export default class DowntimeShift extends Component {
 
         this.state = {
             dataArray: "",
+            loading: true,
         }
     }
 
@@ -71,6 +77,7 @@ export default class DowntimeShift extends Component {
                 });
                 this.setState({
                     dataArray: dataArray,
+                    loading: false,
                 });
             }
         });
@@ -204,7 +211,7 @@ export default class DowntimeShift extends Component {
         let result = '';
         let currentShift = this.specifyCurrentShift(dataArray);
         let shift1 = this.showDowntimeShiftItem(dataArray, 1);
-        /*let shift2 = this.showDowntimeShiftItem(dataArray, 2);
+        let shift2 = this.showDowntimeShiftItem(dataArray, 2);
         let shift3 = this.showDowntimeShiftItem(dataArray, 3);
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
@@ -212,8 +219,7 @@ export default class DowntimeShift extends Component {
             result = <tbody>{shift1}{shift3}{shift2}</tbody>;
         } else if (currentShift == 3) {
             result = <tbody>{shift1}{shift2}{shift3}</tbody>;
-        }*/
-        result = <tbody>{shift1}</tbody>;
+        }
         return result;
     }
 
@@ -221,6 +227,16 @@ export default class DowntimeShift extends Component {
         let {dataArray} = this.state;
         return (
             <div>
+                <ClipLoader
+                    css={override}
+                    sizeUnit={"px"}
+                    size={100}
+                    color={'#30D4A4'}
+                    fadeIn="half"
+                    fadeOut="half"
+                    loading={this.state.loading}
+                    margin-left={300}
+                />
                 <table className="table table-bordered table-dark">
                     <thead>
                     <tr>

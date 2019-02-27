@@ -12,11 +12,6 @@ const override = `
     z-index: 100000;
 `;
 export default class ShiftStatus extends Component {
-    static socket = null;
-    static _isMounted = false;
-    static loginData = null;
-    static role = null;
-    static emitEvent = 'shift_status';
 
     constructor(props) {
         super(props);

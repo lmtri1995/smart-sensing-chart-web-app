@@ -32,6 +32,21 @@ export default class ShiftStatus extends Component {
             dataArray: "",
             loading: true
         };
+
+        switch(this.role) {
+            case 'admin':
+                this.apiUrl = 'api/os/shiftStatus';
+                break;
+            case 'ip':
+                this.apiUrl = 'api/ip/shiftStatus';
+                break;
+            case 'os':
+                this.apiUrl = 'api/os/shiftStatus';
+                break;
+            default:
+                this.apiUrl = 'api/os/shiftStatus';
+                break;
+        }
     }
 
     componentWillUnmount() {
@@ -40,67 +55,11 @@ export default class ShiftStatus extends Component {
 
     componentDidMount() {
         this._isMounted = true;
-        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
-        var uDateFrom = mDateFrom.unix();
-        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();*/
-        /*let emitEvent = 'shift_status';
-        switch(this.role) {
-            case 'admin':
-                process = 'shift_status';
-                break;
-            case 'ip':
-                process = 'shift_status';
-                break;
-            case 'os':
-                process = 'os_shift_status';
-                break;
-        }
-        this.socket.emit(emitEvent, {
-            msg: {
-                event: 'shift_status',
-                from_timedevice: 0,
-                to_timedevice: 0,
-                minute: 0,
-                status: 'start'
-            }
-        });
-
-        this.socket.on('sna_shift_status', (data) => {
-            if (this._isMounted) {
-                let returnArray = JSON.parse(data);
-                let dataArray = returnArray.data;
-                dataArray.sort(function (a, b) {
-                    if (parseInt(a.idStation) < parseInt(b.idStation)) {
-                        return -1;
-                    }
-                    if (parseInt(a.idStation) > parseInt(b.idStation)) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                this.setState({
-                    dataArray: dataArray,
-                });
-            }
-        });*/
-
-        /*this.socket.on('token', (data) => {
-            let tokenObject = JSON.parse(data);
-            if (!tokenObject.success) {
-                console.log('Token is expired');
-                window.location.href = ("/logout");
-            }
-        });*/
-        /*let param = {
-            "article_no": "",
-            "model_name": "100"
-        }*/
         let param = {
             "from_timedevice": 0,
             "to_timedevice": 0,
         };
-        API('api/ip/shiftStatus', 'POST', param)
+        API(this.apiUrl, 'POST', param)
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;

@@ -3,6 +3,7 @@ import LineSummaryItem from './components/LineSummaryItem';
 import GeneralSummaryItem from './components/GeneralSummaryItem';
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
+import API from "../../../../services/api";
 
 const override = `
     position: absolute;
@@ -27,6 +28,21 @@ export default class ProcessStatus extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
+        switch(this.role) {
+            case 'admin':
+                this.apiUrl = 'api/os/processStatus';
+                break;
+            case 'ip':
+                this.apiUrl = 'api/ip/processStatus';
+                break;
+            case 'os':
+                this.apiUrl = 'api/os/processStatus';
+                break;
+            default:
+                this.apiUrl = 'api/os/processStatus';
+                break;
+        }
+
         this.state = {
             dataArray: "",
         };
@@ -38,60 +54,22 @@ export default class ProcessStatus extends Component {
 
     componentDidMount() {
         this._isMounted = true;
-        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
-        var uDateFrom = mDateFrom.unix();
-        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();*/
 
-        /*let emitEvent = 'process_status';
-        switch(this.role) {
-            case 'admin':
-                emitEvent = 'process_status';
-                break;
-            case 'ip':
-                emitEvent = 'process_status';
-                break;
-            case 'os':
-                emitEvent = 'os_process_status';
-                break;
-        }
-        this.socket.emit(emitEvent, {
-            msg: {
-                event: 'sna_process_status',
-                from_timedevice: 0,
-                to_timedevice: 0,
-                minute: 0,
-                status: 'start'
-            }
-        });
-
-        this.socket.on('sna_process_status', (data) => {
-            if (this._isMounted) {
-                let returnArray = JSON.parse(data);
-                let dataArray = returnArray.data;
-                dataArray.sort(function (a, b) {
-                    if (parseInt(a.idStation) < parseInt(b.idStation)) {
-                        return -1;
-                    }
-                    if (parseInt(a.idStation) > parseInt(b.idStation)) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                this.setState({
-                    dataArray: dataArray,
-                });
-            }
-        });*/
-
-        /*socket.on('token', (data) => {
-            let tokenObject = JSON.parse(data);
-            if (!tokenObject.success) {
-                console.log('Token is expired');
-                window.location.href = ("/logout");
-            }
-        });*/
-
+        let param = {
+            "from_timedevice": 0,
+            "to_timedevice": 0,
+        };
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    this.setState({
+                        dataArray: dataArray,
+                        loading: false,
+                    });
+                }
+            })
+            .catch((err) => console.log('err:', err))
     }
 
     showLineItem(data, stationId) {

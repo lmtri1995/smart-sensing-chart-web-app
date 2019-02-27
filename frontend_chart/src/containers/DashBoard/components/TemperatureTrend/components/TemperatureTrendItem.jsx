@@ -4,6 +4,7 @@ import Singleton from "../../../../../services/Socket";
 import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../../constants/constants";
 import Dygraph from "dygraphs/src/dygraph";
 import moment from "moment";
+import Refresh from "../../../../../shared/img/Refresh.svg";
 
 export default class TemperatureTrendItem extends Component {
     /*static socket = null;
@@ -93,7 +94,7 @@ export default class TemperatureTrendItem extends Component {
         let {tempTime, stationIdNo} = this.props;
         this.preTempTime = tempTime;
         let displayData = "X\n";
-        let g = new Dygraph(
+        this.graph = new Dygraph(
             document.getElementById(`station${stationIdNo}`),
             displayData,
             {
@@ -165,7 +166,7 @@ export default class TemperatureTrendItem extends Component {
                         console.log("displayData after updated: ", displayData);
                     }
 
-                    g.updateOptions( { 'file': displayData } );
+                    this.graph.updateOptions( { 'file': displayData } );
                 }
             }
 
@@ -189,11 +190,24 @@ export default class TemperatureTrendItem extends Component {
 
     };
 
+    refresh = () => {
+        if (this.graph){
+            this.graph.resetZoom();
+        }
+    }
+
     render() {
         let {stationIdNo} = this.props;
         return (
             <div className="col">
-                <h4>STATION {stationIdNo}: USL/ Value/ LSL</h4>
+                <div className="row">
+                    <div className="col-11">
+                        <h4 className="float-left">STATION {stationIdNo}: USL/ Value/ LSL</h4>
+                    </div>
+                    <div className="col-1">
+                        <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
+                    </div>
+                </div>
                 <div id={'station' + stationIdNo}></div>
             </div>
         );

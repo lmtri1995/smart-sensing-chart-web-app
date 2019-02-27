@@ -4,6 +4,9 @@ import Singleton from "../../../../services/Socket";
 import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../constants/constants";
 import API from "../../../../services/api";
 import TemperatureTrendItem from "./components/TemperatureTrendItem";
+import Minimize from "../../../../shared/img/Minimize.svg";
+import Expand from "../../../../shared/img/Expand.svg";
+import Refresh from "../../../../shared/img/Refresh.svg";
 
 
 export default class TemperatureTrend extends Component {
@@ -131,7 +134,7 @@ export default class TemperatureTrend extends Component {
             <div className="temperature">
                 <div className="row">
                     <div className="col">
-                        <h4 className="float-left">temperature Trend</h4>
+                        <h4 className="float-left">Temperature Trend</h4>
                     </div>
                 </div>
                 {this.showTemperatureTrendTable()}

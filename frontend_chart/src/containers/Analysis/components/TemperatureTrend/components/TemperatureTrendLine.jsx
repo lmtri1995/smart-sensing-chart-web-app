@@ -40,6 +40,14 @@ class TemperatureTrendLine extends PureComponent {
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
                 break;
         }
+
+        this.props.onRef(this);
+    }
+
+    refresh = () => {
+        if (this.graph){
+            this.graph.resetZoom();
+        }
     }
 
     componentDidMount() {
@@ -52,7 +60,7 @@ class TemperatureTrendLine extends PureComponent {
         };
 
         let displayData = "X\n";
-        let g = new Dygraph(
+        this.graph = new Dygraph(
             document.getElementById('station' + stationId),
             displayData,
             {
@@ -90,7 +98,7 @@ class TemperatureTrendLine extends PureComponent {
 
                     let displayData = JSON.parse(dataArray[0].data);
                     if (displayData) {
-                        g.updateOptions( { 'file': displayData } );
+                        this.graph.updateOptions( { 'file': displayData } );
                     }
 
                 }

@@ -5,6 +5,16 @@ import Dygraph from "dygraphs/src/dygraph";
 import moment from "moment";
 import API from "../../../../../services/api";
 import Singleton from "../../../../../services/Socket";
+import {ClipLoader} from "react-spinners";
+
+const override = `
+    position: absolute;
+    display:block;
+    left:45%;
+    top: 30%;
+    z-index: 100000;
+`;
+
 
 class TemperatureTrendLine extends PureComponent {
     constructor(props) {
@@ -42,6 +52,10 @@ class TemperatureTrendLine extends PureComponent {
         }
 
         this.props.onRef(this);
+
+        this.state = {
+            loading: true
+        };
     }
 
     refresh = () => {
@@ -100,6 +114,7 @@ class TemperatureTrendLine extends PureComponent {
                     if (displayData) {
                         this.graph.updateOptions( { 'file': displayData } );
                     }
+                    this.setState({loading: false});
 
                 }
             })
@@ -109,11 +124,22 @@ class TemperatureTrendLine extends PureComponent {
     render() {
         let {stationId} = this.props;
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col" style={{marginBottom: 70}} id={'station' + stationId}></div>
+            <div>
+                <ClipLoader
+                    css={override}
+                    sizeUnit={"px"}
+                    size={100}
+                    color={'#30D4A4'}
+                    loading={this.state.loading}
+                    margin-left={300}
+                />
+                <div className="container">
+                    <div className="row">
+                        <div className="col" style={{marginBottom: 70}} id={'station' + stationId}></div>
+                    </div>
                 </div>
             </div>
+
 
 
         );

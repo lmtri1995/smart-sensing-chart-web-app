@@ -1,21 +1,19 @@
 import React, {Component} from 'react'
-import LineChart from "./TemperatureTrendLine";
 import Singleton from "../../../../../services/Socket";
-import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../../constants/constants";
 import Dygraph from "dygraphs/src/dygraph";
 import moment from "moment";
 import Refresh from "../../../../../shared/img/Refresh.svg";
+import {ClipLoader} from "react-spinners";
+
+const override = `
+    position: absolute;
+    display:block;
+    left:45%;
+    top: 30%;
+    z-index: 100000;
+`;
 
 export default class TemperatureTrendItem extends Component {
-    /*static socket = null;
-    static pushInterval = null;
-    static getInverval = null;
-    static loginData = null;
-    static role = null;
-    static localTempArrayName = null;
-    static emitEvent = 'temp_trend_1';
-    static preTempTime = 30;*/
-
     constructor(props) {
         super(props);
 
@@ -52,6 +50,10 @@ export default class TemperatureTrendItem extends Component {
                 this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
         }
+
+        this.state = {
+            loading: true
+        };
     }
 
     componentWillUnmount(){
@@ -146,13 +148,7 @@ export default class TemperatureTrendItem extends Component {
                 let returnArray = JSON.parse(returnArrayObject[0].data);
                 console.log("tempTime: ", tempTime, "stationID: ", stationIdNo);
                 console.log("station: ", stationIdNo, "data: ", returnArray);
-                //let timeSpacePushToStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_PUSH_TO_STOCK;
-                //let timeSpaceFromStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_GET_FROM_STOCK;
-
-                //this.getInverval = setInterval(this.showDataToGrid(quantity), timeSpaceFromStock);
-                //this.pushInterval = setInterval(this.pushToStock(returnArray), timeSpacePushToStock);
                 if (returnArray && returnArray.length > 0){
-
                     if (displayData === "X\n"){
                         console.log("display data is X");
                         displayData = returnArray;
@@ -167,6 +163,7 @@ export default class TemperatureTrendItem extends Component {
                     }
 
                     this.graph.updateOptions( { 'file': displayData } );
+                    this.setState({loading: false});
                 }
             }
 
@@ -199,17 +196,28 @@ export default class TemperatureTrendItem extends Component {
     render() {
         let {stationIdNo} = this.props;
         return (
-            <div className="col">
-                <div className="row">
-                    <div className="col-11">
-                        <h4 className="float-left">STATION {stationIdNo}: USL/ Value/ LSL</h4>
+                <div className="col">
+                    <div className="row">
+                        <div className="col-11">
+                            <h4 className="float-left">STATION {stationIdNo}: USL/ Value/ LSL</h4>
+                        </div>
+                        <div>
+                            <ClipLoader
+                                css={override}
+                                sizeUnit={"px"}
+                                size={100}
+                                color={'#30D4A4'}
+                                loading={this.state.loading}
+                                margin-left={300}
+                            />
+                            <div className="col-1">
+                                <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
+                            </div>
+                        </div>
+
                     </div>
-                    <div className="col-1">
-                        <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
-                    </div>
+                    <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
                 </div>
-                <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
-            </div>
         );
     }
 }

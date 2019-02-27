@@ -9,7 +9,7 @@ const override = `
     position: absolute;
     display:block;
     left:45%;
-    top: 30%;
+    top: 25%;
     z-index: 100000;
 `;
 
@@ -104,7 +104,7 @@ export default class TemperatureTrendItem extends Component {
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                 legend: 'follow',
                 animatedZooms: true,
-                width: 720,
+                width: 780,
                 height: 200,
                 colors: this.colorArray,
                 labels: this.labelArray,
@@ -201,6 +201,9 @@ export default class TemperatureTrendItem extends Component {
                         <div className="col-11">
                             <h4 className="float-left">STATION {stationIdNo}: USL/ Value/ LSL</h4>
                         </div>
+                        <div className="col-1">
+                            <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
+                        </div>
                         <div>
                             <ClipLoader
                                 css={override}
@@ -210,13 +213,10 @@ export default class TemperatureTrendItem extends Component {
                                 loading={this.state.loading}
                                 margin-left={300}
                             />
-                            <div className="col-1">
-                                <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
-                            </div>
+                            <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
                         </div>
-
                     </div>
-                    <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
+
                 </div>
         );
     }

@@ -371,35 +371,19 @@ export default class TemperatureTrend extends Component {
 
     showTempTable = (dataArray) => {
         let result = (<div className="row" key={'2'}>
-            <div className="col-md-6">
+            <div className="col-6">
                 <TemperatureTrendItem stationIdNo={1} tempTime={this.state.tempTime}/>
                 <TemperatureTrendItem stationIdNo={2} tempTime={this.state.tempTime}/>
                 <TemperatureTrendItem stationIdNo={3} tempTime={this.state.tempTime}/>
                 <TemperatureTrendItem stationIdNo={4} tempTime={this.state.tempTime}/>
             </div>
-            <div className="col-md-6">
+            <div className="col-6">
                 <TemperatureTrendItem stationIdNo={5} tempTime={this.state.tempTime}/>
                 <TemperatureTrendItem stationIdNo={6} tempTime={this.state.tempTime}/>
                 <TemperatureTrendItem stationIdNo={7} tempTime={this.state.tempTime}/>
                 <TemperatureTrendItem stationIdNo={8} tempTime={this.state.tempTime}/>
             </div>
         </div>);
-        /*if (dataArray && dataArray.length > 0) {
-            result = <div className="row" key={'1'}>
-                <div className="col-md-6">
-                    <TemperatureTrendItem tempData={dataArray[1]}/>
-                    <TemperatureTrendItem tempData={dataArray[2]}/>
-                    <TemperatureTrendItem tempData={dataArray[3]}/>
-                    <TemperatureTrendItem tempData={dataArray[4]}/>
-                </div>
-                <div className="col-md-6">
-                    <TemperatureTrendItem tempData={dataArray[5]}/>
-                    <TemperatureTrendItem tempData={dataArray[6]}/>
-                    <TemperatureTrendItem tempData={dataArray[7]}/>
-                    <TemperatureTrendItem tempData={dataArray[8]}/>
-                </div>
-            </div>
-        }*/
         return result;
     };
 

@@ -100,10 +100,10 @@ export default class TemperatureTrendItem extends Component {
             {
                 // options go here. See http://dygraphs.com/options.html
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
-                legend: 'always',
+                legend: 'follow',
                 animatedZooms: true,
-                width: '100%',
-                height: '65px',
+                width: 720,
+                height: 200,
                 colors: this.colorArray,
                 labels: this.labelArray,
                 //legendFormatter,
@@ -208,7 +208,7 @@ export default class TemperatureTrendItem extends Component {
                         <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
                     </div>
                 </div>
-                <div id={'station' + stationIdNo}></div>
+                <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
             </div>
         );
     }

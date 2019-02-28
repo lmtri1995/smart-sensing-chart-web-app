@@ -29,23 +29,70 @@ class ReportPage extends Component {
 
                     let dateLabels = [], dataToShow = [];
                     let shift1 = [], shift2 = [], shift3 = [];
+                    let averageProductionRatesByDay = [];
 
+                    let totalProductionRateOfCurrentDay = 0, currentProductionRate = 0;
                     dataArray.map(currentDay => {
+                        currentProductionRate = currentDay['PRODUCTION_RATE'];
+                        // Round to 2 decimal places
+                        currentProductionRate = currentProductionRate % 1 === 0
+                            ? currentProductionRate
+                            : Math.round(currentProductionRate * 100) / 100;
+
                         switch (currentDay['SHIFT_NO']) {
                             case '1':
-                                shift1.push(currentDay['PRODUCTION_RATE']);
+                                shift1.push(currentProductionRate);
                                 dateLabels.push(currentDay['WORK_DATE']);
+
+                                totalProductionRateOfCurrentDay = 0;
+                                totalProductionRateOfCurrentDay += currentProductionRate;
                                 break;
                             case '2':
-                                shift2.push(currentDay['PRODUCTION_RATE']);
+                                shift2.push(currentProductionRate);
+
+                                totalProductionRateOfCurrentDay += currentProductionRate;
                                 break;
                             case '3':
-                                shift3.push(currentDay['PRODUCTION_RATE']);
+                                shift3.push(currentProductionRate);
+
+                                totalProductionRateOfCurrentDay += currentProductionRate;
+
+                                averageProductionRatesByDay.push(totalProductionRateOfCurrentDay / 3); // Average of 3 shifts
                                 break;
                         }
+
                     });
 
-                    dataToShow.push(shift1, shift2, shift3);
+                    // Colors = Shift 1 + Shift 2 + Shift 3 + Average line + Average point background color
+                    let colors = ['#FF9C64', '#8C67F6', '#F575F7', '#EBEDF1', '#CCCCCC'];
+                    for (let i = 1; i <= 4; ++i) {  // 3 Shifts' Production Rates + 1 Average Production Rates
+                        if (i < 4) {
+                            dataToShow.push(
+                                {
+                                    label: `Shift ${i}`,
+                                    backgroundColor: colors[i - 1],
+                                    data: eval(`shift${i}`)
+                                }
+                            );
+                        } else {
+                            dataToShow.push(
+                                {
+                                    label: 'Average',
+                                    borderColor: colors[i - 1],
+                                    borderWidth: 2,
+                                    pointRadius: 0,
+                                    pointBorderWidth: 2,
+                                    pointBackgroundColor: colors[i],
+                                    pointBorderColor: colors[i - 1],
+                                    data: averageProductionRatesByDay,
+
+                                    type: 'line',
+                                    fill: false,
+                                    tension: 0
+                                }
+                            );
+                        }
+                    }
 
                     console.log("DATE_LABELS_PRODUCTION_RATE", dateLabels);
                     console.log("DATA_TO_SHOW_PRODUCTION_RATE", dataToShow);
@@ -66,17 +113,53 @@ class ReportPage extends Component {
 
                     let dateLabels = [], dataToShow = [];
                     let defectType1 = [], defectType2 = [], defectType3 = [], defectType4 = [];
+                    let totalDefectsByDay = [];
 
+                    let totalDefectOfCurrentDay = 0, currentDefect = 0;
                     dataArray.map(currentDay => {
-                        defectType1.push(currentDay['DEFECT_COUNT1']);
-                        defectType2.push(currentDay['DEFECT_COUNT2']);
-                        defectType3.push(currentDay['DEFECT_COUNT3']);
-                        defectType4.push(currentDay['DEFECT_COUNT4']);
+                        for (let i = 1; i <= 4; ++i) {  // 4 Defect Types
+                            currentDefect = currentDay[`DEFECT_COUNT${i}`];
+
+                            eval(`defectType${i}.push(currentDefect)`);
+
+                            totalDefectOfCurrentDay += currentDefect;
+                        }
+                        totalDefectsByDay.push(totalDefectOfCurrentDay);
+                        totalDefectOfCurrentDay = 0;
 
                         dateLabels.push(currentDay['WORK_DATE']);
                     });
 
-                    dataToShow.push(defectType1, defectType2, defectType3, defectType4);
+                    // Colors = Type 1 + Type 2 + Type 3 + Type 4 + Total Defect line + Total Defect point background color
+                    let colors = ['#FF9C64', '#46D6EA', '#F575F7', '#8C67F6', '#EB6A91', '#EBEDF1'];
+                    for (let i = 1; i <= 5; ++i) {  // 4 Defect Types + 1 Total Defect
+                        if (i < 5) {
+                            dataToShow.push(
+                                {
+                                    label: `Type ${i}`,
+                                    backgroundColor: colors[i - 1],
+                                    data: eval(`defectType${i}`)
+                                }
+                            );
+                        } else {
+                            dataToShow.push(
+                                {
+                                    label: 'Total Defect',
+                                    borderColor: colors[i - 1],
+                                    borderWidth: 2,
+                                    pointRadius: 0,
+                                    pointBorderWidth: 2,
+                                    pointBackgroundColor: colors[i],
+                                    pointBorderColor: colors[i - 1],
+                                    data: totalDefectsByDay,
+
+                                    type: 'line',
+                                    fill: false,
+                                    tension: 0
+                                }
+                            );
+                        }
+                    }
 
                     console.log("DATE_LABELS_DEFECT_BY_TYPE", dateLabels);
                     console.log("DATA_TO_SHOW_DEFECT_BY_TYPE", dataToShow);

@@ -94,9 +94,6 @@ class ReportPage extends Component {
                         }
                     }
 
-                    console.log("DATE_LABELS_PRODUCTION_RATE", dateLabels);
-                    console.log("DATA_TO_SHOW_PRODUCTION_RATE", dataToShow);
-
                     this.setState({
                         ...this.state,
                         dateLabels: dateLabels,
@@ -161,9 +158,6 @@ class ReportPage extends Component {
                         }
                     }
 
-                    console.log("DATE_LABELS_DEFECT_BY_TYPE", dateLabels);
-                    console.log("DATA_TO_SHOW_DEFECT_BY_TYPE", dataToShow);
-
                     this.setState({
                         ...this.state,
                         dateLabels: dateLabels,
@@ -212,22 +206,21 @@ class ReportPage extends Component {
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="1">
                         <div className="row">
-
                             <div className="col-9">
-                                <ProductionRate/>
+                                <ProductionRate labels={this.state.dateLabels} productionRate={this.state.productionRate}/>
                             </div>
                             <div className="col-3">
-                                <ProductionRateOverview/>
+                                <ProductionRateOverview productionRate={this.state.productionRate}/>
                             </div>
                         </div>
                     </TabPane>
                     <TabPane tabId="2">
                         <div className="row">
                             <div className="col-9">
-                                <DefectRate/>
+                                <DefectRate labels={this.state.dateLabels} defectByTypeOverTime={this.state.defectByTypeOverTime}/>
                             </div>
                             <div className="col-3">
-                                <DefectRateOverview/>
+                                <DefectRateOverview defectByTypeOverTime={this.state.defectByTypeOverTime}/>
                             </div>
                         </div>
                     </TabPane>

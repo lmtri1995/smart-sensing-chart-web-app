@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import MixedLineBarChart from "../../../../Charts/ChartJS/components/MixedLineBarChart";
 
-export class StationComparison extends Component {
+export class CycleDefectStationComparison extends Component {
     render() {
         return (
             <div className="oee-main">
@@ -16,4 +16,4 @@ export class StationComparison extends Component {
     }
 }
 
-export default StationComparison
+export default CycleDefectStationComparison

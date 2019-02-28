@@ -2,10 +2,11 @@ import React from 'react';
 import OEEChart from "./components/OOEChart";
 import OEEPre from "./components/OEEPre";
 import LossOfWork from "./components/LossOfWork";
-import StationComparison from "./components/StationComparison";
+import CycleDefectStationComparison from "./components/CycleDefectStationComparison";
 import SwingArmMachine from "./components/SwingArmMachine";
+import SwingOSStationComparison from "./components/SwingOSStationComparison";
 
-const listBottomCom = () => (
+const listBottomComponent = () => (
     <div className="container">
         <div className="row">
             <div className="col">
@@ -17,7 +18,7 @@ const listBottomCom = () => (
             <div className="col">
                 <div className="row">
                     <div className="col-3"><LossOfWork/></div>
-                    <div className="col-9"><StationComparison/></div>
+                    <div className="col-9"><CycleDefectStationComparison/></div>
                 </div>
             </div>
         </div>
@@ -26,10 +27,10 @@ const listBottomCom = () => (
                 <SwingArmMachine/>
             </div>
             <div className="col-6">
-                <SwingArmMachine/>
+                <SwingOSStationComparison/>
             </div>
         </div>
 
     </div>
 );
-export default listBottomCom;
+export default listBottomComponent;

@@ -104,7 +104,7 @@ export default class TemperatureTrendItem extends Component {
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                 legend: 'follow',
                 animatedZooms: true,
-                width: 780,
+                width: 700,
                 height: 200,
                 colors: this.colorArray,
                 labels: this.labelArray,
@@ -141,25 +141,15 @@ export default class TemperatureTrendItem extends Component {
 
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
-            console.log("response: ", response);
             if (response.success){
-                console.log("success");
                 let returnArrayObject = response.data;
                 let returnArray = JSON.parse(returnArrayObject[0].data);
-                console.log("tempTime: ", tempTime, "stationID: ", stationIdNo);
-                console.log("station: ", stationIdNo, "data: ", returnArray);
                 if (returnArray && returnArray.length > 0){
                     if (displayData === "X\n"){
-                        console.log("display data is X");
                         displayData = returnArray;
                     } else {
-                        console.log("display data different");
-                        console.log("displayData: ", displayData);
-                        console.log("returnArray: ", returnArray);
                         displayData = displayData.slice(returnArray.length, displayData.length);
-                        console.log("display data after slice: ", displayData);
                         displayData.push(...returnArray);
-                        console.log("displayData after updated: ", displayData);
                     }
 
                     this.graph.updateOptions( { 'file': displayData } );

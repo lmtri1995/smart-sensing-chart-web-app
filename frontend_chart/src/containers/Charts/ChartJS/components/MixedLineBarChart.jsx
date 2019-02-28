@@ -3,7 +3,7 @@ import 'chartjs-plugin-zoom';
 import Chart from 'chart.js';
 import moment from 'moment';
 
-const initialData = {
+let initialData = {
     labels: [
         moment().subtract(6, "days").format('YYYY/MM/DD'),
         moment().subtract(5, "days").format('YYYY/MM/DD'),
@@ -17,22 +17,22 @@ const initialData = {
         {
             label: "Type 1",
             backgroundColor: "#FF9C64",
-            data: [48, 26, 43, 18, 30, 34, 33]
+            data: [0, 0, 0, 0, 0, 0, 0]
         },
         {
             label: "Type 2",
             backgroundColor: "#46D6EA",
-            data: [42, 40, 40, 48, 18, 50, 28]
+            data: [0, 0, 0, 0, 0, 0, 0]
         },
         {
             label: "Type 3",
             backgroundColor: "#F575F7",
-            data: [9, 33, 39, 35, 32, 53, 30]
+            data: [0, 0, 0, 0, 0, 0, 0]
         },
         {
             label: "Type 4",
             backgroundColor: "#8C67F6",
-            data: [30, 26, 28, 27, 24, 31, 40]
+            data: [0, 0, 0, 0, 0, 0, 0]
         },
         {
             label: "Total Defect",
@@ -42,7 +42,7 @@ const initialData = {
             pointBorderWidth: 2,
             pointBackgroundColor: '#EBEDF1',
             pointBorderColor: '#EB6A91',
-            data: [129, 125, 150, 128, 104, 168, 131],
+            data: [0, 0, 0, 0, 0, 0, 0],
 
             // Changes this dataset to become a line
             type: 'line',
@@ -54,13 +54,13 @@ const initialData = {
 
 const options = {
     legend: {
-        position: 'bottom',
+        display: false,
     },
     scales: {
         xAxes: [
             {
                 ticks: {
-                    fontColor: 'rgb(204, 204, 204)',
+                    fontColor: '#FFFFFF',
                 },
             },
         ],
@@ -74,7 +74,7 @@ const options = {
                 },
                 ticks: {
                     beginAtZero: true,
-                    fontColor: 'rgb(204, 204, 204)',
+                    fontColor: '#868D93',
                 },
             },
         ],
@@ -89,27 +89,40 @@ export default class MixedLineBarChart extends PureComponent {
         this.canvas = null;
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            let {labels, data} = this.props;
+            if (labels && data && this.canvas) {
+                // These don't work
+                // this.myChart.data.labels = labels;
+                // this.myChart.data.datasets = data;
+
+                // These don't work either
+                // this.myChart.config.data.labels = labels;
+                // this.myChart.config.data.datasets = data;
+
+                // This works
+                // this.myChart.config.data = {
+                //     labels: labels,
+                //     datasets: data
+                // };
+                // This works too
+                this.myChart.data = {
+                    labels: labels,
+                    datasets: data
+                };
+                this.myChart.update();
+            }
+        }
+    }
+
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
-        let myChart = new Chart(ctx, {
+        this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
             options: options
         });
-        setInterval(() => {
-            let random, totalDefect;
-            for (let i = 0, length = myChart.data.datasets[0].data.length; i < length; ++i) {
-                totalDefect = 0;
-                for (let j = 0, datasetLength = myChart.data.datasets.length - 1; j < datasetLength; ++j) {
-                    random = Math.floor(Math.random() * 100) + 1;
-                    myChart.data.datasets[j].data[i] = random;
-
-                    totalDefect += random;
-                }
-                myChart.data.datasets[myChart.data.datasets.length - 1].data[i] = totalDefect;
-                myChart.update();
-            }
-        }, 5000);
     }
 
     render() {

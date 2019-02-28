@@ -96,10 +96,31 @@ export default class DoughnutChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        let data = this.props.data;
-        if (data && this.canvas) {
-            this.myChart.data.datasets[0].data = data;
-            this.myChart.update();
+        if (this.props !== prevProps) {
+            let {labels, data, centerTotal} = this.props;
+            if (labels && data && this.canvas) {
+                this.myChart.data = {
+                    labels: labels,
+                    datasets: data
+                };
+
+                if (!centerTotal) {
+                    centerTotal = data[0].data.reduce((acc, curVal) => acc + curVal, 0);
+                }
+
+                this.myChart.options.elements.center.text =
+                    centerTotal % 1 === 0
+                        ? centerTotal
+                        : centerTotal.toFixed(2);
+
+                // For every 1 more letter (initially 3 letters), subtract sidePadding (initially 70) by 5 unit
+                this.myChart.options.elements.center.sidePadding =
+                    centerTotal % 1 === 0
+                        ? (70 - 5 * (centerTotal.toString().length - 3))
+                        : (70 - 5 * (centerTotal.toFixed(2).length - 3));
+
+                this.myChart.update();
+            }
         }
     }
 

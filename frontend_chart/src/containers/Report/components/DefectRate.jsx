@@ -7,7 +7,7 @@ export default class DefectRate extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Defect by Type over Time</h4></div>
                 <div className="col-12 report-item">
-                    <MixedLineBarChart/>
+                    <MixedLineBarChart labels={this.props.labels} data={this.props.defectByTypeOverTime}/>
                 </div>
             </div>
         )

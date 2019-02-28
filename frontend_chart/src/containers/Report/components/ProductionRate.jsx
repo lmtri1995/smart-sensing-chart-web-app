@@ -7,7 +7,7 @@ export default class ProductionRate extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate</h4></div>
                 <div className="col-12 report-item">
-                    <MixedLineBarChart/>
+                    <MixedLineBarChart labels={this.props.labels} data={this.props.productionRate}/>
                 </div>
             </div>
         )

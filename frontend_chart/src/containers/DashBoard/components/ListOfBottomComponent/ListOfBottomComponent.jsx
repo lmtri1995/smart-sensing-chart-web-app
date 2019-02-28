@@ -1,6 +1,6 @@
 import React from 'react';
-import OEEChart from "./components/OOEChart";
-import OEEPre from "./components/OEEPre";
+import OEEChart from "./components/OEEChart";
+import OEEGeneral from "./components/OEEGeneral";
 import LossOfWork from "./components/LossOfWork";
 import CycleDefectStationComparison from "./components/CycleDefectStationComparison";
 import SwingArmMachine from "./components/SwingArmMachine";
@@ -12,7 +12,7 @@ const listBottomComponent = () => (
             <div className="col">
                 <div className="row">
                     <div className="col-9"><OEEChart/></div>
-                    <div className="col-3"><OEEPre/></div>
+                    <div className="col-3"><OEEGeneral/></div>
                 </div>
             </div>
             <div className="col">

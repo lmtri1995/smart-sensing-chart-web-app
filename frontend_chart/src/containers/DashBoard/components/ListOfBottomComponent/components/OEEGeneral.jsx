@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-export class OEEPre extends Component {
+export class OEEGeneral extends Component {
     constructor(props) {
         super(props);
 
@@ -24,4 +24,4 @@ export class OEEPre extends Component {
     }
 }
 
-export default OEEPre
+export default OEEGeneral

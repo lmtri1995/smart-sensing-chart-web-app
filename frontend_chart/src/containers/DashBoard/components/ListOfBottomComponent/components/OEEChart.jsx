@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import DoughnutChart from "../../../../Charts/ChartJS/components/DoughnutChart";
 
-export default class OOEChart extends Component {
+export default class OEEChart extends Component {
     render() {
         return (
             <div className="oee-main">

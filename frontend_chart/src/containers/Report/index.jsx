@@ -5,8 +5,15 @@ import ProductionRate from './components/ProductionRate';
 import ProductionRateOverview from './components/ProductionRateOverview';
 import {TabContent, TabPane} from 'reactstrap';
 import API from "../../services/api";
+import moment from "moment";
+import {GlobalFilterProps} from "../../shared/prop-types/ReducerProps";
+import {connect} from "react-redux";
 
 class ReportPage extends Component {
+    static propTypes = {
+        globalDateFilter: GlobalFilterProps.isRequired,
+    };
+
     constructor(props) {
         super(props);
 
@@ -17,11 +24,45 @@ class ReportPage extends Component {
             productionRate: null,
             defectByTypeOverTime: null,
         };
+    }
+
+    toggle(tab) {
+        if (this.state.activeTab !== tab) {
+            this.setState({
+                activeTab: tab
+            });
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            let {startDate, endDate} = this.props.globalDateFilter;
+
+            // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
+            let param = {
+                from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
+                to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
+            };
+
+            this.requestProductionRates(param);
+            this.requestDefectByTypeOverTime(param);
+
+        }
+    }
+
+    componentDidMount() {
+        let {startDate, endDate} = this.props.globalDateFilter;
 
         let param = {
-            from_workdate: "20190216",
-            to_workdate: "20190225",
+            from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
+            to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
         };
+
+        this.requestProductionRates(param);
+        this.requestDefectByTypeOverTime(param);
+    }
+
+    requestProductionRates = (param) => {
         API('api/os/productionRate', 'POST', param)
             .then((response) => {
                 if (response.data.success) {
@@ -102,7 +143,9 @@ class ReportPage extends Component {
                 }
             })
             .catch((err) => console.log('err:', err));
+    };
 
+    requestDefectByTypeOverTime = (param) => {
         API('api/os/defectByTypeOverTime', 'POST', param)
             .then((response) => {
                 if (response.data.success) {
@@ -166,15 +209,7 @@ class ReportPage extends Component {
                 }
             })
             .catch((err) => console.log('err:', err));
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
+    };
 
     render() {
         return (
@@ -207,7 +242,8 @@ class ReportPage extends Component {
                     <TabPane tabId="1">
                         <div className="row">
                             <div className="col-9">
-                                <ProductionRate labels={this.state.dateLabels} productionRate={this.state.productionRate}/>
+                                <ProductionRate labels={this.state.dateLabels}
+                                                productionRate={this.state.productionRate}/>
                             </div>
                             <div className="col-3">
                                 <ProductionRateOverview productionRate={this.state.productionRate}/>
@@ -217,7 +253,8 @@ class ReportPage extends Component {
                     <TabPane tabId="2">
                         <div className="row">
                             <div className="col-9">
-                                <DefectRate labels={this.state.dateLabels} defectByTypeOverTime={this.state.defectByTypeOverTime}/>
+                                <DefectRate labels={this.state.dateLabels}
+                                            defectByTypeOverTime={this.state.defectByTypeOverTime}/>
                             </div>
                             <div className="col-3">
                                 <DefectRateOverview defectByTypeOverTime={this.state.defectByTypeOverTime}/>
@@ -230,4 +267,8 @@ class ReportPage extends Component {
     }
 }
 
-export default ReportPage;
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(ReportPage);

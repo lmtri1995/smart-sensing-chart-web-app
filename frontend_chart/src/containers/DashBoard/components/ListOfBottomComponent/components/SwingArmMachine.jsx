@@ -3,14 +3,6 @@ import Singleton from "../../../../../services/Socket";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
 
-const createArray = () => {
-    let arr = [];
-    for (let i = 0; i < 15; i++) {
-        arr.push(0);
-    }
-    return arr;
-}
-
 const initialData = {
     labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     datasets: [
@@ -102,11 +94,6 @@ export class SwingArmMachine extends Component {
 
     handleReturnData = (returnData) => {
         if (returnData && returnData.length > 15){
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
             //server send 360 rows for the first time
             //handle returnData, divide into 2 child arrays: datasets, labels
             //set to this.datasets, this.labels
@@ -116,11 +103,6 @@ export class SwingArmMachine extends Component {
                 this.datasets.push(item[1]);
             });
         } else if (returnData && returnData.length >= 1) {
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
-            console.log(`${returnData.length} ${returnData.length} ${returnData.length}`);
             //return data for last 10s => 1 record
             //insert returned record, remove 1 oldest record from this.datasets
             //update chart
@@ -135,6 +117,18 @@ export class SwingArmMachine extends Component {
             this.labels = this.labels.slice(returnData.length, this.labels.length);
             this.datasets = this.datasets.slice(returnData.length, this.datasets.length);
         }
+    }
+
+    componentWillUnmount(){
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 60,
+                status: 'stop'
+            }
+        });
     }
 
     componentDidMount() {
@@ -154,16 +148,14 @@ export class SwingArmMachine extends Component {
             }
         });
         this.socket.on(this.eventListen, (response) => {
-            // // // console.log("ip");
             response = JSON.parse(response);
             if (response && response.success=="true"){
                 let dataArray = response.data;
                 let returnData = JSON.parse(dataArray[0].data);
                 this.handleReturnData(returnData);
 
-                console.log("this.labels.length: ", this.labels.length, "this.labels: ", this.labels, "type: ", typeof(this.labels));
                 if (this.labels.length > 0){
-                    //Make sure that the length is more than 15 
+                    //Make sure that the length is more than 15
                     let displayLabels = [];
                     let displayDatasets = [];
                     if (this.labels.length > 15){

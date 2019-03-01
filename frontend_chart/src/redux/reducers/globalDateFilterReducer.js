@@ -1,20 +1,32 @@
 import {GLOBAL_DATE_FILTER, RESET_GLOBAL_DATE_FILTER} from '../actions/globalDateFilterActions';
+import {END_WORK_DAY_TIME, START_WORK_DAY_TIME} from "../../constants/constants";
 import moment from 'moment';
 
 const initialState = {
     startDate: new Date(
-        moment()
-            .subtract(6, "days")
-            .startOf("day")
-            .add(6, "hours")
-            .toISOString()
+        moment().isBefore(moment().startOf("day").add(START_WORK_DAY_TIME))
+            ? moment()
+                .subtract(7, "days")
+                .startOf("day")
+                .add(START_WORK_DAY_TIME)
+                .toISOString()
+            : moment()
+                .subtract(6, "days")
+                .startOf("day")
+                .add(START_WORK_DAY_TIME)
+                .toISOString()
     ),
 
     endDate: new Date(
-        moment()
-            .startOf("day")
-            .add({hours: 5, minutes: 59, seconds: 59})
-            .toISOString()
+        moment().isBefore(moment().startOf("day").add(START_WORK_DAY_TIME))
+            ? moment()
+                .startOf("day")
+                .add(END_WORK_DAY_TIME)
+                .toISOString()
+            : moment()
+                .startOf("day")
+                .add({days: 1, ...END_WORK_DAY_TIME})
+                .toISOString()
     ),
 };
 

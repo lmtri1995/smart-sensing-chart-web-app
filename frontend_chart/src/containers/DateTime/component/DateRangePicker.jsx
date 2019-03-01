@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import DayCell from "./DayCell";
 import moment from "moment";
 import PropTypes from "prop-types";
+import {END_WORK_DAY_TIME, START_WORK_DAY_TIME} from "../../../constants/constants";
 
 export default class DateRangePicker extends Component {
     static propTypes = {
@@ -11,9 +12,21 @@ export default class DateRangePicker extends Component {
     constructor(props) {
         super(props);
 
+        let startDate = new Date(
+            moment(props.startDate.toISOString())
+                .startOf("day")
+                .add(START_WORK_DAY_TIME)
+                .toISOString()
+        );
+        let endDate = new Date(
+            moment(props.endDate.toISOString())
+                .subtract(1, "days")
+                .toISOString()
+        );
+
         this.state = {
-            startDate: props.startDate || new Date(),
-            endDate: props.endDate || new Date(),
+            startDate: startDate || new Date(),
+            endDate: endDate || new Date(),
             numClicks: 0,
         }
     }
@@ -56,6 +69,22 @@ export default class DateRangePicker extends Component {
                 break;
         }
 
+        // Change Start & End Date before dispatch to Redux Store as per the rule of a shift time of the factory
+        // 1 work day: starts at 6:00:00 AM => ends at 5:59:59 AM of the following day
+        // Start Date always is 6:00:00 AM of User Selected Date.
+        startDate = new Date(
+            moment(startDate.toISOString())
+                .startOf("day")
+                .add(START_WORK_DAY_TIME)
+                .toISOString()
+        );
+        // End Date always is 5:59:59 AM of the Following Day of User Selected Date.
+        endDate = new Date(
+            moment(endDate.toISOString())
+                .startOf("day")
+                .add({days: 1, ...END_WORK_DAY_TIME})
+                .toISOString()
+        );
         this.props.changeGlobalDateFilter(startDate, endDate);
     }
 
@@ -84,7 +113,11 @@ export default class DateRangePicker extends Component {
                             .map(value => value + 1) // Make 0...10 index keys become 1...11 index keys.
                             .map(value =>
                                 <DayCell key={value}
-                                         disabled={value >= 10}
+                                         disabled={
+                                             moment().isBefore(moment().startOf("day").add(START_WORK_DAY_TIME))
+                                                 ? value > 10
+                                                 : value >= 10
+                                         }
                                          numWeeks={numWeeks}
                                          date={new Date(moment().subtract(value, "days").toISOString())}
                                          onRangeChange={this.handleRangeChange.bind(this)}
@@ -95,7 +128,9 @@ export default class DateRangePicker extends Component {
                     }
 
                     {/*Today*/}
-                    <DayCell disabled={false}
+                    {/*If current time is before 6:00:00 AM => disabled*/}
+                    {/*Else, current time is same or after 6:00:00 AM => enabled*/}
+                    <DayCell disabled={moment().isBefore(moment().startOf("day").add(START_WORK_DAY_TIME))}
                              numWeeks={numWeeks}
                              date={new Date()}
                              onRangeChange={this.handleRangeChange.bind(this)}

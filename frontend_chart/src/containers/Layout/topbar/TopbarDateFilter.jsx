@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Collapse} from 'reactstrap';
 import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import Clock from 'react-live-clock';
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
 import {changeGlobalDateFilter} from '../../../redux/actions/globalDateFilterActions';
@@ -33,7 +34,9 @@ class TopbarDateFilter extends Component {
     }
 
     toggle = () => {
-        this.setState({collapse: !this.state.collapse});
+        if (this.props.location.pathname !== '/') {
+            this.setState({collapse: !this.state.collapse});
+        }
     };
 
     setWrapperRef(node) {
@@ -74,4 +77,4 @@ const mapStateToProps = state => ({
     globalDateFilter: state.globalDateFilter
 });
 
-export default connect(mapStateToProps)(TopbarDateFilter)
+export default withRouter(connect(mapStateToProps)(TopbarDateFilter))

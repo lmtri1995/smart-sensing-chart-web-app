@@ -162,19 +162,19 @@ export default class stationStatus extends Component {
             result = <div className="row">
                 <StationStatusItem stationId={1} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
+                <StationStatusItem stationId={2} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
+                <StationStatusItem stationId={3} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
+                <StationStatusItem stationId={4} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
+                <StationStatusItem stationId={5} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
+                <StationStatusItem stationId={6} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
+                <StationStatusItem stationId={7} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
+                <StationStatusItem stationId={8} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
             </div>
         }

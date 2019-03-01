@@ -158,7 +158,7 @@ export class SwingArmMachine extends Component {
                         labels: ['Shift 1', 'Shift 2', 'Shift 3'],
                         datasets: [
                             {
-                                label: 'Initial Data',
+                                label: 'Swing Arm',
                                 backgroundColor: '#0CD0EB',
                                 borderColor: '#0CD0EB',
                                 borderWidth: 1,
@@ -167,7 +167,7 @@ export class SwingArmMachine extends Component {
                                 data: displayArray[0],
                             },
                             {
-                                label: 'Initial Data',
+                                label: 'Os Press',
                                 backgroundColor: '#4C9EFF',
                                 borderColor: '#4C9EFF',
                                 borderWidth: 1,

@@ -46,24 +46,15 @@ Chart.plugins.register({
 
 const initialData = {
     labels: [
-        "Type 1",
-        "Type 2",
-        "Type 3",
-        "Type 4",
+        "Type 1"
     ],
     datasets: [{
-        data: [138, 127, 92, 92],
+        data: [1],
         backgroundColor: [
             "#FF9C64",
-            "#46D6EA",
-            "#F575F7",
-            "#8C67F6",
         ],
         hoverBackgroundColor: [
             "#FF9C64",
-            "#46D6EA",
-            "#F575F7",
-            "#8C67F6",
         ]
     }]
 };
@@ -97,6 +88,7 @@ export default class DoughnutChart extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
+            console.log("hello");
             let {labels, data, centerTotal} = this.props;
             if (labels && data && this.canvas) {
                 this.myChart.data = {

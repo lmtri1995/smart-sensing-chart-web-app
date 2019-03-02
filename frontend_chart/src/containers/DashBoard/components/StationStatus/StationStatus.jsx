@@ -162,20 +162,20 @@ export default class stationStatus extends Component {
             result = <div className="row">
                 <StationStatusItem stationId={1} status={dataArray[0].istatus}
                                    spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={2} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={3} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={4} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={5} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={6} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={7} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={8} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
+                <StationStatusItem stationId={2} status={dataArray[1].istatus}
+                                   spaceTime={dataArray[1].space_time}/>
+                <StationStatusItem stationId={3} status={dataArray[2].istatus}
+                                   spaceTime={dataArray[2].space_time}/>
+                <StationStatusItem stationId={4} status={dataArray[3].istatus}
+                                   spaceTime={dataArray[3].space_time}/>
+                <StationStatusItem stationId={5} status={dataArray[4].istatus}
+                                   spaceTime={dataArray[4].space_time}/>
+                <StationStatusItem stationId={6} status={dataArray[5].istatus}
+                                   spaceTime={dataArray[5].space_time}/>
+                <StationStatusItem stationId={7} status={dataArray[6].istatus}
+                                   spaceTime={dataArray[6].space_time}/>
+                <StationStatusItem stationId={8} status={dataArray[7].istatus}
+                                   spaceTime={dataArray[7].space_time}/>
             </div>
         }
         return result;

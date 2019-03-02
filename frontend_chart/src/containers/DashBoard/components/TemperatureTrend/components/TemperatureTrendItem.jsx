@@ -104,8 +104,8 @@ export default class TemperatureTrendItem extends Component {
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                 legend: 'follow',
                 animatedZooms: true,
-                width: 700,
-                height: 200,
+                width: 550,
+                height: 300,
                 colors: this.colorArray,
                 labels: this.labelArray,
                 //legendFormatter,
@@ -145,13 +145,17 @@ export default class TemperatureTrendItem extends Component {
                 let returnArrayObject = response.data;
                 let returnArray = JSON.parse(returnArrayObject[0].data);
                 if (returnArray && returnArray.length > 0){
+                    if (this.props.stationIdNo == 1){
+                        console.log(this.props.stationIdNo);
+                        console.log("returnArray: ", returnArray);
+                    }
                     if (displayData === "X\n"){
                         displayData = returnArray;
                     } else {
                         displayData = displayData.slice(returnArray.length, displayData.length);
                         displayData.push(...returnArray);
                     }
-
+                    console.log("displayData: ", displayData);
                     this.graph.updateOptions( { 'file': displayData } );
                     this.setState({loading: false});
                 }
@@ -203,7 +207,11 @@ export default class TemperatureTrendItem extends Component {
                                 loading={this.state.loading}
                                 margin-left={300}
                             />
-                            <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
+                            <div className="container">
+                                <div className="row">
+                                    <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

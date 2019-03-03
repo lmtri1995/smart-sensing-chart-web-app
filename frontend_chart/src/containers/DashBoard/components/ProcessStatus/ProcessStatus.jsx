@@ -4,6 +4,7 @@ import GeneralSummaryItem from './components/GeneralSummaryItem';
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
 import {connect} from "react-redux";
+import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 
 const override = `
     position: absolute;
@@ -314,7 +315,24 @@ class ProcessStatus extends Component {
             <GeneralSummaryItem spec={'STDEV'} data1={stdAvgTemp} data2={stdStddevTemp}
                                 data3={stdAvgPrep} data4={stdStddevPrep} data5={stdAvgCuringTime}
                                 data6={stdStddevCurringTime}/>
-            </tbody>
+            </tbody>;
+
+            // Prepare to push Process Status Data to Redux Store
+            let processStatusDataToDownload = {
+                processingStatusLine: [],
+                general: [],
+            };
+            for (let i = 0; i < 8; ++i) {
+                processStatusDataToDownload.processingStatusLine[i] = dataArray[i];
+            }
+            processStatusDataToDownload.general = [
+                [avgAvgTemp, avgStddevTemp, avgAvgPrep, avgStddevPrep, avgAvgCuringTime, avgStddevCurringTime],
+                [maxAvgTemp, maxStddevTemp, maxAvgPrep, maxStddevPrep, maxAvgCuringTime, maxStddevCurringTime],
+                [minAvgTemp, minStddevTemp, minAvgPrep, minStddevPrep, minAvgCuringTime, minStddevCurringTime],
+                [stdAvgTemp, stdStddevTemp, stdAvgPrep, stdStddevPrep, stdAvgCuringTime, stdStddevCurringTime],
+            ];
+            // Push Process Status Data to Redux Store to Export Data later
+            this.props.dispatch(storeProcessStatusData(processStatusDataToDownload));
         }
         return result;
     }

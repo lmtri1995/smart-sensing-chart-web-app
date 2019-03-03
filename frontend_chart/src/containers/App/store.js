@@ -1,6 +1,12 @@
 import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
 import {reducer as reduxFormReducer} from 'redux-form';
-import {globalDateFilterReducer, LoginReducer, sidebarReducer, themeReducer} from '../../redux/reducers/index';
+import {
+    downloadDataStoreReducer,
+    globalDateFilterReducer,
+    LoginReducer,
+    sidebarReducer,
+    themeReducer
+} from '../../redux/reducers/index';
 import thunk from "redux-thunk";
 
 const reducer = combineReducers({
@@ -9,6 +15,7 @@ const reducer = combineReducers({
     sidebar: sidebarReducer,
     globalDateFilter: globalDateFilterReducer,
     login: LoginReducer,
+    downloadDataStore: downloadDataStoreReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

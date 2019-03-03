@@ -1,6 +1,7 @@
-import {applyMiddleware, combineReducers, createStore, compose } from 'redux';
+import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
 import {reducer as reduxFormReducer} from 'redux-form';
 import {
+    downloadDataStoreReducer,
     globalFilterReducer,
     LoginReducer,
     sidebarReducer,
@@ -13,7 +14,8 @@ const reducer = combineReducers({
     theme: themeReducer,
     sidebar: sidebarReducer,
     globalFilter: globalFilterReducer,
-    login: LoginReducer
+    login: LoginReducer,
+    storeDownloadData: downloadDataStoreReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

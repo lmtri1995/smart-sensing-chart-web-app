@@ -6,8 +6,9 @@ import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import {DashboardContainerID, ExportType} from "../../../constants/constants";
+import {connect} from "react-redux";
 
-export default class DataExporter extends Component {
+class DataExporter extends Component {
 
     exportExcelFile(data) {
         // Create new Workbook
@@ -598,6 +599,8 @@ export default class DataExporter extends Component {
 
     render() {
         let {exportType} = this.props;
+        let {processStatusData} = this.props.downloadDataStore;
+        console.log("PROCESS_STATUS_DATA", processStatusData);
 
         switch (exportType) {
             case ExportType.EXCEL:
@@ -830,3 +833,9 @@ const TestData = [
         timedevice: 1547715177,
     },
 ];
+
+const mapStateToProps = state => ({
+    downloadDataStore: state.downloadDataStore
+});
+
+export default connect(mapStateToProps)(DataExporter);

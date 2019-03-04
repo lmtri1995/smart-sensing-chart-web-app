@@ -29,12 +29,15 @@ export default class ShiftStatus extends Component {
 
         switch (this.role) {
             case 'admin':
-                this.emitEvent = 'shift_status';
+                this.emitEvent = 'os_shift_status';
                 break;
             case 'ip':
-                this.emitEvent = 'shift_status';
+                this.emitEvent = 'ip_shift_status';
                 break;
             case 'os':
+                this.emitEvent = 'os_shift_status';
+                break;
+            default:
                 this.emitEvent = 'os_shift_status';
                 break;
         }

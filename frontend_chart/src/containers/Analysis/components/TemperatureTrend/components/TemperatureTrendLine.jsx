@@ -31,22 +31,22 @@ class TemperatureTrendLine extends PureComponent {
         switch(this.role) {
             case 'admin':
                 this.apiUrl = 'api/os/tempTrend';
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
                 break;
             case 'ip':
                 this.apiUrl = 'api/ip/tempTrend';
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6", "#449AFF", "#46D6EA"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempA4", "tempB1", "tempB2", "tempB3", "tempB4"];
                 break;
             case 'os':
                 this.apiUrl = 'api/os/tempTrend';
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
                 break;
             default:
                 this.apiUrl = 'api/os/tempTrend';
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
                 break;
         }
@@ -85,7 +85,7 @@ class TemperatureTrendLine extends PureComponent {
                 width: 720,
                 height: 200,
                 labels: ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"],
-                colors: ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"],
+                colors: ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"],
                 axes: {
                     x: {
                         drawGrid: false,
@@ -108,7 +108,6 @@ class TemperatureTrendLine extends PureComponent {
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
-                    console.log("stationId: ", stationId, " - dataArray: ", dataArray[0].data);
 
                     let displayData = JSON.parse(dataArray[0].data);
                     if (displayData) {

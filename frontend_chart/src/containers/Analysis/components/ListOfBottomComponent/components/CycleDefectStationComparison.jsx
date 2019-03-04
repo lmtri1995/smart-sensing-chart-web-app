@@ -12,7 +12,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [0, 0, 0],
+            data: [6, 6, 6],
         },
         {
             label: 'Idle Cycle',
@@ -21,7 +21,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [0, 0, 0],
+            data: [6, 6, 6],
         }
     ],
 };
@@ -122,15 +122,6 @@ export class CycleDefectStationComparison extends Component {
     }
 
     componentWillUnmount(){
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                from_timedevice: 0,//1551333600
-                to_timedevice: 0,//1551420000
-                minute: 60,
-                status: 'stop'
-            }
-        });
     }
 
     componentDidMount() {
@@ -139,51 +130,6 @@ export class CycleDefectStationComparison extends Component {
             type: 'bar',
             data: initialData,
             options: options
-        });
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                from_timedevice: 0,//1551333600
-                to_timedevice: 0,//1551420000
-                minute: 60,
-                status: 'start'
-            }
-        });
-        this.socket.on(this.eventListen, (response) => {
-            response = JSON.parse(response);
-            if (response && response.success=="true"){
-                console.log("reponse: ", response);
-                let dataArray = response.data;
-                let returnData = JSON.parse(dataArray[0].data);
-                if (returnData.length > 0){
-                    let displayArray = this.handleReturnData(returnData);
-                    this.myChart.data = {
-                        labels: ['Shift 1', 'Shift 2', 'Shift 3'],
-                        datasets: [
-                            {
-                                label: 'Defective',
-                                backgroundColor: '#4C9EFF',
-                                borderColor: '#4C9EFF',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[0],
-                            },
-                            {
-                                label: 'Idle Cycle',
-                                backgroundColor: '#AFEEFF',
-                                borderColor: '#AFEEFF',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[1],
-                            }
-                        ],
-                    };
-                    this.myChart.update();
-                    this.setState({loading: false});
-                }
-            }
         });
     }
 
@@ -194,15 +140,7 @@ export class CycleDefectStationComparison extends Component {
                     <div className="row">
                         <div className="col-12"><h4>Station Comparison</h4></div>
                         <div>
-                            <ClipLoader
-                                css={override}
-                                sizeUnit={"px"}
-                                size={100}
-                                color={'#30D4A4'}
-                                loading={this.state.loading}
-                                margin-left={300}
-                            />
-                            <canvas ref={(element) => this.canvas = element} height={140} width={570}/>
+                            <canvas ref={(element) => this.canvas = element} height={140} width={510}/>
                         </div>
                     </div>
                 </div>

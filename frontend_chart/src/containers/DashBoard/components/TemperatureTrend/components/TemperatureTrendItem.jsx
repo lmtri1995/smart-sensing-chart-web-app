@@ -29,25 +29,25 @@ export default class TemperatureTrendItem extends Component {
             case 'admin':
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
                 break;
             case 'ip':
                 this.emitEvent = `ip_temp_trend_${stationIdNo}`;
                 this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempA4", "tempB1", "tempB2", "tempB3", "tempB4"];
                 break;
             case 'os':
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
                 break;
             default:
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#F89D9D", "#FF9C64", "#EB6A91", "#F575F7", "#8C67F6"];
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
         }
 
@@ -145,17 +145,12 @@ export default class TemperatureTrendItem extends Component {
                 let returnArrayObject = response.data;
                 let returnArray = JSON.parse(returnArrayObject[0].data);
                 if (returnArray && returnArray.length > 0){
-                    if (this.props.stationIdNo == 1){
-                        console.log(this.props.stationIdNo);
-                        console.log("returnArray: ", returnArray);
-                    }
                     if (displayData === "X\n"){
                         displayData = returnArray;
                     } else {
                         displayData = displayData.slice(returnArray.length, displayData.length);
                         displayData.push(...returnArray);
                     }
-                    console.log("displayData: ", displayData);
                     this.graph.updateOptions( { 'file': displayData } );
                     this.setState({loading: false});
                 }

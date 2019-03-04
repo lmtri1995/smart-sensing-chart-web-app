@@ -154,6 +154,8 @@ export default class DowntimeShift extends Component {
                 initMinute = (initMinute >= 10) ? initMinute : '0' + initMinute;
                 initHour = (initHour >= 10) ? initHour : '0' + initHour;
                 let total = initHour + 'h:' + initMinute + "m:" + initSecond + "s";
+
+                console.log("dataArray 160: ", dataArray);
                 result = <DowntimeShiftItem shiftNo={shiftNo} total={total}
                                             count1={dataArray[0].first_shift_off_sum}
                                             count2={dataArray[1].first_shift_off_sum}

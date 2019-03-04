@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import ShiftStatus from "./components/ShiftStatus/ShiftStatus";
 import TemperatureTrend from "./components/TemperatureTrend/TemperatureTrend";
 import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
+import ListBottomComponent from "./components/ListOfBottomComponent/ListOfBottomComponent";
 
 class AnalysisPage extends Component {
 
@@ -21,6 +22,11 @@ class AnalysisPage extends Component {
                 <div className="row">
                     <div className="col">
                         <ProcessStatus/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        <ListBottomComponent/>
                     </div>
                 </div>
             </div>

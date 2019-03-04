@@ -31,12 +31,15 @@ class ProcessStatus extends Component {
 
         switch (this.role) {
             case 'admin':
-                this.emitEvent = 'process_status';
+                this.emitEvent = 'os_process_status';
                 break;
             case 'ip':
-                this.emitEvent = 'process_status';
+                this.emitEvent = 'ip_process_status';
                 break;
             case 'os':
+                this.emitEvent = 'os_process_status';
+                break;
+            default:
                 this.emitEvent = 'os_process_status';
                 break;
         }

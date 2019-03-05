@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Excel from './../../../../node_modules/exceljs/dist/es5/exceljs.browser';
 import * as FileSaver from 'file-saver';
-import {standardDeviation} from "../../../shared/utils/dataCalculator";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
@@ -11,6 +10,8 @@ import {connect} from "react-redux";
 class DataExporter extends Component {
 
     exportExcelFile(data) {
+        let {processingStatusLine, general} = data;
+
         // Create new Workbook
         let workbook = new Excel.Workbook();
         workbook.creator = 'trile@snaglobal.net';
@@ -27,7 +28,7 @@ class DataExporter extends Component {
         // 2: 2 first rows for Processing Status section
         // data.length: number of stations
         // 6: 6 rows for Total section
-        for (let row = 1; row <= 2 + data.length + 6; ++row) {  // Number of rows
+        for (let row = 1; row <= 2 + processingStatusLine.length + 6; ++row) {  // Number of rows
 
             let currentRow = worksheet.getRow(row);
 
@@ -39,14 +40,14 @@ class DataExporter extends Component {
                     right: {style: 'thin'}
                 };
                 // Station [num] cells in column A => middle left alignment
-                if (row >= 3 && row <= 2 + data.length && col === 1) {
+                if (row >= 3 && row <= 2 + processingStatusLine.length && col === 1) {
                     currentRow.getCell(col).alignment = middleLeftAlignment;
                 } else {
                     currentRow.getCell(col).alignment = middleCenterAlignment;
                 }
                 // Set bold for Processing Status Section, Total Section & Column A
                 if (row < 3
-                    || row > 2 + data.length && row <= 2 + data.length + 2
+                    || row > 2 + processingStatusLine.length && row <= 2 + processingStatusLine.length + 2
                     || col === 1) {
                     currentRow.getCell(col).font = {
                         bold: true
@@ -81,7 +82,7 @@ class DataExporter extends Component {
         worksheet.getCell('G2').value = 'STDEV';
 
         let startStationRow = 3;
-        let endStationRow = startStationRow + data.length - 1;
+        let endStationRow = startStationRow + processingStatusLine.length - 1;
 
         let startTotalSectionRow = endStationRow + 1;
 
@@ -121,129 +122,27 @@ class DataExporter extends Component {
         worksheet.getCell(`G${startTotalSectionRow + 1}`).value = 'STDEV';
 
         // ---------- Fill Data into Table ----------
-        // For AVG. Row of Total Section
-        let sumTempAvg = 0, sumTempStdev = 0,
-            sumPrepAvg = 0, sumPrepStdev = 0,
-            sumCurAvg = 0, sumCurStdev = 0;
-
-        // For Min-Max Row of Total Section
-        let tempAvgMin = Infinity, tempAvgMax = 0, tempStdevMin = Infinity, tempStdevMax = 0,
-            prepAvgMin = Infinity, prepAvgMax = 0, prepStdevMin = Infinity, prepStdevMax = 0,
-            curAvgMin = Infinity, curAvgMax = 0, curStdevMin = Infinity, curStdevMax = 0;
-
-        // For STDEV Row of Total Section
-        let tempAvgArray = [], tempStdevArray = [],
-            prepAvgArray = [], prepStdevArray = [],
-            curAvgArray = [], curStdevArray = [];
-        data.forEach((station, index) => {
+        processingStatusLine.forEach((station, index) => {
             // ---------- Fill Data into Table ----------
             let currentRow = worksheet.getRow(startStationRow + index);
             for (let col = 1; col <= 7; ++col) {
-                switch (col) {
-                    case 1:
-                        currentRow.getCell(col).value = 'Station ' + (+station.idStation);
-                        break;
-                    case 2:
-                        currentRow.getCell(col).value = +station.temp_avg;
-                        break;
-                    case 3:
-                        currentRow.getCell(col).value = +station.temp_stdev;
-                        break;
-                    case 4:
-                        currentRow.getCell(col).value = +station.pre_avg;
-                        break;
-                    case 5:
-                        currentRow.getCell(col).value = +station.pre_stdev;
-                        break;
-                    case 6:
-                        currentRow.getCell(col).value = +station.cur_avg;
-                        break;
-                    case 7:
-                        currentRow.getCell(col).value = +station.cur_stdev;
-                        break;
+                if (col === 1) {
+                    currentRow.getCell(col).value = `Station ${index + 1}`;
+                } else {
+                    currentRow.getCell(col).value = station[col - 2];
                 }
             }
-
-            // ---------- Total for AVG. ----------
-            sumTempAvg += +station.temp_avg;
-            sumTempStdev += +station.temp_stdev;
-            sumPrepAvg += +station.pre_avg;
-            sumPrepStdev += +station.pre_stdev;
-            sumCurAvg += +station.cur_avg;
-            sumCurStdev += +station.cur_stdev;
-
-            // ---------- Min-Max ----------
-            // Temperature AVG.
-            if (station.temp_avg < tempAvgMin) tempAvgMin = +station.temp_avg;
-            if (station.temp_avg > tempAvgMax) tempAvgMax = +station.temp_avg;
-            // Temperature STDEV
-            if (station.temp_stdev < tempStdevMin) tempStdevMin = +station.temp_stdev;
-            if (station.temp_stdev > tempStdevMax) tempStdevMax = +station.temp_stdev;
-            // Preparing Time(s) AVG.
-            if (station.pre_avg < prepAvgMin) prepAvgMin = +station.pre_avg;
-            if (station.pre_avg > prepAvgMax) prepAvgMax = +station.pre_avg;
-            // Preparing Time(s) STDEV
-            if (station.pre_stdev < prepStdevMin) prepStdevMin = +station.pre_stdev;
-            if (station.pre_stdev > prepStdevMax) prepStdevMax = +station.pre_stdev;
-            // Curing Time(s) AVG.
-            if (station.cur_avg < curAvgMin) curAvgMin = +station.cur_avg;
-            if (station.cur_avg > curAvgMax) curAvgMax = +station.cur_avg;
-            // Curing Time(s) STDEV
-            if (station.cur_stdev < curStdevMin) curStdevMin = +station.cur_stdev;
-            if (station.cur_stdev > curStdevMax) curStdevMax = +station.cur_stdev;
-
-            // ---------- Array of data for STDEV ----------
-            tempAvgArray.push(+station.temp_avg);
-            tempStdevArray.push(+station.temp_stdev);
-            prepAvgArray.push(+station.pre_avg);
-            prepStdevArray.push(+station.pre_stdev);
-            curAvgArray.push(+station.cur_avg);
-            curStdevArray.push(+station.cur_stdev);
         });
 
-        // ---------- Calculation ----------
-        let totalAVGTempAvg = sumTempAvg / tempAvgArray.length;
-        let totalAVGTempStdev = sumTempStdev / tempStdevArray.length;
-        let totalAVGPrepAvg = sumPrepAvg / prepAvgArray.length;
-        let totalAVGPrepStdev = sumPrepStdev / prepStdevArray.length;
-        let totalAVGCurAvg = sumCurAvg / curAvgArray.length;
-        let totalAVGCurStdev = sumCurStdev / curStdevArray.length;
-
-        let totalSTDEVTempAvg = standardDeviation(tempAvgArray, totalAVGTempAvg, true);
-        let totalSTDEVTempStdev = standardDeviation(tempStdevArray, totalAVGTempStdev, true);
-        let totalSTDEVPrepAvg = standardDeviation(prepAvgArray, totalAVGPrepAvg, true);
-        let totalSTDEVPrepStdev = standardDeviation(prepStdevArray, totalAVGPrepStdev, true);
-        let totalSTDEVCurAvg = standardDeviation(curAvgArray, totalAVGCurAvg, true);
-        let totalSTDEVCurStdev = standardDeviation(curStdevArray, totalAVGCurStdev, true);
-
-        // ---------- Total AVG Row ----------
-        worksheet.getCell(`B${startTotalSectionRow + 2}`).value = totalAVGTempAvg;
-        worksheet.getCell(`C${startTotalSectionRow + 2}`).value = totalAVGTempStdev;
-        worksheet.getCell(`D${startTotalSectionRow + 2}`).value = totalAVGPrepAvg;
-        worksheet.getCell(`E${startTotalSectionRow + 2}`).value = totalAVGPrepStdev;
-        worksheet.getCell(`F${startTotalSectionRow + 2}`).value = totalAVGCurAvg;
-        worksheet.getCell(`G${startTotalSectionRow + 2}`).value = totalAVGCurStdev;
-        // ---------- Total MAX Row ----------
-        worksheet.getCell(`B${startTotalSectionRow + 3}`).value = tempAvgMax;
-        worksheet.getCell(`C${startTotalSectionRow + 3}`).value = tempStdevMax;
-        worksheet.getCell(`D${startTotalSectionRow + 3}`).value = prepAvgMax;
-        worksheet.getCell(`E${startTotalSectionRow + 3}`).value = prepStdevMax;
-        worksheet.getCell(`F${startTotalSectionRow + 3}`).value = curAvgMax;
-        worksheet.getCell(`G${startTotalSectionRow + 3}`).value = curStdevMax;
-        // ---------- Total MIN Row ----------
-        worksheet.getCell(`B${startTotalSectionRow + 4}`).value = tempAvgMin;
-        worksheet.getCell(`C${startTotalSectionRow + 4}`).value = tempStdevMin;
-        worksheet.getCell(`D${startTotalSectionRow + 4}`).value = prepAvgMin;
-        worksheet.getCell(`E${startTotalSectionRow + 4}`).value = prepStdevMin;
-        worksheet.getCell(`F${startTotalSectionRow + 4}`).value = curAvgMin;
-        worksheet.getCell(`G${startTotalSectionRow + 4}`).value = curStdevMin;
-        // ---------- Total STDEV Row ----------
-        worksheet.getCell(`B${startTotalSectionRow + 5}`).value = totalSTDEVTempAvg;
-        worksheet.getCell(`C${startTotalSectionRow + 5}`).value = totalSTDEVTempStdev;
-        worksheet.getCell(`D${startTotalSectionRow + 5}`).value = totalSTDEVPrepAvg;
-        worksheet.getCell(`E${startTotalSectionRow + 5}`).value = totalSTDEVPrepStdev;
-        worksheet.getCell(`F${startTotalSectionRow + 5}`).value = totalSTDEVCurAvg;
-        worksheet.getCell(`G${startTotalSectionRow + 5}`).value = totalSTDEVCurStdev;
+        // ---------- Fill General Data into table ----------
+        general.forEach((generalData, index) => {
+            worksheet.getCell(`B${startTotalSectionRow + (2 + index)}`).value = generalData[0];
+            worksheet.getCell(`C${startTotalSectionRow + (2 + index)}`).value = generalData[1];
+            worksheet.getCell(`D${startTotalSectionRow + (2 + index)}`).value = generalData[2];
+            worksheet.getCell(`E${startTotalSectionRow + (2 + index)}`).value = generalData[3];
+            worksheet.getCell(`F${startTotalSectionRow + (2 + index)}`).value = generalData[4];
+            worksheet.getCell(`G${startTotalSectionRow + (2 + index)}`).value = generalData[5];
+        });
 
         workbook.xlsx.writeBuffer()
             .then(buffer => FileSaver.saveAs(
@@ -606,7 +505,7 @@ class DataExporter extends Component {
             case ExportType.EXCEL:
                 return (
                     <div className="data-exporter__button"
-                         onClick={() => this.exportExcelFile(TestData)}>
+                         onClick={() => this.exportExcelFile(DummyTableData)}>
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -678,161 +577,6 @@ const DummyTableData = {
         [43.20797901, 77.47023202, 0, 0, 12.69379548, 6.222395916],
     ],
 };
-
-const TestData = [
-    {
-        Target: 14,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 390.81,
-        cur_stdev: 217.65,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "1",
-        iddata: 756578,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 591.65,
-        temp_stdev: 171.76,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-    {
-        Target: 13,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 354.01,
-        cur_stdev: 237.16,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "2",
-        iddata: 836579,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 568.17,
-        temp_stdev: 178.87,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-    {
-        Target: 0,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 352.94,
-        cur_stdev: 236.53,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "3",
-        iddata: 836578,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 555.82,
-        temp_stdev: 202.67,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-    {
-        Target: 13,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 353.65,
-        cur_stdev: 237.12,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "4",
-        iddata: 836577,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 662.03,
-        temp_stdev: 26.47,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-    {
-        Target: 12,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 352.72,
-        cur_stdev: 236.56,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "5",
-        iddata: 836582,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 657.39,
-        temp_stdev: 24.85,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-    {
-        Target: 13,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 351.88,
-        cur_stdev: 236.08,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "6",
-        iddata: 836581,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 659.37,
-        temp_stdev: 26.96,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-    {
-        Target: 13,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 351.92,
-        cur_stdev: 236.08,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "7",
-        iddata: 836574,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 658.71,
-        temp_stdev: 23.67,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-    {
-        Target: 13,
-        TempWarning1: 180,
-        TempWarning2: 190,
-        cur_avg: 350.69,
-        cur_stdev: 235.05,
-        first_shift: "0",
-        idLine: "1039",
-        idStation: "8",
-        iddata: 836573,
-        pre_avg: 0,
-        pre_stdev: 0,
-        second_shift: "0",
-        temp_avg: 657.94,
-        temp_stdev: 24.55,
-        third_shift: "0",
-        timeRecieved: 1547715146,
-        timedevice: 1547715177,
-    },
-];
 
 const mapStateToProps = state => ({
     downloadDataStore: state.downloadDataStore

@@ -325,7 +325,7 @@ class ProcessStatus extends Component {
                 processingStatusLine: [],
                 general: [],
             };
-            for (let i = 0; i < 8; ++i) {
+            for (let i = 0; i < numbersOfStation; ++i) {
                 processStatusDataToDownload.processingStatusLine[i] = dataArray[i];
             }
             processStatusDataToDownload.general = [

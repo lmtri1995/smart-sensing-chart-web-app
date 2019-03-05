@@ -4,6 +4,7 @@ import GeneralSummaryItem from './components/GeneralSummaryItem';
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import API from "../../../../services/api";
+import {connect} from "react-redux";
 
 const override = `
     position: absolute;
@@ -13,7 +14,7 @@ const override = `
     z-index: 100000;
 `;
 
-export default class ProcessStatus extends Component {
+class ProcessStatus extends Component {
     static socket = null;
     static _isMounted = false;
     static loginData = null;
@@ -302,3 +303,5 @@ export default class ProcessStatus extends Component {
         )
     }
 }
+
+export default connect()(ProcessStatus);

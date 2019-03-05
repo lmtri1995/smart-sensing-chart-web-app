@@ -24,6 +24,25 @@ class ReportPage extends Component {
             productionRate: null,
             defectByTypeOverTime: null,
         };
+
+        //initiate socket
+        this.loginData = JSON.parse(localStorage.getItem('logindata'));
+        this.role = this.loginData.data.role;
+
+        switch (this.role) {
+            case 'admin':
+                this.lineCode = 'OS001';
+                break;
+            case 'ip':
+                this.lineCode = '4B01';
+                break;
+            case 'os':
+                this.lineCode = 'OS001';
+                break;
+            default:
+                this.lineCode = 'OS001';
+                break;
+        }
     }
 
     toggle(tab) {
@@ -216,7 +235,7 @@ class ReportPage extends Component {
             <div className="container report">
                 <div className="row">
                     <div className="col-10">
-                        <h3>Line OS001</h3>
+                        <h3>Line {this.lineCode}</h3>
                     </div>
                     <div className="col-2">
                         <div className="btn-group">

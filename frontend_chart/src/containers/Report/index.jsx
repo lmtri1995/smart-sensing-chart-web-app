@@ -216,7 +216,7 @@ class ReportPage extends Component {
             <div className="container report">
                 <div className="row">
                     <div className="col-10">
-                        <h3>Line 1111</h3>
+                        <h3>Line OS001</h3>
                     </div>
                     <div className="col-2">
                         <div className="btn-group">

@@ -5,7 +5,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
 
 const initialData = {
-    labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     datasets: [
         {
             label: 'Initial Data',
@@ -14,7 +14,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3],
+            data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3],
         }
     ],
 };
@@ -89,7 +89,7 @@ export class SwingArmMachine extends Component {
         }
     }
 
-    handleReturnData = (returnData) => {
+    /*handleReturnData = (returnData) => {
         if (returnData && returnData.length > 15){
             //server send 360 rows for the first time
             //handle returnData, divide into 2 child arrays: datasets, labels
@@ -114,17 +114,15 @@ export class SwingArmMachine extends Component {
             this.labels = this.labels.slice(returnData.length, this.labels.length);
             this.datasets = this.datasets.slice(returnData.length, this.datasets.length);
         }
-    }
+    }*/
 
     componentWillUnmount(){
 
     }
 
     componentDidMount() {
-        console.log("124 componentDidMount");
-        console.log("124 componentDidMount");
-        console.log("124 componentDidMount");
-        console.log("124 componentDidMount");
+        let {startDate, endDate} = this.props;
+
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
             type: 'bar',
@@ -134,16 +132,31 @@ export class SwingArmMachine extends Component {
 
 
         let param = {
-            "from_timedevice": "0",
-            "to_timedevice": "0"
+            "from_timedevice": startDate,
+            "to_timedevice": endDate
         };
 
         API('api/oee/swingarm', 'POST', param)
             .then((response) => {
                 console.log("response 139: ", response);
-                /*if (response.data.success) {
-                    console.log("re");
-                }*/
+                if (response.data.success) {
+                    let returnData = response.data.data;
+                    console.log("returnData: ", returnData);
+                    this.myChart.data = {
+                        labels: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                        datasets: [{
+                            label: 'Swing Arm Data',
+                            backgroundColor: '#C88FFA',
+                            borderColor: '#C88FFA',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: [2, 3, 4, 5, 6, 2, 3, 4, 5, 6, 2, 3, 4, 5, 6, 2, 3, 4, 5, 6]
+                        }]
+                    };
+                    this.myChart.update();
+                    //this.setState({loading: false});
+                }
             })
             .catch((err) => console.log('err:', err))
     }

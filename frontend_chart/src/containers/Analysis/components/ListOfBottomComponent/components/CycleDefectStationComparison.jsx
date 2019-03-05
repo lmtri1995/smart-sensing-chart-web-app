@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
-import {ClipLoader} from "react-spinners";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -67,6 +66,25 @@ const override = `
 `;
 
 export class CycleDefectStationComparison extends Component {
+    handleReturnData = (returnData) => {
+        let result = [];
+        let idleCycleArray = [], deffectiveArray = [];
+        if (returnData && returnData.length > 0) {
+            returnData.map(item => {
+                if (item) {
+                    if (item[0] === 1) {
+                        idleCycleArray.push(item[1]);
+                        deffectiveArray.push(item[2]);
+                    }
+                }
+            });
+        }
+        result.push(idleCycleArray);
+        result.push(deffectiveArray);
+        return result;
+
+    }
+
     constructor() {
         super();
 
@@ -79,7 +97,7 @@ export class CycleDefectStationComparison extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.emitEvent = `os_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
@@ -102,26 +120,7 @@ export class CycleDefectStationComparison extends Component {
         };
     }
 
-    handleReturnData = (returnData) => {
-        let result = [];
-        let idleCycleArray = [], deffectiveArray = [];
-        if (returnData && returnData.length > 0){
-            returnData.map(item => {
-                if (item) {
-                    if (item[0] === 1) {
-                        idleCycleArray.push(item[1]);
-                        deffectiveArray.push(item[2]);
-                    }
-                }
-            });
-        }
-        result.push(idleCycleArray);
-        result.push(deffectiveArray);
-        return result;
-
-    }
-
-    componentWillUnmount(){
+    componentWillUnmount() {
     }
 
     componentDidMount() {
@@ -136,13 +135,9 @@ export class CycleDefectStationComparison extends Component {
     render() {
         return (
             <div className="oee-main">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-12"><h4>Station Comparison</h4></div>
-                        <div>
-                            <canvas ref={(element) => this.canvas = element} height={140} width={510}/>
-                        </div>
-                    </div>
+                <div className="col-12"><h4>Station Comparison</h4></div>
+                <div>
+                    <canvas ref={(element) => this.canvas = element} height={70} width={200}/>
                 </div>
             </div>
         )

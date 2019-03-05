@@ -79,7 +79,7 @@ export class CycleDefectStationComparison extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.emitEvent = `os_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
@@ -105,7 +105,7 @@ export class CycleDefectStationComparison extends Component {
     handleReturnData = (returnData) => {
         let result = [];
         let idleCycleArray = [], deffectiveArray = [];
-        if (returnData && returnData.length > 0){
+        if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
                     if (item[0] === 1) {
@@ -121,7 +121,7 @@ export class CycleDefectStationComparison extends Component {
 
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -151,11 +151,11 @@ export class CycleDefectStationComparison extends Component {
         });
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
-            if (response && response.success=="true"){
+            if (response && response.success == "true") {
                 console.log("reponse: ", response);
                 let dataArray = response.data;
                 let returnData = JSON.parse(dataArray[0].data);
-                if (returnData.length > 0){
+                if (returnData.length > 0) {
                     let displayArray = this.handleReturnData(returnData);
                     this.myChart.data = {
                         labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -190,21 +190,17 @@ export class CycleDefectStationComparison extends Component {
     render() {
         return (
             <div className="oee-main">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-12"><h4>Station Comparison</h4></div>
-                        <div>
-                            <ClipLoader
-                                css={override}
-                                sizeUnit={"px"}
-                                size={100}
-                                color={'#30D4A4'}
-                                loading={this.state.loading}
-                                margin-left={300}
-                            />
-                            <canvas ref={(element) => this.canvas = element} height={140} width={570}/>
-                        </div>
-                    </div>
+                <div className="col-12"><h4>Station Comparison</h4></div>
+                <div>
+                    <ClipLoader
+                        css={override}
+                        sizeUnit={"px"}
+                        size={100}
+                        color={'#30D4A4'}
+                        loading={this.state.loading}
+                        margin-left={300}
+                    />
+                    <canvas ref={(element) => this.canvas = element} height={140} width={570}/>
                 </div>
             </div>
         )

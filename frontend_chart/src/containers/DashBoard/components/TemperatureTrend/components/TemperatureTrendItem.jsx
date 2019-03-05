@@ -104,7 +104,7 @@ export default class TemperatureTrendItem extends Component {
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                 legend: 'follow',
                 animatedZooms: true,
-                width: 550,
+                width: 590,
                 height: 300,
                 colors: this.colorArray,
                 labels: this.labelArray,
@@ -114,10 +114,10 @@ export default class TemperatureTrendItem extends Component {
                     x: {
                         drawGrid: false,
                         valueFormatter: function(x) {
-                            return moment.unix(x).format("YYYY/MM/DD hh:mm");;
+                            return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
                         },
                         axisLabelFormatter: function(x) {
-                            return moment.unix(x).format("YYYY/MM/DD  hh:mm");
+                            return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
                         },
                     },
                     y: {

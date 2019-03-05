@@ -134,7 +134,7 @@ class TemperatureTrendLine extends PureComponent {
                 />
                 <div className="container">
                     <div className="row">
-                        <div className="col" style={{marginBottom: 70}} id={'station' + stationId}></div>
+                        <div style={{marginBottom: 70}} id={'station' + stationId}></div>
                     </div>
                 </div>
             </div>

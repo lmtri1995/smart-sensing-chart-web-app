@@ -74,6 +74,7 @@ export default class ShiftStatus extends Component {
         });
 
         this.socket.on('sna_shift_status', (data) => {
+            console.log("data 77: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -103,6 +104,7 @@ export default class ShiftStatus extends Component {
     }
 
     specifyCurrentShift(dataArray) {
+        console.log("dataArray: ", dataArray);
         let today = new Date();
         let dd = today.getDate();
         let mm = today.getMonth();
@@ -128,7 +130,6 @@ export default class ShiftStatus extends Component {
                 result = 3;
             }
         }
-        result = 3;
         return result;
     }
 
@@ -205,7 +206,7 @@ export default class ShiftStatus extends Component {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {
             result = <tbody>{shift1}{shift3}{shift2}</tbody>;
-        } else if (currentShift == 3) {
+        } else {
             result = <tbody>{shift1}{shift2}{shift3}</tbody>;
         }
         return result;

@@ -102,7 +102,7 @@ export default class TemperatureTrendItem extends Component {
             {
                 // options go here. See http://dygraphs.com/options.html
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
-                legend: 'follow',
+                showLabelsOnHighlight: false,
                 animatedZooms: true,
                 width: 590,
                 height: 300,

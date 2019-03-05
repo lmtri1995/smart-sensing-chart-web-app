@@ -4,6 +4,9 @@ export default class StationStatusItem extends Component {
     render() {
         let {stationId, status, spaceTime} = this.props;
         let statusText = (status === 1) ? 'On' : 'Off';
+        if (status == 'N/A'){
+            statusText = 'N/A';
+        }
         return (
             <div className="col boxstation">
                 <div className="box">

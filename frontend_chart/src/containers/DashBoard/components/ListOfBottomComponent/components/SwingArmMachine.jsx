@@ -20,7 +20,8 @@ const initialData = {
 
 const options = {
     legend: {
-        display: false,
+        display: true,
+        position: 'bottom',
     },
     scales: {
         xAxes: [

@@ -159,23 +159,45 @@ export default class stationStatus extends Component {
             <StationStatusItem stationId={0} status={0} spaceTime={0}/>
         </div>;
         if (dataArray && dataArray.length > 0) {
+            console.log("dataArray: ", dataArray);
+            dataArray.map(item=> {
+                this["status" + item.idStation] = item.istatus;
+                this["space_time" + item.idStation] = item.space_time;
+            });
+            let status1 = this.status1?this.status1:'N/A';
+            let status2 = this.status2?this.status2:'N/A';
+            let status3 = this.status3?this.status3:'N/A';
+            let status4 = this.status4?this.status4:'N/A';
+            let status5 = this.status5?this.status5:'N/A';
+            let status6 = this.status6?this.status6:'N/A';
+            let status7 = this.status7?this.status7:'N/A';
+            let status8 = this.status8?this.status8:'N/A';
+
+            let space_time1 = this.space_time1?this.space_time1:'N/A';
+            let space_time2 = this.space_time2?this.space_time2:'N/A';
+            let space_time3 = this.space_time3?this.space_time3:'N/A';
+            let space_time4 = this.space_time4?this.space_time4:'N/A';
+            let space_time5 = this.space_time5?this.space_time5:'N/A';
+            let space_time6 = this.space_time6?this.space_time6:'N/A';
+            let space_time7 = this.space_time7?this.space_time7:'N/A';
+            let space_time8 = this.space_time8?this.space_time8:'N/A';
             result = <div className="row">
-                <StationStatusItem stationId={1} status={dataArray[0].istatus}
-                                   spaceTime={dataArray[0].space_time}/>
-                <StationStatusItem stationId={2} status={dataArray[1].istatus}
-                                   spaceTime={dataArray[1].space_time}/>
-                <StationStatusItem stationId={3} status={dataArray[2].istatus}
-                                   spaceTime={dataArray[2].space_time}/>
-                <StationStatusItem stationId={4} status={dataArray[3].istatus}
-                                   spaceTime={dataArray[3].space_time}/>
-                <StationStatusItem stationId={5} status={dataArray[4].istatus}
-                                   spaceTime={dataArray[4].space_time}/>
-                <StationStatusItem stationId={6} status={dataArray[5].istatus}
-                                   spaceTime={dataArray[5].space_time}/>
-                <StationStatusItem stationId={7} status={dataArray[6].istatus}
-                                   spaceTime={dataArray[6].space_time}/>
-                <StationStatusItem stationId={8} status={dataArray[7].istatus}
-                                   spaceTime={dataArray[7].space_time}/>
+                <StationStatusItem stationId={1} status={status1}
+                                   spaceTime={space_time1}/>
+                <StationStatusItem stationId={2} status={status2}
+                                   spaceTime={space_time2}/>
+                <StationStatusItem stationId={3} status={status3}
+                                   spaceTime={space_time3}/>
+                <StationStatusItem stationId={4} status={status4}
+                                   spaceTime={space_time4}/>
+                <StationStatusItem stationId={5} status={status5}
+                                   spaceTime={space_time5}/>
+                <StationStatusItem stationId={6} status={status6}
+                                   spaceTime={space_time6}/>
+                <StationStatusItem stationId={7} status={status7}
+                                   spaceTime={space_time7}/>
+                <StationStatusItem stationId={8} status={status8}
+                                   spaceTime={space_time8}/>
             </div>
         }
         return result;

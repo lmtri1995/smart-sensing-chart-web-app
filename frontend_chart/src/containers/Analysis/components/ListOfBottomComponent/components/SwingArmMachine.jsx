@@ -20,16 +20,20 @@ const initialData = {
 };
 
 const options = {
+    responsive: true,
     legend: {
-        display: false,
+        display: true,
+        position: 'bottom',
     },
     scales: {
         xAxes: [
             {
                 ticks: {
+                    //autoSkip: false,
                     fontColor: '#6D6F74',
+                    maxRotation: 0,
                 },
-                barPercentage: 0.7
+                barPercentage: 0.7,
             },
         ],
         yAxes: [
@@ -87,6 +91,9 @@ export class SwingArmMachine extends Component {
                 this.emitEvent = `os_swingarm`;
                 this.eventListen = `sna_${this.emitEvent}`;
         }
+
+        this.labels = [];
+        this.data = [];
     }
 
     /*handleReturnData = (returnData) => {
@@ -116,6 +123,17 @@ export class SwingArmMachine extends Component {
         }
     }*/
 
+    handleReturnData = (returnData) => {
+        this.labels = [];
+        this.data = [];
+        if(returnData && returnData.length > 0){
+            returnData.map(item => {
+                this.labels.push(item[0].split(" "));
+                this.data.push(item[1]);
+            });
+        }
+    }
+
     componentWillUnmount(){
 
     }
@@ -127,23 +145,25 @@ export class SwingArmMachine extends Component {
         this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
-            options: options
+            options: options,
         })
 
 
         let param = {
-            "from_timedevice": startDate,
-            "to_timedevice": endDate
+            "from_timedevice": "1551490473",
+            "to_timedevice": "1551749673"
         };
 
         API('api/oee/swingarm', 'POST', param)
             .then((response) => {
                 console.log("response 139: ", response);
                 if (response.data.success) {
-                    let returnData = response.data.data;
+                    let dataArray = response.data.data;
+                    let returnData = JSON.parse(dataArray[0].data);
                     console.log("returnData: ", returnData);
+                    this.handleReturnData(returnData);
                     this.myChart.data = {
-                        labels: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                        labels: this.labels,
                         datasets: [{
                             label: 'Swing Arm Data',
                             backgroundColor: '#C88FFA',
@@ -151,8 +171,8 @@ export class SwingArmMachine extends Component {
                             borderWidth: 1,
                             //hoverBackgroundColor: '#FF6384',
                             //hoverBorderColor: '#FF6384',
-                            data: [2, 3, 4, 5, 6, 2, 3, 4, 5, 6, 2, 3, 4, 5, 6, 2, 3, 4, 5, 6]
-                        }]
+                            data: this.data
+                        }],
                     };
                     this.myChart.update();
                     //this.setState({loading: false});

@@ -145,6 +145,9 @@ export default class TemperatureTrendItem extends Component {
                     />
                     <div className="container">
                         <div className="row">
+                            <div className="float-left">Hello Viet Nam</div>
+                        </div>
+                        <div className="row">
                             <div style={{marginBottom: 70}} id={'station' + stationId}></div>
                         </div>
                     </div>

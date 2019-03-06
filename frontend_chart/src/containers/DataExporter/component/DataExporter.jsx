@@ -123,25 +123,21 @@ class DataExporter extends Component {
 
         // ---------- Fill Data into Table ----------
         processingStatusLine.forEach((station, index) => {
-            // ---------- Fill Data into Table ----------
+            // ---------- Fill Processing Line Data into Table ----------
             let currentRow = worksheet.getRow(startStationRow + index);
             for (let col = 1; col <= 7; ++col) {
-                if (col === 1) {
-                    currentRow.getCell(col).value = `Station ${index + 1}`;
-                } else {
-                    currentRow.getCell(col).value = station[col - 2];
-                }
+                currentRow.getCell(col).value = col === 1 ? `Station ${station[col]}` : station[col];
             }
         });
 
         // ---------- Fill General Data into table ----------
         general.forEach((generalData, index) => {
-            worksheet.getCell(`B${startTotalSectionRow + (2 + index)}`).value = generalData[0];
-            worksheet.getCell(`C${startTotalSectionRow + (2 + index)}`).value = generalData[1];
-            worksheet.getCell(`D${startTotalSectionRow + (2 + index)}`).value = generalData[2];
-            worksheet.getCell(`E${startTotalSectionRow + (2 + index)}`).value = generalData[3];
-            worksheet.getCell(`F${startTotalSectionRow + (2 + index)}`).value = generalData[4];
-            worksheet.getCell(`G${startTotalSectionRow + (2 + index)}`).value = generalData[5];
+            worksheet.getCell(`B${startTotalSectionRow + (2 + index)}`).value = generalData[0].toString();
+            worksheet.getCell(`C${startTotalSectionRow + (2 + index)}`).value = generalData[1].toString();
+            worksheet.getCell(`D${startTotalSectionRow + (2 + index)}`).value = generalData[2].toString();
+            worksheet.getCell(`E${startTotalSectionRow + (2 + index)}`).value = generalData[3].toString();
+            worksheet.getCell(`F${startTotalSectionRow + (2 + index)}`).value = generalData[4].toString();
+            worksheet.getCell(`G${startTotalSectionRow + (2 + index)}`).value = generalData[5].toString();
         });
 
         workbook.xlsx.writeBuffer()
@@ -561,14 +557,14 @@ class DataExporter extends Component {
 
 const DummyTableData = {
     processingStatusLine: [
-        [591.65, 171.76, 0, 0, 390.81, 217.65],
-        [568.17, 178.87, 0, 0, 354.01, 237.16],
-        [555.82, 202.67, 0, 0, 352.94, 236.53],
-        [662.03, 26.47, 0, 0, 353.65, 237.12],
-        [657.39, 24.85, 0, 0, 352.72, 236.56],
-        [659.37, 26.96, 0, 0, 351.88, 236.08],
-        [658.71, 23.67, 0, 0, 351.92, 236.08],
-        [657.94, 24.55, 0, 0, 350.69, 235.05,],
+        ['1-1', '1', 591.65, 171.76, 0, 0, 390.81, 217.65],
+        ['1-1', '2', 568.17, 178.87, 0, 0, 354.01, 237.16],
+        ['1-1', '3', 555.82, 202.67, 0, 0, 352.94, 236.53],
+        ['1-1', '4', 662.03, 26.47, 0, 0, 353.65, 237.12],
+        ['1-1', '5', 657.39, 24.85, 0, 0, 352.72, 236.56],
+        ['1-1', '6', 659.37, 26.96, 0, 0, 351.88, 236.08],
+        ['1-1', '7', 658.71, 23.67, 0, 0, 351.92, 236.08],
+        ['1-1', '8', 657.94, 24.55, 0, 0, 350.69, 235.05],
     ],
     general: [
         [626.385, 84.975, 0, 0, 357.3275, 234.02875],

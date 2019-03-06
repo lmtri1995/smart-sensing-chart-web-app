@@ -92,7 +92,7 @@ export default class MixedLineBarChart extends PureComponent {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
-            let {labels, data} = this.props;
+            let {labels, data, customTooltips} = this.props;
             if (labels && data && this.canvas) {
                 // These don't work
                 // this.myChart.data.labels = labels;
@@ -112,6 +112,11 @@ export default class MixedLineBarChart extends PureComponent {
                     labels: labels,
                     datasets: data
                 };
+
+                if (customTooltips) {
+                    this.myChart.options.tooltips = customTooltips;
+                }
+
                 this.myChart.update();
             }
         }

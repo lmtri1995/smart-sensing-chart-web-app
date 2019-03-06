@@ -13,6 +13,7 @@ const override = `
     top :45%;
     z-index: 100000;
 `;
+
 class ProcessStatus extends Component {
     static socket = null;
     static _isMounted = false;
@@ -266,12 +267,12 @@ class ProcessStatus extends Component {
                 totalSqrStddevCurringTime += (parseInt(this.checkNull(dataArray[i].cur_stdev)) - avgStddevCurringTime) ** 2;
             }
             if (numbersOfStation > 0) {
-                stdAvgTemp = (Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation)).toFixed(3);
-                stdStddevTemp = (Math.sqrt(totalSqrStddevTemp / numbersOfStation)).toFixed(3);
-                stdAvgPrep = (Math.sqrt(totalSqrAvgPrep / numbersOfStation)).toFixed(3);
-                stdStddevPrep = (Math.sqrt(totalSqrStddevPrep / numbersOfStation)).toFixed(3);
-                stdAvgCuringTime = (Math.sqrt(totalSqrAvgCuringTime / numbersOfStation)).toFixed(3);
-                stdStddevCurringTime = (Math.sqrt(totalSqrStddevCurringTime / numbersOfStation)).toFixed(3);
+                stdAvgTemp = Math.round(Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation) * 1000) / 1000;
+                stdStddevTemp = Math.round(Math.sqrt(totalSqrStddevTemp / numbersOfStation) * 1000) / 1000;
+                stdAvgPrep = Math.round(Math.sqrt(totalSqrAvgPrep / numbersOfStation) * 1000) / 1000;
+                stdStddevPrep = Math.round(Math.sqrt(totalSqrStddevPrep / numbersOfStation) * 1000) / 1000;
+                stdAvgCuringTime = Math.round(Math.sqrt(totalSqrAvgCuringTime / numbersOfStation) * 1000) / 1000;
+                stdStddevCurringTime = Math.round(Math.sqrt(totalSqrStddevCurringTime / numbersOfStation) * 1000) / 1000;
             }
 
             result = <tbody>
@@ -326,7 +327,16 @@ class ProcessStatus extends Component {
                 general: [],
             };
             for (let i = 0; i < numbersOfStation; ++i) {
-                processStatusDataToDownload.processingStatusLine[i] = dataArray[i];
+                processStatusDataToDownload.processingStatusLine[i] = [];
+
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idLine']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idStation']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['temp_avg']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['temp_stdev']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['pre_avg']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['pre_stdev']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['cur_avg']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['cur_stdev']);
             }
             processStatusDataToDownload.general = [
                 [avgAvgTemp, avgStddevTemp, avgAvgPrep, avgStddevPrep, avgAvgCuringTime, avgStddevCurringTime],

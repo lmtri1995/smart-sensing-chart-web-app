@@ -3,12 +3,13 @@ import ShiftStatus from "./components/ShiftStatus/ShiftStatus";
 import TemperatureTrend from "./components/TemperatureTrend/TemperatureTrend";
 import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
 import ListBottomComponent from "./components/ListOfBottomComponent/ListOfBottomComponent";
+import {AnalysisContainerID} from "../../constants/constants";
 
 class AnalysisPage extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container" id={AnalysisContainerID}>
                 <div className="row">
                     <div className="col">
                         <ShiftStatus/>

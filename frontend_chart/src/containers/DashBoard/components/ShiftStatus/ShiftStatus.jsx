@@ -124,13 +124,10 @@ export default class ShiftStatus extends Component {
         let result = 0;
         if (dataArray.length > 7) {
             if (currentTime >= shift1From && currentTime < shift1To) {
-                console.log("1");
                 result = 1;
             } else if (currentTime >= shift2From && currentTime < shift2To) {
-                console.log("2");
                 result = 2;
             } else if (currentTime >= shift3From && currentTime < shift3To) {
-                console.log("3");
                 result = 3;
             }
         }
@@ -209,7 +206,7 @@ export default class ShiftStatus extends Component {
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {
-            result = <tbody>{shift1}{shift3}{shift2}</tbody>;
+            result = <tbody>{shift3}{shift1}{shift2}</tbody>;
         } else {
             result = <tbody>{shift1}{shift2}{shift3}</tbody>;
         }

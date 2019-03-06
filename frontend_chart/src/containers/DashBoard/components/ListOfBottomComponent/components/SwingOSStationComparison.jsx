@@ -2,12 +2,13 @@ import React, {Component} from 'react'
 import {Bar} from 'react-chartjs-2';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
+import moment from "moment";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
     datasets: [
         {
-            label: 'Initial Data',
+            label: 'Swing Arm',
             backgroundColor: '#0CD0EB',
             borderColor: '#0CD0EB',
             borderWidth: 1,
@@ -16,7 +17,7 @@ const initialData = {
             data: [0, 0, 0],
         },
         {
-            label: 'Initial Data',
+            label: 'OS Press',
             backgroundColor: '#4C9EFF',
             borderColor: '#4C9EFF',
             borderWidth: 1,
@@ -102,14 +103,77 @@ export class SwingArmMachine extends Component {
         };
     }
 
+    specifyCurrentShift() {
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth();
+        let yyyy = today.getFullYear();
+        let hour = today.getHours();
+        let minute = today.getMinutes();
+        let second = today.getSeconds();
+        //shift 1: 6:00 am - 2:00 pm
+        //shift 2: 2:00 am - 20:00 pm
+        //shift 3: 20:00 pm - 6:00 am
+        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
+        let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
+        let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
+        let shift2From = shift1To;
+        let shift2To = moment.utc([yyyy, mm, dd, 20, 0, 0]).unix();
+        let shift3From = shift2To;
+        let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
+
+        let result = 0;
+        if (currentTime >= shift1From && currentTime < shift1To) {
+            result = 1;
+        } else if (currentTime >= shift2From && currentTime < shift2To) {
+            result = 2;
+        } else if (currentTime >= shift3From && currentTime < shift3To) {
+            result = 3;
+        }
+        return result;
+    }
+
     handleReturnData = (returnData) => {
         let result = [];
         let swingArmArray = [], osPessArray = [];
+        let currentShift = this.specifyCurrentShift();
         if (returnData && returnData.length > 0){
             returnData.map(item => {
                 if (item) {
-                    swingArmArray.push(item[1]);
-                    osPessArray.push(item[2]);
+                    if (currentShift == 1) {//2, 3, 1
+                        if (item[0] == 1) {
+                            swingArmArray[2] = item[1];
+                            osPessArray[2] = item[2];
+                        } else if (item[0] == 2) {
+                            swingArmArray[0] = item[1];
+                            osPessArray[0] = item[2];
+                        } else if (item[0] == 3) {
+                            swingArmArray[1] = item[1];
+                            osPessArray[1] = item[2];
+                        }
+                    } else if (currentShift == 2) {//3, 1, 2
+                        if (item[0] == 1) {
+                            swingArmArray[1] = item[1];
+                            osPessArray[1] = item[2];
+                        } else if (item[0] == 2) {
+                            swingArmArray[2] = item[1];
+                            osPessArray[2] = item[2];
+                        } else if (item[0] == 3) {
+                            swingArmArray[0] = item[1];
+                            osPessArray[0] = item[2];
+                        }
+                    } else { //1, 2, 3
+                        if (item[0] == 1) {
+                            swingArmArray[0] = item[1];
+                            osPessArray[0] = item[2];
+                        } else if (item[0] == 2) {
+                            swingArmArray[1] = item[1];
+                            osPessArray[1] = item[2];
+                        } else if (item[0] == 3) {
+                            swingArmArray[2] = item[1];
+                            osPessArray[2] = item[2];
+                        }
+                    }
                 }
             });
         }
@@ -131,8 +195,22 @@ export class SwingArmMachine extends Component {
         });
     }
 
+    changeLabelArray(){
+        let currentShift = this.specifyCurrentShift();
+        if (currentShift == 1){
+            this.labelArray = ['Shift 2', 'Shift 3', 'Shift 1'];
+        } else if (currentShift == 2){
+            this.labelArray = ['Shift 3', 'Shift 1', 'Shift 2'];
+        } else {
+            this.labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
+        }
+    }
+
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
+
+        this.changeLabelArray();
+
         this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
@@ -150,13 +228,20 @@ export class SwingArmMachine extends Component {
         });
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
+            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
+            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
+            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
+            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
+            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
+            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
+            console.log("response: ", response);
             if (response && response.success=="true"){
                 let dataArray = response.data;
                 let returnData = JSON.parse(dataArray[0].data);
                 if (returnData.length > 0){
                     let displayArray = this.handleReturnData(returnData);
                     this.myChart.data = {
-                        labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+                        labels: this.labelArray,
                         datasets: [
                             {
                                 label: 'Swing Arm',

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
+import moment from "moment";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -74,7 +75,7 @@ export class CycleDefectStationComparison extends Component {
 
         this.canvas = null;
         this.datasets = [];
-        this.labels = [];
+        this.labels = ['Shift 1', 'Shift 2', 'Shift 3'];
 
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
         this.role = this.loginData.data.role;
@@ -104,22 +105,78 @@ export class CycleDefectStationComparison extends Component {
         };
     }
 
+    specifyCurrentShift() {
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth();
+        let yyyy = today.getFullYear();
+        let hour = today.getHours();
+        let minute = today.getMinutes();
+        let second = today.getSeconds();
+        //shift 1: 6:00 am - 2:00 pm
+        //shift 2: 2:00 am - 20:00 pm
+        //shift 3: 20:00 pm - 6:00 am
+        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
+        let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
+        let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
+        let shift2From = shift1To;
+        let shift2To = moment.utc([yyyy, mm, dd, 20, 0, 0]).unix();
+        let shift3From = shift2To;
+        let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
+
+        let result = 0;
+        if (currentTime >= shift1From && currentTime < shift1To) {
+            result = 1;
+        } else if (currentTime >= shift2From && currentTime < shift2To) {
+            result = 2;
+        } else if (currentTime >= shift3From && currentTime < shift3To) {
+            result = 3;
+        }
+        return result;
+    }
+
     handleReturnData = (returnData) => {
         let result = [];
         let idleCycleArray = [], deffectiveArray = [];
+        let currentShift = this.specifyCurrentShift();
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
-                    if (item[0] == 1) {
-                        idleCycleArray.push(item[1]);
-                        deffectiveArray.push(item[2]);
-                    } else if (item[0] == 2) {
-                        idleCycleArray.push(item[1]);
-                        deffectiveArray.push(item[2]);
-                    } else if (item[0] == 3) {
-                        idleCycleArray.push(item[1]);
-                        deffectiveArray.push(item[2]);
+                    if (currentShift == 1) {//2, 3, 1
+                        if (item[0] == 1) {
+                            idleCycleArray[2] = item[1];
+                            deffectiveArray[2] = item[2];
+                        } else if (item[0] == 2) {
+                            idleCycleArray[0] = item[1];
+                            deffectiveArray[0] = item[2];
+                        } else if (item[0] == 3) {
+                            idleCycleArray[1] = item[1];
+                            deffectiveArray[1] = item[2];
+                        }
+                    } else if (currentShift == 2) {//3, 1, 2
+                        if (item[0] == 1) {
+                            idleCycleArray[1] = item[1];
+                            deffectiveArray[1] = item[2];
+                        } else if (item[0] == 2) {
+                            idleCycleArray[2] = item[1];
+                            deffectiveArray[2] = item[2];
+                        } else if (item[0] == 3) {
+                            idleCycleArray[0] = item[1];
+                            deffectiveArray[0] = item[2];
+                        }
+                    } else { //1, 2, 3
+                        if (item[0] == 1) {
+                            idleCycleArray[0] = item[1];
+                            deffectiveArray[0] = item[2];
+                        } else if (item[0] == 2) {
+                            idleCycleArray[1] = item[1];
+                            deffectiveArray[1] = item[2];
+                        } else if (item[0] == 3) {
+                            idleCycleArray[2] = item[1];
+                            deffectiveArray[2] = item[2];
+                        }
                     }
+
                 }
             });
         }
@@ -140,6 +197,17 @@ export class CycleDefectStationComparison extends Component {
         });
     }
 
+    changeLabelArray(){
+        let currentShift = this.specifyCurrentShift();
+        if (currentShift == 1){
+            this.labelArray = ['Shift 2', 'Shift 3', 'Shift 1'];
+        } else if (currentShift == 2){
+            this.labelArray = ['Shift 3', 'Shift 1', 'Shift 2'];
+        } else {
+            this.labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
+        }
+    }
+
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
@@ -147,6 +215,8 @@ export class CycleDefectStationComparison extends Component {
             data: initialData,
             options: options
         });
+
+        this.changeLabelArray();
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -164,7 +234,7 @@ export class CycleDefectStationComparison extends Component {
                 if (returnData.length > 0) {
                     let displayArray = this.handleReturnData(returnData);
                     this.myChart.data = {
-                        labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+                        labels: this.labelArray,
                         datasets: [
                             {
                                 label: 'Defective',

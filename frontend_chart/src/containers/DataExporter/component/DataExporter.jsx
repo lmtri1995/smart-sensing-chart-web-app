@@ -4,13 +4,24 @@ import * as FileSaver from 'file-saver';
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
-import {DashboardContainerID, ExportType} from "../../../constants/constants";
+import {AnalysisContainerID, DashboardContainerID, ExportType} from "../../../constants/constants";
 import {connect} from "react-redux";
+import {withRouter} from 'react-router-dom';
 
 class DataExporter extends Component {
 
-    exportExcelFile(data) {
-        let {processingStatusLine, general} = data;
+    exportExcelFile(props, location) {
+        let processStatusData = null;
+        switch (location.pathname) {
+            case '/':
+                processStatusData = props.downloadDataStore.processStatusData;
+                break;
+            case '/pages/analysis':
+                processStatusData = props.downloadDataStore.processStatusData;
+                break;
+            case '/pages/report':
+                break;
+        }
 
         // Create new Workbook
         let workbook = new Excel.Workbook();
@@ -19,126 +30,11 @@ class DataExporter extends Component {
         workbook.created = new Date();
         workbook.modified = new Date();
 
-        // Add new Worksheet
-        let worksheet = workbook.addWorksheet('Smart_Sensing_Chart_Data');
-
-        // ---------- Draw borders and define text alignments for every cell of the table ----------
-        let middleLeftAlignment = {vertical: 'middle', horizontal: 'left'};
-        let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
-        // 2: 2 first rows for Processing Status section
-        // data.length: number of stations
-        // 6: 6 rows for Total section
-        for (let row = 1; row <= 2 + processingStatusLine.length + 6; ++row) {  // Number of rows
-
-            let currentRow = worksheet.getRow(row);
-
-            for (let col = 1; col <= 7; ++col) {  // Number of columns
-                currentRow.getCell(col).border = {
-                    top: {style: 'thin'},
-                    left: {style: 'thin'},
-                    bottom: {style: 'thin'},
-                    right: {style: 'thin'}
-                };
-                // Station [num] cells in column A => middle left alignment
-                if (row >= 3 && row <= 2 + processingStatusLine.length && col === 1) {
-                    currentRow.getCell(col).alignment = middleLeftAlignment;
-                } else {
-                    currentRow.getCell(col).alignment = middleCenterAlignment;
-                }
-                // Set bold for Processing Status Section, Total Section & Column A
-                if (row < 3
-                    || row > 2 + processingStatusLine.length && row <= 2 + processingStatusLine.length + 2
-                    || col === 1) {
-                    currentRow.getCell(col).font = {
-                        bold: true
-                    }
-                }
-            }
+        // Add Process Status Data Worksheet
+        if (processStatusData) {
+            let {processingStatusLine, general} = processStatusData;
+            addProcessStatusDataTableExcel(workbook, processingStatusLine, general);
         }
-
-        // ---------- Processing Status Section ----------
-        // Line column
-        worksheet.getColumn('A').width = 18;
-        worksheet.mergeCells('A1:A2');
-        worksheet.getCell('A1').value = "Processing Status\r\nLine";
-        worksheet.getCell('A1').alignment = {...middleLeftAlignment, wrapText: true};
-
-        // Temperature columns
-        worksheet.mergeCells('B1:C1');
-        worksheet.getCell('B1').value = 'Temperature';
-        worksheet.getCell('B2').value = 'AVG.';
-        worksheet.getCell('C2').value = 'STDEV';
-
-        // Preparing Time(s) columns
-        worksheet.mergeCells('D1:E1');
-        worksheet.getCell('D1').value = 'Preparing Time(s)';
-        worksheet.getCell('D2').value = 'AVG.';
-        worksheet.getCell('E2').value = 'STDEV';
-
-        // Curing Time(s) columns
-        worksheet.mergeCells('F1:G1');
-        worksheet.getCell('F1').value = 'Curing Time(s)';
-        worksheet.getCell('F2').value = 'AVG.';
-        worksheet.getCell('G2').value = 'STDEV';
-
-        let startStationRow = 3;
-        let endStationRow = startStationRow + processingStatusLine.length - 1;
-
-        let startTotalSectionRow = endStationRow + 1;
-
-        // Total column
-        worksheet.mergeCells(`A${startTotalSectionRow}:A${startTotalSectionRow + 1}`);
-        worksheet.getCell(`A${startTotalSectionRow}`).value = 'Total';
-        worksheet.getCell(`A${startTotalSectionRow}`).alignment = middleCenterAlignment;
-
-        worksheet.getCell(`A${startTotalSectionRow + 2}`).value = 'AVG.';
-        worksheet.getCell(`A${startTotalSectionRow + 2}`).alignment = middleLeftAlignment;
-
-        worksheet.getCell(`A${startTotalSectionRow + 3}`).value = 'MAX';
-        worksheet.getCell(`A${startTotalSectionRow + 3}`).alignment = middleLeftAlignment;
-
-        worksheet.getCell(`A${startTotalSectionRow + 4}`).value = 'MIN';
-        worksheet.getCell(`A${startTotalSectionRow + 4}`).alignment = middleLeftAlignment;
-
-        worksheet.getCell(`A${startTotalSectionRow + 5}`).value = 'STDEV';
-        worksheet.getCell(`A${startTotalSectionRow + 5}`).alignment = middleLeftAlignment;
-
-        // Temperature column
-        worksheet.mergeCells(`B${startTotalSectionRow}:C${startTotalSectionRow}`);
-        worksheet.getCell(`B${startTotalSectionRow}`).value = 'Temperature';
-        worksheet.getCell(`B${startTotalSectionRow + 1}`).value = 'AVG.';
-        worksheet.getCell(`C${startTotalSectionRow + 1}`).value = 'STDEV';
-
-        // Preparing Time(s) column
-        worksheet.mergeCells(`D${startTotalSectionRow}:E${startTotalSectionRow}`);
-        worksheet.getCell(`D${startTotalSectionRow}`).value = 'Preparing Time(s)';
-        worksheet.getCell(`D${startTotalSectionRow + 1}`).value = 'AVG.';
-        worksheet.getCell(`E${startTotalSectionRow + 1}`).value = 'STDEV';
-
-        // Curing Time(s) column
-        worksheet.mergeCells(`F${startTotalSectionRow}:G${startTotalSectionRow}`);
-        worksheet.getCell(`F${startTotalSectionRow}`).value = 'Curing Time(s)';
-        worksheet.getCell(`F${startTotalSectionRow + 1}`).value = 'AVG.';
-        worksheet.getCell(`G${startTotalSectionRow + 1}`).value = 'STDEV';
-
-        // ---------- Fill Data into Table ----------
-        processingStatusLine.forEach((station, index) => {
-            // ---------- Fill Processing Line Data into Table ----------
-            let currentRow = worksheet.getRow(startStationRow + index);
-            for (let col = 1; col <= 7; ++col) {
-                currentRow.getCell(col).value = col === 1 ? `Station ${station[col]}` : station[col];
-            }
-        });
-
-        // ---------- Fill General Data into table ----------
-        general.forEach((generalData, index) => {
-            worksheet.getCell(`B${startTotalSectionRow + (2 + index)}`).value = generalData[0].toString();
-            worksheet.getCell(`C${startTotalSectionRow + (2 + index)}`).value = generalData[1].toString();
-            worksheet.getCell(`D${startTotalSectionRow + (2 + index)}`).value = generalData[2].toString();
-            worksheet.getCell(`E${startTotalSectionRow + (2 + index)}`).value = generalData[3].toString();
-            worksheet.getCell(`F${startTotalSectionRow + (2 + index)}`).value = generalData[4].toString();
-            worksheet.getCell(`G${startTotalSectionRow + (2 + index)}`).value = generalData[5].toString();
-        });
 
         workbook.xlsx.writeBuffer()
             .then(buffer => FileSaver.saveAs(
@@ -148,7 +44,22 @@ class DataExporter extends Component {
             .catch(err => console.log('Error writing excel export', err));
     }
 
-    exportPDFFile(data) {
+    exportPDFFile(props, location) {
+        let processStatusData = null;
+        let imageExportContainerID = null;
+        switch (location.pathname) {
+            case '/':
+                processStatusData = props.downloadDataStore.processStatusData;
+                imageExportContainerID = document.getElementById(DashboardContainerID);
+                break;
+            case '/pages/analysis':
+                processStatusData = props.downloadDataStore.processStatusData;
+                imageExportContainerID = document.getElementById(AnalysisContainerID);
+                break;
+            case '/pages/report':
+                break;
+        }
+
         // paper orientation -> landscape, unit -> pt: point, paper type -> A3
         let doc = new jsPDF('landscape', 'pt', 'a3');
         doc.setFontSize(12);
@@ -160,340 +71,73 @@ class DataExporter extends Component {
             creator: 'trile@snaglobal.net',
         });
 
-        let middleLeftStyle = {
+        let tableStyle = {
             font: 'helvetica',
-            halign: 'left',
-            valign: 'middle',
-            cellWidth: 'wrap',
-        };
-        let middleCenterStyle = {
-            font: 'helvetica',
-            halign: 'center',
-            valign: 'middle',
             cellWidth: 'wrap',
         };
 
-        // ---------- Processing Status Line Section ----------
-        let body = [
-            {
-                col1: {
-                    content: 'Processing Status\r\nLine',
-                    rowSpan: 2,
-                    styles: {
-                        ...middleLeftStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col2: {
-                    content: 'Temperature',
-                    colSpan: 2,
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col3: '',
-                col4: {
-                    content: 'Preparing Time(s)',
-                    colSpan: 2,
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col5: '',
-                col6: {
-                    content: 'Curing Time(s)',
-                    colSpan: 2,
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col7: '',
-            },
-            {
-                col1: '',
-                col2: {
-                    content: 'AVG.',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col3: {
-                    content: 'STDEV',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col4: {
-                    content: 'AVG.',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col5: {
-                    content: 'STDEV',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col6: {
-                    content: 'AVG.',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col7: {
-                    content: 'STDEV',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-            },
-        ];
+        if (imageExportContainerID) {
+            html2canvas(imageExportContainerID).then((canvas) => {
+                const screenShotData = canvas.toDataURL('image/png');
 
-        // ---------- Fill Processing Status Line Section Data into table ----------
-        data.processingStatusLine.forEach((station, index) => {
-            body.push({
-                col1: {
-                    content: `Station ${index + 1}`,
-                    styles: {
-                        ...middleLeftStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col2: {
-                    content: station[0],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col3: {
-                    content: station[1],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col4: {
-                    content: station[2],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col5: {
-                    content: station[3],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col6: {
-                    content: station[4],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col7: {
-                    content: station[5],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
+                var width = doc.internal.pageSize.getWidth();
+                var height = doc.internal.pageSize.getHeight();
+
+                // Add snapshot of full page
+                doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+                if (processStatusData) {
+                    doc.addPage();  // Add new page
+
+                    let {processingStatusLine, general} = processStatusData;
+                    addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
+                }
+
+                doc.save('Smart_Sensing_Chart_Data.pdf');
             });
-        });
-
-        // ---------- General Section ----------
-        body.push(
-            {
-                col1: {
-                    content: 'General',
-                    rowSpan: 2,
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col2: {
-                    content: 'Temperature',
-                    colSpan: 2,
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col3: '',
-                col4: {
-                    content: 'Preparing Time(s)',
-                    colSpan: 2,
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col5: '',
-                col6: {
-                    content: 'Curing Time(s)',
-                    colSpan: 2,
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col7: '',
-            },
-            {
-                col1: '',
-                col2: {
-                    content: 'AVG.',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col3: {
-                    content: 'STDEV',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col4: {
-                    content: 'AVG.',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col5: {
-                    content: 'STDEV',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col6: {
-                    content: 'AVG.',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col7: {
-                    content: 'STDEV',
-                    styles: {
-                        ...middleCenterStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-            },
-        );
-
-        // ---------- Fill General Data into table ----------
-        data.general.forEach((generalData, index) => {
-            body.push({
-                col1: {
-                    content: index === 0 ? 'AVG.' : index === 1 ? 'MAX' : index === 2 ? 'MIN' : 'STDEV',
-                    styles: {
-                        ...middleLeftStyle,
-                        fontStyle: 'bold',
-                    },
-                },
-                col2: {
-                    content: generalData[0],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col3: {
-                    content: generalData[1],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col4: {
-                    content: generalData[2],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col5: {
-                    content: generalData[3],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col6: {
-                    content: generalData[4],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-                col7: {
-                    content: generalData[5],
-                    styles: {
-                        ...middleCenterStyle,
-                    },
-                },
-            });
-        });
-
-        const dashboardContainer = document.getElementById(DashboardContainerID);
-
-        html2canvas(dashboardContainer).then((canvas) => {
-            const screenShotData = canvas.toDataURL('image/png');
-
-            var width = doc.internal.pageSize.getWidth();
-            var height = doc.internal.pageSize.getHeight();
-
-            // Add snapshot of full page
-            doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
-
-            doc.addPage();  // Add new page
-
-            // Add Table of Data
-            doc.autoTable({
-                body: body,
-                theme: 'grid',
-            });
-
-            doc.save('Smart_Sensing_Chart_Data.pdf');
-        });
+        }
     }
 
-    exportPNGFile() {
-        const dashboardContainer = document.getElementById(DashboardContainerID);
+    exportPNGFile(location) {
+        let imageExportContainerID = null;
+        switch (location.pathname) {
+            case '/':
+                imageExportContainerID = document.getElementById(DashboardContainerID);
+                break;
+            case '/pages/analysis':
+                imageExportContainerID = document.getElementById(AnalysisContainerID);
+                break;
+            case '/pages/report':
+                break;
+        }
 
-        html2canvas(dashboardContainer).then((canvas) => {
-            const screenShotData = canvas.toDataURL('image/png');
+        if (imageExportContainerID) {
+            html2canvas(imageExportContainerID).then((canvas) => {
+                const screenShotData = canvas.toDataURL('image/png');
 
-            let link = document.createElement('a');
+                let link = document.createElement('a');
 
-            if (typeof link.download === 'string') {
-                link.href = screenShotData;
-                link.download = 'Smart_Sensing_Chart_Data';
+                if (typeof link.download === 'string') {
+                    link.href = screenShotData;
+                    link.download = 'Smart_Sensing_Chart_Data';
 
-                //Firefox requires the link to be in the body
-                document.body.appendChild(link);
+                    //Firefox requires the link to be in the body
+                    document.body.appendChild(link);
 
-                //simulate click
-                link.click();
+                    //simulate click
+                    link.click();
 
-                //remove the link when done
-                document.body.removeChild(link);
-            } else {
-                window.open(screenShotData);
-            }
-        });
+                    //remove the link when done
+                    document.body.removeChild(link);
+                } else {
+                    window.open(screenShotData);
+                }
+            });
+        }
     }
 
     render() {
-        let {exportType} = this.props;
+        let {exportType, location} = this.props;
         let {processStatusData} = this.props.downloadDataStore;
         console.log("PROCESS_STATUS_DATA", processStatusData);
 
@@ -501,7 +145,7 @@ class DataExporter extends Component {
             case ExportType.EXCEL:
                 return (
                     <div className="data-exporter__button"
-                         onClick={() => this.exportExcelFile(DummyTableData)}>
+                         onClick={() => this.exportExcelFile(this.props, location)}>
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -518,7 +162,7 @@ class DataExporter extends Component {
             case ExportType.PDF:
                 return (
                     <div className="data-exporter__button"
-                         onClick={() => this.exportPDFFile(DummyTableData)}>
+                         onClick={() => this.exportPDFFile(this.props, location)}>
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -535,7 +179,7 @@ class DataExporter extends Component {
             case ExportType.PNG:
                 return (
                     <div className="data-exporter__button"
-                         onClick={() => this.exportPNGFile()}>
+                         onClick={() => this.exportPNGFile(location)}>
                         <span className="data-exporter__icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -555,27 +199,420 @@ class DataExporter extends Component {
     }
 }
 
-const DummyTableData = {
-    processingStatusLine: [
-        ['1-1', '1', 591.65, 171.76, 0, 0, 390.81, 217.65],
-        ['1-1', '2', 568.17, 178.87, 0, 0, 354.01, 237.16],
-        ['1-1', '3', 555.82, 202.67, 0, 0, 352.94, 236.53],
-        ['1-1', '4', 662.03, 26.47, 0, 0, 353.65, 237.12],
-        ['1-1', '5', 657.39, 24.85, 0, 0, 352.72, 236.56],
-        ['1-1', '6', 659.37, 26.96, 0, 0, 351.88, 236.08],
-        ['1-1', '7', 658.71, 23.67, 0, 0, 351.92, 236.08],
-        ['1-1', '8', 657.94, 24.55, 0, 0, 350.69, 235.05],
-    ],
-    general: [
-        [626.385, 84.975, 0, 0, 357.3275, 234.02875],
-        [662.03, 202.67, 0, 0, 390.81, 237.16],
-        [555.82, 23.67, 0, 0, 350.69, 217.65],
-        [43.20797901, 77.47023202, 0, 0, 12.69379548, 6.222395916],
-    ],
-};
+function addProcessStatusDataTableExcel(workbook, processingStatusLine, general) {
+    // Add new Worksheet
+    let worksheet = workbook.addWorksheet('Process_Status_Data');
+
+    // ---------- Draw borders and define text alignments for every cell of the table ----------
+    let middleLeftAlignment = {vertical: 'middle', horizontal: 'left'};
+    let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+    // 2: 2 first rows for Processing Status section
+    // processingStatusLine.length: number of stations
+    // 6: 6 rows for Total section
+    for (let row = 1; row <= 2 + processingStatusLine.length + 6; ++row) {  // Number of rows
+
+        let currentRow = worksheet.getRow(row);
+
+        for (let col = 1; col <= 7; ++col) {  // Number of columns
+            currentRow.getCell(col).border = {
+                top: {style: 'thin'},
+                left: {style: 'thin'},
+                bottom: {style: 'thin'},
+                right: {style: 'thin'}
+            };
+            // Station [num] cells in column A => middle left alignment
+            if (row >= 3 && row <= 2 + processingStatusLine.length && col === 1) {
+                currentRow.getCell(col).alignment = middleLeftAlignment;
+            } else {
+                currentRow.getCell(col).alignment = middleCenterAlignment;
+            }
+            // Set bold for Processing Status Section, Total Section & Column A
+            if (row < 3
+                || row > 2 + processingStatusLine.length && row <= 2 + processingStatusLine.length + 2
+                || col === 1) {
+                currentRow.getCell(col).font = {
+                    bold: true
+                }
+            }
+        }
+    }
+
+    // ---------- Processing Status Section ----------
+    // Line column
+    worksheet.getColumn('A').width = 18;
+    worksheet.mergeCells('A1:A2');
+    worksheet.getCell('A1').value = "Processing Status\r\nLine";
+    worksheet.getCell('A1').alignment = {...middleLeftAlignment, wrapText: true};
+
+    // Temperature columns
+    worksheet.mergeCells('B1:C1');
+    worksheet.getCell('B1').value = 'Temperature';
+    worksheet.getCell('B2').value = 'AVG.';
+    worksheet.getCell('C2').value = 'STDEV';
+
+    // Preparing Time(s) columns
+    worksheet.mergeCells('D1:E1');
+    worksheet.getCell('D1').value = 'Preparing Time(s)';
+    worksheet.getCell('D2').value = 'AVG.';
+    worksheet.getCell('E2').value = 'STDEV';
+
+    // Curing Time(s) columns
+    worksheet.mergeCells('F1:G1');
+    worksheet.getCell('F1').value = 'Curing Time(s)';
+    worksheet.getCell('F2').value = 'AVG.';
+    worksheet.getCell('G2').value = 'STDEV';
+
+    let startStationRow = 3;
+    let endStationRow = startStationRow + processingStatusLine.length - 1;
+
+    let startTotalSectionRow = endStationRow + 1;
+
+    // Total column
+    worksheet.mergeCells(`A${startTotalSectionRow}:A${startTotalSectionRow + 1}`);
+    worksheet.getCell(`A${startTotalSectionRow}`).value = 'Total';
+    worksheet.getCell(`A${startTotalSectionRow}`).alignment = middleCenterAlignment;
+
+    worksheet.getCell(`A${startTotalSectionRow + 2}`).value = 'AVG.';
+    worksheet.getCell(`A${startTotalSectionRow + 2}`).alignment = middleLeftAlignment;
+
+    worksheet.getCell(`A${startTotalSectionRow + 3}`).value = 'MAX';
+    worksheet.getCell(`A${startTotalSectionRow + 3}`).alignment = middleLeftAlignment;
+
+    worksheet.getCell(`A${startTotalSectionRow + 4}`).value = 'MIN';
+    worksheet.getCell(`A${startTotalSectionRow + 4}`).alignment = middleLeftAlignment;
+
+    worksheet.getCell(`A${startTotalSectionRow + 5}`).value = 'STDEV';
+    worksheet.getCell(`A${startTotalSectionRow + 5}`).alignment = middleLeftAlignment;
+
+    // Temperature column
+    worksheet.mergeCells(`B${startTotalSectionRow}:C${startTotalSectionRow}`);
+    worksheet.getCell(`B${startTotalSectionRow}`).value = 'Temperature';
+    worksheet.getCell(`B${startTotalSectionRow + 1}`).value = 'AVG.';
+    worksheet.getCell(`C${startTotalSectionRow + 1}`).value = 'STDEV';
+
+    // Preparing Time(s) column
+    worksheet.mergeCells(`D${startTotalSectionRow}:E${startTotalSectionRow}`);
+    worksheet.getCell(`D${startTotalSectionRow}`).value = 'Preparing Time(s)';
+    worksheet.getCell(`D${startTotalSectionRow + 1}`).value = 'AVG.';
+    worksheet.getCell(`E${startTotalSectionRow + 1}`).value = 'STDEV';
+
+    // Curing Time(s) column
+    worksheet.mergeCells(`F${startTotalSectionRow}:G${startTotalSectionRow}`);
+    worksheet.getCell(`F${startTotalSectionRow}`).value = 'Curing Time(s)';
+    worksheet.getCell(`F${startTotalSectionRow + 1}`).value = 'AVG.';
+    worksheet.getCell(`G${startTotalSectionRow + 1}`).value = 'STDEV';
+
+    // ---------- Fill Data into Table ----------
+    processingStatusLine.forEach((station, index) => {
+        // ---------- Fill Data into Table ----------
+        let currentRow = worksheet.getRow(startStationRow + index);
+        for (let col = 1; col <= 7; ++col) {
+            currentRow.getCell(col).value = col === 1 ? `Station ${station[col]}` : station[col];
+        }
+    });
+
+    // ---------- Fill General Data into table ----------
+    general.forEach((generalData, index) => {
+        worksheet.getCell(`B${startTotalSectionRow + (2 + index)}`).value = generalData[0].toString();
+        worksheet.getCell(`C${startTotalSectionRow + (2 + index)}`).value = generalData[1].toString();
+        worksheet.getCell(`D${startTotalSectionRow + (2 + index)}`).value = generalData[2].toString();
+        worksheet.getCell(`E${startTotalSectionRow + (2 + index)}`).value = generalData[3].toString();
+        worksheet.getCell(`F${startTotalSectionRow + (2 + index)}`).value = generalData[4].toString();
+        worksheet.getCell(`G${startTotalSectionRow + (2 + index)}`).value = generalData[5].toString();
+    });
+}
+
+function addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general) {
+    let middleLeftStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'left',
+    };
+    let middleCenterStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'center',
+    };
+
+    // ---------- Processing Status Line Section ----------
+    let body = [
+        {
+            col1: {
+                content: 'Processing Status\r\nLine',
+                rowSpan: 2,
+                styles: {
+                    ...middleLeftStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: 'Temperature',
+                colSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: '',
+            col4: {
+                content: 'Preparing Time(s)',
+                colSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: '',
+            col6: {
+                content: 'Curing Time(s)',
+                colSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col7: '',
+        },
+        {
+            col1: '',
+            col2: {
+                content: 'AVG.',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: {
+                content: 'STDEV',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col4: {
+                content: 'AVG.',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: {
+                content: 'STDEV',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col6: {
+                content: 'AVG.',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col7: {
+                content: 'STDEV',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+    ];
+
+    // ---------- Fill Processing Status Line Section Data into table ----------
+    processingStatusLine.forEach((station) => {
+        body.push({
+            col1: {
+                content: `Station ${station[1]}`,
+                styles: {
+                    ...middleLeftStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: station[2],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col3: {
+                content: station[3],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col4: {
+                content: station[4],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col5: {
+                content: station[5],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col6: {
+                content: station[6],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col7: {
+                content: station[7],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+        });
+    });
+
+    // ---------- General Section ----------
+    body.push(
+        {
+            col1: {
+                content: 'General',
+                rowSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: 'Temperature',
+                colSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: '',
+            col4: {
+                content: 'Preparing Time(s)',
+                colSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: '',
+            col6: {
+                content: 'Curing Time(s)',
+                colSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col7: '',
+        },
+        {
+            col1: '',
+            col2: {
+                content: 'AVG.',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: {
+                content: 'STDEV',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col4: {
+                content: 'AVG.',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: {
+                content: 'STDEV',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col6: {
+                content: 'AVG.',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col7: {
+                content: 'STDEV',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+    );
+
+    // ---------- Fill General Data into table ----------
+    general.forEach((generalData, index) => {
+        body.push({
+            col1: {
+                content: index === 0 ? 'AVG.' : index === 1 ? 'MAX' : index === 2 ? 'MIN' : 'STDEV',
+                styles: {
+                    ...middleLeftStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: generalData[0],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col3: {
+                content: generalData[1],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col4: {
+                content: generalData[2],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col5: {
+                content: generalData[3],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col6: {
+                content: generalData[4],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col7: {
+                content: generalData[5],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+        });
+    });
+
+    // Add Table of Data
+    doc.autoTable({
+        body: body,
+        theme: 'grid',
+    });
+}
 
 const mapStateToProps = state => ({
     downloadDataStore: state.downloadDataStore
 });
 
-export default connect(mapStateToProps)(DataExporter);
+export default withRouter(connect(mapStateToProps)(DataExporter));

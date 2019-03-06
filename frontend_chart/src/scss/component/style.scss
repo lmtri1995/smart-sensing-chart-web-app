@@ -125,7 +125,7 @@
 
 #station1 .dygraph-legend {
   color: #868D93;
-  padding-left: 80px;
+  padding-left: 100px;
 }
 
 #station2 .dygraph-axis-label-x {
@@ -246,4 +246,26 @@
   /* This applies to the title, x-axis label and y-axis label */
   font-family: Arial, Helvetica, sans-serif;
   color: white;
+}
+
+.temperature-tooltip {
+  color: #868D93;
+  position: 'absolute';
+  margin-left: 30px;
+}
+
+.temperature-legend {
+  color: #868D93;
+  margin-left: 10px;
+}
+
+.legend-box {
+  height: 20px;
+  width: 50px;
+  //position: absolute;
+}
+
+.legend-container {
+  display: flex;
+  //flex-wrap: nowrap;
 }

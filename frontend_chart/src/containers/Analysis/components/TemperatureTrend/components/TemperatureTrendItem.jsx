@@ -59,9 +59,50 @@ export default class TemperatureTrendItem extends Component {
         };
     }
 
+    legendFormatter = (data)=>{
+        console.log("data: ", data);
+        let text = '';
+        if (data.xHTML){
+            text = data.xHTML + "<br/>";
+        }
+        let series = data.series;
+        console.log("series: ", series);
+        for (let i = 0; i < 6; i++){
+            if (series[i].y){
+                text += "<span style='color: " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp;";
+            }
+        }
+
+
+
+        document.getElementById("tooltip" + this.props.stationId).innerHTML = text;
+
+        let html = "";
+        return html;
+    }
+
+    drawLegend = () => {
+        let stationId = this.props.stationId;
+        let legendValue = "<div class='legend-container'>";
+        for (let i = 0; i < this.colorArray.length; i++){
+            let color = this.colorArray[i];
+            console.log("color: ", color);
+            let label = this.labelArray[i+1];
+            legendValue += "<div id='"+ label + stationId +"' class='legend-box'" +
+                " style='background-color: " + color + ";'></div>";
+            legendValue += "<div class='temperature-legend'>" + label + "</div> &nbsp; &nbsp; ";
+        }
+        legendValue += "</div>";
+        document.getElementById("lengendLabel" + this.props.stationId).innerHTML = legendValue;
+    }
+
 
     componentDidMount() {
         let {stationId} = this.props;
+        console.log(`stationID: ${stationId}`);
+
+        this.drawLegend();
+
         let param = {
             idStation: stationId,
             from_timedevice: 0,
@@ -77,11 +118,11 @@ export default class TemperatureTrendItem extends Component {
                 // options go here. See http://dygraphs.com/options.html
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
                 animatedZooms: true,
-                showLabelsOnHighlight: false,
+                showLabelsOnHighlight: true,
                 width: 590,
-                height: 300,
-                labels: ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"],
-                colors: ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"],
+                height: 200,
+                labels: this.labelArray,
+                colors: this.colorArray,
                 axes: {
                     x: {
                         drawGrid: false,
@@ -96,7 +137,10 @@ export default class TemperatureTrendItem extends Component {
                         axisLineColor: '#464d54',
                         //drawAxis: false,
                     }
-                }
+                },
+                //labelsDiv: `lengendLabel` + stationId,
+                legendFormatter: this.legendFormatter,
+                labelsShowZeroValues: false
             }
         );
 
@@ -107,7 +151,11 @@ export default class TemperatureTrendItem extends Component {
 
                     let displayData = JSON.parse(dataArray[0].data);
                     if (displayData) {
-                        this.graph.updateOptions( { 'file': displayData } );
+                        this.graph.updateOptions(
+                            {
+                                'file': displayData,
+                            },
+                        );
                     }
                     this.setState({loading: false});
 
@@ -143,12 +191,19 @@ export default class TemperatureTrendItem extends Component {
                         loading={this.state.loading}
                         margin-left={300}
                     />
+                    <div className="container" style={{marginBottom: 40}}>
+                        <div className="row">
+                            <div className="temperature-tooltip" style={{position: 'absolute'}} id={'tooltip' + stationId}> </div>
+                        </div>
+                    </div>
                     <div className="container">
                         <div className="row">
-                            <div className="float-left">Hello Viet Nam</div>
+                            <div style={{marginBottom: 50}} id={'station' + stationId}></div>
                         </div>
+                    </div>
+                    <div className="container" style={{marginBottom: 40}}>
                         <div className="row">
-                            <div style={{marginBottom: 70}} id={'station' + stationId}></div>
+                            <div style={{position: 'absolute'}} id={'lengendLabel' + stationId}> </div>
                         </div>
                     </div>
                 </div>

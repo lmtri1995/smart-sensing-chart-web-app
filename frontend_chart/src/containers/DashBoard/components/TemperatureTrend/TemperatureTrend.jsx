@@ -401,7 +401,7 @@ export default class TemperatureTrend extends Component {
             <div className="temperature">
                 <div className="row">
                     <div className="col">
-                        <h4 className="float-left">temperature Trend</h4>
+                        <h4 className="float-left">Temperature Trend</h4>
                         <ButtonGroup className="float-right">
                             <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
                                 <DropdownToggle caret>

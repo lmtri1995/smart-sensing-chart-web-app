@@ -91,7 +91,47 @@ export default class TemperatureTrendItem extends Component {
         this.preTempTime = tempTime;
     }
 
+    legendFormatter = (data)=>{
+        let stationId = this.props.stationIdNo;
+
+        console.log("data: ", data);
+        let text = '';
+        if (data.xHTML){
+            text = data.xHTML + "<br/>";
+        }
+        let series = data.series;
+        console.log("series: ", series);
+        for (let i = 0; i < 6; i++){
+            if (series[i].y){
+                text += "<span style='color: " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp;";
+            }
+        }
+
+
+
+        document.getElementById("tooltip" + stationId).innerHTML = text;
+
+        let html = "";
+        return html;
+    }
+
+    drawLegend = () => {
+        let stationId = this.props.stationIdNo;
+        let legendValue = "<div class='legend-container'>";
+        for (let i = 0; i < this.colorArray.length; i++){
+            let color = this.colorArray[i];
+            console.log("color: ", color);
+            let label = this.labelArray[i+1];
+            legendValue += "<div id='"+ label + stationId +"' class='legend-box'" +
+                " style='background-color: " + color + ";'></div>";
+            legendValue += "<div class='temperature-legend'>" + label + "</div> &nbsp; &nbsp; ";
+        }
+        legendValue += "</div>";
+        document.getElementById("lengendLabel" + stationId).innerHTML = legendValue;
+    }
+
     componentDidMount() {
+        this.drawLegend();
 
         let {tempTime, stationIdNo} = this.props;
         this.preTempTime = tempTime;
@@ -102,7 +142,7 @@ export default class TemperatureTrendItem extends Component {
             {
                 // options go here. See http://dygraphs.com/options.html
                 //https://stackoverflow.com/questions/20234787/in-dygraphs-how-to-display-axislabels-as-text-instead-of-numbers-date
-                showLabelsOnHighlight: false,
+                showLabelsOnHighlight: true,
                 animatedZooms: true,
                 width: 590,
                 height: 300,
@@ -124,7 +164,9 @@ export default class TemperatureTrendItem extends Component {
                         axisLineColor: '#464d54',
                         //drawAxis: false,
                     }
-                }
+                },
+                legendFormatter: this.legendFormatter,
+                labelsShowZeroValues: false
             }
         );
 
@@ -183,33 +225,42 @@ export default class TemperatureTrendItem extends Component {
     }
 
     render() {
-        let {stationIdNo} = this.props;
+        let stationId = this.props.stationIdNo;
         return (
                 <div className="col">
                     <div className="row">
                         <div className="col-11">
-                            <h4 className="float-left">STATION {stationIdNo}: USL/ Value/ LSL</h4>
+                            <h4 className="float-left">STATION {stationId}: USL/ Value/ LSL</h4>
                         </div>
                         <div className="col-1">
                             <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
                         </div>
-                        <div>
-                            <ClipLoader
-                                css={override}
-                                sizeUnit={"px"}
-                                size={100}
-                                color={'#30D4A4'}
-                                loading={this.state.loading}
-                                margin-left={300}
-                            />
-                            <div className="container">
-                                <div className="row">
-                                    <div id={'station' + stationIdNo}  style={{marginBottom: 70}} ></div>
-                                </div>
+                    </div>
+                    <div className="row">
+                        <ClipLoader
+                            css={override}
+                            sizeUnit={"px"}
+                            size={100}
+                            color={'#30D4A4'}
+                            loading={this.state.loading}
+                            margin-left={300}
+                        />
+                        <div className="container" style={{marginBottom: 40}}>
+                            <div className="row">
+                                <div className="temperature-tooltip" style={{position: 'absolute'}} id={'tooltip' + stationId}> </div>
+                            </div>
+                        </div>
+                        <div className="container">
+                            <div className="row">
+                                <div id={'station' + stationId}  style={{marginBottom: 50}} ></div>
+                            </div>
+                        </div>
+                        <div className="container" style={{marginBottom: 40}}>
+                            <div className="row">
+                                <div style={{position: 'absolute'}} id={'lengendLabel' + stationId}> </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
         );
     }

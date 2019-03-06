@@ -35,3 +35,4 @@ export const ExportType = {
 
 // ID for HTML elements to generate canvas of the elements thru html2canvas library
 export const DashboardContainerID = 'dashboardContainerID';
+export const AnalysisContainerID = 'analysisContainerID';

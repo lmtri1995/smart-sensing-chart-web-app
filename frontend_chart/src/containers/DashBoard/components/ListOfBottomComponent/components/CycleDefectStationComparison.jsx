@@ -52,6 +52,7 @@ const options = {
                 },
                 ticks: {
                     beginAtZero: true,
+                    min: 0,
                     fontColor: '#6D6F74',
                 },
             },
@@ -109,7 +110,13 @@ export class CycleDefectStationComparison extends Component {
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
-                    if (item[0] === 1) {
+                    if (item[0] == 1) {
+                        idleCycleArray.push(item[1]);
+                        deffectiveArray.push(item[2]);
+                    } else if (item[0] == 2) {
+                        idleCycleArray.push(item[1]);
+                        deffectiveArray.push(item[2]);
+                    } else if (item[0] == 3) {
                         idleCycleArray.push(item[1]);
                         deffectiveArray.push(item[2]);
                     }
@@ -119,7 +126,6 @@ export class CycleDefectStationComparison extends Component {
         result.push(idleCycleArray);
         result.push(deffectiveArray);
         return result;
-
     }
 
     componentWillUnmount() {
@@ -153,7 +159,6 @@ export class CycleDefectStationComparison extends Component {
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
             if (response && response.success == "true") {
-                console.log("reponse: ", response);
                 let dataArray = response.data;
                 let returnData = JSON.parse(dataArray[0].data);
                 if (returnData.length > 0) {

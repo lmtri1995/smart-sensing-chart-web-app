@@ -69,8 +69,10 @@ export default class TemperatureTrendItem extends Component {
         }
 
 
-
-        document.getElementById("tooltip" + this.props.stationId).innerHTML = text;
+        console.log("stationId: ", this.props.stationId);
+        if (document.getElementById("tooltip" + this.props.stationId)){
+            document.getElementById("tooltip" + this.props.stationId).innerHTML = text;
+        }
 
         let html = "";
         return html;
@@ -120,10 +122,10 @@ export default class TemperatureTrendItem extends Component {
                     x: {
                         drawGrid: false,
                         valueFormatter: function (x) {
-                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY HH:mm:ss");
                         },
                         axisLabelFormatter: function (x) {
-                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY HH:mm:ss");
                         },
                     },
                     y: {

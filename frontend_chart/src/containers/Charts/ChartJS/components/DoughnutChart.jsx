@@ -88,8 +88,9 @@ export default class DoughnutChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("prevProps: ", prevProps);
+        console.log("prevState: ", prevState);
         if (this.props !== prevProps) {
-            console.log("hello");
             let {labels, data, centerTotal, showLegend} = this.props;
             if (labels && data && this.canvas) {
                 this.myChart.data = {

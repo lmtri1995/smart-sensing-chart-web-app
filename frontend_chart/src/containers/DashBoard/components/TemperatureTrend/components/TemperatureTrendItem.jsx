@@ -158,10 +158,10 @@ export default class TemperatureTrendItem extends Component {
                     x: {
                         drawGrid: false,
                         valueFormatter: function(x) {
-                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY HH:mm:ss");
                         },
                         axisLabelFormatter: function(x) {
-                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY HH:mm:ss");
                         },
                     },
                     y: {

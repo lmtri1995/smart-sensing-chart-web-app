@@ -51,8 +51,9 @@ export default class TemperatureTrendItem extends Component {
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
         }
 
+        let parentLoading = this.props.loading;
         this.state = {
-            loading: true
+            loading: parentLoading
         };
     }
 
@@ -68,27 +69,34 @@ export default class TemperatureTrendItem extends Component {
         });
     }
 
-    componentDidUpdate(){
-        let {tempTime, stationIdNo} = this.props;
+    componentDidUpdate(prevProps, prevState, snapshot){
+        let currentTime = this.preTempTime;
+        let newTime = this.props.tempTime;
+        if (currentTime !== newTime) {
+            let {tempTime, stationIdNo, parentLoading} = this.props;
 
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                minute: this.preTempTime,
-                status: 'stop',
-                idStation:stationIdNo
-            }
-        });
+            this.socket.emit(this.emitEvent, {
+                msg: {
+                    event: this.eventListen,
+                    minute: this.preTempTime,
+                    status: 'stop',
+                    idStation:stationIdNo
+                }
+            });
 
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                minute: tempTime,
-                status: 'start',
-                idStation:`${stationIdNo}`
-            }
-        });
-        this.preTempTime = tempTime;
+            this.socket.emit(this.emitEvent, {
+                msg: {
+                    event: this.eventListen,
+                    minute: tempTime,
+                    status: 'start',
+                    idStation:`${stationIdNo}`
+                }
+            });
+            this.preTempTime = tempTime;
+            this.setState({
+                loading: parentLoading
+            });
+        }
     }
 
     legendFormatter = (data)=>{

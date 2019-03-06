@@ -74,7 +74,6 @@ export default class ShiftStatus extends Component {
         });
 
         this.socket.on('sna_shift_status', (data) => {
-            console.log("data 77: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;

@@ -92,6 +92,7 @@ class ReportPage extends Component {
                     let averageProductionRatesByDay = [];
 
                     let totalProductionRateOfCurrentDay = 0, currentProductionRate = 0;
+                    let averageProductionRate = 0;
                     dataArray.map(currentDay => {
                         currentProductionRate = currentDay['PRODUCTION_RATE'];
                         // Round to 2 decimal places
@@ -117,10 +118,13 @@ class ReportPage extends Component {
 
                                 totalProductionRateOfCurrentDay += currentProductionRate;
 
-                                averageProductionRatesByDay.push(totalProductionRateOfCurrentDay / 3); // Average of 3 shifts
+                                averageProductionRate = totalProductionRateOfCurrentDay / 3;
+                                averageProductionRate = averageProductionRate % 1 !== 0
+                                    ? Math.round(averageProductionRate * 100) / 100
+                                    : averageProductionRate;
+                                averageProductionRatesByDay.push(averageProductionRate); // Average of 3 shifts
                                 break;
                         }
-
                     });
 
                     // Colors = Shift 1 + Shift 2 + Shift 3 + Average line + Average point background color

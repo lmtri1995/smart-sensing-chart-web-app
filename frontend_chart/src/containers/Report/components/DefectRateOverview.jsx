@@ -36,7 +36,7 @@ export default class DefectRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Defect Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={chartData} centerTotal={totalDefects}/>
+                    <DoughnutChart labels={chartLabels} data={chartData} centerTotal={totalDefects} showLegend={true}/>
                 </div>
             </div>
         )

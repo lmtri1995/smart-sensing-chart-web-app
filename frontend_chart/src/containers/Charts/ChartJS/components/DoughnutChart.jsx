@@ -59,7 +59,7 @@ const initialData = {
     }]
 };
 
-const options = {
+let options = {
     cutoutPercentage: 62,
     elements: {
         arc: {
@@ -75,6 +75,7 @@ const options = {
     },
     legend: {
         display: false,
+        position: 'bottom',
     }
 };
 
@@ -89,12 +90,14 @@ export default class DoughnutChart extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
             console.log("hello");
-            let {labels, data, centerTotal} = this.props;
+            let {labels, data, centerTotal, showLegend} = this.props;
             if (labels && data && this.canvas) {
                 this.myChart.data = {
                     labels: labels,
                     datasets: data
                 };
+
+                this.myChart.options.legend.display = !!showLegend;
 
                 if (!centerTotal) {
                     centerTotal = data[0].data.reduce((acc, curVal) => acc + curVal, 0);
@@ -119,6 +122,7 @@ export default class DoughnutChart extends Component {
     componentDidMount() {
         if (this.canvas) {
             const ctx = this.canvas.getContext('2d');
+            options.legend.display = !!this.props.showLegend;
             this.myChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: initialData,

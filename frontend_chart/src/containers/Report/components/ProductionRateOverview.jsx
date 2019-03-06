@@ -37,7 +37,7 @@ export default class ProductionRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={chartData} centerTotal={averageProductionRate}/>
+                    <DoughnutChart labels={chartLabels} data={chartData} centerTotal={averageProductionRate} showLegend={true}/>
                 </div>
             </div>
         )

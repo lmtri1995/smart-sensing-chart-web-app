@@ -93,14 +93,11 @@ export default class TemperatureTrendItem extends Component {
 
     legendFormatter = (data)=>{
         let stationId = this.props.stationIdNo;
-
-        console.log("data: ", data);
         let text = '';
         if (data.xHTML){
             text = data.xHTML + "<br/>";
         }
         let series = data.series;
-        console.log("series: ", series);
         for (let i = 0; i < 6; i++){
             if (series[i].y){
                 text += "<span style='color: " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp;";
@@ -120,7 +117,6 @@ export default class TemperatureTrendItem extends Component {
         let legendValue = "<div class='legend-container'>";
         for (let i = 0; i < this.colorArray.length; i++){
             let color = this.colorArray[i];
-            console.log("color: ", color);
             let label = this.labelArray[i+1];
             legendValue += "<div id='"+ label + stationId +"' class='legend-box'" +
                 " style='background-color: " + color + ";'></div>";
@@ -154,10 +150,10 @@ export default class TemperatureTrendItem extends Component {
                     x: {
                         drawGrid: false,
                         valueFormatter: function(x) {
-                            return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
                         },
                         axisLabelFormatter: function(x) {
-                            return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
                         },
                     },
                     y: {
@@ -199,23 +195,6 @@ export default class TemperatureTrendItem extends Component {
             }
 
         });
-
-        //Show data to grid for the first time after GUI rendered
-        /*let quantity = LOCAL_IP_TEMP_TREND.IP_TEMP_ITEM_TO_GET;
-        //this.showDataToGrid(quantity);
-
-        this.socket.on('chart_temp_trend', (data) => {
-            //console.log("data: ", data);
-            let returnArray = JSON.parse(data);
-            console.log("station: ", stationIdNo, "data: ", returnArray);
-            let timeSpacePushToStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_PUSH_TO_STOCK;
-            let timeSpaceFromStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_GET_FROM_STOCK;
-
-            //this.getInverval = setInterval(this.showDataToGrid(quantity), timeSpaceFromStock);
-            //this.pushInterval = setInterval(this.pushToStock(returnArray), timeSpacePushToStock);
-
-        });*/
-
     };
 
     refresh = () => {

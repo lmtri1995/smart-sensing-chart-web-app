@@ -51,22 +51,17 @@ export default class TemperatureTrendItem extends Component {
                 this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
                 break;
         }
-
-        //this.props.onRef(this);
-
         this.state = {
             loading: true
         };
     }
 
     legendFormatter = (data)=>{
-        console.log("data: ", data);
         let text = '';
         if (data.xHTML){
             text = data.xHTML + "<br/>";
         }
         let series = data.series;
-        console.log("series: ", series);
         for (let i = 0; i < 6; i++){
             if (series[i].y){
                 text += "<span style='color: " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp;";
@@ -86,7 +81,6 @@ export default class TemperatureTrendItem extends Component {
         let legendValue = "<div class='legend-container'>";
         for (let i = 0; i < this.colorArray.length; i++){
             let color = this.colorArray[i];
-            console.log("color: ", color);
             let label = this.labelArray[i+1];
             legendValue += "<div id='"+ label + stationId +"' class='legend-box'" +
                 " style='background-color: " + color + ";'></div>";
@@ -99,7 +93,6 @@ export default class TemperatureTrendItem extends Component {
 
     componentDidMount() {
         let {stationId} = this.props;
-        console.log(`stationID: ${stationId}`);
 
         this.drawLegend();
 
@@ -127,10 +120,10 @@ export default class TemperatureTrendItem extends Component {
                     x: {
                         drawGrid: false,
                         valueFormatter: function (x) {
-                            return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
                         },
                         axisLabelFormatter: function (x) {
-                            return moment.unix(x).format("YYYY/MM/DD hh:mm:ss");
+                            return moment.unix(x).format("DD/MM/YYYY hh:mm:ss");
                         },
                     },
                     y: {

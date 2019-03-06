@@ -104,14 +104,17 @@ export default class ShiftStatus extends Component {
     }
 
     specifyCurrentShift(dataArray) {
-        console.log("dataArray: ", dataArray);
         let today = new Date();
         let dd = today.getDate();
         let mm = today.getMonth();
         let yyyy = today.getFullYear();
+        let hour = today.getHours();
+        let minute = today.getMinutes();
+        let second = today.getSeconds();
         //shift 1: 6:00 am - 2:00 pm
         //shift 2: 2:00 am - 20:00 pm
         //shift 3: 20:00 pm - 6:00 am
+        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
         let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
         let shift2From = shift1To;
@@ -121,12 +124,14 @@ export default class ShiftStatus extends Component {
 
         let result = 0;
         if (dataArray.length > 7) {
-            let timeReceived = dataArray[7].timeRecieved;
-            if (timeReceived >= shift1From && timeReceived < shift1To) {
+            if (currentTime >= shift1From && currentTime < shift1To) {
+                console.log("1");
                 result = 1;
-            } else if (timeReceived >= shift2From && timeReceived < shift2To) {
+            } else if (currentTime >= shift2From && currentTime < shift2To) {
+                console.log("2");
                 result = 2;
-            } else if (timeReceived >= shift3From && timeReceived < shift3To) {
+            } else if (currentTime >= shift3From && currentTime < shift3To) {
+                console.log("3");
                 result = 3;
             }
         }

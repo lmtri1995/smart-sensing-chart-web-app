@@ -148,7 +148,6 @@ export default class DoughnutChart extends Component {
     componentDidMount() {
         if (this.canvas) {
             const ctx = this.canvas.getContext('2d');
-            options.legend.display = !!this.props.showLegend;
             this.myChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: initialData,

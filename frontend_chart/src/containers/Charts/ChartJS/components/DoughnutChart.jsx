@@ -107,7 +107,8 @@ let options = {
             color: '#FFFFFF', // Default is #000000
             fontSize: 32,   // Default is 32px
             fontFamily: 'Roboto', // Default is Arial, sans-serif
-            sidePadding: 76, // Default is 76 (as a percentage). Currently, side padding should be 76.
+            sidePadding: 50, // Default is 76 (as a percentage). Currently, side padding should
+            // be 76.
         }
     },
     legend: {

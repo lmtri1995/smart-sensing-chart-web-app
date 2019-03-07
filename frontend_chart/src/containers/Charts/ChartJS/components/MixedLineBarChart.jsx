@@ -24,7 +24,7 @@ let initialData = {
 
 const options = {
     legend: {
-        display: true,
+        display: false,
         position: 'bottom',
     },
     scales: {
@@ -62,7 +62,7 @@ export default class MixedLineBarChart extends PureComponent {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
-            let {labels, data, customTooltips} = this.props;
+            let {labels, data, customTooltips, showLegend} = this.props;
             if (labels && data && this.canvas) {
                 // These don't work
                 // this.myChart.data.labels = labels;
@@ -82,6 +82,8 @@ export default class MixedLineBarChart extends PureComponent {
                     labels: labels,
                     datasets: data
                 };
+
+                this.myChart.options.legend.display = !!showLegend;
 
                 if (customTooltips) {
                     this.myChart.options.tooltips = customTooltips;

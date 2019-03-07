@@ -11,15 +11,33 @@ Chart.plugins.register({
             let centerConfig = chart.config.options.elements.center;
             let fontSize = centerConfig.fontSize || 32;
             let fontFamily = centerConfig.fontFamily || 'arial, sans-serif';
-            let txt = centerConfig.text;
+            // Txt is a string OR an array of 2 elements, 1 for each line
+            // Currently, only supports array of 2 elements (2 lines of text)
+            let txt = centerConfig.text.search('\n') !== -1 ? centerConfig.text.split('\n') : centerConfig.text;
             let color = centerConfig.color || '#000';
-            let sidePadding = centerConfig.sidePadding || 20;   // padding percentage of text in inner circle
-            let sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2);
             //Start with a base font of 20px
             ctx.font = `${fontSize}px ${fontFamily}`;
 
-            //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
-            let stringWidth = ctx.measureText(txt).width;
+            // Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+            let stringWidth = 0, maxLength = 0;
+            if (Array.isArray(txt)) {
+                let currentWidth = 0, maxWidth = 0;
+                txt.forEach(str => {
+                    currentWidth = ctx.measureText(str).width;
+                    maxWidth = currentWidth > maxWidth ? currentWidth : maxWidth;
+                    maxLength = str.length > maxLength ? str.length : maxLength;
+                });
+                stringWidth = maxWidth;
+            } else {    // txt is a String
+                maxLength = txt.length;
+                stringWidth = ctx.measureText(txt).width;
+            }
+            // Padding percentage of text in inner circle.
+            // for every 1 more letter (initially 3 letters -> subtract by 3),
+            // subtract sidePadding (initially 76) by 3 unit
+            // Currently, side padding should be 76 initially
+            let sidePadding = (centerConfig.sidePadding - (maxLength - 3) * 3) || (76 - (maxLength - 3) * 3);
+            let sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2);
             let elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
 
             // Find out how much the font can grow in width.
@@ -39,7 +57,26 @@ Chart.plugins.register({
             ctx.fillStyle = color;
 
             //Draw text in center
-            ctx.fillText(txt, centerX, centerY);
+            if (Array.isArray(txt)) {
+                let scaledFontSizeToUse = 1.4 * fontSizeToUse;   // to have spacing between lines of texts
+                let topBaselineToDraw = centerY;
+
+                if (txt.length % 2 === 0) {
+                    let halfNumOfTxtLines = txt.length / 2;
+
+                    let topBaseline = centerY - (halfNumOfTxtLines * scaledFontSizeToUse);
+                    topBaselineToDraw =  topBaseline + (scaledFontSizeToUse / 2);
+                } else {
+                    let halfNumOfTxtLines = (txt.length - 1) / 2;
+
+                    topBaselineToDraw = centerY - (halfNumOfTxtLines * scaledFontSizeToUse);
+                }
+                txt.forEach((str, index) => {
+                    ctx.fillText(str, centerX, topBaselineToDraw + index * scaledFontSizeToUse);
+                });
+            } else {    // txt is a String
+                ctx.fillText(txt, centerX, centerY);
+            }
         }
     }
 });
@@ -66,11 +103,11 @@ let options = {
             borderWidth: 0, // No outline
         },
         center: {
-            text: '439',
+            text: '0',  // initially 1 letter
             color: '#FFFFFF', // Default is #000000
             fontSize: 32,   // Default is 32px
             fontFamily: 'Roboto', // Default is Arial, sans-serif
-            sidePadding: 70, // Default is 20 (as a percentage)
+            sidePadding: 76, // Default is 76 (as a percentage). Currently, side padding should be 76.
         }
     },
     legend: {
@@ -88,10 +125,8 @@ export default class DoughnutChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("prevProps: ", prevProps);
-        console.log("prevState: ", prevState);
         if (this.props !== prevProps) {
-            let {labels, data, centerTotal, showLegend} = this.props;
+            let {labels, data, centerText, showLegend} = this.props;
             if (labels && data && this.canvas) {
                 this.myChart.data = {
                     labels: labels,
@@ -100,20 +135,7 @@ export default class DoughnutChart extends Component {
 
                 this.myChart.options.legend.display = !!showLegend;
 
-                if (!centerTotal) {
-                    centerTotal = data[0].data.reduce((acc, curVal) => acc + curVal, 0);
-                }
-
-                this.myChart.options.elements.center.text =
-                    centerTotal % 1 === 0
-                        ? centerTotal
-                        : centerTotal.toFixed(2);
-
-                // For every 1 more letter (initially 3 letters), subtract sidePadding (initially 70) by 5 unit
-                this.myChart.options.elements.center.sidePadding =
-                    centerTotal % 1 === 0
-                        ? (70 - 5 * (centerTotal.toString().length - 3))
-                        : (70 - 5 * (centerTotal.toFixed(2).length - 3));
+                this.myChart.options.elements.center.text = centerText;
 
                 this.myChart.update();
             }

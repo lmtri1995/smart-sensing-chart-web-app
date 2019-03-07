@@ -122,89 +122,110 @@ export default class DowntimeShift extends Component {
         return result;
     }
 
+    countTotal(dataArray, shiftNo){
+        let init = moment({h: '0', m: '0', s: '0'});
+        let initHour = 0;
+        let initMinute = 0;
+        let initSecond = 0;
+        let total = 0;
+        //let total = 0;
+        for (let i = 0; i < 8; i++) {
+            //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
+            //total = 0;
+            let tmpTime = null;
+            if (shiftNo == 1){
+                tmpTime = dataArray[i].first_shift_off_sum;
+            } else if (shiftNo == 2){
+                tmpTime = dataArray[i].second_shift_off_sum;
+            } else if (shiftNo == 3){
+                tmpTime = dataArray[i].third_shift_off_sum;
+            }
+
+            let hour = tmpTime ? tmpTime.substr(tmpTime.indexOf('h') - 2, 2) : 'N/A';
+            let minute = tmpTime ? tmpTime.substr(tmpTime.indexOf('m') - 2, 2) : 'N/A';
+            let second = tmpTime ? tmpTime.substr(tmpTime.indexOf('s') - 2, 2) : 'N/A';
+            if (hour != 'N/A'){
+                initHour = +hour + initHour;
+            } else {
+                initHour = 'N/A';
+            }
+            if (minute != 'N/A'){
+                initMinute = +minute + initMinute;
+            } else {
+                initMinute = 'N/A';
+            }
+            if (second != 'N/A'){
+                initSecond = +second + initSecond;
+            } else {
+                initSecond = 'N/A';
+            }
+        }
+        if (initHour != 'N/A' && initMinute != 'N/A' && initSecond != 'N/A'){
+            if (initSecond >= 60) {
+                initMinute = (initSecond % 60) + initMinute;
+                initSecond = Math.floor(initSecond / 60);
+                if (initMinute >= 60) {
+                    initHour = (initMinute % 60) + initHour;
+                    initMinute = Math.floor(initMinute / 60);
+                }
+            }
+            initSecond = (initSecond >= 10) ? initSecond : '0' + initSecond;
+            initMinute = (initMinute >= 10) ? initMinute : '0' + initMinute;
+            initHour = (initHour >= 10) ? initHour : '0' + initHour;
+            total = initHour + 'h:' + initMinute + "m:" + initSecond + "s";
+        } else {
+            total = 'N/A';
+        }
+        return total;
+    }
+
     showDowntimeShiftItem(dataArray, shiftNo) {
         let result = "";
         if (dataArray && dataArray.length > 7) {
+            let total = this.countTotal(dataArray, shiftNo);
             if (shiftNo == 1) {
-                let init = moment({h: '0', m: '0', s: '0'});
-                let initHour = 0;
-                let initMinute = 0;
-                let initSecond = 0;
-                //let total = 0;
-                for (let i = 0; i < 8; i++) {
-                    //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
-                    //total = 0;
-                    let tmpTime = dataArray[i].first_shift_off_sum;
-                    let hour = tmpTime ? tmpTime.substr(tmpTime.indexOf('h') - 2, 2) : 0;
-                    let minute = tmpTime ? tmpTime.substr(tmpTime.indexOf('m') - 2, 2) : 0;
-                    let second = tmpTime ? tmpTime.substr(tmpTime.indexOf('s') - 2, 2) : 0;
-                    initHour = +hour + initHour;
-                    initMinute = +minute + initMinute;
-                    initSecond = +second + initSecond;
-                }
-                if (initSecond >= 60) {
-                    initMinute = (initSecond % 60) + initMinute;
-                    initSecond = Math.floor(initSecond / 60);
-                    if (initMinute >= 60) {
-                        initHour = (initMinute % 60) + initHour;
-                        initMinute = Math.floor(initMinute / 60);
-                    }
-                }
-                initSecond = (initSecond >= 10) ? initSecond : '0' + initSecond;
-                initMinute = (initMinute >= 10) ? initMinute : '0' + initMinute;
-                initHour = (initHour >= 10) ? initHour : '0' + initHour;
-                let total = initHour + 'h:' + initMinute + "m:" + initSecond + "s";
-
-                console.log("dataArray 160: ", dataArray);
-                result = <DowntimeShiftItem shiftNo={shiftNo} total={total}
-                                            count1={dataArray[0].first_shift_off_sum}
-                                            count2={dataArray[1].first_shift_off_sum}
-                                            count3={dataArray[2].first_shift_off_sum}
-                                            count4={dataArray[3].first_shift_off_sum}
-                                            count5={dataArray[4].first_shift_off_sum}
-                                            count6={dataArray[5].first_shift_off_sum}
-                                            count7={dataArray[6].first_shift_off_sum}
-                                            count8={dataArray[7].first_shift_off_sum}
+                result = <DowntimeShiftItem shiftNo={shiftNo} total={dataArray[0].first_shift_total?dataArray[0].first_shift_total:'N/A'}
+                                            count1={dataArray[0].first_shift_off_sum?dataArray[0].first_shift_off_sum: 'N/A'}
+                                            count2={dataArray[1].first_shift_off_sum?dataArray[1].first_shift_off_sum: 'N/A'}
+                                            count3={dataArray[2].first_shift_off_sum?dataArray[2].first_shift_off_sum: 'N/A'}
+                                            count4={dataArray[3].first_shift_off_sum?dataArray[3].first_shift_off_sum: 'N/A'}
+                                            count5={dataArray[4].first_shift_off_sum?dataArray[4].first_shift_off_sum: 'N/A'}
+                                            count6={dataArray[5].first_shift_off_sum?dataArray[5].first_shift_off_sum: 'N/A'}
+                                            count7={dataArray[6].first_shift_off_sum?dataArray[6].first_shift_off_sum: 'N/A'}
+                                            count8={dataArray[7].first_shift_off_sum?dataArray[7].first_shift_off_sum: 'N/A'}
                 />
             } else if (shiftNo == 2) {
-                let total = 0;
-
-                result = <DowntimeShiftItem shiftNo={shiftNo} total={total}
-                                            count1={dataArray[0].amount_second_shift_off}
-                                            count2={dataArray[1].amount_second_shift_off}
-                                            count3={dataArray[2].amount_second_shift_off}
-                                            count4={dataArray[3].amount_second_shift_off}
-                                            count5={dataArray[4].amount_second_shift_off}
-                                            count6={dataArray[5].amount_second_shift_off}
-                                            count7={dataArray[6].amount_second_shift_off}
-                                            count8={dataArray[7].amount_second_shift_off}
+                result = <DowntimeShiftItem shiftNo={shiftNo} total={dataArray[0].second_shift_total?dataArray[0].second_shift_total:'N/A'}
+                                            count1={dataArray[0].second_shift_off_sum?dataArray[0].second_shift_off_sum:'N/A'}
+                                            count2={dataArray[1].second_shift_off_sum?dataArray[1].second_shift_off_sum:'N/A'}
+                                            count3={dataArray[2].second_shift_off_sum?dataArray[2].second_shift_off_sum:'N/A'}
+                                            count4={dataArray[3].second_shift_off_sum?dataArray[3].second_shift_off_sum:'N/A'}
+                                            count5={dataArray[4].second_shift_off_sum?dataArray[4].second_shift_off_sum:'N/A'}
+                                            count6={dataArray[5].second_shift_off_sum?dataArray[5].second_shift_off_sum:'N/A'}
+                                            count7={dataArray[6].second_shift_off_sum?dataArray[6].second_shift_off_sum:'N/A'}
+                                            count8={dataArray[7].second_shift_off_sum?dataArray[7].second_shift_off_sum:'N/A'}
                 />
             } else if (shiftNo == 3) {
-                let total = 0;
-                for (let i = 0; i < 8; i++) {
-                    //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
-                    total = 0;
-                }
-                result = <DowntimeShiftItem shiftNo={shiftNo} total={total}
-                                            count1={dataArray[0].amount_third_shift_off}
-                                            count2={dataArray[1].amount_third_shift_off}
-                                            count3={dataArray[2].amount_third_shift_off}
-                                            count4={dataArray[3].amount_third_shift_off}
-                                            count5={dataArray[4].amount_third_shift_off}
-                                            count6={dataArray[5].amount_third_shift_off}
-                                            count7={dataArray[6].amount_third_shift_off}
-                                            count8={dataArray[7].amount_third_shift_off}/>
+                result = <DowntimeShiftItem shiftNo={shiftNo} total={dataArray[0].third_shift_total?dataArray[0].third_shift_total:'N/A'}
+                                            count1={dataArray[0].third_shift_off_sum?dataArray[0].third_shift_off_sum:'N/A'}
+                                            count2={dataArray[1].third_shift_off_sum?dataArray[1].third_shift_off_sum:'N/A'}
+                                            count3={dataArray[2].third_shift_off_sum?dataArray[2].third_shift_off_sum:'N/A'}
+                                            count4={dataArray[3].third_shift_off_sum?dataArray[3].third_shift_off_sum:'N/A'}
+                                            count5={dataArray[4].third_shift_off_sum?dataArray[4].third_shift_off_sum:'N/A'}
+                                            count6={dataArray[5].third_shift_off_sum?dataArray[5].third_shift_off_sum:'N/A'}
+                                            count7={dataArray[6].third_shift_off_sum?dataArray[6].third_shift_off_sum:'N/A'}
+                                            count8={dataArray[7].third_shift_off_sum?dataArray[7].third_shift_off_sum:'N/A'}/>
             }
         } else {
-            result = <DowntimeShiftItem shiftNo={shiftNo} total={0}
-                                        count1={0}
-                                        count2={0}
-                                        count3={0}
-                                        count4={0}
-                                        count5={0}
-                                        count6={0}
-                                        count7={0}
-                                        count8={0}/>;
+            result = <DowntimeShiftItem shiftNo={shiftNo} total={'N/A'}
+                                        count1={'N/A'}
+                                        count2={'N/A'}
+                                        count3={'N/A'}
+                                        count4={'N/A'}
+                                        count5={'N/A'}
+                                        count6={'N/A'}
+                                        count7={'N/A'}
+                                        count8={'N/A'}/>;
         }
         return result;
     }

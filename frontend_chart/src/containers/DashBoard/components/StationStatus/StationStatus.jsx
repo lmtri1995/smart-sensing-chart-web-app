@@ -108,6 +108,7 @@ export default class stationStatus extends Component {
                 proccess = 'os-Molding';
                 break;
         }
+
         this.socket.emit('machine_status', {
             msg: {
                 'event': 'sna_machine_status',
@@ -163,7 +164,6 @@ export default class stationStatus extends Component {
             </div>
         </div>;
         if (dataArray && dataArray.length > 0) {
-            console.log("dataArray: ", dataArray);
             dataArray.map(item => {
                 this["status" + item.idStation] = item.istatus;
                 this["space_time" + item.idStation] = item.space_time;

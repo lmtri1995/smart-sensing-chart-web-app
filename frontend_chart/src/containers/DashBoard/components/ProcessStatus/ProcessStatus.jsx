@@ -187,12 +187,6 @@ class ProcessStatus extends Component {
             let numbersOfStation = 8;
             let totalAvgTemp = 0, totalStddevTemp = 0, totalAvgPrep = 0, totalStddevPrep = 0,
                 totalAvgCuringTime = 0, totalStddevCurringTime = 0;
-            let avgAvgTemp = parseInt(this.checkNull(dataArray[0].temp_avg)),
-                avgStddevTemp = parseInt(this.checkNull(dataArray[0].temp_stdev)),
-                avgAvgPrep = parseInt(this.checkNull(dataArray[0].pre_avg)),
-                avgStddevPrep = parseInt(this.checkNull(dataArray[0].pre_stdev)),
-                avgAvgCuringTime = parseInt(this.checkNull(dataArray[0].cur_avg)),
-                avgStddevCurringTime = parseInt(this.checkNull(dataArray[0].cur_stdev));
 
             let maxAvgTemp = parseInt(this.checkNull(dataArray[0].temp_avg)),
                 maxStddevTemp = parseInt(this.checkNull(dataArray[0].temp_stdev)),
@@ -235,14 +229,14 @@ class ProcessStatus extends Component {
 
                 //for stddev line
             }
-            if (numbersOfStation > 0) {
-                avgAvgTemp = totalAvgTemp / numbersOfStation;
-                avgStddevTemp = totalStddevTemp / numbersOfStation;
-                avgAvgPrep = totalAvgPrep / numbersOfStation;
-                avgStddevPrep = totalStddevPrep / numbersOfStation;
-                avgAvgCuringTime = totalAvgCuringTime / numbersOfStation;
-                avgStddevCurringTime = totalStddevCurringTime / numbersOfStation;
-            }
+
+            let avgAvgTemp = Math.round(totalAvgTemp / numbersOfStation * 100) / 100;
+            let avgStddevTemp = Math.round(totalStddevTemp / numbersOfStation * 100) / 100;
+            let avgAvgPrep = Math.round(totalAvgPrep / numbersOfStation * 100) / 100;
+            let avgStddevPrep = Math.round(totalStddevPrep / numbersOfStation * 100) / 100;
+            let avgAvgCuringTime = Math.round(totalAvgCuringTime / numbersOfStation * 100) / 100;
+            let avgStddevCurringTime = Math.round(totalStddevCurringTime / numbersOfStation * 100) / 100;
+
 
             //count standard deviation
             let stdAvgTemp = 0,
@@ -267,12 +261,12 @@ class ProcessStatus extends Component {
                 totalSqrStddevCurringTime += (parseInt(this.checkNull(dataArray[i].cur_stdev)) - avgStddevCurringTime) ** 2;
             }
             if (numbersOfStation > 0) {
-                stdAvgTemp = Math.round(Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation) * 1000) / 1000;
-                stdStddevTemp = Math.round(Math.sqrt(totalSqrStddevTemp / numbersOfStation) * 1000) / 1000;
-                stdAvgPrep = Math.round(Math.sqrt(totalSqrAvgPrep / numbersOfStation) * 1000) / 1000;
-                stdStddevPrep = Math.round(Math.sqrt(totalSqrStddevPrep / numbersOfStation) * 1000) / 1000;
-                stdAvgCuringTime = Math.round(Math.sqrt(totalSqrAvgCuringTime / numbersOfStation) * 1000) / 1000;
-                stdStddevCurringTime = Math.round(Math.sqrt(totalSqrStddevCurringTime / numbersOfStation) * 1000) / 1000;
+                stdAvgTemp = Math.round(Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation) * 100) / 100;
+                stdStddevTemp = Math.round(Math.sqrt(totalSqrStddevTemp / numbersOfStation) * 100) / 100;
+                stdAvgPrep = Math.round(Math.sqrt(totalSqrAvgPrep / numbersOfStation) * 100) / 100;
+                stdStddevPrep = Math.round(Math.sqrt(totalSqrStddevPrep / numbersOfStation) * 100) / 100;
+                stdAvgCuringTime = Math.round(Math.sqrt(totalSqrAvgCuringTime / numbersOfStation) * 100) / 100;
+                stdStddevCurringTime = Math.round(Math.sqrt(totalSqrStddevCurringTime / numbersOfStation) * 100) / 100;
             }
 
             result = <tbody>

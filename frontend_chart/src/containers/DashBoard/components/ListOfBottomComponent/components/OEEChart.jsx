@@ -40,6 +40,7 @@ export default class OEEChart extends Component {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
+                //idStation:0,
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
@@ -47,12 +48,48 @@ export default class OEEChart extends Component {
             }
         });
         this.socket.on(this.eventListen, (response) => {
-            console.log("===================================================");
-            console.log("===================================================");
-            console.log("===================================================");
-            console.log("===================================================");
-            console.log("===================================================");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
+            console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt");
             console.log("response: ", response);
+            if (response && response.success){
+
+                let returnData = response.data;
+                console.log("returnData: ", returnData);
+            }
+        });
+        let data = [
+            {"working_hr":27000,"stopping_hr":340870,"count1":33,"count2":27,"idle_cycle":486,"preparingtime":34953,"curringtime":103630,"shiftno":1,"timedevice":"2019-03-06 13:20:02"},
+            {"working_hr":27000,"stopping_hr":340870,"count1":65,"count2":62,"idle_cycle":447,"preparingtime":40110,"curringtime":94400,"shiftno":2,"timedevice":"2019-03-06 20:57:36"}
+        ];
+        let totalWorkingHour = 0;
+        let totalStoppingHour = 0;
+        let totalProductCount = 0;
+        let totalDefect = 0;
+        let totalStandardTime = 0;
+        let availability = 0;
+        let totalPreparingTime = 0;
+        let cycleCount = 1;
+        data.map(item=> {
+            if (item){
+                totalWorkingHour += item.working_hr;
+                totalStoppingHour += item.stopping_hr;
+                totalProductCount += item.count1 + item.count2;
+
+            }
+        });
+        availability = (totalWorkingHour - totalStoppingHour) / totalWorkingHour * 100;
+        availability = Math.round(availability * 100) / 100;
+        this.setState({
+            availabilityNumber: availability,
         });
     }
 
@@ -87,9 +124,9 @@ export default class OEEChart extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-12"><h4>OEE</h4></div>
-                        <div className="col-4 align-self-center"><DoughnutChart labels={["Availability", ""]} data={availabilityChartData} centerTotal={availabilityNumber}/></div>
-                        <div className="col-4 align-self-center"><DoughnutChart labels={["Performance", ""]} data={performanceChartData} centerTotal={performanceNumber}/></div>
-                        <div className="col-4 align-self-center"><DoughnutChart labels={["Quality", ""]} data={qualityChartData} centerTotal={qualityNumber}/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart labels={["Availability", ""]} data={availabilityChartData} centerText={`Availability\n${availabilityNumber}%`}/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart labels={["Performance", ""]} data={performanceChartData} centerText={performanceNumber}/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart labels={["Quality", ""]} data={qualityChartData} centerText={qualityNumber}/></div>
                     </div>
                 </div>
             </div>

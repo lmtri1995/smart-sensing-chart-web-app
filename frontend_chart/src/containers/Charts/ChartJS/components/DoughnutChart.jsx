@@ -136,7 +136,9 @@ export default class DoughnutChart extends Component {
 
                 this.myChart.options.legend.display = !!showLegend;
 
-                this.myChart.options.elements.center.text = centerText;
+                if (centerText) {
+                    this.myChart.options.elements.center.text = centerText;
+                }
 
                 this.myChart.update();
             }

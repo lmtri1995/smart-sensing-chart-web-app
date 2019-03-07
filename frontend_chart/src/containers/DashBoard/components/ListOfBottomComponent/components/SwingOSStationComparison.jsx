@@ -228,13 +228,6 @@ export class SwingArmMachine extends Component {
         });
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
-            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
-            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
-            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
-            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
-            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
-            console.log("gggggggggggggggggggggggggggggggggggggggggggg");
-            console.log("response: ", response);
             if (response && response.success=="true"){
                 let dataArray = response.data;
                 let returnData = JSON.parse(dataArray[0].data);

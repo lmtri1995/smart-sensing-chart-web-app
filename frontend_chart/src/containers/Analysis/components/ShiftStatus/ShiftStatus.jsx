@@ -168,17 +168,18 @@ export default class ShiftStatus extends Component {
 
     showShiftTable(dataArray) {
         let result = '';
-        let currentShift = this.specifyCurrentShift(dataArray);
+        //let currentShift = this.specifyCurrentShift(dataArray);
         let shift1 = this.showShiftItem(dataArray, 1);
         let shift2 = this.showShiftItem(dataArray, 2);
         let shift3 = this.showShiftItem(dataArray, 3);
-        if (currentShift == 1) {
+        /*if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {
-            result = <tbody>{shift1}{shift3}{shift2}</tbody>;
+            result = <tbody>{shift3}{shift1}{shift2}</tbody>;
         } else if (currentShift == 3) {
             result = <tbody>{shift1}{shift2}{shift3}</tbody>;
-        }
+        }*/
+        result = <tbody>{shift1}{shift2}{shift3}</tbody>;
         return result;
     };
 

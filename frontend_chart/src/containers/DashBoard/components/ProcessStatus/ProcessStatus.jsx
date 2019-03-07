@@ -135,7 +135,7 @@ class ProcessStatus extends Component {
     showLineTable(dataArray) {
         let result = <tbody>
         <tr>
-            <th></th>
+            <th>STATION No.</th>
             <th>AVG</th>
             <th>STDEV</th>
             <th>AVG</th>
@@ -226,12 +226,12 @@ class ProcessStatus extends Component {
                 maxStddevCurringTime = (maxStddevCurringTime < parseInt(dataArray[i].cur_stdev)) ? parseInt(dataArray[i].cur_stdev) : maxStddevCurringTime;
 
                 //for min line
-                minAvgTemp = (minAvgTemp < parseInt(dataArray[i].temp_avg)) ? parseInt(dataArray[i].temp_avg) : minAvgTemp;
-                minStddevTemp = (minStddevTemp < parseInt(dataArray[i].temp_stdev)) ? parseInt(dataArray[i].temp_stdev) : minStddevTemp;
-                minAvgPrep = (minAvgPrep < parseInt(dataArray[i].pre_avg)) ? parseInt(dataArray[i].pre_avg) : minAvgPrep;
-                minStddevPrep = (minStddevPrep < parseInt(dataArray[i].pre_stdev)) ? parseInt(dataArray[i].pre_stdev) : minStddevPrep;
-                minAvgCuringTime = (minAvgCuringTime < parseInt(dataArray[i].cur_avg)) ? parseInt(dataArray[i].cur_avg) : minAvgCuringTime;
-                minStddevCurringTime = (minStddevCurringTime < parseInt(dataArray[i].cur_stdev)) ? parseInt(dataArray[i].cur_stdev) : minStddevCurringTime;
+                minAvgTemp = (minAvgTemp < parseInt(dataArray[i].temp_avg)) ? minAvgTemp : parseInt(dataArray[i].temp_avg);
+                minStddevTemp = (minStddevTemp < parseInt(dataArray[i].temp_stdev)) ? minStddevTemp : parseInt(dataArray[i].temp_stdev);
+                minAvgPrep = (minAvgPrep < parseInt(dataArray[i].pre_avg)) ? minAvgPrep : parseInt(dataArray[i].pre_avg);
+                minStddevPrep = (minStddevPrep < parseInt(dataArray[i].pre_stdev)) ? minStddevPrep : parseInt(dataArray[i].pre_stdev);
+                minAvgCuringTime = (minAvgCuringTime < parseInt(dataArray[i].cur_avg)) ? minAvgCuringTime : parseInt(dataArray[i].cur_avg);
+                minStddevCurringTime = (minStddevCurringTime < parseInt(dataArray[i].cur_stdev)) ? minStddevCurringTime : parseInt(dataArray[i].cur_stdev);
 
                 //for stddev line
             }
@@ -277,7 +277,7 @@ class ProcessStatus extends Component {
 
             result = <tbody>
             <tr>
-                <th>0</th>
+                <th>STATION No.</th>
                 <th>AVG</th>
                 <th>STDEV</th>
                 <th>AVG</th>

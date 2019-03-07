@@ -74,7 +74,6 @@ export default class ShiftStatus extends Component {
         });
 
         this.socket.on('sna_shift_status', (data) => {
-            console.log("data 77: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -104,14 +103,17 @@ export default class ShiftStatus extends Component {
     }
 
     specifyCurrentShift(dataArray) {
-        console.log("dataArray: ", dataArray);
         let today = new Date();
         let dd = today.getDate();
         let mm = today.getMonth();
         let yyyy = today.getFullYear();
+        let hour = today.getHours();
+        let minute = today.getMinutes();
+        let second = today.getSeconds();
         //shift 1: 6:00 am - 2:00 pm
         //shift 2: 2:00 am - 20:00 pm
         //shift 3: 20:00 pm - 6:00 am
+        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
         let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
         let shift2From = shift1To;
@@ -121,12 +123,11 @@ export default class ShiftStatus extends Component {
 
         let result = 0;
         if (dataArray.length > 7) {
-            let timeReceived = dataArray[7].timeRecieved;
-            if (timeReceived >= shift1From && timeReceived < shift1To) {
+            if (currentTime >= shift1From && currentTime < shift1To) {
                 result = 1;
-            } else if (timeReceived >= shift2From && timeReceived < shift2To) {
+            } else if (currentTime >= shift2From && currentTime < shift2To) {
                 result = 2;
-            } else if (timeReceived >= shift3From && timeReceived < shift3To) {
+            } else if (currentTime >= shift3From && currentTime < shift3To) {
                 result = 3;
             }
         }
@@ -205,7 +206,7 @@ export default class ShiftStatus extends Component {
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {
-            result = <tbody>{shift1}{shift3}{shift2}</tbody>;
+            result = <tbody>{shift3}{shift1}{shift2}</tbody>;
         } else {
             result = <tbody>{shift1}{shift2}{shift3}</tbody>;
         }

@@ -5,7 +5,7 @@ export default class ProductionRateOverview extends Component {
     render() {
         let {productionRate} = this.props;
         let chartLabels = [];
-        let sumProductionRates = [], sum = 0, averageProductionRate = 0;
+        let sumProductionRates = [], sum = 0, averageProductionRateText = '';
         if (productionRate) {
             productionRate.map((element, index) => {
                 if (index < productionRate.length - 1) {
@@ -21,7 +21,10 @@ export default class ProductionRateOverview extends Component {
                     sumProductionRates.push(sum);
                 }
             });
-            averageProductionRate = sumProductionRates.reduce((acc, curVal) => acc + curVal, 0) / sumProductionRates.length;
+            let averageProductionRate = sumProductionRates.reduce((acc, curVal) => acc + curVal, 0) / sumProductionRates.length;
+            averageProductionRateText = averageProductionRate % 1 !== 0
+                ? averageProductionRate.toFixed(2)
+                : averageProductionRate.toString();
         }
 
         let chartData = [{
@@ -37,7 +40,7 @@ export default class ProductionRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={chartData} centerTotal={averageProductionRate}/>
+                    <DoughnutChart labels={chartLabels} data={chartData} centerText={averageProductionRateText} showLegend={true}/>
                 </div>
             </div>
         )

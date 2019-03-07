@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {ButtonDropdown, ButtonGroup, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
-import TemperatureTrendTable from './components/TemperatureTrendTable';
 import TemperatureTrendItem from './components/TemperatureTrendItem';
 import Singleton from "../../../../services/Socket";
 import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../constants/constants";
@@ -45,6 +44,7 @@ export default class TemperatureTrend extends Component {
             dropdownOpen: false,
             dataArray: "",
             tempTime: 30, //choosen time for temperature
+            loading: true,
         };
 
         switch (this.role) {
@@ -287,7 +287,7 @@ export default class TemperatureTrend extends Component {
         let token = loginData.token;
         let socket = Singleton.getInstance(token);*/
 
-            //////////////test
+        //////////////test
         /*let {tempTime, stationIdNo} = this.props;
         this.socket.emit('os_temp_trend', {
             msg: {
@@ -361,10 +361,11 @@ export default class TemperatureTrend extends Component {
         /*let loginData = JSON.parse(localStorage.getItem('logindata'));
         let token = loginData.token;
         let socket = Singleton.getInstance(token);*/
-        let currentTempTime = parseInt(event.currentTarget.getAttribute("dropdownvalue"));
+        let newTempTime = parseInt(event.currentTarget.getAttribute("dropdownvalue"));
 
         this.setState({
-            tempTime: currentTempTime,
+            tempTime: newTempTime,
+            loading: true,
         });
     };
 
@@ -372,16 +373,24 @@ export default class TemperatureTrend extends Component {
     showTempTable = (dataArray) => {
         let result = (<div className="row" key={'2'}>
             <div className="col-6">
-                <TemperatureTrendItem stationIdNo={1} tempTime={this.state.tempTime}/>
-                <TemperatureTrendItem stationIdNo={2} tempTime={this.state.tempTime}/>
-                <TemperatureTrendItem stationIdNo={3} tempTime={this.state.tempTime}/>
-                <TemperatureTrendItem stationIdNo={4} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={1} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
+                <TemperatureTrendItem stationIdNo={2} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
+                <TemperatureTrendItem stationIdNo={3} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
+                <TemperatureTrendItem stationIdNo={4} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
             </div>
             <div className="col-6">
-                <TemperatureTrendItem stationIdNo={5} tempTime={this.state.tempTime}/>
-                <TemperatureTrendItem stationIdNo={6} tempTime={this.state.tempTime}/>
-                <TemperatureTrendItem stationIdNo={7} tempTime={this.state.tempTime}/>
-                <TemperatureTrendItem stationIdNo={8} tempTime={this.state.tempTime}/>
+                <TemperatureTrendItem stationIdNo={5} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
+                <TemperatureTrendItem stationIdNo={6} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
+                <TemperatureTrendItem stationIdNo={7} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
+                <TemperatureTrendItem stationIdNo={8} tempTime={this.state.tempTime}
+                                      parentLoading={this.state.loading}/>
             </div>
         </div>);
         return result;
@@ -401,7 +410,7 @@ export default class TemperatureTrend extends Component {
             <div className="temperature">
                 <div className="row">
                     <div className="col">
-                        <h4 className="float-left">temperature Trend</h4>
+                        <h4 className="float-left">Temperature Trend</h4>
                         <ButtonGroup className="float-right">
                             <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
                                 <DropdownToggle caret>

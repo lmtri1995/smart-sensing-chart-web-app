@@ -8,7 +8,7 @@ const initialData = {
     labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     datasets: [
         {
-            label: 'Initial Data',
+            label: 'Swing Arm',
             backgroundColor: '#C88FFA',
             borderColor: '#C88FFA',
             borderWidth: 1,

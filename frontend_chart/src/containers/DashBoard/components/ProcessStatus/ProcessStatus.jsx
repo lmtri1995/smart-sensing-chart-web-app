@@ -33,15 +33,19 @@ class ProcessStatus extends Component {
         switch (this.role) {
             case 'admin':
                 this.emitEvent = 'os_process_status';
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             case 'ip':
                 this.emitEvent = 'ip_process_status';
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             case 'os':
                 this.emitEvent = 'os_process_status';
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             default:
                 this.emitEvent = 'os_process_status';
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
         }
 
@@ -57,7 +61,7 @@ class ProcessStatus extends Component {
         //Unregister event
         this.socket.emit(this.emitEvent, {
             msg: {
-                event: 'sna_process_status',
+                event: this.listenEvent,
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
@@ -77,7 +81,7 @@ class ProcessStatus extends Component {
 
         this.socket.emit(this.emitEvent, {
             msg: {
-                event: 'sna_process_status',
+                event: this.listenEvent,
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
@@ -85,7 +89,7 @@ class ProcessStatus extends Component {
             }
         });
 
-        this.socket.on('sna_process_status', (data) => {
+        this.socket.on(this.listenEvent, (data) => {
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -116,7 +120,7 @@ class ProcessStatus extends Component {
 
     showLineItem(data, stationId) {
         let result = <LineSummaryItem stationId={stationId} avgTemp={data.temp_avg}
-                                      stddevTemp={data.temp_stdev} avgPreparing={data.pre_avg}
+                                      stddevTemp={Math.round(data.temp_stdev * 100)/100} avgPreparing={data.pre_avg}
                                       stddevPreparing={data.pre_stdev} avgCuringTime={data.cur_avg}
                                       stddevCurringTime={data.cur_stdev}/>;
         return result;

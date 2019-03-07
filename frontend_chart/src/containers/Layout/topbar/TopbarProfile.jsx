@@ -36,9 +36,7 @@ export default class TopbarProfile extends PureComponent {
                 {this.state.collapse && <button className="topbar__back" onClick={this.toggle}/>}
                 <Collapse isOpen={this.state.collapse} className="topbar__setting-wrap">
                     <div className="topbar__setting">
-                        <TopbarMenuLink title="Page one" icon="list" path="/pages/one"/>
-                        <TopbarMenuLink title="Page two" icon="inbox" path="/pages/two"/>
-                        <div className="topbar__menu-divider"/>
+                        {/*<div className="topbar__menu-divider"/>*/}
                         <TopbarMenuLink title="Log Out" icon="exit" path="/logout"/>
                     </div>
                 </Collapse>

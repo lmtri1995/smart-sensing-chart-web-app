@@ -15,7 +15,7 @@ export const LOCAL_IP_TEMP_TREND = {
 
 export const ROLES = {
     ROLE_ADMIN: 'admin',
-    ROLE_IP: 'admin',
+    ROLE_IP: 'ip',
     ROLE_OS: 'os',
     ROLE_AS: 'as',
 };

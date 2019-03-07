@@ -30,6 +30,18 @@ export default class stationStatus extends Component {
             loading: true
         };
 
+        switch (this.role) {
+            case 'admin':
+                this.emitEvent = 'machine_status';
+                break;
+            case 'ip':
+                this.emitEvent = 'machine_status';
+                break;
+            case 'os':
+                this.emitEvent = 'machine_status';
+                break;
+        }
+
 
     }
 

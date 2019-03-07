@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Chart from "chart.js";
+import {ClipLoader} from "react-spinners";
 
 Chart.plugins.register({
     beforeDraw: function (chart) {
@@ -117,12 +118,24 @@ let options = {
     }
 };
 
+const override = `
+    position: absolute;
+    display:block;
+    left:15%;
+    top: 10%;
+    z-index: 100000;
+`;
+
 export default class DoughnutChart extends Component {
 
     constructor(props) {
         super(props);
 
         this.canvas = null;
+
+        this.state = {
+            loading: true
+        };
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -141,6 +154,7 @@ export default class DoughnutChart extends Component {
                 }
 
                 this.myChart.update();
+                this.setState({loading: false});
             }
         }
     }
@@ -158,9 +172,19 @@ export default class DoughnutChart extends Component {
 
     render() {
         return (
-            <canvas width={35} height={30}
-                    ref={(element) => this.canvas = element}
-            />
+            <div>
+                <ClipLoader
+                    css={override}
+                    sizeUnit={"px"}
+                    size={100}
+                    color={'#30D4A4'}
+                    loading={this.state.loading}
+                    margin-left={300}
+                />
+                <canvas width={35} height={30}
+                        ref={(element) => this.canvas = element}
+                />
+            </div>
         );
     }
 }

@@ -233,6 +233,15 @@ export class CycleDefectStationComparison extends Component {
                 let returnData = JSON.parse(dataArray[0].data);
                 if (returnData.length > 0) {
                     let displayArray = this.handleReturnData(returnData);
+                    let totalDefectcount = 0;
+                    if (displayArray[0] && displayArray.length > 0){
+                        displayArray[0].map(item=>{
+                            if (item){
+                                totalDefectcount += parseInt(item);
+                            }
+                        });
+                    }
+                    localStorage.setItem("totalDefectCount", totalDefectcount);
                     this.myChart.data = {
                         labels: this.labelArray,
                         datasets: [

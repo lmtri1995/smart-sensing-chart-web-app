@@ -37,12 +37,20 @@ export default class TemperatureTrend extends Component {
         switch (this.role) {
             case ROLES.ROLE_ADMIN:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
+                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
                 break;
             case ROLES.ROLE_IP:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
+                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempA4", "tempB1", "tempB2", "tempB3", "tempB4"];
                 break;
             case ROLES.ROLE_OS:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
+                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
                 break;
         }
 
@@ -53,18 +61,6 @@ export default class TemperatureTrend extends Component {
             tempTime: 30, //choosen time for temperature
             loading: true,
         };
-
-        switch (this.role) {
-            case 'admin':
-                this.emitEvent = 'temp_trend';
-                break;
-            case 'ip':
-                this.emitEvent = 'temp_trend';
-                break;
-            case 'os':
-                this.emitEvent = 'os_temp_trend';
-                break;
-        }
     }
 
     /*componentWillUnmount() {
@@ -289,74 +285,22 @@ export default class TemperatureTrend extends Component {
         }
     };
 
+
+    drawLegend = () => {
+        let legendValue = "<div class='legend-container' style='margin: 40px 200px 40px'>";
+        for (let i = 0; i < this.colorArray.length; i++){
+            let color = this.colorArray[i];
+            let label = this.labelArray[i+1];
+            legendValue += "<div id='lengendLabel' class='legend-box'" +
+                " style='background-color: " + color + ";'></div>";
+            legendValue += "<div class='temperature-legend'>" + label + "</div> &nbsp; &nbsp; ";
+        }
+        legendValue += "</div>";
+        document.getElementById("lengendLabel").innerHTML = legendValue;
+    }
+
     componentDidMount() {
-        /*let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let token = loginData.token;
-        let socket = Singleton.getInstance(token);*/
-
-        //////////////test
-        /*let {tempTime, stationIdNo} = this.props;
-        this.socket.emit('os_temp_trend', {
-            msg: {
-                event: 'chart_temp_trend',
-                minute: 30,
-                status: 'start',
-                idStation:'1'
-            }
-        });
-
-        //Show data to grid for the first time after GUI rendered
-        let quantity = LOCAL_IP_TEMP_TREND.IP_TEMP_ITEM_TO_GET;
-        //this.showDataToGrid(quantity);
-
-        this.socket.on('chart_temp_trend', (data) => {
-            console.log("data raw: ", data);
-            let returnArray = JSON.parse(data);
-            console.log("=====================================");
-            console.log("=====================================");console.log("=====================================");
-            console.log("=====================================");
-            console.log("station: ", stationIdNo, "data: ", returnArray);
-            let timeSpacePushToStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_PUSH_TO_STOCK;
-            let timeSpaceFromStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_GET_FROM_STOCK;
-
-            //this.getInverval = setInterval(this.showDataToGrid(quantity), timeSpaceFromStock);
-            //this.pushInterval = setInterval(this.pushToStock(returnArray), timeSpacePushToStock);
-
-        });*/
-
-        ///end test
-        /*let {tempTime} = this.state;
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: 'chart_temp_trend',
-                minute: tempTime,
-                status: 'start'
-            }
-        });
-
-        //Show data to grid for the first time after GUI rendered
-        let quantity = LOCAL_IP_TEMP_TREND.IP_TEMP_ITEM_TO_GET;
-        this.showDataToGrid(quantity);
-
-        this.socket.on('chart_temp_trend', (data) => {
-            console.log("data: ", data);
-            let returnArray = JSON.parse(data);
-            let timeSpacePushToStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_PUSH_TO_STOCK;
-            let timeSpaceFromStock = LOCAL_IP_TEMP_TREND.IP_TEMP_TIME_SPACE_GET_FROM_STOCK;
-
-            this.getInverval = setInterval(this.showDataToGrid(quantity), timeSpaceFromStock);
-            this.pushInterval = setInterval(this.pushToStock(returnArray), timeSpacePushToStock);
-
-        });
-
-        /!*socket.on('token', (data) => {
-            let tokenObject = JSON.parse(data);
-            if (!tokenObject.success) {
-                console.log('Token is expired');
-                window.location.href = ("/logout");
-            }
-        });*!/*/
-
+        this.drawLegend();
     }
 
     toggle() {
@@ -447,6 +391,11 @@ export default class TemperatureTrend extends Component {
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </ButtonGroup>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        <div tyle={{position: 'absolute'}} id={'lengendLabel'}> </div>
                     </div>
                 </div>
                 {this.showTempTable()}

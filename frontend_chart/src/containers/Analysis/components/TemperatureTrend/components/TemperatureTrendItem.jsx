@@ -33,7 +33,9 @@ export default class TemperatureTrendItem extends Component {
             case 'admin':
                 this.apiUrl = 'api/os/tempTrend';
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
+                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
+                // "tempB3"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
                 break;
             case 'ip':
                 this.apiUrl = 'api/ip/tempTrend';
@@ -43,12 +45,16 @@ export default class TemperatureTrendItem extends Component {
             case 'os':
                 this.apiUrl = 'api/os/tempTrend';
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
+                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
+                // "tempB3"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
                 break;
             default:
                 this.apiUrl = 'api/os/tempTrend';
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
+                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
+                // "tempB3"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
                 break;
         }
         this.state = {
@@ -62,14 +68,18 @@ export default class TemperatureTrendItem extends Component {
             text = data.xHTML + "<br/>";
         }
         let series = data.series;
-        for (let i = 0; i < 6; i++){
+        let numberOfTemp = 6;
+        for (let i = 0; i < numberOfTemp; i++){
             if (series[i].y){
-                text += "<span style='color: " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp;";
+                text += "<span style='color:   " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp; &nbsp; &nbsp;";
+            }
+            if (i == (numberOfTemp/2 - 1)){
+                text += "<br/>";
             }
         }
 
+        //console.log("stationId: ", this.props.stationId);
 
-        console.log("stationId: ", this.props.stationId);
         if (document.getElementById("tooltip" + this.props.stationId)){
             document.getElementById("tooltip" + this.props.stationId).innerHTML = text;
         }
@@ -169,7 +179,7 @@ export default class TemperatureTrendItem extends Component {
         let {stationId} = this.props;
         return (
             <div className="col">
-                <div className="row">
+                <div className="row" style={{marginTop: 30}}>
                     <div className="col-11">
                         <h4 className="float-left">STATION {stationId}: USL/ Value/ LSL</h4>
                     </div>

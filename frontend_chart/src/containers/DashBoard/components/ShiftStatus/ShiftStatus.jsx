@@ -27,27 +27,43 @@ export default class ShiftStatus extends Component {
             loading: true
         };
 
+        console.log("role role role role role role role role role");
+        console.log("role role role role role role role role role");
+        console.log("role role role role role role role role role");
+        console.log("role role role role role role role role role");
+        console.log("role role role role role role role role role");
+        console.log("role role role role role role role role role");
+        console.log("role: ", this.role);
         switch (this.role) {
             case 'admin':
+                console.log("admin");
                 this.emitEvent = 'os_shift_status';
+                this.eventListen = 'sna_' + this.emitEvent;
                 break;
             case 'ip':
+                console.log("ip");
                 this.emitEvent = 'ip_shift_status';
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             case 'os':
+                console.log("os");
                 this.emitEvent = 'os_shift_status';
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             default:
+                console.log("default");
                 this.emitEvent = 'os_shift_status';
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
         }
+        console.log("ip");
     }
 
     componentWillUnmount() {
         this._isMounted = false;
         this.socket.emit(this.emitEvent, {
             msg: {
-                event: 'shift_status',
+                event: this.listenEvent,
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
@@ -65,7 +81,7 @@ export default class ShiftStatus extends Component {
 
         this.socket.emit(this.emitEvent, {
             msg: {
-                event: 'sna_shift_status',
+                event: this.listenEvent,
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
@@ -73,7 +89,14 @@ export default class ShiftStatus extends Component {
             }
         });
 
-        this.socket.on('sna_shift_status', (data) => {
+        this.socket.on(this.listenEvent, (data) => {
+            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
+            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
+            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
+            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
+            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
+            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
+            console.log("data: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;

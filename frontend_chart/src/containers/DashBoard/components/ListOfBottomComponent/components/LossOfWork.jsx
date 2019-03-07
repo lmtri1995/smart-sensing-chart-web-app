@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 
 export class LossOfWork extends Component {
     render() {
+        let {workLossNumber} = this.props;
         return (
             <div className="oee-main">
                 <div className="col-12"><h4>Lost of work</h4></div>
@@ -9,7 +10,7 @@ export class LossOfWork extends Component {
                     <div className="container">
                         <div className="row">
                             <div className="col align-self-center"><i
-                                className="fas fa-arrow-up"></i><span>67.5%</span></div>
+                                className="fas fa-arrow-up"></i><span>{workLossNumber}%</span></div>
                         </div>
                     </div>
                 </div>

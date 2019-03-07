@@ -30,7 +30,10 @@ export default class TemperatureTrendItem extends Component {
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
+                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
+                // "tempB2","tempB3"];
                 break;
             case 'ip':
                 this.emitEvent = `ip_temp_trend_${stationIdNo}`;
@@ -42,13 +45,17 @@ export default class TemperatureTrendItem extends Component {
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
+                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
+                // "tempB2","tempB3"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
                 break;
             default:
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2", "tempB3"];
+                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
+                // "tempB2","tempB3"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
         }
 
         let parentLoading = this.props.loading;
@@ -106,9 +113,13 @@ export default class TemperatureTrendItem extends Component {
             text = data.xHTML + "<br/>";
         }
         let series = data.series;
-        for (let i = 0; i < 6; i++){
+        let numberOfTemp = 6;
+        for (let i = 0; i < numberOfTemp; i++){
             if (series[i].y){
-                text += "<span style='color: " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp;";
+                text += "<span style='color:   " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp; &nbsp; &nbsp;";
+            }
+            if (i == (numberOfTemp/2 - 1)){
+                text += "<br/>";
             }
         }
 
@@ -135,7 +146,7 @@ export default class TemperatureTrendItem extends Component {
     }
 
     componentDidMount() {
-        this.drawLegend();
+        //this.drawLegend();
 
         let {tempTime, stationIdNo} = this.props;
         this.preTempTime = tempTime;
@@ -215,7 +226,7 @@ export default class TemperatureTrendItem extends Component {
         let stationId = this.props.stationIdNo;
         return (
                 <div className="col">
-                    <div className="row">
+                    <div className="row" style={{marginTop: 30}}>
                         <div className="col-11">
                             <h4 className="float-left">STATION {stationId}: USL/ Value/ LSL</h4>
                         </div>
@@ -240,11 +251,6 @@ export default class TemperatureTrendItem extends Component {
                         <div className="container">
                             <div className="row">
                                 <div id={'station' + stationId}  style={{marginBottom: 50}} ></div>
-                            </div>
-                        </div>
-                        <div className="container" style={{marginBottom: 40}}>
-                            <div className="row">
-                                <div style={{position: 'absolute'}} id={'lengendLabel' + stationId}> </div>
                             </div>
                         </div>
                     </div>

@@ -5,7 +5,7 @@ import {
     ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID,
     ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_3_4_ID,
     ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_5_6_ID,
-    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_7_8_ID
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_7_8_ID, LOCAL_IP_TEMP_TREND, ROLES
 } from "../../../../constants/constants";
 
 
@@ -18,6 +18,26 @@ export default class TemperatureTrend extends Component {
         this.role = this.loginData.data.role;
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
+
+        switch (this.role) {
+            case ROLES.ROLE_ADMIN:
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
+                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                break;
+            case ROLES.ROLE_IP:
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
+                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempA4", "tempB1", "tempB2", "tempB3", "tempB4"];
+                break;
+            case ROLES.ROLE_OS:
+                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
+                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
+                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
+                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                break;
+        }
 
         this.state = {
             dropdownOpen: false,
@@ -141,6 +161,23 @@ export default class TemperatureTrend extends Component {
         return result;
     };
 
+    drawLegend = () => {
+        let legendValue = "<div class='legend-container' style='margin: 40px 200px 40px'>";
+        for (let i = 0; i < this.colorArray.length; i++){
+            let color = this.colorArray[i];
+            let label = this.labelArray[i+1];
+            legendValue += "<div id='lengendLabel' class='legend-box'" +
+                " style='background-color: " + color + ";'></div>";
+            legendValue += "<div class='temperature-legend'>" + label + "</div> &nbsp; &nbsp; ";
+        }
+        legendValue += "</div>";
+        document.getElementById("lengendLabel").innerHTML = legendValue;
+    }
+
+    componentDidMount() {
+        this.drawLegend();
+    }
+
     render() {
         this.showTemperatureTrendTable();
         let {dataArray} = this.state;
@@ -157,6 +194,11 @@ export default class TemperatureTrend extends Component {
                 <div className="row">
                     <div className="col">
                         <h4 className="float-left">Temperature Trend</h4>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        <div tyle={{position: 'absolute'}} id={'lengendLabel'}> </div>
                     </div>
                 </div>
                 {this.showTemperatureTrendTable()}

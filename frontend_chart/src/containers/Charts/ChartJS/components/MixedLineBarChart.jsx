@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import 'chartjs-plugin-zoom';
 import Chart from 'chart.js';
 import moment from 'moment';
+import {ClipLoader} from "react-spinners";
 
 let initialData = {
     labels: [
@@ -52,12 +53,24 @@ const options = {
     },
 };
 
+const override = `
+    position: absolute;
+    display:block;
+    left:45%;
+    top: 30%;
+    z-index: 100000;
+`;
+
 export default class MixedLineBarChart extends PureComponent {
 
     constructor(props) {
         super(props);
 
         this.canvas = null;
+
+        this.state = {
+            loading: true
+        };
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -90,6 +103,7 @@ export default class MixedLineBarChart extends PureComponent {
                 }
 
                 this.myChart.update();
+                this.setState({loading: false});
             }
         }
     }
@@ -105,7 +119,17 @@ export default class MixedLineBarChart extends PureComponent {
 
     render() {
         return (
-            <canvas ref={(element) => this.canvas = element}/>
+            <div>
+                <ClipLoader
+                    css={override}
+                    sizeUnit={"px"}
+                    size={100}
+                    color={'#30D4A4'}
+                    loading={this.state.loading}
+                    margin-left={300}
+                />
+                <canvas ref={(element) => this.canvas = element}/>
+            </div>
         );
     }
 }

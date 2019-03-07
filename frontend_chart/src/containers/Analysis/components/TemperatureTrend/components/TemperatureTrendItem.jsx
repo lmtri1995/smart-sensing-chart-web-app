@@ -88,25 +88,10 @@ export default class TemperatureTrendItem extends Component {
         return html;
     }
 
-    drawLegend = () => {
-        let stationId = this.props.stationId;
-        let legendValue = "<div class='legend-container'>";
-        for (let i = 0; i < this.colorArray.length; i++){
-            let color = this.colorArray[i];
-            let label = this.labelArray[i+1];
-            legendValue += "<div id='"+ label + stationId +"' class='legend-box'" +
-                " style='background-color: " + color + ";'></div>";
-            legendValue += "<div class='temperature-legend'>" + label + "</div> &nbsp; &nbsp; ";
-        }
-        legendValue += "</div>";
-        document.getElementById("lengendLabel" + this.props.stationId).innerHTML = legendValue;
-    }
-
-
     componentDidMount() {
         let {stationId} = this.props;
 
-        this.drawLegend();
+        //this.drawLegend();
 
         let param = {
             idStation: stationId,
@@ -206,11 +191,11 @@ export default class TemperatureTrendItem extends Component {
                             <div style={{marginBottom: 50}} id={'station' + stationId}></div>
                         </div>
                     </div>
-                    <div className="container" style={{marginBottom: 40}}>
+                    {/*<div className="container" style={{marginBottom: 40}}>
                         <div className="row">
                             <div style={{position: 'absolute'}} id={'lengendLabel' + stationId}> </div>
                         </div>
-                    </div>
+                    </div>*/}
                 </div>
             </div>
         );

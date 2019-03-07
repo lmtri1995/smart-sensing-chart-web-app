@@ -1,12 +1,6 @@
 import React, {Component} from 'react'
-import {ButtonDropdown, ButtonGroup, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
 import Singleton from "../../../../services/Socket";
-import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../constants/constants";
-import API from "../../../../services/api";
 import TemperatureTrendItem from "./components/TemperatureTrendItem";
-import Minimize from "../../../../shared/img/Minimize.svg";
-import Expand from "../../../../shared/img/Expand.svg";
-import Refresh from "../../../../shared/img/Refresh.svg";
 
 
 export default class TemperatureTrend extends Component {
@@ -68,20 +62,42 @@ export default class TemperatureTrend extends Component {
 
 
     showTemperatureTrendTable = () => {
-        let result = (<div className="row" key={'2'}>
-            <div className="col-6">
-                <TemperatureTrendItem stationId={1}/>
-                <TemperatureTrendItem stationId={2}/>
-                <TemperatureTrendItem stationId={3}/>
-                <TemperatureTrendItem stationId={4}/>
+        let result = (
+            <div>
+                <div className="row" key={'2'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={1}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={2}/>
+                    </div>
+                </div>
+                <div className="row" key={'3'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={3}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={4}/>
+                    </div>
+                </div>
+                <div className="row" key={'4'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={5}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={6}/>
+                    </div>
+                </div>
+                <div className="row" key={'5'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={7}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationId={8}/>
+                    </div>
+                </div>
             </div>
-            <div className="col-6">
-                <TemperatureTrendItem stationId={5}/>
-                <TemperatureTrendItem stationId={6}/>
-                <TemperatureTrendItem stationId={7}/>
-                <TemperatureTrendItem stationId={8}/>
-            </div>
-        </div>);
+        );
         /*for (let i = 1; i < 9; i++) {
             this["tempItem" + i] = <TemperatureTrendItem tempData=""/>;
             let param = {

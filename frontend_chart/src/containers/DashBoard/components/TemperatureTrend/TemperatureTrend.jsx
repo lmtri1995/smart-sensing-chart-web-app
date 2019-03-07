@@ -371,28 +371,42 @@ export default class TemperatureTrend extends Component {
 
 
     showTempTable = (dataArray) => {
-        let result = (<div className="row" key={'2'}>
-            <div className="col-6">
-                <TemperatureTrendItem stationIdNo={1} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
-                <TemperatureTrendItem stationIdNo={2} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
-                <TemperatureTrendItem stationIdNo={3} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
-                <TemperatureTrendItem stationIdNo={4} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
+        let result = (
+            <div>
+                <div className="row" key={'2'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={1} tempTime={this.state.tempTime}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={2} tempTime={this.state.tempTime}/>
+                    </div>
+                </div>
+                <div className="row" key={'3'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={3} tempTime={this.state.tempTime}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={4} tempTime={this.state.tempTime}/>
+                    </div>
+                </div>
+                <div className="row" key={'4'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={5} tempTime={this.state.tempTime}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={6} tempTime={this.state.tempTime}/>
+                    </div>
+                </div>
+                <div className="row" key={'5'}>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={7} tempTime={this.state.tempTime}/>
+                    </div>
+                    <div className="col-6">
+                        <TemperatureTrendItem stationIdNo={8} tempTime={this.state.tempTime}/>
+                    </div>
+                </div>
             </div>
-            <div className="col-6">
-                <TemperatureTrendItem stationIdNo={5} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
-                <TemperatureTrendItem stationIdNo={6} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
-                <TemperatureTrendItem stationIdNo={7} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
-                <TemperatureTrendItem stationIdNo={8} tempTime={this.state.tempTime}
-                                      parentLoading={this.state.loading}/>
-            </div>
-        </div>);
+        );
         return result;
     };
 

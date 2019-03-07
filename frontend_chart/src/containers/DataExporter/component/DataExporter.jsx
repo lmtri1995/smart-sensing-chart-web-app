@@ -4,7 +4,28 @@ import * as FileSaver from 'file-saver';
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
-import {AnalysisContainerID, DashboardContainerID, ExportType} from "../../../constants/constants";
+import {
+    ANALYSIS_CONTAINER_ID,
+    ANALYSIS_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID,
+    ANALYSIS_PROCESSING_STATUS_ID,
+    ANALYSIS_SHIFT_STATUS_ID,
+    ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID,
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID,
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_3_4_ID,
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_5_6_ID,
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_7_8_ID,
+    DASHBOARD_CONTAINER_ID,
+    DASHBOARD_DOWN_TIME_BY_SHIFT_ID,
+    DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID,
+    DASHBOARD_PROCESSING_STATUS_ID,
+    DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID,
+    DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID,
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_1_2_ID,
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_3_4_ID,
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_5_6_ID,
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_7_8_ID,
+    ExportType
+} from "../../../constants/constants";
 import {connect} from "react-redux";
 import {withRouter} from 'react-router-dom';
 
@@ -55,17 +76,34 @@ class DataExporter extends Component {
     exportPDFFile(props, location) {
         let fileName = '';
         let processStatusData = null;
-        let imageExportContainerID = null;
+        let imageExportContainerElements = null;
         switch (location.pathname) {
             case '/':
                 fileName = 'Dashboard';
                 processStatusData = props.downloadDataStore.processStatusData;
-                imageExportContainerID = document.getElementById(DashboardContainerID);
+                imageExportContainerElements = [];
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_1_2_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_3_4_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_5_6_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_7_8_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_PROCESSING_STATUS_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_DOWN_TIME_BY_SHIFT_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID));
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID));
                 break;
             case '/pages/analysis':
                 fileName = 'Analysis';
                 processStatusData = props.downloadDataStore.processStatusData;
-                imageExportContainerID = document.getElementById(AnalysisContainerID);
+                imageExportContainerElements = [];
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_SHIFT_STATUS_ID));
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID));
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_3_4_ID));
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_5_6_ID));
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_7_8_ID));
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_PROCESSING_STATUS_ID));
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID));
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID));
                 break;
             case '/pages/report':
                 fileName = 'Report';
@@ -88,27 +126,84 @@ class DataExporter extends Component {
             cellWidth: 'wrap',
         };
 
-        if (imageExportContainerID) {
-            html2canvas(imageExportContainerID).then((canvas) => {
-                const screenShotData = canvas.toDataURL('image/png');
-
-                var width = doc.internal.pageSize.getWidth();
-                var height = doc.internal.pageSize.getHeight();
-
-                // Add snapshot of full page
-                doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
-
-                if (processStatusData) {
-                    doc.addPage();  // Add new page
-
-                    let {processingStatusLine, general} = processStatusData;
-                    addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
-                }
-
-                doc.save(
-                    fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
-                );
+        if (imageExportContainerElements) {
+            let mapOfContainerCanvas = new Map();
+            imageExportContainerElements.forEach((element, index) => {
+                html2canvas(element).then((canvas) => mapOfContainerCanvas.set(index, canvas));
             });
+            var saveDocInterval = setInterval(() => {
+                console.log("SAVE_DOC_INTERVAL=============================",);
+                switch (location.pathname) {
+                    case '/':
+                        if (mapOfContainerCanvas.size === 9) {
+                            clearInterval(saveDocInterval);
+
+                            let mapCanvasAscending = new Map([...mapOfContainerCanvas.entries()].sort());
+                            mapCanvasAscending.forEach((canvas, key, mapCanvas) => {
+                                const screenShotData = canvas.toDataURL('image/png');
+
+                                let width = doc.internal.pageSize.getWidth();
+                                let height = canvas.height > doc.internal.pageSize.getHeight()
+                                    ? doc.internal.pageSize.getHeight()
+                                    : canvas.height;
+
+                                // Add snapshot of full page
+                                doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+                                if (key !== mapCanvas.size - 1) {
+                                    doc.addPage();  // Add new page
+                                }
+                            });
+                            if (processStatusData) {
+                                doc.addPage();  // Add new page
+
+                                let {processingStatusLine, general} = processStatusData;
+                                addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
+                            }
+
+                            doc.save(
+                                fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
+                            );
+                        }
+                        break;
+                    case '/pages/analysis':
+                        if (mapOfContainerCanvas.size === 8) {
+                            clearInterval(saveDocInterval);
+
+                            let mapCanvasAscending = new Map([...mapOfContainerCanvas.entries()].sort());
+                            mapCanvasAscending.forEach((canvas, key, mapCanvas) => {
+                                const screenShotData = canvas.toDataURL('image/png');
+
+                                let width = doc.internal.pageSize.getWidth();
+                                let height = canvas.height > doc.internal.pageSize.getHeight()
+                                    ? doc.internal.pageSize.getHeight()
+                                    : canvas.height;
+
+                                // Add snapshot of full page
+                                doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+                                if (key !== mapCanvas.size - 1) {
+                                    doc.addPage();  // Add new page
+                                }
+                            });
+                            if (processStatusData) {
+                                doc.addPage();  // Add new page
+
+                                let {processingStatusLine, general} = processStatusData;
+                                addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
+                            }
+
+                            doc.save(
+                                fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
+                            );
+                        }
+                        break;
+                    case '/pages/report':
+                        // todo Export PDF for Report
+                        saveDocInterval.clearInterval();
+                        break;
+                }
+            }, 1000);
         }
     }
 
@@ -118,11 +213,11 @@ class DataExporter extends Component {
         switch (location.pathname) {
             case '/':
                 fileName = 'Dashboard';
-                imageExportContainerID = document.getElementById(DashboardContainerID);
+                imageExportContainerID = document.getElementById(DASHBOARD_CONTAINER_ID);
                 break;
             case '/pages/analysis':
                 fileName = 'Analysis';
-                imageExportContainerID = document.getElementById(AnalysisContainerID);
+                imageExportContainerID = document.getElementById(ANALYSIS_CONTAINER_ID);
                 break;
             case '/pages/report':
                 fileName = 'Report';

@@ -1,6 +1,12 @@
 import React, {Component} from 'react'
 import Singleton from "../../../../services/Socket";
 import TemperatureTrendItem from "./components/TemperatureTrendItem";
+import {
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID,
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_3_4_ID,
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_5_6_ID,
+    ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_7_8_ID
+} from "../../../../constants/constants";
 
 
 export default class TemperatureTrend extends Component {
@@ -64,7 +70,7 @@ export default class TemperatureTrend extends Component {
     showTemperatureTrendTable = () => {
         let result = (
             <div>
-                <div className="row" key={'2'}>
+                <div id={ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID} className="row" key={'2'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationId={1}/>
                     </div>
@@ -72,7 +78,7 @@ export default class TemperatureTrend extends Component {
                         <TemperatureTrendItem stationId={2}/>
                     </div>
                 </div>
-                <div className="row" key={'3'}>
+                <div id={ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_3_4_ID} className="row" key={'3'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationId={3}/>
                     </div>
@@ -80,7 +86,7 @@ export default class TemperatureTrend extends Component {
                         <TemperatureTrendItem stationId={4}/>
                     </div>
                 </div>
-                <div className="row" key={'4'}>
+                <div id={ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_5_6_ID} className="row" key={'4'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationId={5}/>
                     </div>
@@ -88,7 +94,7 @@ export default class TemperatureTrend extends Component {
                         <TemperatureTrendItem stationId={6}/>
                     </div>
                 </div>
-                <div className="row" key={'5'}>
+                <div id={ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_7_8_ID} className="row" key={'5'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationId={7}/>
                     </div>

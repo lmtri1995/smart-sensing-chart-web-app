@@ -2,7 +2,14 @@ import React, {Component} from 'react'
 import {ButtonDropdown, ButtonGroup, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
 import TemperatureTrendItem from './components/TemperatureTrendItem';
 import Singleton from "../../../../services/Socket";
-import {LOCAL_IP_TEMP_TREND, ROLES} from "../../../../constants/constants";
+import {
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_1_2_ID,
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_3_4_ID,
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_5_6_ID,
+    DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_7_8_ID,
+    LOCAL_IP_TEMP_TREND,
+    ROLES
+} from "../../../../constants/constants";
 import {config} from "../../../../constants/config";
 
 
@@ -373,7 +380,7 @@ export default class TemperatureTrend extends Component {
     showTempTable = (dataArray) => {
         let result = (
             <div>
-                <div className="row" key={'2'}>
+                <div id={DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_1_2_ID} className="row" key={'2'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationIdNo={1} tempTime={this.state.tempTime}/>
                     </div>
@@ -381,7 +388,7 @@ export default class TemperatureTrend extends Component {
                         <TemperatureTrendItem stationIdNo={2} tempTime={this.state.tempTime}/>
                     </div>
                 </div>
-                <div className="row" key={'3'}>
+                <div id={DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_3_4_ID} className="row" key={'3'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationIdNo={3} tempTime={this.state.tempTime}/>
                     </div>
@@ -389,7 +396,7 @@ export default class TemperatureTrend extends Component {
                         <TemperatureTrendItem stationIdNo={4} tempTime={this.state.tempTime}/>
                     </div>
                 </div>
-                <div className="row" key={'4'}>
+                <div id={DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_5_6_ID} className="row" key={'4'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationIdNo={5} tempTime={this.state.tempTime}/>
                     </div>
@@ -397,7 +404,7 @@ export default class TemperatureTrend extends Component {
                         <TemperatureTrendItem stationIdNo={6} tempTime={this.state.tempTime}/>
                     </div>
                 </div>
-                <div className="row" key={'5'}>
+                <div id={DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_7_8_ID} className="row" key={'5'}>
                     <div className="col-6">
                         <TemperatureTrendItem stationIdNo={7} tempTime={this.state.tempTime}/>
                     </div>

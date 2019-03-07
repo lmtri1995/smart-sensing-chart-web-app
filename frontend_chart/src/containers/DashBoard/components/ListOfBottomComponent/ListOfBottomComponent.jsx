@@ -5,10 +5,14 @@ import LossOfWork from "./components/LossOfWork";
 import CycleDefectStationComparison from "./components/CycleDefectStationComparison";
 import SwingArmMachine from "./components/SwingArmMachine";
 import SwingOSStationComparison from "./components/SwingOSStationComparison";
+import {
+    DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID,
+    DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID
+} from "../../../../constants/constants";
 
 const listBottomComponent = () => (
     <div className="container">
-        <div className="row">
+        <div id={DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID} className="row">
             <div className="col">
                 <div className="row">
                     <div className="col-9"><OEEChart/></div>
@@ -22,7 +26,7 @@ const listBottomComponent = () => (
                 </div>
             </div>
         </div>
-        <div className="row">
+        <div id={DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID} className="row">
             <div className="col-6">
                 <SwingArmMachine/>
             </div>
@@ -30,7 +34,6 @@ const listBottomComponent = () => (
                 <SwingOSStationComparison/>
             </div>
         </div>
-
     </div>
 );
 export default listBottomComponent;

@@ -4,15 +4,20 @@ import ShiftStatus from "./components/ShiftStatus/ShiftStatus";
 import TemperatureTrend from "./components/TemperatureTrend/TemperatureTrend";
 import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
 import DowntimeShift from "./components/DowntimeShift/DowntimeShift";
-import {DashboardContainerID} from "../../constants/constants";
+import {
+    DASHBOARD_CONTAINER_ID,
+    DASHBOARD_DOWN_TIME_BY_SHIFT_ID,
+    DASHBOARD_PROCESSING_STATUS_ID,
+    DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID
+} from "../../constants/constants";
 import ListBottomComponent from "./components/ListOfBottomComponent/ListOfBottomComponent";
 
 class DashboardPage extends Component {
 
     render() {
         return (
-            <div className="container" id={DashboardContainerID}>
-                <div className="row">
+            <div id={DASHBOARD_CONTAINER_ID} className="container">
+                <div id={DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID} className="row">
                     <div className="col">
                         <StationStatus/>
                     </div>
@@ -25,12 +30,12 @@ class DashboardPage extends Component {
                         <TemperatureTrend/>
                     </div>
                 </div>
-                <div className="row">
+                <div id={DASHBOARD_PROCESSING_STATUS_ID} className="row">
                     <div className="col">
                         <ProcessStatus/>
                     </div>
                 </div>
-                <div className="row">
+                <div id={DASHBOARD_DOWN_TIME_BY_SHIFT_ID} className="row">
                     <div className="col">
                         <DowntimeShift/>
                     </div>

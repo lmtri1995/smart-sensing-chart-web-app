@@ -11,15 +11,19 @@ import {withRouter} from 'react-router-dom';
 class DataExporter extends Component {
 
     exportExcelFile(props, location) {
+        let fileName = '';
         let processStatusData = null;
         switch (location.pathname) {
             case '/':
+                fileName = 'Dashboard';
                 processStatusData = props.downloadDataStore.processStatusData;
                 break;
             case '/pages/analysis':
+                fileName = 'Analysis';
                 processStatusData = props.downloadDataStore.processStatusData;
                 break;
             case '/pages/report':
+                fileName = 'Report';
                 break;
         }
 
@@ -39,24 +43,30 @@ class DataExporter extends Component {
         workbook.xlsx.writeBuffer()
             .then(buffer => FileSaver.saveAs(
                 new Blob([buffer]),
-                'Smart_Sensing_Chart_Data.xlsx' // Excel File Name
+                fileName
+                    ? `${fileName}_Smart_Sensing_Chart_Data.xlsx`
+                    : 'Smart_Sensing_Chart_Data.xlsx' // Excel File Name
             ))
             .catch(err => console.log('Error writing excel export', err));
     }
 
     exportPDFFile(props, location) {
+        let fileName = '';
         let processStatusData = null;
         let imageExportContainerID = null;
         switch (location.pathname) {
             case '/':
+                fileName = 'Dashboard';
                 processStatusData = props.downloadDataStore.processStatusData;
                 imageExportContainerID = document.getElementById(DashboardContainerID);
                 break;
             case '/pages/analysis':
+                fileName = 'Analysis';
                 processStatusData = props.downloadDataStore.processStatusData;
                 imageExportContainerID = document.getElementById(AnalysisContainerID);
                 break;
             case '/pages/report':
+                fileName = 'Report';
                 break;
         }
 
@@ -65,8 +75,8 @@ class DataExporter extends Component {
         doc.setFontSize(12);
         // doc.setTextColor('#000');
         doc.setProperties({
-            title: 'Smart Sensing Chart Data',
-            subject: 'Table of Data & Data Visualization Sheet',
+            title: fileName ? `${fileName} - Smart Sensing Chart Data` : 'Smart Sensing Chart Data',
+            subject: 'Smart Sensing Chart Data',
             author: 'trile@snaglobal.net',
             creator: 'trile@snaglobal.net',
         });
@@ -93,21 +103,27 @@ class DataExporter extends Component {
                     addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
                 }
 
-                doc.save('Smart_Sensing_Chart_Data.pdf');
+                doc.save(
+                    fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
+                );
             });
         }
     }
 
     exportPNGFile(location) {
+        let fileName = '';
         let imageExportContainerID = null;
         switch (location.pathname) {
             case '/':
+                fileName = 'Dashboard';
                 imageExportContainerID = document.getElementById(DashboardContainerID);
                 break;
             case '/pages/analysis':
+                fileName = 'Analysis';
                 imageExportContainerID = document.getElementById(AnalysisContainerID);
                 break;
             case '/pages/report':
+                fileName = 'Report';
                 break;
         }
 
@@ -119,7 +135,7 @@ class DataExporter extends Component {
 
                 if (typeof link.download === 'string') {
                     link.href = screenShotData;
-                    link.download = 'Smart_Sensing_Chart_Data';
+                    link.download = fileName ? `${fileName}_Smart_Sensing_Chart_Data` : 'Smart_Sensing_Chart_Data';
 
                     //Firefox requires the link to be in the body
                     document.body.appendChild(link);
@@ -138,8 +154,6 @@ class DataExporter extends Component {
 
     render() {
         let {exportType, location} = this.props;
-        let {processStatusData} = this.props.downloadDataStore;
-        console.log("PROCESS_STATUS_DATA", processStatusData);
 
         switch (exportType) {
             case ExportType.EXCEL:

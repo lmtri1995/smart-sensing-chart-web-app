@@ -5,13 +5,13 @@ import moment from 'moment';
 
 let initialData = {
     labels: [
-        moment().subtract(6, "days").format('YYYY/MM/DD'),
-        moment().subtract(5, "days").format('YYYY/MM/DD'),
-        moment().subtract(4, "days").format('YYYY/MM/DD'),
-        moment().subtract(3, "days").format('YYYY/MM/DD'),
-        moment().subtract(2, "days").format('YYYY/MM/DD'),
-        moment().subtract(1, "days").format('YYYY/MM/DD'),
-        moment().format('YYYY/MM/DD'),
+        moment().subtract(6, "days").format('DD/MM/YYYY'),
+        moment().subtract(5, "days").format('DD/MM/YYYY'),
+        moment().subtract(4, "days").format('DD/MM/YYYY'),
+        moment().subtract(3, "days").format('DD/MM/YYYY'),
+        moment().subtract(2, "days").format('DD/MM/YYYY'),
+        moment().subtract(1, "days").format('DD/MM/YYYY'),
+        moment().format('DD/MM/YYYY'),
     ],
     datasets: [
         {

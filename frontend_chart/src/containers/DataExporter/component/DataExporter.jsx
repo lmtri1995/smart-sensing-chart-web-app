@@ -38,6 +38,8 @@ class DataExporter extends Component {
         if (processStatusData) {
             let {processingStatusLine, general} = processStatusData;
             addProcessStatusDataTableExcel(workbook, processingStatusLine, general);
+        } else {
+            workbook.addWorksheet('Empty Sheet');
         }
 
         workbook.xlsx.writeBuffer()

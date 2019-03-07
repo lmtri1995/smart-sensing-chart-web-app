@@ -15,39 +15,9 @@ let initialData = {
     ],
     datasets: [
         {
-            label: "Type 1",
+            label: "Empty Label",
             backgroundColor: "#FF9C64",
             data: [0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            label: "Type 2",
-            backgroundColor: "#46D6EA",
-            data: [0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            label: "Type 3",
-            backgroundColor: "#F575F7",
-            data: [0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            label: "Type 4",
-            backgroundColor: "#8C67F6",
-            data: [0, 0, 0, 0, 0, 0, 0]
-        },
-        {
-            label: "Total Defect",
-            borderColor: '#EB6A91',
-            borderWidth: 2,
-            pointRadius: 0,
-            pointBorderWidth: 2,
-            pointBackgroundColor: '#EBEDF1',
-            pointBorderColor: '#EB6A91',
-            data: [0, 0, 0, 0, 0, 0, 0],
-
-            // Changes this dataset to become a line
-            type: 'line',
-            fill: false,
-            tension: 0,
         }
     ]
 };

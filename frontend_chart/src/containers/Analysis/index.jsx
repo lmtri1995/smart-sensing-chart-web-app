@@ -10,27 +10,6 @@ import {
 } from "../../constants/constants";
 
 class AnalysisPage extends Component {
-    constructor(props) {
-        super(props);
-
-        this.loginData = JSON.parse(localStorage.getItem('logindata'));
-        this.role = this.loginData.data.role;
-        switch (this.role) {
-            case ROLES.ROLE_IP:
-                this.listBottomComponent = '';
-                break;
-            case ROLES.ROLE_ADMIN:
-            case ROLES.ROLE_OS:
-                this.listBottomComponent = <div className="row">
-                    <div className="col">
-                        <ListBottomComponent/>
-                    </div>
-                </div>
-                break;
-            default:
-                this.listBottomComponent = '';
-        }
-    }
 
     render() {
         return (
@@ -50,7 +29,11 @@ class AnalysisPage extends Component {
                         <ProcessStatus/>
                     </div>
                 </div>
-                {this.listBottomComponent}
+                <div className="row">
+                    <div className="col">
+                        <ListBottomComponent/>
+                    </div>
+                </div>
             </div>
         )
     }

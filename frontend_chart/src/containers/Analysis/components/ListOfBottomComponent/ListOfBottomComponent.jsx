@@ -90,6 +90,11 @@ class listBottomComponent extends Component {
         let workLoss = totalPreparingTime / (totalStandardCycleTime * totalCycleCount) * 100;
         workLoss = Math.round(workLoss * 100) / 100;
 
+        performance = (performance > 100)?100:performance;
+        quality = (quality > 100)?100:quality;
+        availability = (availability > 100)?100:availability;
+        workLoss = (workLoss > 100)?100:workLoss;
+
         this.setState({
             availabilityNumber: availability,
             performanceNumber: performance,

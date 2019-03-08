@@ -7,7 +7,7 @@ const initialData = {
     labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     datasets: [
         {
-            label: 'Initial Data',
+            label: 'Swing Arm',
             backgroundColor: '#C88FFA',
             borderColor: '#C88FFA',
             borderWidth: 1,
@@ -100,7 +100,7 @@ export class SwingArmMachine extends Component {
             //set to this.datasets, this.labels
             //update chart
             returnData.map(item => {
-                this.labels.push(moment.unix(item[0]).format("hh:mm:ss"));
+                this.labels.push(moment.unix(item[0]).format("HH:mm:ss"));
                 this.datasets.push(item[1]);
             });
         } else if (returnData && returnData.length >= 1) {
@@ -110,7 +110,7 @@ export class SwingArmMachine extends Component {
 
             //insert the newest record
             returnData.map(item => {
-                this.labels.push(moment.unix(item[0]).format("hh:mm:ss"));
+                this.labels.push(moment.unix(item[0]).format("HH:mm:ss"));
                 this.datasets.push(item[1]);
             });
 

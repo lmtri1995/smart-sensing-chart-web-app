@@ -5,7 +5,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
 
 const initialData = {
-    labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     datasets: [
         {
             label: 'Swing Arm',
@@ -14,7 +14,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3],
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         }
     ],
 };

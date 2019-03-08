@@ -69,7 +69,7 @@ class TemperatureTrendItem extends Component {
             text = data.xHTML + "<br/>";
         }
         let series = data.series;
-        let numberOfTemp = 6;
+        let numberOfTemp = this.colorArray.length;
         for (let i = 0; i < numberOfTemp; i++){
             if (series[i].y){
                 text += "<span style='color:   " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp; &nbsp; &nbsp;";

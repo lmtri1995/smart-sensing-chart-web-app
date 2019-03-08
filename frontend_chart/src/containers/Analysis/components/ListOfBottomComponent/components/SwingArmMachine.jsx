@@ -94,6 +94,10 @@ export class SwingArmMachine extends Component {
 
         this.labels = [];
         this.data = [];
+
+        this.state = {
+            loading: true
+        };
     }
 
     /*handleReturnData = (returnData) => {
@@ -154,31 +158,35 @@ export class SwingArmMachine extends Component {
             "to_timedevice": "1551749673"
         };
 
-        API('api/oee/swingarm', 'POST', param)
-            .then((response) => {
-                console.log("response 139: ", response);
-                if (response.data.success) {
-                    let dataArray = response.data.data;
-                    let returnData = JSON.parse(dataArray[0].data);
-                    console.log("returnData: ", returnData);
-                    this.handleReturnData(returnData);
-                    this.myChart.data = {
-                        labels: this.labels,
-                        datasets: [{
-                            label: 'Swing Arm Data',
-                            backgroundColor: '#C88FFA',
-                            borderColor: '#C88FFA',
-                            borderWidth: 1,
-                            //hoverBackgroundColor: '#FF6384',
-                            //hoverBorderColor: '#FF6384',
-                            data: this.data
-                        }],
-                    };
-                    this.myChart.update();
-                    //this.setState({loading: false});
-                }
-            })
-            .catch((err) => console.log('err:', err))
+        if (this.role == 'ip'){
+            this.setState({loading: false});
+        } else {
+            API('api/oee/swingarm', 'POST', param)
+                .then((response) => {
+                    console.log("response 139: ", response);
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        let returnData = JSON.parse(dataArray[0].data);
+                        this.handleReturnData(returnData);
+                        this.myChart.data = {
+                            labels: this.labels,
+                            datasets: [{
+                                label: 'Swing Arm Data',
+                                backgroundColor: '#C88FFA',
+                                borderColor: '#C88FFA',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: this.data
+                            }],
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                    }
+                })
+                .catch((err) => console.log('err:', err))
+        }
+
     }
 
     render() {
@@ -186,6 +194,14 @@ export class SwingArmMachine extends Component {
             <div className="oee-main">
                 <div className="col-12"><h4>Swing Arm Machine</h4></div>
                 <div>
+                    <ClipLoader
+                        css={override}
+                        sizeUnit={"px"}
+                        size={100}
+                        color={'#30D4A4'}
+                        loading={this.state.loading}
+                        margin-left={300}
+                    />
                     <canvas ref={(element) => this.canvas = element} height={70} width={200}/>
                 </div>
             </div>

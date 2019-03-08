@@ -139,51 +139,54 @@ export class SwingArmMachine extends Component {
             data: initialData,
             options: options
         });
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                from_timedevice: 0,
-                to_timedevice: 0,
-                minute: 60,
-                status: 'start'
-            }
-        });
-        this.socket.on(this.eventListen, (response) => {
-            response = JSON.parse(response);
-            if (response && response.success=="true"){
-                let dataArray = response.data;
-                let returnData = JSON.parse(dataArray[0].data);
-                this.handleReturnData(returnData);
-
-                if (this.labels.length > 0){
-                    //Make sure that the length is more than 15
-                    let displayLabels = [];
-                    let displayDatasets = [];
-                    if (this.labels.length > 15){
-                        displayLabels = this.labels.slice(this.labels.length - 15, this.labels.length);
-                        displayDatasets = this.datasets.slice(this.datasets.length - 15, this.datasets.length);
-                    } else {
-                        displayLabels = this.labels;
-                        displayDatasets = this.datasets;
-                    }
-                    this.myChart.data = {
-                        labels: displayLabels,
-                        datasets: [{
-                            label: 'Swing Arm Data',
-                            backgroundColor: '#C88FFA',
-                            borderColor: '#C88FFA',
-                            borderWidth: 1,
-                            //hoverBackgroundColor: '#FF6384',
-                            //hoverBorderColor: '#FF6384',
-                            data: displayDatasets
-                        }]
-                    };
-                    this.myChart.update();
-                    this.setState({loading: false});
+        if (this.role == "ip"){
+            this.setState({loading: false});
+        } else {
+            this.socket.emit(this.emitEvent, {
+                msg: {
+                    event: this.eventListen,
+                    from_timedevice: 0,
+                    to_timedevice: 0,
+                    minute: 60,
+                    status: 'start'
                 }
-            }
-        });
+            });
+            this.socket.on(this.eventListen, (response) => {
+                response = JSON.parse(response);
+                if (response && response.success=="true"){
+                    let dataArray = response.data;
+                    let returnData = JSON.parse(dataArray[0].data);
+                    this.handleReturnData(returnData);
 
+                    if (this.labels.length > 0){
+                        //Make sure that the length is more than 15
+                        let displayLabels = [];
+                        let displayDatasets = [];
+                        if (this.labels.length > 15){
+                            displayLabels = this.labels.slice(this.labels.length - 15, this.labels.length);
+                            displayDatasets = this.datasets.slice(this.datasets.length - 15, this.datasets.length);
+                        } else {
+                            displayLabels = this.labels;
+                            displayDatasets = this.datasets;
+                        }
+                        this.myChart.data = {
+                            labels: displayLabels,
+                            datasets: [{
+                                label: 'Swing Arm Data',
+                                backgroundColor: '#C88FFA',
+                                borderColor: '#C88FFA',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: displayDatasets
+                            }]
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                    }
+                }
+            });
+        }
     }
 
     render() {

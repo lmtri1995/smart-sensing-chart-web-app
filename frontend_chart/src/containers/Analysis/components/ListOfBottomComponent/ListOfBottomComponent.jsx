@@ -132,14 +132,14 @@ class listBottomComponent extends Component {
                                 startDate={startDate} endDate={endDate}/></div>
                         </div>
                     </div>
-                    <div id={ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID}
-                         className="row">
-                        <div className="col-6">
-                            <SwingArmMachine startDate={startDate} endDate={endDate}/>
-                        </div>
-                        <div className="col-6">
-                            <SwingOSStationComparison startDate={startDate} endDate={endDate}/>
-                        </div>
+                </div>
+                <div id={ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID}
+                     className="row">
+                    <div className="col-6">
+                        <SwingArmMachine startDate={startDate} endDate={endDate}/>
+                    </div>
+                    <div className="col-6">
+                        <SwingOSStationComparison startDate={startDate} endDate={endDate}/>
                     </div>
                 </div>
             </div>

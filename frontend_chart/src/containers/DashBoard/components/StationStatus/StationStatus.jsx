@@ -32,13 +32,13 @@ export default class stationStatus extends Component {
 
         switch (this.role) {
             case 'admin':
-                this.emitEvent = 'machine_status';
+                this.emitEvent = 'os_machine_status';
                 break;
             case 'ip':
-                this.emitEvent = 'machine_status';
+                this.emitEvent = 'ip_machine_status';
                 break;
             case 'os':
-                this.emitEvent = 'machine_status';
+                this.emitEvent = 'os_machine_status';
                 break;
         }
 
@@ -49,9 +49,9 @@ export default class stationStatus extends Component {
         this._isMounted = false;
 
         //Unregister event
-        this.socket.emit('machine_status', {
+        this.socket.emit(this.emitEvent, {
             msg: {
-                'event': 'sna_machine_status',
+                'event': 'sna_' + this.emitEvent,
                 'from_timedevice': 0,
                 'to_timedevice': 0,
                 'proccess': '',

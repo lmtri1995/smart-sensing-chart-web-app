@@ -27,13 +27,6 @@ export default class ShiftStatus extends Component {
             loading: true
         };
 
-        console.log("role role role role role role role role role");
-        console.log("role role role role role role role role role");
-        console.log("role role role role role role role role role");
-        console.log("role role role role role role role role role");
-        console.log("role role role role role role role role role");
-        console.log("role role role role role role role role role");
-        console.log("role: ", this.role);
         switch (this.role) {
             case 'admin':
                 console.log("admin");
@@ -90,13 +83,6 @@ export default class ShiftStatus extends Component {
         });
 
         this.socket.on(this.listenEvent, (data) => {
-            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
-            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
-            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
-            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
-            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
-            console.log("hehehehehehehehehehehehehehehehehehehehehehehehehehehehehehe");
-            console.log("data: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -125,7 +111,7 @@ export default class ShiftStatus extends Component {
 
     }
 
-    specifyCurrentShift(dataArray) {
+    specifyCurrentShift() {
         let today = new Date();
         let dd = today.getDate();
         let mm = today.getMonth();
@@ -140,20 +126,19 @@ export default class ShiftStatus extends Component {
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
         let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
         let shift2From = shift1To;
-        let shift2To = moment.utc([yyyy, mm, dd, 20, 0, 0]).unix();
+        let shift2To = moment.utc([yyyy, mm, dd, 22, 0, 0]).unix();
         let shift3From = shift2To;
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 
         let result = 0;
-        if (dataArray.length > 7) {
-            if (currentTime >= shift1From && currentTime < shift1To) {
-                result = 1;
-            } else if (currentTime >= shift2From && currentTime < shift2To) {
-                result = 2;
-            } else if (currentTime >= shift3From && currentTime < shift3To) {
-                result = 3;
-            }
+        if (currentTime >= shift1From && currentTime < shift1To) {
+            result = 1;
+        } else if (currentTime >= shift2From && currentTime < shift2To) {
+            result = 2;
+        } else if (currentTime >= shift3From && currentTime < shift3To) {
+            result = 3;
         }
+
         return result;
     }
 
@@ -222,7 +207,7 @@ export default class ShiftStatus extends Component {
 
     showShiftTable(dataArray) {
         let result = '';
-        let currentShift = this.specifyCurrentShift(dataArray);
+        let currentShift = this.specifyCurrentShift();
         let shift1 = this.showShiftItem(dataArray, 1);
         let shift2 = this.showShiftItem(dataArray, 2);
         let shift3 = this.showShiftItem(dataArray, 3);

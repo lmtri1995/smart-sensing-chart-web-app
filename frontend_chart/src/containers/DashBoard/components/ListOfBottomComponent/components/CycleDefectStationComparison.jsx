@@ -88,7 +88,7 @@ export class CycleDefectStationComparison extends Component {
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'ip':
-                this.emitEvent = `ip_swingarm_idledefect`;
+                this.emitEvent = `os_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'os':
@@ -120,7 +120,7 @@ export class CycleDefectStationComparison extends Component {
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
         let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
         let shift2From = shift1To;
-        let shift2To = moment.utc([yyyy, mm, dd, 20, 0, 0]).unix();
+        let shift2To = moment.utc([yyyy, mm, dd, 22, 0, 0]).unix();
         let shift3From = shift2To;
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 

@@ -91,34 +91,34 @@ export default class DowntimeShift extends Component {
         });*/
     }
 
-    specifyCurrentShift(dataArray) {
+    specifyCurrentShift() {
         let today = new Date();
         let dd = today.getDate();
         let mm = today.getMonth();
         let yyyy = today.getFullYear();
+        let hour = today.getHours();
+        let minute = today.getMinutes();
+        let second = today.getSeconds();
         //shift 1: 6:00 am - 2:00 pm
         //shift 2: 2:00 am - 20:00 pm
         //shift 3: 20:00 pm - 6:00 am
+        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
         let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
         let shift2From = shift1To;
-        let shift2To = moment.utc([yyyy, mm, dd, 20, 0, 0]).unix();
+        let shift2To = moment.utc([yyyy, mm, dd, 22, 0, 0]).unix();
         let shift3From = shift2To;
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 
-        let result = 1;
-        if (dataArray.length > 0) {
-            if (dataArray[7]) {
-                let timeReceived = dataArray[7].timeRecieved;
-                if (timeReceived >= shift1From && timeReceived < shift1To) {
-                    result = 1;
-                } else if (timeReceived >= shift2From && timeReceived < shift2To) {
-                    result = 2;
-                } else if (timeReceived >= shift3From && timeReceived < shift3To) {
-                    result = 3;
-                }
-            }
+        let result = 0;
+        if (currentTime >= shift1From && currentTime < shift1To) {
+            result = 1;
+        } else if (currentTime >= shift2From && currentTime < shift2To) {
+            result = 2;
+        } else if (currentTime >= shift3From && currentTime < shift3To) {
+            result = 3;
         }
+
         return result;
     }
 
@@ -232,7 +232,7 @@ export default class DowntimeShift extends Component {
 
     showDowntimeShiftTable(dataArray) {
         let result = '';
-        let currentShift = this.specifyCurrentShift(dataArray);
+        let currentShift = this.specifyCurrentShift();
         let shift1 = this.showDowntimeShiftItem(dataArray, 1);
         let shift2 = this.showDowntimeShiftItem(dataArray, 2);
         let shift3 = this.showDowntimeShiftItem(dataArray, 3);

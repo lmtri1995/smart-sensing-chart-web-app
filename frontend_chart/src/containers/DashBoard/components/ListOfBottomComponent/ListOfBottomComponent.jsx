@@ -27,7 +27,7 @@ export default class listBottomComponent extends Component {
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'ip':
-                this.emitEvent = `ip_swingarm_oeedata`;
+                this.emitEvent = `os_swingarm_oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'os':
@@ -46,6 +46,19 @@ export default class listBottomComponent extends Component {
             OEENumber: 0,
             workLossNumber: 0,
         };
+    }
+
+    componentWillUnmount() {
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                //idStation:0,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop'
+            }
+        });
     }
 
     componentDidMount(){

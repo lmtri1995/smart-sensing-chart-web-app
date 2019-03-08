@@ -85,7 +85,7 @@ export class SwingArmMachine extends Component {
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'ip':
-                this.emitEvent = `ip_swingarm_stationcomparison`;
+                this.emitEvent = `os_swingarm_stationcomparison`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'os':

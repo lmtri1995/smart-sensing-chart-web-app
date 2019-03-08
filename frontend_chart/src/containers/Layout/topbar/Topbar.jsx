@@ -35,7 +35,7 @@ class Topbar extends Component {
 
                         <TopbarDateFilter/>
                         <TopbarFilter/>
-                        <TopbarNotification/>
+                        {/*<TopbarNotification/>*/}
                         <TopbarProfile/>
                         <TopbarFullScreen goFull={this.click}/>
                     </div>

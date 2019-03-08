@@ -7,19 +7,16 @@ import Analysis from '../containers/Analysis/index';
 const admin = [
     {component: DashBoard, route: "/", title: "Dashboard"},
     {component: Report, route: "/pages/report", title: "Report"},
-    {component: ExamplePageThree, route: "/pages/three", title: "Page three"},
     {component: Analysis, route: "/pages/analysis", title: "Analysis"},
 ];
 const ip = [
     {component: DashBoard, route: "/pages/", title: "Page dashboard"},
     {component: Report, route: '/pages/report', title: "Report"},
-    {component: ExamplePageThree, route: "/pages/three", title: "Page three"},
     {component: Analysis, route: "/pages/analysis", title: "Analysis"},
 ];
 const os = [
     {component: DashBoard, route: "/pages/", title: "Page dashboard"},
     {component: Report, route: '/pages/report', title: "Report"},
-    {component: ExamplePageThree, route: "/pages/three", title: "Page three"},
     {component: Analysis, route: "/pages/analysis", title: "Analysis"},
 ];
 export const RoleList = {

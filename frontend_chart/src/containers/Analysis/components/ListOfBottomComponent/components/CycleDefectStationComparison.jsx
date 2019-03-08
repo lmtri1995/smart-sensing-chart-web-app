@@ -104,7 +104,7 @@ export class CycleDefectStationComparison extends Component {
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'ip':
-                this.emitEvent = `ip_swingarm_idledefect`;
+                this.emitEvent = `os_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'os':

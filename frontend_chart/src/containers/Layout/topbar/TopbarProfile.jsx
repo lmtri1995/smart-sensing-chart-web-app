@@ -23,9 +23,10 @@ export default class TopbarProfile extends PureComponent {
     };
 
     render() {
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
         let username = '';
         if (this.loginData) {
-            this.loginData.data.username;
+            username = loginData.data.username;
         }
 
         return (
@@ -36,7 +37,8 @@ export default class TopbarProfile extends PureComponent {
                 {this.state.collapse && <button className="topbar__back" onClick={this.toggle}/>}
                 <Collapse isOpen={this.state.collapse} className="topbar__setting-wrap">
                     <div className="topbar__setting">
-                        {/*<div className="topbar__menu-divider"/>*/}
+                        <div className="text-center">{username}</div>
+                        <div className="topbar__menu-divider"/>
                         <TopbarMenuLink title="Log Out" icon="exit" path="/logout"/>
                     </div>
                 </Collapse>

@@ -134,7 +134,7 @@ export default class TemperatureTrendItem extends Component {
             }
         );
 
-        API('api/os/tempTrend', 'POST', param)
+        API(this.apiUrl, 'POST', param)
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;

@@ -123,7 +123,7 @@ export default class TemperatureTrendItem extends Component {
             }
         }
 
-        if (document.getElementById("tooltip" + stationId).innerHTML){
+        if (document.getElementById("tooltip" + stationId)){
             document.getElementById("tooltip" + stationId).innerHTML = text;
         }
 

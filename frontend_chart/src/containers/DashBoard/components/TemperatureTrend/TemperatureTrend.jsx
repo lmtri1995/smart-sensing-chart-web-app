@@ -38,19 +38,19 @@ export default class TemperatureTrend extends Component {
             case ROLES.ROLE_ADMIN:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
-                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.labelArray = ["Time", "Actual Temp Top", "Actual Temp Middle", "Actual Temp Bottom", "Setting Temp Top", "Setting Temp Middle", "Setting Temp Bottom"];
                 break;
             case ROLES.ROLE_IP:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
-                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual R.Top Temp", "Acutal R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
+                this.labelArray = ["Time", "Actual Temp L.Top", "Actual Temp L.Bott", "Actual" +
+                " Temp R.Top", "Acutal Temp" +
+                " R.Bott", "Setting Temp L.Top", "Setting Temp L.Bott", "Setting Temp R.Top", "Setting Temp R.Bott"];
                 break;
             case ROLES.ROLE_OS:
                 this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
-                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.labelArray = ["Time", "Actual Temp Top", "Actual Temp Middle", "Actual Temp Bottom", "Setting Temp Top", "Setting Temp Middle", "Setting Temp Bottom"];
                 break;
         }
 

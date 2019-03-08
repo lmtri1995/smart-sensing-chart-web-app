@@ -39,7 +39,7 @@ export default class TemperatureTrendItem extends Component {
                 this.emitEvent = `ip_temp_trend_${stationIdNo}`;
                 this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempA4", "tempB1", "tempB2", "tempB3", "tempB4"];
+                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual R.Top Temp", "Acutal R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
                 break;
             case 'os':
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;

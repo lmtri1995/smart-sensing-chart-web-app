@@ -6,6 +6,7 @@ import Dygraph from "dygraphs/src/dygraph";
 import moment from "moment";
 import API from "../../../../../services/api";
 import Singleton from "../../../../../services/Socket";
+import connect from "react-redux/es/connect/connect";
 
 const override = `
     position: absolute;
@@ -15,7 +16,7 @@ const override = `
     z-index: 100000;
 `;
 
-export default class TemperatureTrendItem extends Component {
+class TemperatureTrendItem extends Component {
 
     constructor(props) {
         super(props);
@@ -40,7 +41,7 @@ export default class TemperatureTrendItem extends Component {
             case 'ip':
                 this.apiUrl = 'api/ip/tempTrend';
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6", "#449AFF", "#46D6EA"];
-                this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempA4", "tempB1", "tempB2", "tempB3", "tempB4"];
+                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual R.Top Temp", "Acutal R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
                 break;
             case 'os':
                 this.apiUrl = 'api/os/tempTrend';
@@ -93,10 +94,22 @@ export default class TemperatureTrendItem extends Component {
 
         //this.drawLegend();
 
+        let {startDate, endDate} = this.props.globalDateFilter;
+
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        console.log(`startDate: ${startDate}, endDate: ${endDate}`);
+        console.log(`startDate: `, moment(startDate.toISOString()).unix(), ' + endDate: ', moment(endDate.toISOString()).unix());
+
         let param = {
-            idStation: stationId,
-            from_timedevice: 0,
-            to_timedevice: 0,
+            idstation: stationId,
+            from_timedevice: moment(startDate.toISOString()).unix(),
+            to_timedevice: moment(endDate.toISOString()).unix(),
             minute: 0,
         };
 
@@ -136,6 +149,7 @@ export default class TemperatureTrendItem extends Component {
 
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("response: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
 
@@ -201,3 +215,9 @@ export default class TemperatureTrendItem extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(TemperatureTrendItem);

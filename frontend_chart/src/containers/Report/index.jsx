@@ -72,6 +72,7 @@ class ReportPage extends Component {
     componentDidMount() {
         let {startDate, endDate} = this.props.globalDateFilter;
 
+        // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
         let param = {
             from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),

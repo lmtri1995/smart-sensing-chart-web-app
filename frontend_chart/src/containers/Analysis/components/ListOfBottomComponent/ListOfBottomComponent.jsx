@@ -94,6 +94,7 @@ class listBottomComponent extends Component {
         quality = (quality > 100)?100:quality;
         availability = (availability > 100)?100:availability;
         workLoss = (workLoss > 100)?100:workLoss;
+        OEE = (OEE > 100)?100:OEE;
 
         this.setState({
             availabilityNumber: availability,

@@ -123,9 +123,9 @@ export default class TemperatureTrendItem extends Component {
             }
         }
 
-
-
-        document.getElementById("tooltip" + stationId).innerHTML = text;
+        if (document.getElementById("tooltip" + stationId).innerHTML){
+            document.getElementById("tooltip" + stationId).innerHTML = text;
+        }
 
         let html = "";
         return html;

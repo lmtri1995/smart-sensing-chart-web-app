@@ -5,30 +5,31 @@ export default class ProductionRateOverview extends Component {
     render() {
         let {productionRate} = this.props;
         let chartLabels = [];
-        let sumProductionRates = [], sum = 0, averageProductionRateText = '';
+        let averageProductionRatesByShift = [], average = 0, averageProductionRateText = '';
         if (productionRate) {
             productionRate.map((element, index) => {
                 if (index < productionRate.length - 1) {
                     chartLabels.push(element.label);
 
-                    sum = element.data.reduce(    // sum all production rates of current shift
+                    average = element.data.reduce(    // sum all production rates of current shift
                         (accumulator, currentValue) => accumulator + currentValue,
                         0
-                    );
+                    ) / element.data.length;
                     // Round to 2 decimal places
-                    sum = sum % 1 === 0 ? sum : Math.round(sum * 100) / 100;
+                    average = average % 1 === 0 ? average : Math.round(average * 100) / 100;
 
-                    sumProductionRates.push(sum);
+                    averageProductionRatesByShift.push(average);
                 }
             });
-            let averageProductionRate = sumProductionRates.reduce((acc, curVal) => acc + curVal, 0) / sumProductionRates.length;
+            let averageProductionRate =
+                averageProductionRatesByShift.reduce((acc, curVal) => acc + curVal, 0) / averageProductionRatesByShift.length;
             averageProductionRateText = averageProductionRate % 1 !== 0
                 ? averageProductionRate.toFixed(2)
                 : averageProductionRate.toString();
         }
 
         let chartData = [{
-            data: sumProductionRates,
+            data: averageProductionRatesByShift,
             backgroundColor: [
                 "#FF9C64",
                 "#8C67F6",
@@ -40,7 +41,8 @@ export default class ProductionRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={chartData} centerText={averageProductionRateText} showLegend={true}/>
+                    <DoughnutChart labels={chartLabels} data={chartData} centerText={averageProductionRateText}
+                                   showLegend={true}/>
                 </div>
             </div>
         )

@@ -24,7 +24,8 @@ import {
     DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_3_4_ID,
     DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_5_6_ID,
     DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_7_8_ID,
-    ExportType
+    ExportType,
+    ROUTE
 } from "../../../constants/constants";
 import {connect} from "react-redux";
 import {withRouter} from 'react-router-dom';
@@ -35,15 +36,15 @@ class DataExporter extends Component {
         let fileName = '';
         let processStatusData = null;
         switch (location.pathname) {
-            case '/':
+            case ROUTE.Dashboard:
                 fileName = 'Dashboard';
                 processStatusData = props.downloadDataStore.processStatusData;
                 break;
-            case '/pages/analysis':
+            case ROUTE.Analysis:
                 fileName = 'Analysis';
                 processStatusData = props.downloadDataStore.processStatusData;
                 break;
-            case '/pages/report':
+            case ROUTE.Report:
                 fileName = 'Report';
                 break;
         }
@@ -78,7 +79,7 @@ class DataExporter extends Component {
         let processStatusData = null;
         let imageExportContainerElements = null;
         switch (location.pathname) {
-            case '/':
+            case ROUTE.Dashboard:
                 fileName = 'Dashboard';
                 processStatusData = props.downloadDataStore.processStatusData;
                 imageExportContainerElements = [];
@@ -92,7 +93,7 @@ class DataExporter extends Component {
                 imageExportContainerElements.push(document.getElementById(DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID));
                 imageExportContainerElements.push(document.getElementById(DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID));
                 break;
-            case '/pages/analysis':
+            case ROUTE.Analysis:
                 fileName = 'Analysis';
                 processStatusData = props.downloadDataStore.processStatusData;
                 imageExportContainerElements = [];
@@ -105,7 +106,7 @@ class DataExporter extends Component {
                 imageExportContainerElements.push(document.getElementById(ANALYSIS_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID));
                 imageExportContainerElements.push(document.getElementById(ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID));
                 break;
-            case '/pages/report':
+            case ROUTE.Report:
                 fileName = 'Report';
                 break;
         }
@@ -134,7 +135,7 @@ class DataExporter extends Component {
             var saveDocInterval = setInterval(() => {
                 console.log("SAVE_DOC_INTERVAL=============================",);
                 switch (location.pathname) {
-                    case '/':
+                    case ROUTE.Dashboard:
                         if (mapOfContainerCanvas.size === 9) {
                             clearInterval(saveDocInterval);
 
@@ -166,7 +167,7 @@ class DataExporter extends Component {
                             );
                         }
                         break;
-                    case '/pages/analysis':
+                    case ROUTE.Analysis:
                         if (mapOfContainerCanvas.size === 8) {
                             clearInterval(saveDocInterval);
 
@@ -198,7 +199,7 @@ class DataExporter extends Component {
                             );
                         }
                         break;
-                    case '/pages/report':
+                    case ROUTE.Report:
                         // todo Export PDF for Report
                         saveDocInterval.clearInterval();
                         break;
@@ -211,15 +212,15 @@ class DataExporter extends Component {
         let fileName = '';
         let imageExportContainerID = null;
         switch (location.pathname) {
-            case '/':
+            case ROUTE.Dashboard:
                 fileName = 'Dashboard';
                 imageExportContainerID = document.getElementById(DASHBOARD_CONTAINER_ID);
                 break;
-            case '/pages/analysis':
+            case ROUTE.Analysis:
                 fileName = 'Analysis';
                 imageExportContainerID = document.getElementById(ANALYSIS_CONTAINER_ID);
                 break;
-            case '/pages/report':
+            case ROUTE.Report:
                 fileName = 'Report';
                 break;
         }

@@ -105,7 +105,7 @@ export default class ShiftStatus extends Component {
             let tokenObject = JSON.parse(data);
             if (!tokenObject.success) {
                 console.log('Token is expired');
-                window.location.href = ("/logout");
+                window.location.href = (ROUTE.Logout);
             }
         });*/
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Redirect} from "react-router-dom";
 import Singleton from "../../services/Socket";
+import {ROUTE} from "../../constants/constants";
 
 const index = () => {
     console.log('logout');
@@ -13,7 +14,7 @@ const index = () => {
         socket.disconnect();
     }
     localStorage.removeItem('logindata');
-    return <Redirect to='/login'/>
+    return <Redirect to={ROUTE.Login}/>
 };
 
 export default index;

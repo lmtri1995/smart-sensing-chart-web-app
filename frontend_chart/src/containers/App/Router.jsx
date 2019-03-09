@@ -4,16 +4,16 @@ import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
 import LogIn from '../LogIn/index';
 import Report from '../Report/index';
-import ExamplePageThree from '../ExampleThree/index';
 import LogOut from '../LogOut/index';
 import DashBoard from "../DashBoard/index";
 import Analysis from "../Analysis/index";
 import PrivateRoute from "./PrivateRoute";
 import Fullscreen from "react-full-screen";
+import {ROUTE} from "../../constants/constants";
 
 class Pages extends Component {
     constructor(props) {
-        super();
+        super(props);
 
         this.state = {
             isFull: false,
@@ -34,10 +34,10 @@ class Pages extends Component {
                     <Layout goFull={this.goFull}/>
                     <div className="container__wrap">
                         <Switch>
-                            <PrivateRoute exact path="/" component={DashBoard}/>
-                            <PrivateRoute path="/pages/analysis" component={Analysis}/>
+                            <PrivateRoute exact path={ROUTE.Dashboard} component={DashBoard}/>
+                            <PrivateRoute path={ROUTE.Analysis} component={Analysis}/>
                             {/* <PrivateRoute path="/pages/one" component={ExamplePageOne}/> */}
-                            <PrivateRoute path="/pages/report" component={Report}/>
+                            <PrivateRoute path={ROUTE.Report} component={Report}/>
                         </Switch>
                     </div>
                 </Fullscreen>
@@ -52,10 +52,10 @@ class Pages extends Component {
 //             <Layout goFull={this.goFull}/>
 //             <div className="container__wrap">
 //                 <Switch>
-//                     <PrivateRoute exact path="/" component={DashBoard}/>
-//                     <PrivateRoute path="/pages/analysis" component={Analysis}/>
+//                     <PrivateRoute exact path={ROUTE.Dashboard} component={DashBoard}/>
+//                     <PrivateRoute path={ROUTE.Analysis} component={Analysis}/>
 //                     {/* <PrivateRoute path="/pages/one" component={ExamplePageOne}/> */}
-//                     <PrivateRoute path="/pages/report" component={Report}/>
+//                     <PrivateRoute path={ROUTE.Report} component={Report}/>
 //                     <PrivateRoute path="/pages/three" component={ExamplePageThree}/>
 //                 </Switch>
 //             </div>
@@ -65,15 +65,15 @@ class Pages extends Component {
 const wrappedRoutes = () => (
     console.log('wrappedRoutes'),
         <Switch>
-            <Route exact path="/" component={Pages}/>
-            <Route exact path="/login" render={(props) => (
+            <Route exact path={ROUTE.Dashboard} component={Pages}/>
+            <Route exact path={ROUTE.Login} render={(props) => (
                 JSON.parse(localStorage.getItem('logindata')) === null
                     ? <LogIn/>
-                    : <Redirect to="/"/>
+                    : <Redirect to={ROUTE.Dashboard}/>
             )}/>
-            <Route exact path="/logout" component={LogOut}/>
+            <Route exact path={ROUTE.Logout} component={LogOut}/>
             )} />
-            <Route path="/pages" render={(props) => (
+            <Route path={ROUTE.Pages} render={(props) => (
                 JSON.parse(localStorage.getItem('logindata')) === null
                     ? <LogIn/>
                     : <Pages/>
@@ -85,7 +85,7 @@ const Router = () => {
     return (
         <MainWrapper>
             <main>
-                <Route path="/" component={wrappedRoutes}/>
+                <Route path={ROUTE.Dashboard} component={wrappedRoutes}/>
             </main>
         </MainWrapper>
     );

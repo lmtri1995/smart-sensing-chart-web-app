@@ -7,6 +7,7 @@ import TopbarDateFilter from "./TopbarDateFilter";
 import TopbarFilter from "./TopbarFilter";
 import TopbarNotification from "./TopbarNotification";
 import TopbarFullScreen from "./TopbarFullScreen";
+import {ROUTE} from "../../../constants/constants";
 
 class Topbar extends Component {
     static propTypes = {
@@ -29,7 +30,7 @@ class Topbar extends Component {
                             changeMobileSidebarVisibility={changeMobileSidebarVisibility}
                             changeSidebarVisibility={changeSidebarVisibility}
                         />
-                        <Link className="topbar__logo" to='/'/>
+                        <Link className="topbar__logo" to={ROUTE.Dashboard}/>
                     </div>
                     <div className="topbar__right">
 

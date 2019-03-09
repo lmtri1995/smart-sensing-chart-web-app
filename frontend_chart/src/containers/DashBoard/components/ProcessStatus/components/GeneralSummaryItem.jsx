@@ -7,12 +7,12 @@ export default class GeneralSummaryItem extends Component {
         return (
             <tr>
                 <th scope="row">{spec}</th>
-                <td>{data1}</td>
-                <td>{data2}</td>
-                <td>{data3}</td>
-                <td>{data4}</td>
-                <td>{data5}</td>
-                <td>{data6}</td>
+                <td style={{textAlign:'right'}}>{data1}</td>
+                <td style={{textAlign:'right'}}>{data2}</td>
+                <td style={{textAlign:'right'}}>{data3}</td>
+                <td style={{textAlign:'right'}}>{data4}</td>
+                <td style={{textAlign:'right'}}>{data5}</td>
+                <td style={{textAlign:'right'}}>{data6}</td>
             </tr>
         );
     }

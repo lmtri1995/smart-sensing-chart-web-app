@@ -6,15 +6,15 @@ export default class DowntimeShiftItem extends Component {
         return (
             <tr>
                 <th scope="row">Shift {shiftNo}</th>
-                <td>{count1}</td>
-                <td>{count2}</td>
-                <td>{count3}</td>
-                <td>{count4}</td>
-                <td>{count5}</td>
-                <td>{count6}</td>
-                <td>{count7}</td>
-                <td>{count8}</td>
-                <td>{total}</td>
+                <td className="cellText">{count1}</td>
+                <td className="cellText">{count2}</td>
+                <td className="cellText">{count3}</td>
+                <td className="cellText">{count4}</td>
+                <td className="cellText">{count5}</td>
+                <td className="cellText">{count6}</td>
+                <td className="cellText">{count7}</td>
+                <td className="cellText">{count8}</td>
+                <td className="cellText">{total}</td>
             </tr>
         );
     }

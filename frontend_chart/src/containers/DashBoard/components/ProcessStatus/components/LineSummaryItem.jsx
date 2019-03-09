@@ -6,12 +6,12 @@ export default class LineSummaryItem extends Component {
         return (
             <tr>
                 <th scope="row">Station {stationId}</th>
-                <td>{avgTemp}</td>
-                <td>{stddevTemp}</td>
-                <td>{avgPreparing}</td>
-                <td>{stddevPreparing}</td>
-                <td>{avgCuringTime}</td>
-                <td>{stddevCurringTime}</td>
+                <td className="cellText">{avgTemp}</td>
+                <td className="cellText">{stddevTemp}</td>
+                <td className="cellText">{avgPreparing}</td>
+                <td className="cellText">{stddevPreparing}</td>
+                <td className="cellText">{avgCuringTime}</td>
+                <td className="cellText">{stddevCurringTime}</td>
             </tr>
         );
     }

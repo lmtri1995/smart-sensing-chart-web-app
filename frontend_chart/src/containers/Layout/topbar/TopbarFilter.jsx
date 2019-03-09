@@ -3,6 +3,7 @@ import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
 import {ExportType, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
+import {connect} from "react-redux";
 
 class TopbarFilter extends Component {
     constructor(props) {
@@ -98,4 +99,4 @@ class TopbarFilter extends Component {
     }
 }
 
-export default TopbarFilter;
+export default connect()(TopbarFilter);

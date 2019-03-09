@@ -5,7 +5,8 @@ import {
     globalDateFilterReducer,
     LoginReducer,
     sidebarReducer,
-    themeReducer
+    themeReducer,
+    globalShiftFilterReducer,
 } from '../../redux/reducers/index';
 import thunk from "redux-thunk";
 
@@ -16,6 +17,7 @@ const reducer = combineReducers({
     globalDateFilter: globalDateFilterReducer,
     login: LoginReducer,
     downloadDataStore: downloadDataStoreReducer,
+    globalShiftFilter: globalShiftFilterReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

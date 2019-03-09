@@ -1,5 +1,6 @@
 import React, {PureComponent} from "react";
 import Singleton from "../../../services/Socket";
+import {ROUTE} from "../../../constants/constants";
 
 class TestSocket extends PureComponent {
     constructor() {
@@ -23,7 +24,7 @@ class TestSocket extends PureComponent {
             let tokenObject = JSON.parse(data);
             if (!tokenObject.success) {
                 console.log('vantran!!!!');
-                window.location.href = ("/logout");
+                window.location.href = (ROUTE.Logout);
             }
         });
         socket.emit('outsole', {msg: {event: 'truong-outsole', from_timedevice: "", to_timedevice: ""}});

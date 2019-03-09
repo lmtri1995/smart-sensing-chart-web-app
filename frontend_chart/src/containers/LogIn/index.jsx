@@ -3,6 +3,7 @@ import {Redirect} from 'react-router-dom';
 import LogInForm from './components/LogInForm';
 import {connect} from 'react-redux'
 import {fetchData} from '../../redux/actions/loginActions';
+import {ROUTE} from "../../constants/constants";
 
 class LogIn extends Component {
     constructor(props) {
@@ -37,7 +38,7 @@ class LogIn extends Component {
     render() {
         //console.log('LogIn state',this.state.login)
         //console.log('LogIn localstore',JSON.parse(localStorage.getItem('logindata')))
-        if (JSON.parse(localStorage.getItem('logindata')) !== null) return <Redirect to='/'/>;
+        if (JSON.parse(localStorage.getItem('logindata')) !== null) return <Redirect to={ROUTE.Dashboard}/>;
         return (
             <div className="account">
                 <div className="account__wrapper">

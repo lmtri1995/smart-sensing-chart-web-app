@@ -6,6 +6,7 @@ import Clock from 'react-live-clock';
 import {GlobalFilterProps} from '../../../shared/prop-types/ReducerProps';
 import {changeGlobalDateFilter} from '../../../redux/actions/globalDateFilterActions';
 import DateRangePicker from "../../DateTime/component/DateRangePicker";
+import {ROUTE} from "../../../constants/constants";
 
 class TopbarDateFilter extends Component {
     static propTypes = {
@@ -34,7 +35,7 @@ class TopbarDateFilter extends Component {
     }
 
     toggle = () => {
-        if (this.props.location.pathname !== '/') {
+        if (this.props.location.pathname !== ROUTE.Dashboard) {
             this.setState({collapse: !this.state.collapse});
         }
     };

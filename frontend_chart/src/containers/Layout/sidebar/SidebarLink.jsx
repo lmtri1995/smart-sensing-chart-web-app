@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Badge} from 'reactstrap';
 import {NavLink} from 'react-router-dom';
+import {ROUTE} from "../../../constants/constants";
 
 const SidebarLink = ({
                          title, icon, newLink, route, onClick,
@@ -32,7 +33,7 @@ SidebarLink.propTypes = {
 SidebarLink.defaultProps = {
     icon: '',
     newLink: false,
-    route: '/',
+    route: ROUTE.Dashboard,
     onClick: () => {
     },
 };

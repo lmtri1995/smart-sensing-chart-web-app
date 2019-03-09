@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import {Collapse} from 'reactstrap';
 import TopbarMenuLink from './TopbarMenuLink';
 import Setting from "../../../shared/img/Setting.svg";
+import {ROUTE} from "../../../constants/constants";
 
 const Ava = `${process.env.PUBLIC_URL}/img/ava.png`;
 
@@ -39,7 +40,7 @@ export default class TopbarProfile extends PureComponent {
                     <div className="topbar__setting">
                         <div className="text-center">{username}</div>
                         <div className="topbar__menu-divider"/>
-                        <TopbarMenuLink title="Log Out" icon="exit" path="/logout"/>
+                        <TopbarMenuLink title="Log Out" icon="exit" path={ROUTE.Logout}/>
                     </div>
                 </Collapse>
             </div>

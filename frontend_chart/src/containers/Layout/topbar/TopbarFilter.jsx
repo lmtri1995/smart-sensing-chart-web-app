@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {Collapse} from 'reactstrap';
+import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {ExportType} from "../../../constants/constants";
+import {ExportType, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 
 class TopbarFilter extends Component {
@@ -9,6 +9,7 @@ class TopbarFilter extends Component {
         super(props);
         this.state = {
             filterMenuCollapse: false,
+            shiftFilterMenuCollapse: false,
             downloadCollapse: false,
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
@@ -29,8 +30,16 @@ class TopbarFilter extends Component {
         });
     };
 
+    onShiftFilterMenuClicked = () => {
+        this.setState({
+            shiftFilterMenuCollapse: !this.state.shiftFilterMenuCollapse,
+            downloadCollapse: false,
+        });
+    };
+
     onDownloadMenuClicked = () => {
         this.setState({
+            shiftFilterMenuCollapse: false,
             downloadCollapse: !this.state.downloadCollapse
         });
     };
@@ -43,6 +52,7 @@ class TopbarFilter extends Component {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             this.setState({
                 filterMenuCollapse: false,
+                shiftFilterMenuCollapse: false,
                 downloadCollapse: false
             });
         }
@@ -57,7 +67,20 @@ class TopbarFilter extends Component {
                 <Collapse isOpen={this.state.filterMenuCollapse} className="topbar__menu-wrap">
                     <div className="topbar_filter_menu">
                         <button className="btn btn-secondary">Filter: Model</button>
-                        <button className="btn btn-secondary">Filter: Shift</button>
+                        <button className="btn btn-secondary" onClick={this.onShiftFilterMenuClicked}>
+                            Filter: Shift <i className="fas fa-caret-down"></i>
+                        </button>
+                        <Collapse isOpen={this.state.shiftFilterMenuCollapse} className="topbar__menu-wrap">
+                            <ListGroup>
+                                {
+                                    SHIFT_DESCRIPTIONS.map(shift =>
+                                        <ListGroupItem>
+                                            {shift}
+                                        </ListGroupItem>
+                                    )
+                                }
+                            </ListGroup>
+                        </Collapse>
                         <button className="btn btn-secondary" onClick={this.onDownloadMenuClicked}>
                             Download <i className="fas fa-caret-down"></i>
                         </button>
@@ -67,7 +90,6 @@ class TopbarFilter extends Component {
                                 <DataExporter exportType={ExportType.PDF}/>
                                 <DataExporter exportType={ExportType.PNG}/>
                             </div>
-
                         </Collapse>
                     </div>
                 </Collapse>

@@ -26,6 +26,9 @@ export const ROLES = {
 export const START_WORK_DAY_TIME = {hours: 6, minutes: 0, seconds: 0};
 export const END_WORK_DAY_TIME = {hours: 5, minutes: 59, seconds: 59};
 
+// Shift
+export const SHIFT_DESCRIPTIONS = ['Shift 1', 'Shift 2', 'Shift 3'];
+
 // Data Export Type
 export const ExportType = {
     EXCEL: 'Excel',

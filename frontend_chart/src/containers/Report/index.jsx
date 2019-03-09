@@ -8,6 +8,7 @@ import API from "../../services/api";
 import moment from "moment";
 import {GlobalFilterProps} from "../../shared/prop-types/ReducerProps";
 import {connect} from "react-redux";
+import {IP_DEFECT_NAME, OS_DEFECT_NAME, SHIFT_DESCRIPTIONS} from "../../constants/constants";
 
 class ReportPage extends Component {
     static propTypes = {
@@ -83,7 +84,19 @@ class ReportPage extends Component {
     }
 
     requestProductionRates = (param) => {
-        API('api/os/productionRate', 'POST', param)
+        let link = 'ip';
+        switch (this.role) {
+            case 'admin':
+                link = 'os';
+                break;
+            case 'ip':
+                link = 'ip';
+                break;
+            case 'os':
+                link = 'os';
+                break;
+        }
+        API(`api/${link}/productionRate`, 'POST', param)
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
@@ -153,7 +166,7 @@ class ReportPage extends Component {
                         if (i < 4) {
                             dataToShow.push(
                                 {
-                                    label: `Shift ${i}`,
+                                    label: SHIFT_DESCRIPTIONS[i - 1],
                                     backgroundColor: colors[i - 1],
                                     data: eval(`shift${i}`)
                                 }
@@ -189,7 +202,23 @@ class ReportPage extends Component {
     };
 
     requestDefectByTypeOverTime = (param) => {
-        API('api/os/defectByTypeOverTime', 'POST', param)
+        let link = 'ip';
+        let defectTypes = IP_DEFECT_NAME;
+        switch (this.role) {
+            case 'admin':
+                link = 'os';
+                defectTypes = OS_DEFECT_NAME;
+                break;
+            case 'ip':
+                link = 'ip';
+                defectTypes = IP_DEFECT_NAME;
+                break;
+            case 'os':
+                link = 'os';
+                defectTypes = OS_DEFECT_NAME;
+                break;
+        }
+        API(`api/${link}/defectByTypeOverTime`, 'POST', param)
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
@@ -239,7 +268,7 @@ class ReportPage extends Component {
                         if (i < 5) {
                             dataToShow.push(
                                 {
-                                    label: `Type ${i}`,
+                                    label: defectTypes[i - 1],
                                     backgroundColor: colors[i - 1],
                                     data: eval(`defectType${i}`)
                                 }
@@ -247,7 +276,7 @@ class ReportPage extends Component {
                         } else {
                             dataToShow.push(
                                 {
-                                    label: 'Total Defect',
+                                    label: 'Total Defects',
                                     borderColor: colors[i - 1],
                                     borderWidth: 2,
                                     pointRadius: 0,

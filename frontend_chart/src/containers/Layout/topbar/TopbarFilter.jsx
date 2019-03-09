@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {ExportType, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
+import {ExportType, ROUTE, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
 import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
+import {withRouter} from "react-router-dom";
 
 class TopbarFilter extends Component {
     constructor(props) {
@@ -65,6 +66,8 @@ class TopbarFilter extends Component {
     }
 
     render() {
+        let {location} = this.props;
+
         return (
             <div className="topbar__profile" ref={this.setWrapperRef}>
                 <button className="topbar__avatar" onClick={this.onFilterMenuClicked}>
@@ -72,21 +75,30 @@ class TopbarFilter extends Component {
                 </button>
                 <Collapse isOpen={this.state.filterMenuCollapse} className="topbar__menu-wrap">
                     <div className="topbar_filter_menu">
-                        <button className="btn btn-secondary">Filter: Model</button>
-                        <button className="btn btn-secondary" onClick={this.onShiftFilterMenuClicked}>
-                            Filter: Shift <i className="fas fa-caret-down"></i>
-                        </button>
-                        <Collapse isOpen={this.state.shiftFilterMenuCollapse} className="topbar__menu-wrap">
-                            <ListGroup>
-                                {
-                                    SHIFT_DESCRIPTIONS.map(shift =>
-                                        <ListGroupItem onClick={this.onShiftItemClicked}>
-                                            {shift}
-                                        </ListGroupItem>
-                                    )
-                                }
-                            </ListGroup>
-                        </Collapse>
+                        {
+                            location.pathname === ROUTE.Report // Only show Filter by Model & Shift Menu on Report Page
+                                ? (
+                                    <span>
+                                        <button className="btn btn-secondary">Filter: Model</button>
+                                        <button className="btn btn-secondary" onClick={this.onShiftFilterMenuClicked}>
+                                            Filter: Shift <i className="fas fa-caret-down"></i>
+                                        </button>
+                                        <Collapse isOpen={this.state.shiftFilterMenuCollapse}
+                                                  className="topbar__menu-wrap">
+                                            <ListGroup>
+                                                {
+                                                    SHIFT_DESCRIPTIONS.map(shift =>
+                                                        <ListGroupItem onClick={this.onShiftItemClicked}>
+                                                            {shift}
+                                                        </ListGroupItem>
+                                                    )
+                                                }
+                                            </ListGroup>
+                                        </Collapse>
+                                    </span>
+                                )
+                                : null
+                        }
                         <button className="btn btn-secondary" onClick={this.onDownloadMenuClicked}>
                             Download <i className="fas fa-caret-down"></i>
                         </button>
@@ -104,4 +116,4 @@ class TopbarFilter extends Component {
     }
 }
 
-export default connect()(TopbarFilter);
+export default withRouter(connect()(TopbarFilter));

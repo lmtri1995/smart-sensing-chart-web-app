@@ -5,11 +5,11 @@ import {ExportType} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 
 class TopbarFilter extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            collapse: false,
-            collapse1: false,
+            filterMenuCollapse: false,
+            downloadCollapse: false,
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -23,11 +23,16 @@ class TopbarFilter extends Component {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
-    toggle = () => {
-        this.setState({collapse: !this.state.collapse});
+    onFilterMenuClicked = () => {
+        this.setState({
+            filterMenuCollapse: !this.state.filterMenuCollapse
+        });
     };
-    toggle1 = () => {
-        this.setState({collapse1: !this.state.collapse1});
+
+    onDownloadMenuClicked = () => {
+        this.setState({
+            downloadCollapse: !this.state.downloadCollapse
+        });
     };
 
     setWrapperRef(node) {
@@ -36,24 +41,27 @@ class TopbarFilter extends Component {
 
     handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-            this.setState({collapse: false, collapse1: false});
+            this.setState({
+                filterMenuCollapse: false,
+                downloadCollapse: false
+            });
         }
     }
 
     render() {
         return (
             <div className="topbar__profile" ref={this.setWrapperRef}>
-                <button className="topbar__avatar" onClick={this.toggle}>
+                <button className="topbar__avatar" onClick={this.onFilterMenuClicked}>
                     <img src={Filter}/>
                 </button>
-                <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
+                <Collapse isOpen={this.state.filterMenuCollapse} className="topbar__menu-wrap">
                     <div className="topbar_filter_menu">
                         <button className="btn btn-secondary">Filter: Model</button>
                         <button className="btn btn-secondary">Filter: Shift</button>
-                        <button className="btn btn-secondary" onClick={this.toggle1}>
+                        <button className="btn btn-secondary" onClick={this.onDownloadMenuClicked}>
                             Download <i className="fas fa-caret-down"></i>
                         </button>
-                        <Collapse isOpen={this.state.collapse1} className="topbar__menu-wrap">
+                        <Collapse isOpen={this.state.downloadCollapse} className="topbar__menu-wrap">
                             <div className="col-12">
                                 <DataExporter exportType={ExportType.EXCEL}/>
                                 <DataExporter exportType={ExportType.PDF}/>

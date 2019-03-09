@@ -4,7 +4,7 @@ export class OEEGeneral extends Component {
 
     render() {
         let {OEENumber} = this.props;
-        OEENumber = OEENumber?OEENumber:'N/A';
+        OEENumber = (OEENumber || OEENumber==0)?OEENumber:'N/A';
         return (
             <div className="oee-main">
                 <div className="col-12"><h4>OEE</h4></div>

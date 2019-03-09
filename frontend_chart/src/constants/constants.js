@@ -42,6 +42,30 @@ export const END_WORK_DAY_TIME = {hours: 5, minutes: 59, seconds: 59};
 // Shift
 export const SHIFT_DESCRIPTIONS = ['Shift 1', 'Shift 2', 'Shift 3'];
 
+// Defect Name
+export const IP_DEFECT_NAME = [
+    'SHORT LENGTH',
+    'LONG LENGTH',
+    'SMALL WIDTH',
+    'BIG WIDTH',
+    'POOR TRIMMING',
+    'NO TRIMMING',
+    'CROOKED TOE',
+    'AIR BUBBLE',
+    'LACK OF COMPOUND'
+];
+export const OS_DEFECT_NAME = [
+    'DIRTY (DUST, CONTAMINANTS ETC.)',
+    'SOIL (OILY, MARKS ETC.)',
+    'COLOR MIGRATION',
+    'AIR BUBBLED',
+    'STICKY (OVER CURE)',
+    'PRESSING DATE IS VISIBLE',
+    'TRIMMING EDGE IS 0.2MM OR LESS',
+    'MATCHING WITH SIGNED OUTSOLE MCS',
+    'FINISHED O/S ARE PACKED IN CLEAN POLYBAGS/CATONS'
+];
+
 // Data Export Type
 export const ExportType = {
     EXCEL: 'Excel',

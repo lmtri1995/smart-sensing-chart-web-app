@@ -181,7 +181,7 @@ export default class DoughnutChart extends Component {
                     loading={this.state.loading}
                     margin-left={300}
                 />
-                <canvas width={35} height={30}
+                <canvas width={35} height={50}
                         ref={(element) => this.canvas = element}
                 />
             </div>

@@ -4,6 +4,7 @@ import DataExporter from "../../DataExporter/component/DataExporter";
 import {ExportType, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
+import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
 
 class TopbarFilter extends Component {
     constructor(props) {
@@ -36,6 +37,10 @@ class TopbarFilter extends Component {
             shiftFilterMenuCollapse: !this.state.shiftFilterMenuCollapse,
             downloadCollapse: false,
         });
+    };
+
+    onShiftItemClicked = (event) => {
+        this.props.dispatch(changeGlobalShiftFilter(event.target.innerText));
     };
 
     onDownloadMenuClicked = () => {
@@ -75,7 +80,7 @@ class TopbarFilter extends Component {
                             <ListGroup>
                                 {
                                     SHIFT_DESCRIPTIONS.map(shift =>
-                                        <ListGroupItem>
+                                        <ListGroupItem onClick={this.onShiftItemClicked}>
                                             {shift}
                                         </ListGroupItem>
                                     )

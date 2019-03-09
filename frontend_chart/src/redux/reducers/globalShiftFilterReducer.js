@@ -1,7 +1,12 @@
 import {GLOBAL_SHIFT_FILTER} from "../actions/globalShiftFilterActions";
+import {SHIFT_DESCRIPTIONS} from "../../constants/constants";
 
 const initialState = {
-    shiftNumber: 0, // Shift index of SHIFT_DESCRIPTIONS in constants file -> 0: Shift 1, 1: Shift 2, 2: Shift 3
+    selectedShifts: new Map([
+        [SHIFT_DESCRIPTIONS[0], true],
+        [SHIFT_DESCRIPTIONS[1], true],
+        [SHIFT_DESCRIPTIONS[2], true],
+    ]),
 };
 
 export default function (state = initialState, action) {
@@ -9,7 +14,7 @@ export default function (state = initialState, action) {
         case GLOBAL_SHIFT_FILTER:
             return {
                 ...state,
-                shiftNumber: action.shiftNumber,
+                selectedShifts: action.selectedShifts,
             };
         default:
             return state;

@@ -10,10 +10,12 @@ import {withRouter} from "react-router-dom";
 class TopbarFilter extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             filterMenuCollapse: false,
             shiftFilterMenuCollapse: false,
             downloadCollapse: false,
+            selectedShifts: props.globalShiftFilter.selectedShifts,
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -41,8 +43,12 @@ class TopbarFilter extends Component {
     };
 
     onShiftItemClicked = (event) => {
+        let item = event.target.innerText;
+        this.setState(prevState => ({
+            selectedShifts: prevState.selectedShifts.set(item, !prevState.selectedShifts.get(item))
+        }));
         this.props.dispatch(
-            changeGlobalShiftFilter(SHIFT_DESCRIPTIONS.indexOf(event.target.innerText))
+            changeGlobalShiftFilter(this.state.selectedShifts)
         );
     };
 
@@ -89,11 +95,17 @@ class TopbarFilter extends Component {
                                                   className="topbar__menu-wrap">
                                             <ListGroup>
                                                 {
-                                                    SHIFT_DESCRIPTIONS.map(shift =>
-                                                        <ListGroupItem onClick={this.onShiftItemClicked}>
+                                                    SHIFT_DESCRIPTIONS.map((shift, index) => {
+                                                        let shiftClassName = 'list-group__unchecked';
+                                                        if (this.state.selectedShifts.get(shift)) {
+                                                            shiftClassName = 'list-group__checked';
+                                                        }
+                                                        return <ListGroupItem key={index}
+                                                                              className={shiftClassName}
+                                                                              onClick={this.onShiftItemClicked}>
                                                             {shift}
-                                                        </ListGroupItem>
-                                                    )
+                                                        </ListGroupItem>;
+                                                    })
                                                 }
                                             </ListGroup>
                                         </Collapse>
@@ -118,4 +130,8 @@ class TopbarFilter extends Component {
     }
 }
 
-export default withRouter(connect()(TopbarFilter));
+const mapStateToProps = (state) => ({
+    globalShiftFilter: state.globalShiftFilter
+});
+
+export default withRouter(connect(mapStateToProps)(TopbarFilter));

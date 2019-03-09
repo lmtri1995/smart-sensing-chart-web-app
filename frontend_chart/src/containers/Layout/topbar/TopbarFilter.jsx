@@ -41,7 +41,9 @@ class TopbarFilter extends Component {
     };
 
     onShiftItemClicked = (event) => {
-        this.props.dispatch(changeGlobalShiftFilter(event.target.innerText));
+        this.props.dispatch(
+            changeGlobalShiftFilter(SHIFT_DESCRIPTIONS.indexOf(event.target.innerText))
+        );
     };
 
     onDownloadMenuClicked = () => {

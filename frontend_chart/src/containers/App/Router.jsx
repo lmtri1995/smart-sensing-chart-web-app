@@ -4,7 +4,6 @@ import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
 import LogIn from '../LogIn/index';
 import Report from '../Report/index';
-import ExamplePageThree from '../ExampleThree/index';
 import LogOut from '../LogOut/index';
 import DashBoard from "../DashBoard/index";
 import Analysis from "../Analysis/index";
@@ -13,7 +12,7 @@ import Fullscreen from "react-full-screen";
 
 class Pages extends Component {
     constructor(props) {
-        super();
+        super(props);
 
         this.state = {
             isFull: false,

@@ -22,7 +22,7 @@ export default class OEEChart extends Component {
 
         let qualityCenterText = 'N/A';
         let qualityChartData = [{
-            data: [NaN, NaN],
+            data: [0, 100],
             backgroundColor: [
                 "#FF7033",
                 "#303339"

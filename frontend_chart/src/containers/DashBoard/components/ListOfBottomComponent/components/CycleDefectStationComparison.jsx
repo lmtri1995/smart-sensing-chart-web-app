@@ -88,7 +88,7 @@ export class CycleDefectStationComparison extends Component {
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'ip':
-                this.emitEvent = `os_swingarm_idledefect`;
+                this.emitEvent = `ip_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'os':
@@ -144,25 +144,25 @@ export class CycleDefectStationComparison extends Component {
                 if (item) {
                     if (currentShift == 1) {//2, 3, 1
                         if (item[0] == 1) {
-                            idleCycleArray[2] = item[1];
-                            deffectiveArray[2] = item[2];
+                            deffectiveArray[2] = item[1];
+                            idleCycleArray[2] = item[2];
                         } else if (item[0] == 2) {
-                            idleCycleArray[0] = item[1];
-                            deffectiveArray[0] = item[2];
+                            deffectiveArray[0] = item[1];
+                            idleCycleArray[0] = item[2];
                         } else if (item[0] == 3) {
-                            idleCycleArray[1] = item[1];
-                            deffectiveArray[1] = item[2];
+                            deffectiveArray[1] = item[1];
+                            idleCycleArray[1] = item[2];
                         }
                     } else if (currentShift == 2) {//3, 1, 2
                         if (item[0] == 1) {
-                            idleCycleArray[1] = item[1];
-                            deffectiveArray[1] = item[2];
+                            deffectiveArray[1] = item[1];
+                            idleCycleArray[1] = item[2];
                         } else if (item[0] == 2) {
-                            idleCycleArray[2] = item[1];
-                            deffectiveArray[2] = item[2];
+                            deffectiveArray[2] = item[1];
+                            idleCycleArray[2] = item[2];
                         } else if (item[0] == 3) {
-                            idleCycleArray[0] = item[1];
-                            deffectiveArray[0] = item[2];
+                            deffectiveArray[0] = item[1];
+                            idleCycleArray[0] = item[2];
                         }
                     } else { //1, 2, 3
                         if (item[0] == 1) {
@@ -180,8 +180,8 @@ export class CycleDefectStationComparison extends Component {
                 }
             });
         }
-        result.push(idleCycleArray);
         result.push(deffectiveArray);
+        result.push(idleCycleArray);
         return result;
     }
 

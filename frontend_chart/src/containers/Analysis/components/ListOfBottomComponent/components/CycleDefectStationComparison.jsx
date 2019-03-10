@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
+import API from "../../../../../services/api";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -67,6 +68,7 @@ const override = `
 `;
 
 export class CycleDefectStationComparison extends Component {
+
     handleReturnData = (returnData) => {
         let result = [];
         let idleCycleArray = [], deffectiveArray = [];
@@ -74,14 +76,20 @@ export class CycleDefectStationComparison extends Component {
             returnData.map(item => {
                 if (item) {
                     if (item[0] === 1) {
-                        idleCycleArray.push(item[1]);
-                        deffectiveArray.push(item[2]);
+                        deffectiveArray[0] = item[1];
+                        idleCycleArray[0] = item[2];
+                    } else if (item[0] === 2){
+                        deffectiveArray[1] = item[1];
+                        idleCycleArray[1] = item[2];
+                    } else if (item[0] === 3){
+                        deffectiveArray[2] = item[1];
+                        idleCycleArray[2] = item[2];
                     }
                 }
             });
         }
-        result.push(idleCycleArray);
         result.push(deffectiveArray);
+        result.push(idleCycleArray);
         return result;
 
     }
@@ -100,28 +108,29 @@ export class CycleDefectStationComparison extends Component {
 
         switch (this.role) {
             case 'admin':
-                this.emitEvent = `os_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/os/defectdata`;
+                this.istatus = `0`;
+                this.process = 'os-Molding';
                 break;
             case 'ip':
-                this.emitEvent = `os_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/ip/defectdata`;
+                this.istatus = `1`;
+                this.process = 'imev';
                 break;
             case 'os':
-                this.emitEvent = `os_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/os/defectdata`;
+                this.istatus = `0`;
+                this.process = 'os-Molding';
                 break;
             default:
-                this.emitEvent = `os_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/os/defectdata`;
+                this.istatus = `0`;
+                this.process = 'os-Molding';
         }
 
         this.state = {
             loading: true
         };
-    }
-
-    componentWillUnmount() {
     }
 
     componentDidMount() {
@@ -131,6 +140,59 @@ export class CycleDefectStationComparison extends Component {
             data: initialData,
             options: options
         });
+
+        let param = {
+            "from_timedevice": 0,
+            "to_timedevice": 0,
+            "istatus": this.istatus,
+            "proccess": this.process
+        };
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    let returnData =  JSON.parse(dataArray[0].data);
+                    if (returnData && returnData.length > 0) {
+                        let displayArray = this.handleReturnData(returnData);
+                        let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
+                        /*let totalDefectcount = 0;
+                        if (displayArray[0] && displayArray.length > 0){
+                            displayArray[0].map(item=>{
+                                if (item){
+                                    totalDefectcount += parseInt(item);
+                                }
+                            });
+                        }
+                        localStorage.setItem("totalDefectCount", totalDefectcount);*/
+                        this.myChart.data = {
+                            labels: labelArray,
+                            datasets: [
+                                {
+                                    label: 'Defective',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                },
+                                {
+                                    label: 'Idle Cycle',
+                                    backgroundColor: '#AFEEFF',
+                                    borderColor: '#AFEEFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[1],
+                                }
+                            ],
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                    }
+                }
+            })
+            .catch((err) => console.log('err:', err))
     }
 
     render() {

@@ -100,7 +100,7 @@ export default class DowntimeShift extends Component {
         let minute = today.getMinutes();
         let second = today.getSeconds();
         //shift 1: 6:00 am - 2:00 pm
-        //shift 2: 2:00 am - 20:00 pm
+        //shift 2: 2:00 am - 22:00 pm
         //shift 3: 20:00 pm - 6:00 am
         let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();

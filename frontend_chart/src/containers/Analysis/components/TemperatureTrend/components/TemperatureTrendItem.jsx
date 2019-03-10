@@ -89,28 +89,55 @@ class TemperatureTrendItem extends Component {
         return html;
     }
 
+    componentWillUpdate(){
+        let {stationId} = this.props;
+        let {startDate, endDate} = this.props.globalDateFilter;
+        let newFromTimeDevice = moment(startDate.toISOString()).unix();
+        let newToTimeDevice = moment(endDate.toISOString()).unix();
+        if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice){
+            this.fromTimeDevice = newFromTimeDevice;
+            this.toTimedevice = newToTimeDevice;
+            let param = {
+                "idStation": stationId,
+                "from_timedevice": this.fromTimeDevice,
+                "to_timedevice": this.toTimedevice
+            };
+            API(this.apiUrl, 'POST', param)
+                .then((response) => {
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        let displayData = '';
+                        if (dataArray[0].data){
+                            displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
+                        }
+
+                        if (displayData) {
+                            this.graph.updateOptions(
+                                {
+                                    'file': displayData,
+                                },
+                            );
+                        }
+                        this.setState({loading: false});
+
+                    }
+                })
+                .catch((err) => console.log('err:', err, "stationId: ", stationId));
+        }
+    }
+
     componentDidMount() {
         let {stationId} = this.props;
 
         //this.drawLegend();
 
         let {startDate, endDate} = this.props.globalDateFilter;
-
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        console.log(`startDate: ${startDate}, endDate: ${endDate}`);
-        console.log(`startDate: `, moment(startDate.toISOString()).unix(), ' + endDate: ', moment(endDate.toISOString()).unix());
-
+        this.fromTimeDevice = moment(startDate.toISOString()).unix();
+        this.toTimedevice   = moment(endDate.toISOString()).unix();
         let param = {
-            idstation: stationId,
-            from_timedevice: moment(startDate.toISOString()).unix(),
-            to_timedevice: moment(endDate.toISOString()).unix(),
-            minute: 0,
+            "idStation": stationId,
+            "from_timedevice": this.fromTimeDevice,
+            "to_timedevice": this.toTimedevice
         };
 
         let displayData = "X\n";
@@ -149,11 +176,9 @@ class TemperatureTrendItem extends Component {
 
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                console.log("response: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
-
-                    let displayData = JSON.parse(dataArray[0].data);
+                    displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
                     if (displayData) {
                         this.graph.updateOptions(
                             {

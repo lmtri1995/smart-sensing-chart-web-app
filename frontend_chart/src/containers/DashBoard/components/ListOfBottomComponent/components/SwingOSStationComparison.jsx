@@ -217,50 +217,55 @@ export class SwingArmMachine extends Component {
             options: options
         });
 
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                from_timedevice: 0,//1551333600
-                to_timedevice: 0,//1551420000
-                minute: 60,
-                status: 'start'
-            }
-        });
-        this.socket.on(this.eventListen, (response) => {
-            response = JSON.parse(response);
-            if (response && response.success=="true"){
-                let dataArray = response.data;
-                let returnData = JSON.parse(dataArray[0].data);
-                if (returnData.length > 0){
-                    let displayArray = this.handleReturnData(returnData);
-                    this.myChart.data = {
-                        labels: this.labelArray,
-                        datasets: [
-                            {
-                                label: 'Swing Arm',
-                                backgroundColor: '#0CD0EB',
-                                borderColor: '#0CD0EB',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[0],
-                            },
-                            {
-                                label: 'Os Press',
-                                backgroundColor: '#4C9EFF',
-                                borderColor: '#4C9EFF',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[1],
-                            }
-                        ],
-                    };
-                    this.myChart.update();
-                    this.setState({loading: false});
+        if(this.role == 'os'){
+            this.socket.emit(this.emitEvent, {
+                msg: {
+                    event: this.eventListen,
+                    from_timedevice: 0,//1551333600
+                    to_timedevice: 0,//1551420000
+                    minute: 60,
+                    status: 'start'
                 }
-            }
-        });
+            });
+            this.socket.on(this.eventListen, (response) => {
+                response = JSON.parse(response);
+                if (response && response.success=="true"){
+                    let dataArray = response.data;
+                    let returnData = JSON.parse(dataArray[0].data);
+                    if (returnData.length > 0){
+                        let displayArray = this.handleReturnData(returnData);
+                        this.myChart.data = {
+                            labels: this.labelArray,
+                            datasets: [
+                                {
+                                    label: 'Swing Arm',
+                                    backgroundColor: '#0CD0EB',
+                                    borderColor: '#0CD0EB',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                },
+                                {
+                                    label: 'Os Press',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[1],
+                                }
+                            ],
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                    }
+                }
+            });
+        } else {
+            this.setState({loading: false});
+        }
+
     }
 
     render() {

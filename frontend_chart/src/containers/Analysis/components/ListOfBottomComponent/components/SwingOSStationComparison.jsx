@@ -13,7 +13,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [1, 2, 3],
+            data: [0, 0, 0],
         },
         {
             label: 'OS Press',
@@ -22,7 +22,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [6, 5, 4],
+            data: [0, 0, 0],
         }
     ],
 };
@@ -81,19 +81,19 @@ export class SwingArmMachine extends Component {
 
         switch(this.role) {
             case 'admin':
-                this.emitEvent = `os_swingarm_stationcomparison`;
+                //this.apiUrl = `api/os/oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'ip':
-                this.emitEvent = `os_swingarm_stationcomparison`;
+                //this.apiUrl = `api/os/oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'os':
-                this.emitEvent = `os_swingarm_stationcomparison`;
+                //this.apiUrl = `api/os/oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             default:
-                this.emitEvent = `os_swingarm_stationcomparison`;
+                //this.apiUrl = `api/os/oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
         }
 
@@ -130,6 +130,11 @@ export class SwingArmMachine extends Component {
             data: initialData,
             options: options
         });
+        if(this.role == 'os'){
+
+        } else {
+            this.setState({loading: false});
+        }
     }
 
     render() {
@@ -137,6 +142,14 @@ export class SwingArmMachine extends Component {
             <div className="oee-main">
                 <div className="col-12"><h4>Station Comparison</h4></div>
                 <div>
+                    <ClipLoader
+                        css={override}
+                        sizeUnit={"px"}
+                        size={100}
+                        color={'#30D4A4'}
+                        loading={this.state.loading}
+                        margin-left={300}
+                    />
                     <canvas ref={(element) => this.canvas = element} height={70} width={200}/>
                 </div>
             </div>

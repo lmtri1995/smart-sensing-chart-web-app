@@ -27,15 +27,19 @@ class listBottomComponent extends Component {
         switch(this.role) {
             case 'admin':
                 this.apiUrl = `api/os/oeedata`;
+                this.standardCycleTimeUrl = 'api/os/std';
                 break;
             case 'ip':
                 this.apiUrl = `api/ip/oeedata`;
+                this.standardCycleTimeUrl = 'api/ip/std';
                 break;
             case 'os':
                 this.apiUrl = `api/os/oeedata`;
+                this.standardCycleTimeUrl = 'api/os/std';
                 break;
             default:
                 this.apiUrl = `api/os/oeedata`;
+                this.standardCycleTimeUrl = 'api/os/std';
         }
 
         this.state = {
@@ -46,7 +50,7 @@ class listBottomComponent extends Component {
             workLossNumber: 0,
         };
 
-        this.countStandardCycleTime();
+        ///this.countStandardCycleTime();
 
         this.currentWorkingHour = [];
         this.totalWorkingHour = 0;
@@ -286,6 +290,8 @@ class listBottomComponent extends Component {
     }
 
     componentDidMount() {
+        this.countStandardCycleTime();
+
         let param = {
             "from_timedevice": 0,
             "to_timedevice": 0,
@@ -294,6 +300,7 @@ class listBottomComponent extends Component {
             .then((response) => {
                 if (response.data.success) {
                     let data = response.data.data;
+                    console.log("data: ", data);
                     let summaryArray = this.handleReturnArray(data);
 
                     let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;

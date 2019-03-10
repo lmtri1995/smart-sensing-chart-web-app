@@ -128,6 +128,7 @@ export class SwingArmMachine extends Component {
     }*/
 
     handleReturnData = (returnData) => {
+        console.log("returnData: ", returnData);
         this.labels = [];
         this.data = [];
         if(returnData && returnData.length > 0){
@@ -154,16 +155,15 @@ export class SwingArmMachine extends Component {
 
 
         let param = {
-            "from_timedevice": "1551490473",
-            "to_timedevice": "1551749673"
+            "from_timedevice": 0,
+            "to_timedevice": 0
         };
 
         if (this.role == 'ip'){
             this.setState({loading: false});
         } else {
-            API('api/oee/swingarm', 'POST', param)
+            API('api/os/swingarm', 'POST', param)
                 .then((response) => {
-                    console.log("response 139: ", response);
                     if (response.data.success) {
                         let dataArray = response.data.data;
                         let returnData = JSON.parse(dataArray[0].data);

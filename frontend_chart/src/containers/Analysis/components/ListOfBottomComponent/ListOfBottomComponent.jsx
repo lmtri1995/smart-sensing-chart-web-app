@@ -300,9 +300,7 @@ class listBottomComponent extends Component {
             .then((response) => {
                 if (response.data.success) {
                     let data = response.data.data;
-                    console.log("data: ", data);
                     let summaryArray = this.handleReturnArray(data);
-
                     let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
                     summaryArray.map(item => {
                         availability += (item[0]?item[0]:0);

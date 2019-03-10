@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
-import {Bar} from 'react-chartjs-2';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
+import API from "../../../../../services/api";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -79,22 +79,18 @@ export class SwingArmMachine extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
-                //this.apiUrl = `api/os/oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/os/oeedata`;
                 break;
             case 'ip':
-                //this.apiUrl = `api/os/oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/os/oeedata`;
                 break;
             case 'os':
-                //this.apiUrl = `api/os/oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/os/oeedata`;
                 break;
             default:
-                //this.apiUrl = `api/os/oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
+                this.apiUrl = `api/os/oeedata`;
         }
 
         this.state = {
@@ -103,13 +99,23 @@ export class SwingArmMachine extends Component {
     }
 
     handleReturnData = (returnData) => {
+        console.log("returnData 102: ", returnData);
         let result = [];
         let swingArmArray = [], osPessArray = [];
-        if (returnData && returnData.length > 0){
+        if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
-                    swingArmArray.push(item[1]);
-                    osPessArray.push(item[2]);
+                    if (item[0] == 1) {
+                        swingArmArray[0] = item[1];
+                        osPessArray[0] = item[2];
+                    } else if (item[0] == 2) {
+                        swingArmArray[1] = item[1];
+                        osPessArray[1] = item[2];
+                    } else if (item[0] == 3) {
+                        swingArmArray[2] = item[1];
+                        osPessArray[2] = item[2];
+                    }
+
                 }
             });
         }
@@ -119,7 +125,7 @@ export class SwingArmMachine extends Component {
 
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
 
     }
 
@@ -130,8 +136,48 @@ export class SwingArmMachine extends Component {
             data: initialData,
             options: options
         });
-        if(this.role == 'os'){
+        console.log("this.myChart: ", this.myChart);
 
+        if (this.role == 'os') {
+            let param = {
+                "from_timedevice": 0,
+                "to_timedevice": 0
+            };
+            API('api/os/stationcomparision', 'POST', param)
+                .then((response) => {
+                    console.log("response 137: ", response);
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        let returnData = JSON.parse(dataArray[0].data);
+                        let displayArray = this.handleReturnData(returnData);
+                        console.log("displayArray: ", displayArray);
+                        this.myChart.data = {
+                            labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+                            datasets: [
+                                {
+                                    label: 'Swing Arm',
+                                    backgroundColor: '#0CD0EB',
+                                    borderColor: '#0CD0EB',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                },
+                                {
+                                    label: 'Os Press',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[1],
+                                }
+                            ],
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                    }
+                })
         } else {
             this.setState({loading: false});
         }

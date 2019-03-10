@@ -12,7 +12,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [6, 6, 6],
+            data: [0, 0, 0],
         },
         {
             label: 'Idle Cycle',
@@ -21,7 +21,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [6, 6, 6],
+            data: [0, 0, 0],
         }
     ],
 };
@@ -88,6 +88,8 @@ export class CycleDefectStationComparison extends Component {
                 }
             });
         }
+        console.log("deffectiveArray: ", deffectiveArray);
+        console.log("idleCycleArray: ", idleCycleArray);
         result.push(deffectiveArray);
         result.push(idleCycleArray);
         return result;
@@ -155,15 +157,7 @@ export class CycleDefectStationComparison extends Component {
                     if (returnData && returnData.length > 0) {
                         let displayArray = this.handleReturnData(returnData);
                         let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
-                        /*let totalDefectcount = 0;
-                        if (displayArray[0] && displayArray.length > 0){
-                            displayArray[0].map(item=>{
-                                if (item){
-                                    totalDefectcount += parseInt(item);
-                                }
-                            });
-                        }
-                        localStorage.setItem("totalDefectCount", totalDefectcount);*/
+                        console.log("displayArray: ", displayArray);
                         this.myChart.data = {
                             labels: labelArray,
                             datasets: [

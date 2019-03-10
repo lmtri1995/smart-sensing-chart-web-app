@@ -231,6 +231,8 @@ export class SwingArmMachine extends Component {
                 response = JSON.parse(response);
                 if (response && response.success=="true"){
                     let dataArray = response.data;
+
+                    console.log("dataArray aaa: ", dataArray);
                     let returnData = JSON.parse(dataArray[0].data);
                     if (returnData.length > 0){
                         let displayArray = this.handleReturnData(returnData);

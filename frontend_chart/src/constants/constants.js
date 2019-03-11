@@ -41,8 +41,8 @@ export const END_WORK_DAY_TIME = {hours: 5, minutes: 59, seconds: 59};
 
 // Model
 export const MODEL_NAMES = new Map([    // initial data
-    ['N/A', {   // name to show on screen
-        key: 'N/A', // key to send request to server
+    ['All Models', {   // name to show on screen
+        key: '%', // key to send request to server, '%' to select All Models in Query on Server
         selected: true,
     }]
 ]);

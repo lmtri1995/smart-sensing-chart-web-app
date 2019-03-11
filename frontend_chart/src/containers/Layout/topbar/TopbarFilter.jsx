@@ -111,7 +111,9 @@ class TopbarFilter extends Component {
                     let dataArray = response.data.data;
 
                     if (dataArray) {
+                        let allModelsSet = MODEL_NAMES.entries().next().value;  // Get 'All Models' option
                         MODEL_NAMES.clear();
+                        MODEL_NAMES.set(allModelsSet[0], allModelsSet[1]);
 
                         dataArray.forEach(element => {
                             MODEL_NAMES.set(

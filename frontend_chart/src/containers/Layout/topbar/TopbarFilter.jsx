@@ -51,15 +51,13 @@ class TopbarFilter extends Component {
 
     onModelItemClicked = (event) => {
         let item = event.target.innerText;
-        this.setState(prevState => ({
-            selectedModels: prevState.selectedModels.set(
-                item,
-                {
-                    ...prevState.selectedModels.get(item),
-                    selected: !prevState.selectedModels.get(item).selected,
-                }
-            )
-        }));
+        let selectedModels = this.state.selectedModels;
+        selectedModels.forEach((value, key) => {
+            value.selected = key === item;
+        });
+        this.setState({
+            selectedModels: selectedModels
+        });
         this.props.dispatch(
             changeGlobalModelFilter(this.state.selectedModels)
         );
@@ -120,10 +118,14 @@ class TopbarFilter extends Component {
                                 element.value,
                                 {
                                     key: element.key,
-                                    selected: true,
+                                    selected: false,
                                 }
                             );
                         });
+
+                        if (MODEL_NAMES.size > 0) {
+                            MODEL_NAMES.values().next().value.selected = true;
+                        }
 
                         this.setState({
                             selectedModels: MODEL_NAMES,

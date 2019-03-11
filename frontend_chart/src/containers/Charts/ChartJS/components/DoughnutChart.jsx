@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Chart from "chart.js";
 import {ClipLoader} from "react-spinners";
+import moment from "moment";
+import API from "../../../../services/api";
 
 Chart.plugins.register({
     beforeDraw: function (chart) {
@@ -133,14 +135,20 @@ export default class DoughnutChart extends Component {
 
         this.canvas = null;
 
-        this.state = {
+        /*this.state = {
             loading: true
-        };
+        };*/
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
-            let {labels, data, centerText, showLegend} = this.props;
+
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            let {labels, data, centerText, showLegend, loading} = this.props;
             if (labels && data && this.canvas) {
                 this.myChart.data = {
                     labels: labels,
@@ -154,8 +162,8 @@ export default class DoughnutChart extends Component {
                 }
 
                 this.myChart.update();
-                this.setState({loading: false});
             }
+            //this.setState({loading: !!loading});
         }
     }
 
@@ -178,7 +186,7 @@ export default class DoughnutChart extends Component {
                     sizeUnit={"px"}
                     size={100}
                     color={'#30D4A4'}
-                    loading={this.state.loading}
+                    loading={this.props.loading}
                     margin-left={300}
                 />
                 <canvas width={35} height={50}

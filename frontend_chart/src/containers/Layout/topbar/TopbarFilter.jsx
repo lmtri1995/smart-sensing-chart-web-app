@@ -14,10 +14,10 @@ class TopbarFilter extends Component {
         super(props);
 
         this.state = {
-            filterMenuCollapse: false,
-            modelFilterMenuCollapse: false,
-            shiftFilterMenuCollapse: false,
-            downloadCollapse: false,
+            filterMenuOpen: false,
+            modelFilterMenuOpen: false,
+            shiftFilterMenuOpen: false,
+            downloadMenuOpen: false,
             selectedModels: props.globalModelFilter.selectedModels,
             selectedShifts: props.globalShiftFilter.selectedShifts,
         };
@@ -37,15 +37,15 @@ class TopbarFilter extends Component {
 
     onFilterMenuClicked = () => {
         this.setState({
-            filterMenuCollapse: !this.state.filterMenuCollapse
+            filterMenuOpen: !this.state.filterMenuOpen
         });
     };
 
     onModelFilterMenuClicked = () => {
         this.setState({
-            modelFilterMenuCollapse: !this.state.modelFilterMenuCollapse,
-            shiftFilterMenuCollapse: false,
-            downloadCollapse: false,
+            modelFilterMenuOpen: !this.state.modelFilterMenuOpen,
+            shiftFilterMenuOpen: false,
+            downloadMenuOpen: false,
         });
     };
 
@@ -67,9 +67,9 @@ class TopbarFilter extends Component {
 
     onShiftFilterMenuClicked = () => {
         this.setState({
-            modelFilterMenuCollapse: false,
-            shiftFilterMenuCollapse: !this.state.shiftFilterMenuCollapse,
-            downloadCollapse: false,
+            modelFilterMenuOpen: false,
+            shiftFilterMenuOpen: !this.state.shiftFilterMenuOpen,
+            downloadMenuOpen: false,
         });
     };
 
@@ -85,9 +85,9 @@ class TopbarFilter extends Component {
 
     onDownloadMenuClicked = () => {
         this.setState({
-            modelFilterMenuCollapse: false,
-            shiftFilterMenuCollapse: false,
-            downloadCollapse: !this.state.downloadCollapse
+            modelFilterMenuOpen: false,
+            shiftFilterMenuOpen: false,
+            downloadMenuOpen: !this.state.downloadMenuOpen
         });
     };
 
@@ -143,10 +143,10 @@ class TopbarFilter extends Component {
     handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             this.setState({
-                filterMenuCollapse: false,
-                modelFilterMenuCollapse: false,
-                shiftFilterMenuCollapse: false,
-                downloadCollapse: false
+                filterMenuOpen: false,
+                modelFilterMenuOpen: false,
+                shiftFilterMenuOpen: false,
+                downloadMenuOpen: false
             });
         }
     }
@@ -166,7 +166,7 @@ class TopbarFilter extends Component {
                 <button className="topbar__avatar" onClick={this.onFilterMenuClicked}>
                     <img src={Filter}/>
                 </button>
-                <Collapse isOpen={this.state.filterMenuCollapse} className="topbar__menu-wrap">
+                <Collapse isOpen={this.state.filterMenuOpen} className="topbar__menu-wrap">
                     <div className="topbar_filter_menu">
                         {
                             location.pathname === ROUTE.Report // Only show Filter by Model & Shift Menu on Report Page
@@ -175,7 +175,7 @@ class TopbarFilter extends Component {
                                         <button className="btn btn-secondary" onClick={this.onModelFilterMenuClicked}>
                                             Filter: Model <i className="fas fa-caret-down"></i>
                                         </button>
-                                        <Collapse isOpen={this.state.modelFilterMenuCollapse}
+                                        <Collapse isOpen={this.state.modelFilterMenuOpen}
                                                   className="topbar__menu-wrap">
                                             <ListGroup>
                                                 {
@@ -197,7 +197,7 @@ class TopbarFilter extends Component {
                                         <button className="btn btn-secondary" onClick={this.onShiftFilterMenuClicked}>
                                             Filter: Shift <i className="fas fa-caret-down"></i>
                                         </button>
-                                        <Collapse isOpen={this.state.shiftFilterMenuCollapse}
+                                        <Collapse isOpen={this.state.shiftFilterMenuOpen}
                                                   className="topbar__menu-wrap">
                                             <ListGroup>
                                                 {
@@ -222,7 +222,7 @@ class TopbarFilter extends Component {
                         <button className="btn btn-secondary" onClick={this.onDownloadMenuClicked}>
                             Download <i className="fas fa-caret-down"></i>
                         </button>
-                        <Collapse isOpen={this.state.downloadCollapse} className="topbar__menu-wrap">
+                        <Collapse isOpen={this.state.downloadMenuOpen} className="topbar__menu-wrap">
                             <div className="col-12">
                                 <DataExporter exportType={ExportType.EXCEL}/>
                                 <DataExporter exportType={ExportType.PDF}/>

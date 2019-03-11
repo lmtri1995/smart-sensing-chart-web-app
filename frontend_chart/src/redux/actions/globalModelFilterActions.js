@@ -1,8 +1,8 @@
 export const GLOBAL_MODEL_FILTER = 'GLOBAL_MODEL_FILTER';
 
-export function changeGlobalModelFilter(selectedModels) {
+export function changeGlobalModelFilter(selectedModel) {
     return {
         type: GLOBAL_MODEL_FILTER,
-        selectedModels: selectedModels,
+        selectedModel: selectedModel,
     };
 }

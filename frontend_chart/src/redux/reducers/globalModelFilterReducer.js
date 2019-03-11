@@ -2,7 +2,7 @@ import {MODEL_NAMES} from "../../constants/constants";
 import {GLOBAL_MODEL_FILTER} from "../actions/globalModelFilterActions";
 
 const initialState = {
-    selectedModels: MODEL_NAMES,
+    selectedModel: MODEL_NAMES.entries().next().value,
 };
 
 export default function (state = initialState, action) {
@@ -10,7 +10,7 @@ export default function (state = initialState, action) {
         case GLOBAL_MODEL_FILTER:
             return {
                 ...state,
-                selectedModels: action.selectedModels,
+                selectedModel: action.selectedModel,
             };
         default:
             return state;

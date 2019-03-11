@@ -18,7 +18,7 @@ class TopbarFilter extends Component {
             modelFilterMenuOpen: false,
             shiftFilterMenuOpen: false,
             downloadMenuOpen: false,
-            selectedModels: props.globalModelFilter.selectedModels,
+            selectedModels: MODEL_NAMES,
             selectedShifts: props.globalShiftFilter.selectedShifts,
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
@@ -51,15 +51,21 @@ class TopbarFilter extends Component {
 
     onModelItemClicked = (event) => {
         let item = event.target.innerText;
+        let selectedModel = [item];
+
         let selectedModels = this.state.selectedModels;
         selectedModels.forEach((value, key) => {
             value.selected = key === item;
+
+            if (key === item) {
+                selectedModel.push(value);
+            }
         });
         this.setState({
             selectedModels: selectedModels
         });
         this.props.dispatch(
-            changeGlobalModelFilter(this.state.selectedModels)
+            changeGlobalModelFilter(selectedModel)
         );
     };
 
@@ -133,7 +139,9 @@ class TopbarFilter extends Component {
                             selectedModels: MODEL_NAMES,
                         });
 
-                        this.props.dispatch(changeGlobalModelFilter(MODEL_NAMES));
+                        this.props.dispatch(
+                            changeGlobalModelFilter(allModelsSet)
+                        );
                     }
                 }
             })
@@ -157,10 +165,9 @@ class TopbarFilter extends Component {
 
     render() {
         let {location} = this.props;
-        let modelList = ['N/A'];
+        let modelList = [];
         if (MODEL_NAMES && MODEL_NAMES.size > 0) {
-            modelList.length = 0;
-            MODEL_NAMES.forEach((object, name)  => {
+            MODEL_NAMES.forEach((object, name) => {
                 modelList.push(name);
             });
         }

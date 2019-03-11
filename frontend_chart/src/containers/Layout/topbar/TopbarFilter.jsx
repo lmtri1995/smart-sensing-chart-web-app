@@ -180,10 +180,10 @@ class TopbarFilter extends Component {
                                             <ListGroup>
                                                 {
                                                     modelList.map((name, index) => {
-                                                        let modelClassName = 'list-group__unchecked';
+                                                        let modelClassName = 'list-item__unchecked';
                                                         let model = this.state.selectedModels.get(name);
                                                         if (model && model.selected) {
-                                                            modelClassName = 'list-group__checked';
+                                                            modelClassName = 'list-item__checked';
                                                         }
                                                         return <ListGroupItem key={index}
                                                                               className={modelClassName}
@@ -202,9 +202,9 @@ class TopbarFilter extends Component {
                                             <ListGroup>
                                                 {
                                                     SHIFT_DESCRIPTIONS.map((shift, index) => {
-                                                        let shiftClassName = 'list-group__unchecked';
+                                                        let shiftClassName = 'list-item__unchecked';
                                                         if (this.state.selectedShifts.get(shift)) {
-                                                            shiftClassName = 'list-group__checked';
+                                                            shiftClassName = 'list-item__checked';
                                                         }
                                                         return <ListGroupItem key={index}
                                                                               className={shiftClassName}

@@ -15,6 +15,7 @@ class TopbarFilter extends Component {
 
         this.state = {
             filterMenuCollapse: false,
+            modelFilterMenuCollapse: false,
             shiftFilterMenuCollapse: false,
             downloadCollapse: false,
             selectedModels: props.globalModelFilter.selectedModels,
@@ -40,8 +41,33 @@ class TopbarFilter extends Component {
         });
     };
 
+    onModelFilterMenuClicked = () => {
+        this.setState({
+            modelFilterMenuCollapse: !this.state.modelFilterMenuCollapse,
+            shiftFilterMenuCollapse: false,
+            downloadCollapse: false,
+        });
+    };
+
+    onModelItemClicked = (event) => {
+        let item = event.target.innerText;
+        this.setState(prevState => ({
+            selectedModels: prevState.selectedModels.set(
+                item,
+                {
+                    ...prevState.selectedModels.get(item),
+                    selected: !prevState.selectedModels.get(item).selected,
+                }
+            )
+        }));
+        this.props.dispatch(
+            changeGlobalModelFilter(this.state.selectedModels)
+        );
+    };
+
     onShiftFilterMenuClicked = () => {
         this.setState({
+            modelFilterMenuCollapse: false,
             shiftFilterMenuCollapse: !this.state.shiftFilterMenuCollapse,
             downloadCollapse: false,
         });
@@ -59,6 +85,7 @@ class TopbarFilter extends Component {
 
     onDownloadMenuClicked = () => {
         this.setState({
+            modelFilterMenuCollapse: false,
             shiftFilterMenuCollapse: false,
             downloadCollapse: !this.state.downloadCollapse
         });
@@ -117,6 +144,7 @@ class TopbarFilter extends Component {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             this.setState({
                 filterMenuCollapse: false,
+                modelFilterMenuCollapse: false,
                 shiftFilterMenuCollapse: false,
                 downloadCollapse: false
             });
@@ -125,6 +153,13 @@ class TopbarFilter extends Component {
 
     render() {
         let {location} = this.props;
+        let modelList = ['N/A'];
+        if (MODEL_NAMES && MODEL_NAMES.size > 0) {
+            modelList.length = 0;
+            MODEL_NAMES.forEach((object, name)  => {
+                modelList.push(name);
+            });
+        }
 
         return (
             <div className="topbar__profile" ref={this.setWrapperRef}>
@@ -137,7 +172,28 @@ class TopbarFilter extends Component {
                             location.pathname === ROUTE.Report // Only show Filter by Model & Shift Menu on Report Page
                                 ? (
                                     <span>
-                                        <button className="btn btn-secondary">Filter: Model</button>
+                                        <button className="btn btn-secondary" onClick={this.onModelFilterMenuClicked}>
+                                            Filter: Model <i className="fas fa-caret-down"></i>
+                                        </button>
+                                        <Collapse isOpen={this.state.modelFilterMenuCollapse}
+                                                  className="topbar__menu-wrap">
+                                            <ListGroup>
+                                                {
+                                                    modelList.map((name, index) => {
+                                                        let modelClassName = 'list-group__unchecked';
+                                                        let model = this.state.selectedModels.get(name);
+                                                        if (model && model.selected) {
+                                                            modelClassName = 'list-group__checked';
+                                                        }
+                                                        return <ListGroupItem key={index}
+                                                                              className={modelClassName}
+                                                                              onClick={this.onModelItemClicked}>
+                                                            {name}
+                                                        </ListGroupItem>;
+                                                    })
+                                                }
+                                            </ListGroup>
+                                        </Collapse>
                                         <button className="btn btn-secondary" onClick={this.onShiftFilterMenuClicked}>
                                             Filter: Shift <i className="fas fa-caret-down"></i>
                                         </button>

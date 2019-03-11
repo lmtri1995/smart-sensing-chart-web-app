@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
 import API from "../../../../../services/api";
+import connect from "react-redux/es/connect/connect";
+import {SwingArmMachine} from "./SwingOSStationComparison";
+import moment from "moment";
+import {ClipLoader} from "react-spinners";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -88,8 +92,6 @@ export class CycleDefectStationComparison extends Component {
                 }
             });
         }
-        console.log("deffectiveArray: ", deffectiveArray);
-        console.log("idleCycleArray: ", idleCycleArray);
         result.push(deffectiveArray);
         result.push(idleCycleArray);
         return result;
@@ -135,6 +137,61 @@ export class CycleDefectStationComparison extends Component {
         };
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let fromTimeDevice = moment(startDate.toISOString()).unix();
+            let toTimedevice   = moment(endDate.toISOString()).unix();
+
+            let param = {
+                "from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice,
+                "istatus": this.istatus,
+                "proccess": this.process
+            };
+            this.setState({
+                loading: true,
+            });
+            API(this.apiUrl, 'POST', param)
+                .then((response) => {
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        let returnData =  JSON.parse(dataArray[0].data);
+                        if (returnData && returnData.length > 0) {
+                            let displayArray = this.handleReturnData(returnData);
+                            let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
+                            this.myChart.data = {
+                                labels: labelArray,
+                                datasets: [
+                                    {
+                                        label: 'Defective',
+                                        backgroundColor: '#4C9EFF',
+                                        borderColor: '#4C9EFF',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayArray[0],
+                                    },
+                                    {
+                                        label: 'Idle Cycle',
+                                        backgroundColor: '#AFEEFF',
+                                        borderColor: '#AFEEFF',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayArray[1],
+                                    }
+                                ],
+                            };
+                            this.myChart.update();
+                            this.setState({loading: false});
+                        }
+                    }
+                })
+                .catch((err) => console.log('err:', err))
+        }
+    }
+
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
@@ -143,9 +200,13 @@ export class CycleDefectStationComparison extends Component {
             options: options
         });
 
+        let {startDate, endDate} = this.props.globalDateFilter;
+        let fromTimeDevice = moment(startDate.toISOString()).unix();
+        let toTimedevice   = moment(endDate.toISOString()).unix();
+
         let param = {
-            "from_timedevice": 0,
-            "to_timedevice": 0,
+            "from_timedevice": fromTimeDevice,
+            "to_timedevice": toTimedevice,
             "istatus": this.istatus,
             "proccess": this.process
         };
@@ -194,6 +255,14 @@ export class CycleDefectStationComparison extends Component {
             <div className="oee-main">
                 <div className="col-12"><h4>Station Comparison</h4></div>
                 <div>
+                    <ClipLoader
+                        css={override}
+                        sizeUnit={"px"}
+                        size={100}
+                        color={'#30D4A4'}
+                        loading={this.state.loading}
+                        margin-left={300}
+                    />
                     <canvas ref={(element) => this.canvas = element} height={70} width={200}/>
                 </div>
             </div>
@@ -201,4 +270,8 @@ export class CycleDefectStationComparison extends Component {
     }
 }
 
-export default CycleDefectStationComparison
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(CycleDefectStationComparison);

@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
+import connect from "react-redux/es/connect/connect";
+import moment from "moment";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -129,6 +131,61 @@ export class SwingArmMachine extends Component {
 
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            if (this.role == 'os'){
+                let {startDate, endDate} = this.props.globalDateFilter;
+                let fromTimeDevice = moment(startDate.toISOString()).unix();
+                let toTimedevice   = moment(endDate.toISOString()).unix();
+
+                let param = {
+                    "from_timedevice": fromTimeDevice,
+                    "to_timedevice": toTimedevice,
+                };
+                this.setState({
+                    loading: true,
+                });
+                API('api/os/stationcomparision', 'POST', param)
+                    .then((response) => {
+                        console.log("response 137: ", response);
+                        if (response.data.success) {
+                            let dataArray = response.data.data;
+                            let returnData = JSON.parse(dataArray[0].data);
+                            let displayArray = this.handleReturnData(returnData);
+                            console.log("displayArray: ", displayArray);
+                            this.myChart.data = {
+                                labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+                                datasets: [
+                                    {
+                                        label: 'Swing Arm',
+                                        backgroundColor: '#0CD0EB',
+                                        borderColor: '#0CD0EB',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayArray[0],
+                                    },
+                                    {
+                                        label: 'Os Press',
+                                        backgroundColor: '#4C9EFF',
+                                        borderColor: '#4C9EFF',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayArray[1],
+                                    }
+                                ],
+                            };
+                            this.myChart.update();
+                            this.setState({loading: false});
+                        }
+                    })
+            }
+
+
+        }
+    }
+
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
@@ -136,12 +193,15 @@ export class SwingArmMachine extends Component {
             data: initialData,
             options: options
         });
-        console.log("this.myChart: ", this.myChart);
 
         if (this.role == 'os') {
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let fromTimeDevice = moment(startDate.toISOString()).unix();
+            let toTimedevice   = moment(endDate.toISOString()).unix();
+
             let param = {
-                "from_timedevice": 0,
-                "to_timedevice": 0
+                "from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice
             };
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {
@@ -203,4 +263,8 @@ export class SwingArmMachine extends Component {
     }
 }
 
-export default SwingArmMachine
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(SwingArmMachine);

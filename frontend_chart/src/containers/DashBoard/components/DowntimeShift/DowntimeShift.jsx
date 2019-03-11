@@ -29,15 +29,15 @@ export default class DowntimeShift extends Component {
             loading: true,
         }
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 /*this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;*/
                 this.process = "os-Molding";
                 break;
             case 'ip':
-               /* this.emitEvent = `ip_temp_trend_${stationIdNo}`;
-                this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;*/
+                /* this.emitEvent = `ip_temp_trend_${stationIdNo}`;
+                 this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;*/
                 this.process = "imev";
                 break;
             case 'os':
@@ -145,99 +145,48 @@ export default class DowntimeShift extends Component {
         return result;
     }
 
-    countTotal(dataArray, shiftNo){
-        let init = moment({h: '0', m: '0', s: '0'});
-        let initHour = 0;
-        let initMinute = 0;
-        let initSecond = 0;
-        let total = 0;
-        //let total = 0;
-        for (let i = 0; i < 8; i++) {
-            //total = moment.duration(dataArray[i].amount_first_shift_off).add(total);
-            //total = 0;
-            let tmpTime = null;
-            if (shiftNo == 1){
-                tmpTime = dataArray[i].first_shift_off_sum;
-            } else if (shiftNo == 2){
-                tmpTime = dataArray[i].second_shift_off_sum;
-            } else if (shiftNo == 3){
-                tmpTime = dataArray[i].third_shift_off_sum;
-            }
-
-            let hour = tmpTime ? tmpTime.substr(tmpTime.indexOf('h') - 2, 2) : 'N/A';
-            let minute = tmpTime ? tmpTime.substr(tmpTime.indexOf('m') - 2, 2) : 'N/A';
-            let second = tmpTime ? tmpTime.substr(tmpTime.indexOf('s') - 2, 2) : 'N/A';
-            if (hour != 'N/A'){
-                initHour = +hour + initHour;
-            } else {
-                initHour = 'N/A';
-            }
-            if (minute != 'N/A'){
-                initMinute = +minute + initMinute;
-            } else {
-                initMinute = 'N/A';
-            }
-            if (second != 'N/A'){
-                initSecond = +second + initSecond;
-            } else {
-                initSecond = 'N/A';
-            }
-        }
-        if (initHour != 'N/A' && initMinute != 'N/A' && initSecond != 'N/A'){
-            if (initSecond >= 60) {
-                initMinute = (initSecond % 60) + initMinute;
-                initSecond = Math.floor(initSecond / 60);
-                if (initMinute >= 60) {
-                    initHour = (initMinute % 60) + initHour;
-                    initMinute = Math.floor(initMinute / 60);
-                }
-            }
-            initSecond = (initSecond >= 10) ? initSecond : '0' + initSecond;
-            initMinute = (initMinute >= 10) ? initMinute : '0' + initMinute;
-            initHour = (initHour >= 10) ? initHour : '0' + initHour;
-            total = initHour + 'h:' + initMinute + "m:" + initSecond + "s";
-        } else {
-            total = 'N/A';
-        }
-        return total;
-    }
-
     showDowntimeShiftItem(dataArray, shiftNo) {
+        console.log("dataArray: ", dataArray);
         let result = "";
-        if (dataArray && dataArray.length > 7) {
-            let total = this.countTotal(dataArray, shiftNo);
+
+
+        if (dataArray && dataArray.length > 0) {
             if (shiftNo == 1) {
-                result = <DowntimeShiftItem shiftNo={shiftNo} total={dataArray[0].first_shift_total?dataArray[0].first_shift_total:'N/A'}
-                                            count1={dataArray[0].first_shift_off_sum?dataArray[0].first_shift_off_sum: 'N/A'}
-                                            count2={dataArray[1].first_shift_off_sum?dataArray[1].first_shift_off_sum: 'N/A'}
-                                            count3={dataArray[2].first_shift_off_sum?dataArray[2].first_shift_off_sum: 'N/A'}
-                                            count4={dataArray[3].first_shift_off_sum?dataArray[3].first_shift_off_sum: 'N/A'}
-                                            count5={dataArray[4].first_shift_off_sum?dataArray[4].first_shift_off_sum: 'N/A'}
-                                            count6={dataArray[5].first_shift_off_sum?dataArray[5].first_shift_off_sum: 'N/A'}
-                                            count7={dataArray[6].first_shift_off_sum?dataArray[6].first_shift_off_sum: 'N/A'}
-                                            count8={dataArray[7].first_shift_off_sum?dataArray[7].first_shift_off_sum: 'N/A'}
+                result = <DowntimeShiftItem shiftNo={shiftNo}
+                                            count1={dataArray[0][0]}
+                                            count2={dataArray[0][1]}
+                                            count3={dataArray[0][2]}
+                                            count4={dataArray[0][3]}
+                                            count5={dataArray[0][4]}
+                                            count6={dataArray[0][5]}
+                                            count7={dataArray[0][6]}
+                                            count8={dataArray[0][7]}
+                                            total ={dataArray[0][8]}
                 />
-            } else if (shiftNo == 2) {
-                result = <DowntimeShiftItem shiftNo={shiftNo} total={dataArray[0].second_shift_total?dataArray[0].second_shift_total:'N/A'}
-                                            count1={dataArray[0].second_shift_off_sum?dataArray[0].second_shift_off_sum:'N/A'}
-                                            count2={dataArray[1].second_shift_off_sum?dataArray[1].second_shift_off_sum:'N/A'}
-                                            count3={dataArray[2].second_shift_off_sum?dataArray[2].second_shift_off_sum:'N/A'}
-                                            count4={dataArray[3].second_shift_off_sum?dataArray[3].second_shift_off_sum:'N/A'}
-                                            count5={dataArray[4].second_shift_off_sum?dataArray[4].second_shift_off_sum:'N/A'}
-                                            count6={dataArray[5].second_shift_off_sum?dataArray[5].second_shift_off_sum:'N/A'}
-                                            count7={dataArray[6].second_shift_off_sum?dataArray[6].second_shift_off_sum:'N/A'}
-                                            count8={dataArray[7].second_shift_off_sum?dataArray[7].second_shift_off_sum:'N/A'}
+            } else if (shiftNo == 2){
+                result = <DowntimeShiftItem shiftNo={shiftNo}
+                                            count1={dataArray[1][0]}
+                                            count2={dataArray[1][1]}
+                                            count3={dataArray[1][2]}
+                                            count4={dataArray[1][3]}
+                                            count5={dataArray[1][4]}
+                                            count6={dataArray[1][5]}
+                                            count7={dataArray[1][6]}
+                                            count8={dataArray[1][7]}
+                                            total ={dataArray[1][8]}
                 />
-            } else if (shiftNo == 3) {
-                result = <DowntimeShiftItem shiftNo={shiftNo} total={dataArray[0].third_shift_total?dataArray[0].third_shift_total:'N/A'}
-                                            count1={dataArray[0].third_shift_off_sum?dataArray[0].third_shift_off_sum:'N/A'}
-                                            count2={dataArray[1].third_shift_off_sum?dataArray[1].third_shift_off_sum:'N/A'}
-                                            count3={dataArray[2].third_shift_off_sum?dataArray[2].third_shift_off_sum:'N/A'}
-                                            count4={dataArray[3].third_shift_off_sum?dataArray[3].third_shift_off_sum:'N/A'}
-                                            count5={dataArray[4].third_shift_off_sum?dataArray[4].third_shift_off_sum:'N/A'}
-                                            count6={dataArray[5].third_shift_off_sum?dataArray[5].third_shift_off_sum:'N/A'}
-                                            count7={dataArray[6].third_shift_off_sum?dataArray[6].third_shift_off_sum:'N/A'}
-                                            count8={dataArray[7].third_shift_off_sum?dataArray[7].third_shift_off_sum:'N/A'}/>
+            } else if (shiftNo == 3){
+                result = <DowntimeShiftItem shiftNo={shiftNo}
+                                            count1={dataArray[2][0]}
+                                            count2={dataArray[2][1]}
+                                            count3={dataArray[2][2]}
+                                            count4={dataArray[2][3]}
+                                            count5={dataArray[2][4]}
+                                            count6={dataArray[2][5]}
+                                            count7={dataArray[2][6]}
+                                            count8={dataArray[2][7]}
+                                            total ={dataArray[2][8]}
+                />
             }
         } else {
             result = <DowntimeShiftItem shiftNo={shiftNo} total={'N/A'}
@@ -253,12 +202,62 @@ export default class DowntimeShift extends Component {
         return result;
     }
 
+    handleData(dataArray){
+        let downtimeShiftArray1 = ['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'];
+        let downtimeShiftArray2 = ['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'];
+        let downtimeShiftArray3 = ['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'];
+        let downtimeShiftArraySummary = [];
+        if (dataArray && dataArray.length){
+            downtimeShiftArray1[8] = dataArray[0].first_shift_total;
+            downtimeShiftArray2[8] = dataArray[0].second_shift_total;
+            downtimeShiftArray3[8] = dataArray[0].third_shift_total;
+            dataArray.map(item => {
+                if (item.idStation == 1){
+                    downtimeShiftArray1[0] = item.first_shift_sum;
+                    downtimeShiftArray2[0] = item.second_shift_off_sum;
+                    downtimeShiftArray3[0] = item.third_shift_off_sum;
+                } else if (item.idStation == 2){
+                    downtimeShiftArray1[1] = item.first_shift_sum;
+                    downtimeShiftArray2[1] = item.second_shift_off_sum;
+                    downtimeShiftArray3[1] = item.third_shift_off_sum;
+                } else if (item.idStation == 3){
+                    downtimeShiftArray1[2] = item.first_shift_sum;
+                    downtimeShiftArray2[2] = item.second_shift_off_sum;
+                    downtimeShiftArray3[2] = item.third_shift_off_sum;
+                } else if (item.idStation == 4){
+                    downtimeShiftArray1[3] = item.first_shift_sum;
+                    downtimeShiftArray2[3] = item.second_shift_off_sum;
+                    downtimeShiftArray3[3] = item.third_shift_off_sum;
+                } else if (item.idStation == 5){
+                    downtimeShiftArray1[4] = item.first_shift_sum;
+                    downtimeShiftArray2[4] = item.second_shift_off_sum;
+                    downtimeShiftArray3[4] = item.third_shift_off_sum;
+                } else if (item.idStation == 6){
+                    downtimeShiftArray1[5] = item.first_shift_sum;
+                    downtimeShiftArray2[5] = item.second_shift_off_sum;
+                    downtimeShiftArray3[5] = item.third_shift_off_sum;
+                } else if (item.idStation == 7){
+                    downtimeShiftArray1[6] = item.first_shift_sum;
+                    downtimeShiftArray2[6] = item.second_shift_off_sum;
+                    downtimeShiftArray3[6] = item.third_shift_off_sum;
+                } else if (item.idStation == 8){
+                    downtimeShiftArray1[7] = item.first_shift_sum;
+                    downtimeShiftArray2[7] = item.second_shift_off_sum;
+                    downtimeShiftArray3[7] = item.third_shift_off_sum;
+                }
+            });
+        }
+        downtimeShiftArraySummary = [downtimeShiftArray1, downtimeShiftArray2, downtimeShiftArray3];
+        return downtimeShiftArraySummary;
+    }
+
     showDowntimeShiftTable(dataArray) {
         let result = '';
         let currentShift = this.specifyCurrentShift();
-        let shift1 = this.showDowntimeShiftItem(dataArray, 1);
-        let shift2 = this.showDowntimeShiftItem(dataArray, 2);
-        let shift3 = this.showDowntimeShiftItem(dataArray, 3);
+        let processData = this.handleData(dataArray);
+        let shift1 = this.showDowntimeShiftItem(processData, 1);
+        let shift2 = this.showDowntimeShiftItem(processData, 2);
+        let shift3 = this.showDowntimeShiftItem(processData, 3);
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {

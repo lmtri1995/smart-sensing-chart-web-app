@@ -357,6 +357,7 @@ export default class listBottomComponent extends Component {
                         qualityNumber: Math.round(quality/8 * 100)/100,
                         OEENumber: Math.round(OEE/8 * 100)/100,
                         workLossNumber: Math.round(workLost/8 * 100)/100,
+                        loading: false,
                     });
                 }
             }
@@ -375,7 +376,8 @@ export default class listBottomComponent extends Component {
                     <div className="row">
                         <div className="col-9"><OEEChart availabilityNumber={availabilityNumber}
                                                          performanceNumber={performanceNumber}
-                                                         qualityNumber={qualityNumber}/></div>
+                                                         qualityNumber={qualityNumber}
+                                                         loading={this.state.loading}/></div>
                         <div className="col-3"><OEEGeneral OEENumber={OEENumber}/></div>
                     </div>
                 </div>

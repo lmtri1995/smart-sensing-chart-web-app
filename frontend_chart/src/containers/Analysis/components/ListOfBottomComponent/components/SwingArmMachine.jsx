@@ -3,6 +3,7 @@ import Singleton from "../../../../../services/Socket";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
+import connect from "react-redux/es/connect/connect";
 
 const initialData = {
     labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -143,9 +144,48 @@ export class SwingArmMachine extends Component {
 
     }
 
-    componentDidMount() {
-        let {startDate, endDate} = this.props;
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            if (this.role == 'os'){
+                let {startDate, endDate} = this.props.globalDateFilter;
+                let fromTimeDevice = moment(startDate.toISOString()).unix();
+                let toTimedevice   = moment(endDate.toISOString()).unix();
 
+                this.setState({
+                    loading: true,
+                });
+                let param = {
+                    "from_timedevice": fromTimeDevice,
+                    "to_timedevice": toTimedevice
+                };
+                API('api/os/swingarm', 'POST', param)
+                    .then((response) => {
+                        if (response.data.success) {
+                            let dataArray = response.data.data;
+                            let returnData = JSON.parse(dataArray[0].data);
+                            this.handleReturnData(returnData);
+                            this.myChart.data = {
+                                labels: this.labels,
+                                datasets: [{
+                                    label: 'Swing Arm Data',
+                                    backgroundColor: '#C88FFA',
+                                    borderColor: '#C88FFA',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: this.data
+                                }],
+                            };
+                            this.myChart.update();
+                            this.setState({loading: false});
+                        }
+                    })
+                    .catch((err) => console.log('err:', err))
+            }
+        }
+    }
+
+    componentDidMount() {
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
             type: 'bar',
@@ -153,15 +193,17 @@ export class SwingArmMachine extends Component {
             options: options,
         })
 
-
-        let param = {
-            "from_timedevice": 0,
-            "to_timedevice": 0
-        };
-
         if (this.role == 'ip'){
             this.setState({loading: false});
         } else {
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let fromTimeDevice = moment(startDate.toISOString()).unix();
+            let toTimedevice   = moment(endDate.toISOString()).unix();
+
+            let param = {
+                "from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice
+            };
             API('api/os/swingarm', 'POST', param)
                 .then((response) => {
                     if (response.data.success) {
@@ -209,4 +251,9 @@ export class SwingArmMachine extends Component {
     }
 }
 
-export default SwingArmMachine
+
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(SwingArmMachine);

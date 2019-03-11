@@ -89,41 +89,45 @@ class TemperatureTrendItem extends Component {
         return html;
     }
 
-    componentWillUpdate(){
-        let {stationId} = this.props;
-        let {startDate, endDate} = this.props.globalDateFilter;
-        let newFromTimeDevice = moment(startDate.toISOString()).unix();
-        let newToTimeDevice = moment(endDate.toISOString()).unix();
-        if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice){
-            this.fromTimeDevice = newFromTimeDevice;
-            this.toTimedevice = newToTimeDevice;
-            let param = {
-                "idStation": stationId,
-                "from_timedevice": this.fromTimeDevice,
-                "to_timedevice": this.toTimedevice
-            };
-            API(this.apiUrl, 'POST', param)
-                .then((response) => {
-                    if (response.data.success) {
-                        let dataArray = response.data.data;
-                        let displayData = '';
-                        if (dataArray[0].data){
-                            displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
-                        }
+    componentDidUpdate(prevProps, prevState, snapshot){
+        if (this.props !== prevProps) {
+            this.setState({loading: true});
+            let {stationId} = this.props;
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let newFromTimeDevice = moment(startDate.toISOString()).unix();
+            let newToTimeDevice = moment(endDate.toISOString()).unix();
+            if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice){
+                this.fromTimeDevice = newFromTimeDevice;
+                this.toTimedevice = newToTimeDevice;
+                let param = {
+                    "idStation": stationId,
+                    "from_timedevice": this.fromTimeDevice,
+                    "to_timedevice": this.toTimedevice
+                };
+                API(this.apiUrl, 'POST', param)
+                    .then((response) => {
+                        if (response.data.success) {
+                            let dataArray = response.data.data;
+                            let displayData = '';
+                            if (dataArray[0].data){
+                                displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
+                            }
 
-                        if (displayData) {
-                            this.graph.updateOptions(
-                                {
-                                    'file': displayData,
-                                },
-                            );
-                        }
-                        this.setState({loading: false});
+                            if (displayData) {
+                                this.graph.updateOptions(
+                                    {
+                                        'file': displayData,
+                                    },
+                                );
+                            }
+                            this.setState({loading: false});
 
-                    }
-                })
-                .catch((err) => console.log('err:', err, "stationId: ", stationId));
+                        }
+                    })
+                    .catch((err) => console.log('err:', err, "stationId: ", stationId));
+            }
         }
+
     }
 
     componentDidMount() {

@@ -28,6 +28,28 @@ export default class DowntimeShift extends Component {
             dataArray: "",
             loading: true,
         }
+
+        switch(this.role) {
+            case 'admin':
+                /*this.emitEvent = `os_temp_trend_${stationIdNo}`;
+                this.eventListen = `os_chart_temp_trend_${stationIdNo}`;*/
+                this.process = "os-Molding";
+                break;
+            case 'ip':
+               /* this.emitEvent = `ip_temp_trend_${stationIdNo}`;
+                this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;*/
+                this.process = "imev";
+                break;
+            case 'os':
+                /*this.emitEvent = `os_temp_trend_${stationIdNo}`;
+                this.eventListen = `os_chart_temp_trend_${stationIdNo}`;*/
+                this.process = "os-Molding";
+                break;
+            default:
+                /*this.emitEvent = `os_temp_trend_${stationIdNo}`;
+                this.eventListen = `os_chart_temp_trend_${stationIdNo}`;*/
+                this.process = "os-Molding";
+        }
     }
 
     componentWillUnmount() {
@@ -63,6 +85,7 @@ export default class DowntimeShift extends Component {
         });
 
         this.socket.on('sna_down_shift', (data) => {
+            console.log("data 88: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;

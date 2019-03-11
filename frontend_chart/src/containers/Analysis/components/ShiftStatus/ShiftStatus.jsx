@@ -4,6 +4,7 @@ import moment from "moment";
 import Singleton from "../../../../services/Socket";
 import API from '../../../../services/api';
 import {ClipLoader} from "react-spinners";
+import connect from "react-redux/es/connect/connect";
 
 const override = `
     position: absolute;
@@ -13,7 +14,7 @@ const override = `
     z-index: 100000;
 `;
 
-export default class ShiftStatus extends Component {
+class ShiftStatus extends Component {
     static socket = null;
     static _isMounted = false;
     static loginData = null;
@@ -53,11 +54,43 @@ export default class ShiftStatus extends Component {
         this._isMounted = false;
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let fromTimeDevice = moment(startDate.toISOString()).unix();
+            let toTimedevice   = moment(endDate.toISOString()).unix();
+
+            let param = {
+                "from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice,
+            };
+            this.setState({
+                loading: true,
+            });
+            API(this.apiUrl, 'POST', param)
+                .then((response) => {
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        this.setState({
+                            dataArray: dataArray,
+                            loading: false,
+                        });
+                    }
+                })
+                .catch((err) => console.log('err:', err));
+
+        }
+    }
+
     componentDidMount() {
+        let {startDate, endDate} = this.props.globalDateFilter;
+        let fromTimeDevice = moment(startDate.toISOString()).unix();
+        let toTimedevice   = moment(endDate.toISOString()).unix();
+
         this._isMounted = true;
         let param = {
-            "from_timedevice": 0,
-            "to_timedevice": 0,
+            "from_timedevice": fromTimeDevice,
+            "to_timedevice": toTimedevice,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -220,3 +253,9 @@ export default class ShiftStatus extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(ShiftStatus);

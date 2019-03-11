@@ -3,10 +3,11 @@ import {reducer as reduxFormReducer} from 'redux-form';
 import {
     downloadDataStoreReducer,
     globalDateFilterReducer,
+    globalModelFilterReducer,
+    globalShiftFilterReducer,
     LoginReducer,
     sidebarReducer,
     themeReducer,
-    globalShiftFilterReducer,
 } from '../../redux/reducers/index';
 import thunk from "redux-thunk";
 
@@ -17,6 +18,7 @@ const reducer = combineReducers({
     globalDateFilter: globalDateFilterReducer,
     login: LoginReducer,
     downloadDataStore: downloadDataStoreReducer,
+    globalModelFilter: globalModelFilterReducer,
     globalShiftFilter: globalShiftFilterReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

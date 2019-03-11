@@ -3,7 +3,8 @@ import sidebarReducer from './sidebarReducer';
 import LoginReducer from './loginReducer';
 import globalDateFilterReducer from './globalDateFilterReducer';
 import downloadDataStoreReducer from './downloadDataStoreReducer';
-import globalShiftFilterReducer from './globalShiftFilterReducer'
+import globalModelFilterReducer from './globalModelFilterReducer';
+import globalShiftFilterReducer from './globalShiftFilterReducer';
 
 export {
     themeReducer,
@@ -11,5 +12,6 @@ export {
     globalDateFilterReducer,
     LoginReducer,
     downloadDataStoreReducer,
+    globalModelFilterReducer,
     globalShiftFilterReducer,
 };

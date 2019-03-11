@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {ExportType, ROUTE, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
+import {ExportType, MODEL_NAMES, ROUTE, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
 import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
 import {withRouter} from "react-router-dom";
+import API from "../../../services/api";
+import {changeGlobalModelFilter} from "../../../redux/actions/globalModelFilterActions";
 
 class TopbarFilter extends Component {
     constructor(props) {
@@ -15,10 +17,13 @@ class TopbarFilter extends Component {
             filterMenuCollapse: false,
             shiftFilterMenuCollapse: false,
             downloadCollapse: false,
+            selectedModels: props.globalModelFilter.selectedModels,
             selectedShifts: props.globalShiftFilter.selectedShifts,
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
+
+        this.requestModelTypesForFiltering();
     }
 
     componentDidMount() {
@@ -57,6 +62,51 @@ class TopbarFilter extends Component {
             shiftFilterMenuCollapse: false,
             downloadCollapse: !this.state.downloadCollapse
         });
+    };
+
+    requestModelTypesForFiltering = () => {
+        this.loginData = JSON.parse(localStorage.getItem('logindata'));
+        this.role = this.loginData.data.role;
+
+        let link = 'ip';
+        switch (this.role) {
+            case 'admin':
+                link = 'os';
+                break;
+            case 'ip':
+                link = 'ip';
+                break;
+            case 'os':
+                link = 'os';
+                break;
+        }
+        API(`api/${link}/modelName`, 'POST', {})
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+
+                    if (dataArray) {
+                        MODEL_NAMES.clear();
+
+                        dataArray.forEach(element => {
+                            MODEL_NAMES.set(
+                                element.value,
+                                {
+                                    key: element.key,
+                                    selected: true,
+                                }
+                            );
+                        });
+
+                        this.setState({
+                            selectedModels: MODEL_NAMES,
+                        });
+
+                        this.props.dispatch(changeGlobalModelFilter(MODEL_NAMES));
+                    }
+                }
+            })
+            .catch((err) => console.log('err: ', err));
     };
 
     setWrapperRef(node) {
@@ -131,7 +181,8 @@ class TopbarFilter extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalShiftFilter: state.globalShiftFilter
+    globalModelFilter: state.globalModelFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default withRouter(connect(mapStateToProps)(TopbarFilter));

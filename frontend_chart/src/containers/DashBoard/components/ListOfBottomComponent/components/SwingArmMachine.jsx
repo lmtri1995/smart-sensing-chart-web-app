@@ -94,29 +94,15 @@ export class SwingArmMachine extends Component {
     }
 
     handleReturnData = (returnData) => {
-        if (returnData && returnData.length > 15){
+        if (returnData && returnData.length > 0){
             //server send 360 rows for the first time
             //handle returnData, divide into 2 child arrays: datasets, labels
             //set to this.datasets, this.labels
             //update chart
             returnData.map(item => {
-                this.labels.push(moment.unix(item[0]).format("HH:mm:ss"));
+                this.labels.push(item[0] + 'h');
                 this.datasets.push(item[1]);
             });
-        } else if (returnData && returnData.length >= 1) {
-            //return data for last 10s => 1 record
-            //insert returned record, remove 1 oldest record from this.datasets
-            //update chart
-
-            //insert the newest record
-            returnData.map(item => {
-                this.labels.push(moment.unix(item[0]).format("HH:mm:ss"));
-                this.datasets.push(item[1]);
-            });
-
-            //remove the oldest record
-            this.labels = this.labels.slice(returnData.length, this.labels.length);
-            this.datasets = this.datasets.slice(returnData.length, this.datasets.length);
         }
     }
 
@@ -157,7 +143,6 @@ export class SwingArmMachine extends Component {
                     let dataArray = response.data;
                     let returnData = JSON.parse(dataArray[0].data);
                     this.handleReturnData(returnData);
-
                     if (this.labels.length > 0){
                         //Make sure that the length is more than 15
                         let displayLabels = [];

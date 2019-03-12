@@ -95,10 +95,6 @@ export class SwingArmMachine extends Component {
 
     handleReturnData = (returnData) => {
         if (returnData && returnData.length > 0){
-            //server send 360 rows for the first time
-            //handle returnData, divide into 2 child arrays: datasets, labels
-            //set to this.datasets, this.labels
-            //update chart
             returnData.map(item => {
                 this.labels.push(item[0] + 'h');
                 this.datasets.push(item[1]);

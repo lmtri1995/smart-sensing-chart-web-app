@@ -129,13 +129,14 @@ export class SwingArmMachine extends Component {
     }*/
 
     handleReturnData = (returnData) => {
-        console.log("returnData: ", returnData);
-        this.labels = [];
-        this.data = [];
-        if(returnData && returnData.length > 0){
+        if (returnData && returnData.length > 0){
+            console.log("133 133 133")
+            console.log("133 133 133")
+            console.log("133 133 133")
+            console.log("returnData: ", returnData);
             returnData.map(item => {
-                this.labels.push(item[0].split(" "));
-                this.data.push(item[1]);
+                this.labels.push(item[0] + 'h');
+                this.datasets.push(item[1]);
             });
         }
     }
@@ -154,6 +155,8 @@ export class SwingArmMachine extends Component {
                 this.setState({
                     loading: true,
                 });
+                console.log("fromTimeDevice: ", fromTimeDevice);
+                console.log("toTimedevice: ", toTimedevice);
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice
@@ -164,8 +167,11 @@ export class SwingArmMachine extends Component {
                             let dataArray = response.data.data;
                             let returnData = JSON.parse(dataArray[0].data);
                             this.handleReturnData(returnData);
+
+                            let displayLabels = this.labels;
+                            let displayData = this.data;
                             this.myChart.data = {
-                                labels: this.labels,
+                                labels: displayLabels,
                                 datasets: [{
                                     label: 'Swing Arm Data',
                                     backgroundColor: '#C88FFA',
@@ -173,7 +179,7 @@ export class SwingArmMachine extends Component {
                                     borderWidth: 1,
                                     //hoverBackgroundColor: '#FF6384',
                                     //hoverBorderColor: '#FF6384',
-                                    data: this.data
+                                    data: displayData
                                 }],
                             };
                             this.myChart.update();
@@ -200,6 +206,8 @@ export class SwingArmMachine extends Component {
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
+
+
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice
@@ -210,6 +218,8 @@ export class SwingArmMachine extends Component {
                         let dataArray = response.data.data;
                         let returnData = JSON.parse(dataArray[0].data);
                         this.handleReturnData(returnData);
+                        console.log("this.labels 221: ", this.labels);
+                        console.log("this.data 222: ", this.data);
                         this.myChart.data = {
                             labels: this.labels,
                             datasets: [{
@@ -219,7 +229,7 @@ export class SwingArmMachine extends Component {
                                 borderWidth: 1,
                                 //hoverBackgroundColor: '#FF6384',
                                 //hoverBorderColor: '#FF6384',
-                                data: this.data
+                                data: this.datasets
                             }],
                         };
                         this.myChart.update();

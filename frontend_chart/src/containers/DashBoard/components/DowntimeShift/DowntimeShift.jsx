@@ -213,37 +213,37 @@ export default class DowntimeShift extends Component {
             downtimeShiftArray3[8] = dataArray[0].third_shift_total;
             dataArray.map(item => {
                 if (item.idStation == 1){
-                    downtimeShiftArray1[0] = item.first_shift_sum;
-                    downtimeShiftArray2[0] = item.second_shift_off_sum;
-                    downtimeShiftArray3[0] = item.third_shift_off_sum;
+                    downtimeShiftArray1[0] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[0] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[0] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 } else if (item.idStation == 2){
-                    downtimeShiftArray1[1] = item.first_shift_sum;
-                    downtimeShiftArray2[1] = item.second_shift_off_sum;
-                    downtimeShiftArray3[1] = item.third_shift_off_sum;
+                    downtimeShiftArray1[1] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[1] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[1] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 } else if (item.idStation == 3){
-                    downtimeShiftArray1[2] = item.first_shift_sum;
-                    downtimeShiftArray2[2] = item.second_shift_off_sum;
-                    downtimeShiftArray3[2] = item.third_shift_off_sum;
+                    downtimeShiftArray1[2] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[2] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[2] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 } else if (item.idStation == 4){
-                    downtimeShiftArray1[3] = item.first_shift_sum;
-                    downtimeShiftArray2[3] = item.second_shift_off_sum;
-                    downtimeShiftArray3[3] = item.third_shift_off_sum;
+                    downtimeShiftArray1[3] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[3] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[3] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 } else if (item.idStation == 5){
-                    downtimeShiftArray1[4] = item.first_shift_sum;
-                    downtimeShiftArray2[4] = item.second_shift_off_sum;
-                    downtimeShiftArray3[4] = item.third_shift_off_sum;
+                    downtimeShiftArray1[4] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[4] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[4] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 } else if (item.idStation == 6){
-                    downtimeShiftArray1[5] = item.first_shift_sum;
-                    downtimeShiftArray2[5] = item.second_shift_off_sum;
-                    downtimeShiftArray3[5] = item.third_shift_off_sum;
+                    downtimeShiftArray1[5] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[5] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[5] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 } else if (item.idStation == 7){
-                    downtimeShiftArray1[6] = item.first_shift_sum;
-                    downtimeShiftArray2[6] = item.second_shift_off_sum;
-                    downtimeShiftArray3[6] = item.third_shift_off_sum;
+                    downtimeShiftArray1[6] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[6] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[6] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 } else if (item.idStation == 8){
-                    downtimeShiftArray1[7] = item.first_shift_sum;
-                    downtimeShiftArray2[7] = item.second_shift_off_sum;
-                    downtimeShiftArray3[7] = item.third_shift_off_sum;
+                    downtimeShiftArray1[7] = item.first_shift_sum?item.first_shift_sum:'N/A';
+                    downtimeShiftArray2[7] = item.second_shift_off_sum?item.second_shift_off_sum:'N/A';
+                    downtimeShiftArray3[7] = item.third_shift_off_sum?item.second_shift_off_sum:'N/A';
                 }
             });
         }

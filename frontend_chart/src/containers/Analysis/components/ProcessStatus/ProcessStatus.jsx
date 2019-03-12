@@ -62,8 +62,10 @@ class ProcessStatus extends Component {
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
             let param = {
-                "from_timedevice": fromTimeDevice,
-                "to_timedevice": toTimedevice,
+                /*"from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice,*/
+                "from_timedevice": 0,
+                "to_timedevice": 0,
             };
             this.setState({
                 loading: true,
@@ -92,8 +94,10 @@ class ProcessStatus extends Component {
         let toTimedevice   = moment(endDate.toISOString()).unix();
 
         let param = {
-            "from_timedevice": fromTimeDevice,
-            "to_timedevice": toTimedevice,
+            /*"from_timedevice": fromTimeDevice,
+            "to_timedevice": toTimedevice,*/
+            "from_timedevice": 0,
+            "to_timedevice": 0,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

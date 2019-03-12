@@ -5,6 +5,7 @@ import Singleton from "../../../../services/Socket";
 import API from '../../../../services/api';
 import {ClipLoader} from "react-spinners";
 import connect from "react-redux/es/connect/connect";
+import {SHIFT_OPTIONS} from "./../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -61,8 +62,12 @@ class ShiftStatus extends Component {
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
             let param = {
-                "from_timedevice": fromTimeDevice,
+                /*"from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
+                "shiftno": 0,
+                */
+                "from_timedevice": 0,
+                "to_timedevice": 0,
             };
             this.setState({
                 loading: true,
@@ -89,8 +94,12 @@ class ShiftStatus extends Component {
 
         this._isMounted = true;
         let param = {
-            "from_timedevice": fromTimeDevice,
+            /*"from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
+            "shiftno": 0,
+            */
+            "from_timedevice": 0,
+            "to_timedevice": 0,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -205,14 +214,22 @@ class ShiftStatus extends Component {
         let shift1 = this.showShiftItem(dataArray, 1);
         let shift2 = this.showShiftItem(dataArray, 2);
         let shift3 = this.showShiftItem(dataArray, 3);
-        /*if (currentShift == 1) {
-            result = <tbody>{shift2}{shift3}{shift1}</tbody>;
-        } else if (currentShift == 2) {
-            result = <tbody>{shift3}{shift1}{shift2}</tbody>;
-        } else if (currentShift == 3) {
-            result = <tbody>{shift1}{shift2}{shift3}</tbody>;
-        }*/
-        result = <tbody>{shift1}{shift2}{shift3}</tbody>;
+
+        switch (this.props.globalShiftFilter.selectedShift) {
+            case SHIFT_OPTIONS[0]:
+                result = <tbody>{shift1}{shift2}{shift3}</tbody>;
+                break;
+            case SHIFT_OPTIONS[1]:
+                result = <tbody>{shift1}</tbody>;
+                break;
+            case SHIFT_OPTIONS[2]:
+                result = <tbody>{shift2}</tbody>;
+                break;
+            case SHIFT_OPTIONS[3]:
+                result = <tbody>{shift3}</tbody>;
+                break;
+        }
+
         return result;
     };
 
@@ -255,7 +272,8 @@ class ShiftStatus extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default connect(mapStateToProps)(ShiftStatus);

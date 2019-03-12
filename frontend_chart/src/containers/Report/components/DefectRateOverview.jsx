@@ -3,7 +3,7 @@ import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
 
 export default class DefectRateOverview extends Component {
     render() {
-        let {defectByTypeOverTime} = this.props;
+        let {defectByTypeOverTime, loading} = this.props;
         let chartLabels = [];
         let sumDefectsByType = [], totalDefectsText = '';
         if (defectByTypeOverTime) {
@@ -37,7 +37,8 @@ export default class DefectRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Defect Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={chartData} centerText={totalDefectsText} showLegend={true}/>
+                    <DoughnutChart labels={chartLabels} data={chartData} centerText={totalDefectsText}
+                                   showLegend={true} loading={loading}/>
                 </div>
             </div>
         )

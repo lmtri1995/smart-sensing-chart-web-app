@@ -23,8 +23,10 @@ class ReportPage extends Component {
             activeTab: '1',
             productionRateDateLabels: null,
             productionRate: null,
+            productionRateLoading: true,
             defectRateDateLabels: null,
             defectByTypeOverTime: null,
+            defectRateLoading: true,
         };
 
         //initiate socket
@@ -195,6 +197,7 @@ class ReportPage extends Component {
                         ...this.state,
                         productionRateDateLabels: dateLabels,
                         productionRate: dataToShow,
+                        productionRateLoading: false,
                     });
                 }
             })
@@ -297,6 +300,7 @@ class ReportPage extends Component {
                         ...this.state,
                         defectRateDateLabels: dateLabels,
                         defectByTypeOverTime: dataToShow,
+                        defectRateLoading: false,
                     });
                 }
             })
@@ -338,7 +342,8 @@ class ReportPage extends Component {
                                                 productionRate={this.state.productionRate}/>
                             </div>
                             <div className="col-3">
-                                <ProductionRateOverview productionRate={this.state.productionRate}/>
+                                <ProductionRateOverview productionRate={this.state.productionRate}
+                                                        loading={this.state.productionRateLoading}/>
                             </div>
                         </div>
                     </TabPane>
@@ -349,7 +354,8 @@ class ReportPage extends Component {
                                             defectByTypeOverTime={this.state.defectByTypeOverTime}/>
                             </div>
                             <div className="col-3">
-                                <DefectRateOverview defectByTypeOverTime={this.state.defectByTypeOverTime}/>
+                                <DefectRateOverview defectByTypeOverTime={this.state.defectByTypeOverTime}
+                                                    loading={this.state.defectRateLoading}/>
                             </div>
                         </div>
                     </TabPane>

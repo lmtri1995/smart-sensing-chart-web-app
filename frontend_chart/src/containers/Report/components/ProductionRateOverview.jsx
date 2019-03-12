@@ -9,7 +9,7 @@ var PRODUCTION_RATE_FOR_DOUGHNUT_CHART = [];
 
 class ProductionRateOverview extends Component {
     render() {
-        let {productionRate} = this.props;
+        let {productionRate, loading} = this.props;
         let chartLabels = [], backgroundColor = [];
         let averageProductionRatesByShift = [], average = 0, averageProductionRateText = 'N/A';
 
@@ -70,7 +70,7 @@ class ProductionRateOverview extends Component {
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
                     <DoughnutChart labels={chartLabels} data={chartData} centerText={averageProductionRateText}
-                                   showLegend={true}/>
+                                   showLegend={true} loading={loading}/>
                 </div>
             </div>
         )

@@ -39,6 +39,9 @@ export const ROUTE = {
 export const START_WORK_DAY_TIME = {hours: 6, minutes: 0, seconds: 0};
 export const END_WORK_DAY_TIME = {hours: 5, minutes: 59, seconds: 59};
 
+// Current Selected Tab (IP or OS) when user role is Admin
+export const ADMIN_TAB_INDEX = [1, 2];
+
 // Model
 export const MODEL_NAMES = new Map([    // initial data
     ['N/A', {   // name to show on screen

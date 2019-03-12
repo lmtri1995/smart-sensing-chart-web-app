@@ -1,6 +1,7 @@
 import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
 import {reducer as reduxFormReducer} from 'redux-form';
 import {
+    adminTabReducer,
     downloadDataStoreReducer,
     globalDateFilterReducer,
     globalModelFilterReducer,
@@ -15,8 +16,9 @@ const reducer = combineReducers({
     form: reduxFormReducer, // mounted under "form",
     theme: themeReducer,
     sidebar: sidebarReducer,
-    globalDateFilter: globalDateFilterReducer,
     login: LoginReducer,
+    adminTab: adminTabReducer,
+    globalDateFilter: globalDateFilterReducer,
     downloadDataStore: downloadDataStoreReducer,
     globalModelFilter: globalModelFilterReducer,
     globalShiftFilter: globalShiftFilterReducer,

@@ -25,13 +25,16 @@ class Pages extends Component {
     };
 
     render() {
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
         return (
             <div>
                 <Fullscreen
                     enabled={this.state.isFull}
                     onChange={isFull => this.setState({isFull})}
                 >
-                    <Layout goFull={this.goFull}/>
+                    {
+                        loginData ? <Layout goFull={this.goFull}/> : null
+                    }
                     <div className="container__wrap">
                         <Switch>
                             <PrivateRoute exact path={ROUTE.Dashboard} component={DashBoard}/>
@@ -72,7 +75,6 @@ const wrappedRoutes = () => (
                     : <Redirect to={ROUTE.Dashboard}/>
             )}/>
             <Route exact path={ROUTE.Logout} component={LogOut}/>
-            )} />
             <Route path={ROUTE.Pages} render={(props) => (
                 JSON.parse(localStorage.getItem('logindata')) === null
                     ? <LogIn/>

@@ -13,13 +13,26 @@ class TopbarFilter extends Component {
     constructor(props) {
         super(props);
 
+        let selectedShifts = new Map([
+            [SHIFT_DESCRIPTIONS[0], false],
+            [SHIFT_DESCRIPTIONS[1], false],
+            [SHIFT_DESCRIPTIONS[2], false],
+            [SHIFT_DESCRIPTIONS[3], false],
+        ]);
+
+        selectedShifts.forEach((value, key, map) => {
+            if (key === props.globalShiftFilter.selectedShift) {
+                map.set(key, true);
+            }
+        });
+
         this.state = {
             filterMenuOpen: false,
             modelFilterMenuOpen: false,
             shiftFilterMenuOpen: false,
             downloadMenuOpen: false,
             selectedModels: props.globalModelFilter.selectedModels,
-            selectedShifts: props.globalShiftFilter.selectedShifts,
+            selectedShifts: selectedShifts,
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -76,18 +89,18 @@ class TopbarFilter extends Component {
     onShiftItemClicked = (event) => {
         let item = event.target.innerText;
         let selectedShifts = this.state.selectedShifts;
-        selectedShifts.forEach((value, key) => {
+        selectedShifts.forEach((value, key, map) => {
             if (key !== item) {
-                selectedShifts.set(key, false);
+                map.set(key, false);
             } else {
-                selectedShifts.set(key, true);
+                map.set(key, true);
             }
         });
         this.setState({
             selectedShifts: selectedShifts
         });
         this.props.dispatch(
-            changeGlobalShiftFilter(selectedShifts)
+            changeGlobalShiftFilter(item)
         );
     };
 
@@ -164,7 +177,7 @@ class TopbarFilter extends Component {
         let modelList = ['N/A'];
         if (MODEL_NAMES && MODEL_NAMES.size > 0) {
             modelList.length = 0;
-            MODEL_NAMES.forEach((object, name)  => {
+            MODEL_NAMES.forEach((object, name) => {
                 modelList.push(name);
             });
         }

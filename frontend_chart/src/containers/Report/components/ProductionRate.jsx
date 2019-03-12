@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import MixedLineBarChart from "../../Charts/ChartJS/components/MixedLineBarChart";
 import {connect} from "react-redux";
+import {SHIFT_DESCRIPTIONS} from "../../../constants/constants";
 
 // Keep a copy of original Production Rate Data Array received from Server
 // To use when filtering data by shift
@@ -35,28 +36,32 @@ class ProductionRate extends Component {
             if (tempProductionRate.length >= PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.length) {
                 PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = tempProductionRate.slice();
             }
-            tempProductionRate.length = 0;  // Empty Array
-            let averageProductionRate = 0, averageProductionRatesByDay = [];
-            PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.forEach((element, index, array) => {
-                if (this.props.globalShiftFilter.selectedShifts.get(element.label) === true) {
-                    tempProductionRate.push(element);
-                }
-                // Recalculate Average Production Rates By Date for Filtered Shifts
-                if (index === PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.length - 1 && tempProductionRate && tempProductionRate.length > 0) {
-                    for (let i = 0; i < tempProductionRate[0].data.length; ++i) {
-                        for (let j = 0; j < tempProductionRate.length; ++j) {
-                            averageProductionRate += tempProductionRate[j].data[i];
-                        }
-                        averageProductionRate /= tempProductionRate.length;
-                        averageProductionRatesByDay.push(averageProductionRate);
-                        averageProductionRate = 0;
+            // Selected option is Not All Shifts
+            if (this.props.globalShiftFilter.selectedShift !== SHIFT_DESCRIPTIONS[0]) {
+                tempProductionRate.length = 0;  // Empty Array
+
+                let averageProductionRate = 0, averageProductionRatesByDay = [];
+                PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.forEach((element, index, array) => {
+                    if (this.props.globalShiftFilter.selectedShift === element.label) {
+                        tempProductionRate.push(element);
                     }
-                    tempProductionRate.push({
-                        ...array[index],
-                        data: averageProductionRatesByDay,
-                    });
-                }
-            });
+                    // Recalculate Average Production Rates By Date for Filtered Shifts
+                    if (index === PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.length - 1 && tempProductionRate && tempProductionRate.length > 0) {
+                        for (let i = 0; i < tempProductionRate[0].data.length; ++i) {
+                            for (let j = 0; j < tempProductionRate.length; ++j) {
+                                averageProductionRate += tempProductionRate[j].data[i];
+                            }
+                            averageProductionRate /= tempProductionRate.length;
+                            averageProductionRatesByDay.push(averageProductionRate);
+                            averageProductionRate = 0;
+                        }
+                        tempProductionRate.push({
+                            ...array[index],
+                            data: averageProductionRatesByDay,
+                        });
+                    }
+                });
+            }
         }
         return (
             <div className="report-main">

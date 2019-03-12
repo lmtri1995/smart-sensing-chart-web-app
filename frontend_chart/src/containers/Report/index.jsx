@@ -166,7 +166,7 @@ class ReportPage extends Component {
                         if (i < 4) {
                             dataToShow.push(
                                 {
-                                    label: SHIFT_DESCRIPTIONS[i - 1],
+                                    label: SHIFT_DESCRIPTIONS[i],
                                     backgroundColor: colors[i - 1],
                                     data: eval(`shift${i}`)
                                 }

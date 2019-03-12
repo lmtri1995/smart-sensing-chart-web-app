@@ -164,7 +164,7 @@ class TopbarFilter extends Component {
         let modelList = ['N/A'];
         if (MODEL_NAMES && MODEL_NAMES.size > 0) {
             modelList.length = 0;
-            MODEL_NAMES.forEach((object, name)  => {
+            MODEL_NAMES.forEach((object, name) => {
                 modelList.push(name);
             });
         }
@@ -180,7 +180,8 @@ class TopbarFilter extends Component {
                             location.pathname === ROUTE.Report // Only show Filter by Model & Shift Menu on Report Page
                                 ? (
                                     <span>
-                                        <button className="btn btn-secondary" onClick={this.onModelFilterMenuClicked}>
+                                        <button className="btn btn-secondary"
+                                                onClick={this.onModelFilterMenuClicked}>
                                             Filter: Model <i className="fas fa-caret-down"></i>
                                         </button>
                                         <Collapse isOpen={this.state.modelFilterMenuOpen}
@@ -202,7 +203,16 @@ class TopbarFilter extends Component {
                                                 }
                                             </ListGroup>
                                         </Collapse>
-                                        <button className="btn btn-secondary" onClick={this.onShiftFilterMenuClicked}>
+                                    </span>
+                                )
+                                : null
+                        }
+                        {
+                            location.pathname === ROUTE.Report || location.pathname === ROUTE.Analysis
+                                ? (
+                                    <span>
+                                        <button className="btn btn-secondary"
+                                                onClick={this.onShiftFilterMenuClicked}>
                                             Filter: Shift <i className="fas fa-caret-down"></i>
                                         </button>
                                         <Collapse isOpen={this.state.shiftFilterMenuOpen}
@@ -230,7 +240,8 @@ class TopbarFilter extends Component {
                         <button className="btn btn-secondary" onClick={this.onDownloadMenuClicked}>
                             Download <i className="fas fa-caret-down"></i>
                         </button>
-                        <Collapse isOpen={this.state.downloadMenuOpen} className="topbar__menu-wrap">
+                        <Collapse isOpen={this.state.downloadMenuOpen}
+                                  className="topbar__menu-wrap">
                             <div className="col-12">
                                 <DataExporter exportType={ExportType.EXCEL}/>
                                 <DataExporter exportType={ExportType.PDF}/>

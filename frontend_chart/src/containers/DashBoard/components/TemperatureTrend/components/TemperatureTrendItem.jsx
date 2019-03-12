@@ -210,6 +210,7 @@ export default class TemperatureTrendItem extends Component {
                 height: 300,
                 colors: this.colorArray,
                 labels: this.labelArray,
+                series: this.seriesOptions,
                 //legendFormatter,
                 //labelsSeparateLines: true,
                 axes : {

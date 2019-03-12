@@ -75,11 +75,19 @@ class TopbarFilter extends Component {
 
     onShiftItemClicked = (event) => {
         let item = event.target.innerText;
-        this.setState(prevState => ({
-            selectedShifts: prevState.selectedShifts.set(item, !prevState.selectedShifts.get(item))
-        }));
+        let selectedShifts = this.state.selectedShifts;
+        selectedShifts.forEach((value, key) => {
+            if (key !== item) {
+                selectedShifts.set(key, false);
+            } else {
+                selectedShifts.set(key, true);
+            }
+        });
+        this.setState({
+            selectedShifts: selectedShifts
+        });
         this.props.dispatch(
-            changeGlobalShiftFilter(this.state.selectedShifts)
+            changeGlobalShiftFilter(selectedShifts)
         );
     };
 

@@ -4,8 +4,9 @@ import {SHIFT_DESCRIPTIONS} from "../../constants/constants";
 const initialState = {
     selectedShifts: new Map([
         [SHIFT_DESCRIPTIONS[0], true],
-        [SHIFT_DESCRIPTIONS[1], true],
-        [SHIFT_DESCRIPTIONS[2], true],
+        [SHIFT_DESCRIPTIONS[1], false],
+        [SHIFT_DESCRIPTIONS[2], false],
+        [SHIFT_DESCRIPTIONS[3], false],
     ]),
 };
 

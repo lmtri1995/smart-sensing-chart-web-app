@@ -64,6 +64,7 @@ class TopbarDateFilter extends Component {
                 <Collapse isOpen={this.state.collapse} className="topbar__menu-wrap">
                     <div className="topbar__menu">
                         <DateRangePicker numWeeks={3}
+                                         toggleMenu={this.toggle}
                                          changeGlobalDateFilter={this.changeGlobalDateFilter.bind(this)}
                                          startDate={startDate}
                                          endDate={endDate}/>

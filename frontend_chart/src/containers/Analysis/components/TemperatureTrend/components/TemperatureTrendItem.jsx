@@ -37,11 +37,38 @@ class TemperatureTrendItem extends Component {
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
                 // "tempB3"];
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
             case 'ip':
                 this.apiUrl = 'api/ip/tempTrend';
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6", "#449AFF", "#46D6EA"];
-                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual R.Top Temp", "Acutal R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
+                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual" +
+                " R.Top Temp", "Actual R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom" +
+                " Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting L.Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting L.Bottom Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting R.Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting R.Bottom Temp": {
+                        strokeWidth: 3
+                    },
+                };
                 break;
             case 'os':
                 this.apiUrl = 'api/os/tempTrend';
@@ -49,6 +76,17 @@ class TemperatureTrendItem extends Component {
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
                 // "tempB3"];
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
             default:
                 this.apiUrl = 'api/os/tempTrend';
@@ -56,11 +94,23 @@ class TemperatureTrendItem extends Component {
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
                 // "tempB3"];
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
         }
         this.state = {
             loading: true
         };
+
     }
 
 
@@ -98,7 +148,6 @@ class TemperatureTrendItem extends Component {
             let newFromTimeDevice = moment(startDate.toISOString()).unix();
             let newToTimeDevice = moment(endDate.toISOString()).unix();
             let isSelectedShiftChange = this.props.globalShiftFilter.selectedShift != prevProps.globalDateFilter.selectedShift;
-            console.log("isSelectedShiftChange: ", isSelectedShiftChange);
             if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice) {
                 this.fromTimeDevice = newFromTimeDevice;
                 this.toTimedevice = newToTimeDevice;
@@ -115,9 +164,7 @@ class TemperatureTrendItem extends Component {
                         if (response.data.success) {
                             let dataArray = response.data.data;
                             let displayData = '';
-                            console.log("dataArray: ", dataArray);
                             if (dataArray[0].data) {
-                                console.log("hehehe");
                                 displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
                             }
                             this.graph.updateOptions(
@@ -132,7 +179,6 @@ class TemperatureTrendItem extends Component {
                     .catch((err) => console.log('err:', err, "stationId: ", stationId));
             } else if (isSelectedShiftChange) {
                 let selectedShift = this.specifySelectedShiftNo();
-                console.log("selectedShift", selectedShift);
                 this.fromTimeDevice = newFromTimeDevice;
                 this.toTimedevice = newToTimeDevice;
                 let param = {
@@ -191,13 +237,14 @@ class TemperatureTrendItem extends Component {
         let {startDate, endDate} = this.props.globalDateFilter;
         this.fromTimeDevice = moment(startDate.toISOString()).unix();
         this.toTimedevice = moment(endDate.toISOString()).unix();
+        let selectedShift = this.specifySelectedShiftNo();
         let param = {
             "idStation": stationId,
             /*"from_timedevice": this.fromTimeDevice,
             "to_timedevice": this.toTimedevice*/
             "from_timedevice": 0,
             "to_timedevice": 0,
-            "shiftno": 0
+            "shiftno": selectedShift
         };
 
         let displayData = "X\n";
@@ -213,6 +260,7 @@ class TemperatureTrendItem extends Component {
                 height: 200,
                 labels: this.labelArray,
                 colors: this.colorArray,
+                series: this.seriesOptions,
                 axes: {
                     x: {
                         drawGrid: false,
@@ -242,6 +290,7 @@ class TemperatureTrendItem extends Component {
                     this.graph.updateOptions(
                         {
                             'file': displayData,
+                            strokeWidth: '20px',
                         },
                     );
                     this.setState({loading: false});

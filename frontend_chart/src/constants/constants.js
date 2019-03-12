@@ -48,7 +48,7 @@ export const MODEL_NAMES = new Map([    // initial data
 ]);
 
 // Shift
-export const SHIFT_DESCRIPTIONS = ['All Shifts', 'Shift 1', 'Shift 2', 'Shift 3'];
+export const SHIFT_OPTIONS = ['All Shifts', 'Shift 1', 'Shift 2', 'Shift 3'];
 
 // Defect Name
 export const IP_DEFECT_NAME = [

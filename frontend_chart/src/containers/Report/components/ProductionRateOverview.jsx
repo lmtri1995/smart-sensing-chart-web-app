@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
 import {connect} from "react-redux";
-import {SHIFT_DESCRIPTIONS} from "../../../constants/constants";
+import {SHIFT_OPTIONS} from "../../../constants/constants";
 
 // Keep a copy of original Production Rate Data Array received from Server
 // To use when filtering data by shift
@@ -27,7 +27,7 @@ class ProductionRateOverview extends Component {
                 PRODUCTION_RATE_FOR_DOUGHNUT_CHART = tempProductionRate.slice();
             }
             // Selected option is NOT All Shifts
-            if (this.props.globalShiftFilter.selectedShift !== SHIFT_DESCRIPTIONS[0]) {
+            if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
                 tempProductionRate.length = 0;  // Empty Array
 
                 PRODUCTION_RATE_FOR_DOUGHNUT_CHART.forEach((element) => {

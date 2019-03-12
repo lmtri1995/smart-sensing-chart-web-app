@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import MixedLineBarChart from "../../Charts/ChartJS/components/MixedLineBarChart";
 import {connect} from "react-redux";
-import {SHIFT_DESCRIPTIONS} from "../../../constants/constants";
+import {SHIFT_OPTIONS} from "../../../constants/constants";
 
 // Keep a copy of original Production Rate Data Array received from Server
 // To use when filtering data by shift
@@ -37,7 +37,7 @@ class ProductionRate extends Component {
                 PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = tempProductionRate.slice();
             }
             // Selected option is Not All Shifts
-            if (this.props.globalShiftFilter.selectedShift !== SHIFT_DESCRIPTIONS[0]) {
+            if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
                 tempProductionRate.length = 0;  // Empty Array
 
                 let averageProductionRate = 0, averageProductionRatesByDay = [];

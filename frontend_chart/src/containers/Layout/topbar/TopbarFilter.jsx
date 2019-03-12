@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {ExportType, MODEL_NAMES, ROUTE, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
+import {ExportType, MODEL_NAMES, ROUTE, SHIFT_OPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
 import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
@@ -14,10 +14,10 @@ class TopbarFilter extends Component {
         super(props);
 
         let selectedShifts = new Map([
-            [SHIFT_DESCRIPTIONS[0], false],
-            [SHIFT_DESCRIPTIONS[1], false],
-            [SHIFT_DESCRIPTIONS[2], false],
-            [SHIFT_DESCRIPTIONS[3], false],
+            [SHIFT_OPTIONS[0], false],
+            [SHIFT_OPTIONS[1], false],
+            [SHIFT_OPTIONS[2], false],
+            [SHIFT_OPTIONS[3], false],
         ]);
 
         selectedShifts.forEach((value, key, map) => {
@@ -222,7 +222,7 @@ class TopbarFilter extends Component {
                                                   className="topbar__menu-wrap">
                                             <ListGroup>
                                                 {
-                                                    SHIFT_DESCRIPTIONS.map((shift, index) => {
+                                                    SHIFT_OPTIONS.map((shift, index) => {
                                                         let shiftClassName = 'list-item__unchecked';
                                                         if (this.state.selectedShifts.get(shift)) {
                                                             shiftClassName = 'list-item__checked';

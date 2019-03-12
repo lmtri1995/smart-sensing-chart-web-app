@@ -8,7 +8,7 @@ import API from "../../services/api";
 import moment from "moment";
 import {GlobalFilterProps} from "../../shared/prop-types/ReducerProps";
 import {connect} from "react-redux";
-import {IP_DEFECT_NAME, OS_DEFECT_NAME, SHIFT_DESCRIPTIONS} from "../../constants/constants";
+import {IP_DEFECT_NAME, OS_DEFECT_NAME, SHIFT_OPTIONS} from "../../constants/constants";
 
 class ReportPage extends Component {
     static propTypes = {
@@ -166,7 +166,7 @@ class ReportPage extends Component {
                         if (i < 4) {
                             dataToShow.push(
                                 {
-                                    label: SHIFT_DESCRIPTIONS[i],
+                                    label: SHIFT_OPTIONS[i],
                                     backgroundColor: colors[i - 1],
                                     data: eval(`shift${i}`)
                                 }

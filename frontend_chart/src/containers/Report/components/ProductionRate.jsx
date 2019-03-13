@@ -7,9 +7,39 @@ import {SHIFT_OPTIONS} from "../../../constants/constants";
 // To use when filtering data by shift
 var PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = [];
 
+// Keep a copy of original Actual Production Data Array received from Server
+// To use when filtering data by shift
+var ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = [];
+
 class ProductionRate extends Component {
     render() {
         let {labels, productionRate, actualProduction} = this.props;
+        let tempActualProduction = [];
+        if (actualProduction) {
+            tempActualProduction = actualProduction.slice();
+        }
+        // Update Actual Production on tooltips of the chart after applying Shift Filter
+        if (tempActualProduction.length > 0) {
+            if (tempActualProduction.length >= ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART.length) {
+                ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = tempActualProduction.slice();
+            }
+            // Selected option is Not All Shifts
+            if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
+                tempActualProduction.length = 0;
+
+                switch (this.props.globalShiftFilter.selectedShift) {
+                    case SHIFT_OPTIONS[1]:
+                        tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[0]);
+                        break;
+                    case SHIFT_OPTIONS[2]:
+                        tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[1]);
+                        break;
+                    case SHIFT_OPTIONS[3]:
+                        tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[2]);
+                        break;
+                }
+            }
+        }
         let customChartTooltips = {
             callbacks: {
                 label: function (tooltipItem, data) {
@@ -21,7 +51,13 @@ class ProductionRate extends Component {
                     return label;
                 },
                 afterLabel: function (tooltipItem, data) {
-                    return `Actual Production: ${actualProduction[tooltipItem.datasetIndex][tooltipItem.index]}`;
+                    let label = 'Actual Production: ';
+                    if (tempActualProduction.length > 0) {
+                        label += tempActualProduction[tooltipItem.datasetIndex][tooltipItem.index];
+                    } else {
+                        label += 'N/A';
+                    }
+                    return label;
                 },
             }
         };
@@ -35,7 +71,7 @@ class ProductionRate extends Component {
         }
 
         // Update chart data after applying Shift Filter
-        if (tempProductionRate) {
+        if (tempProductionRate.length > 0) {
             if (tempProductionRate.length >= PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.length) {
                 PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = tempProductionRate.slice();
             }

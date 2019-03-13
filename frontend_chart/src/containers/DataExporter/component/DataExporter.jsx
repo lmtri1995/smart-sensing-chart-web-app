@@ -34,15 +34,22 @@ class DataExporter extends Component {
 
     exportExcelFile(props, location) {
         let fileName = '';
-        let processStatusData = null;
+        let stationStatusData = null, shiftStatusData= null,
+            processStatusData = null, downTimeShiftData = null;
         switch (location.pathname) {
             case ROUTE.Dashboard:
                 fileName = 'Dashboard';
+                stationStatusData = props.downloadDataStore.stationStatusData;
+                shiftStatusData = props.downloadDataStore.shiftStatusData;
                 processStatusData = props.downloadDataStore.processStatusData;
+                downTimeShiftData = props.downloadDataStore.downTimeShiftData;
                 break;
             case ROUTE.Analysis:
                 fileName = 'Analysis';
+                stationStatusData = props.downloadDataStore.stationStatusData;
+                shiftStatusData = props.downloadDataStore.shiftStatusData;
                 processStatusData = props.downloadDataStore.processStatusData;
+                downTimeShiftData = props.downloadDataStore.downTimeShiftData;
                 break;
             case ROUTE.Report:
                 fileName = 'Report';
@@ -56,11 +63,25 @@ class DataExporter extends Component {
         workbook.created = new Date();
         workbook.modified = new Date();
 
+        // Add Station Status Data Worksheet
+        if (stationStatusData) {
+            addStationStatusDataTableExcel(workbook, stationStatusData);
+        }
+        // Add Shift Status Data Worksheet
+        if (shiftStatusData) {
+            addShiftStatusDataTableExcel(workbook, shiftStatusData);
+        }
         // Add Process Status Data Worksheet
         if (processStatusData) {
             let {processingStatusLine, general} = processStatusData;
             addProcessStatusDataTableExcel(workbook, processingStatusLine, general);
-        } else {
+        }
+        // Add Down Time Shift Data Worksheet
+        if (downTimeShiftData) {
+            addDownTimeShiftDataTableExcel(workbook, downTimeShiftData);
+        }
+
+        if (!stationStatusData && !shiftStatusData && !processStatusData && !downTimeShiftData) {
             workbook.addWorksheet('Empty Sheet');
         }
 
@@ -311,6 +332,118 @@ class DataExporter extends Component {
     }
 }
 
+function addStationStatusDataTableExcel(workbook, stationStatusData) {
+    // Add new Worksheet
+    let worksheet = workbook.addWorksheet('Station_Status_Data');
+
+    let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+
+    worksheet.mergeCells('A1:C1');
+    worksheet.getCell('A1').value = "STATION STATUS";
+
+    worksheet.getCell('A2').value = "STATION";
+    worksheet.getCell('B2').value = "STATUS";
+
+    worksheet.getColumn(3).width = 14;
+    worksheet.getCell('C2').value = "TIME";
+
+    for (let row = 1; row <= 2 + stationStatusData.length; ++row) {
+
+        let currentRow = worksheet.getRow(row);
+
+        for (let col = 1; col <= 3; ++col) {
+            currentRow.getCell(col).border = {
+                top: row === 1 ? {style: 'thick'} : {style: 'thin'},
+                left: col === 1 ? {style: 'thick'} : {style: 'thin'},
+                bottom: row === 2 + stationStatusData.length ? {style: 'thick'} : {style: 'thin'},
+                right: col === 3 ? {style: 'thick'} : {style: 'thin'}
+            };
+            currentRow.getCell(col).alignment = middleCenterAlignment;
+
+            if (row < 3 || col === 1) {
+                currentRow.getCell(col).font = {
+                    bold: true
+                }
+            }
+        }
+    }
+
+    let startRow = 3;
+    stationStatusData.forEach((stationData, index) => {
+        let currentRow = worksheet.getRow((startRow + index));
+        stationData.forEach((value, index) => {
+            if (index === 1) {
+                currentRow.getCell(index + 1).value = value === 1 ? 'On' : 'Off';
+            } else {
+                currentRow.getCell(index + 1).value = value;
+            }
+        })
+    });
+}
+
+function addShiftStatusDataTableExcel(workbook, shiftStatusData) {
+    // Add new Worksheet
+    let worksheet = workbook.addWorksheet('Shift_Status_Data');
+
+    let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+    let middleRightAlignment = {vertical: 'middle', horizontal: 'right'};
+
+    worksheet.mergeCells('A1:J1');
+    worksheet.getCell('A1').value = "SHIFT STATUS";
+
+    worksheet.mergeCells('A2:A3');
+    worksheet.getCell('A2').value = "SHIFT NO.";
+
+    worksheet.mergeCells('B2:I2');
+    worksheet.getCell('B2').value = "STATION";
+
+    worksheet.mergeCells('J2:J3');
+    worksheet.getCell('J2').value = "TOTAL";
+
+    for (let col = 1; col <= 1 + shiftStatusData[0].length; ++col) {
+        worksheet.getColumn(col).width = 14
+    }
+
+    for (let row = 1; row <= 3 + shiftStatusData.length; ++row) {
+        let currentRow = worksheet.getRow(row);
+
+        for (let col = 1; col <= 1 + shiftStatusData[0].length; ++col) {
+            currentRow.getCell(col).border = {
+                top: row === 1 ? {style: 'thick'} : {style: 'thin'},
+                left: col === 1 ? {style: 'thick'} : {style: 'thin'},
+                bottom: row === 3 + shiftStatusData.length ? {style: 'thick'} : {style: 'thin'},
+                right: col === 1 + shiftStatusData[0].length ? {style: 'thick'} : {style: 'thin'}
+            };
+
+            if (row > 3 && col > 1) {
+                currentRow.getCell(col).alignment = middleRightAlignment;
+            } else {
+                currentRow.getCell(col).alignment = middleCenterAlignment;
+            }
+
+            if (row < 4 || col === 1 || col === 1 + shiftStatusData[0].length) {
+                currentRow.getCell(col).font = {
+                    bold: true
+                }
+            }
+        }
+    }
+
+    for (let col = 2; col <= shiftStatusData[0].length; ++col) {
+        worksheet.getRow(3).getCell(col).value = col - 1;
+    }
+    for (let row = 4; row <= 3 + shiftStatusData.length; ++row) {
+        worksheet.getRow(row).getCell(1).value = row - 3;
+    }
+
+    shiftStatusData.forEach((shiftData, index) => {
+        let currentRow = worksheet.getRow(4 + index);
+        shiftData.forEach((value, index) => {
+            currentRow.getCell(1 + index + 1).value = value;
+        })
+    });
+}
+
 function addProcessStatusDataTableExcel(workbook, processingStatusLine, general) {
     // Add new Worksheet
     let worksheet = workbook.addWorksheet('Process_Status_Data');
@@ -318,6 +451,7 @@ function addProcessStatusDataTableExcel(workbook, processingStatusLine, general)
     // ---------- Draw borders and define text alignments for every cell of the table ----------
     let middleLeftAlignment = {vertical: 'middle', horizontal: 'left'};
     let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+    let middleRightAlignment = {vertical: 'middle', horizontal: 'right'};
     // 2: 2 first rows for Processing Status section
     // processingStatusLine.length: number of stations
     // 6: 6 rows for Total section
@@ -335,6 +469,9 @@ function addProcessStatusDataTableExcel(workbook, processingStatusLine, general)
             // Station [num] cells in column A => middle left alignment
             if (row >= 3 && row <= 2 + processingStatusLine.length && col === 1) {
                 currentRow.getCell(col).alignment = middleLeftAlignment;
+            } else if (col > 1 && row >= 3 && row <= 2 + processingStatusLine.length
+                || col > 1 && row > 2 + processingStatusLine.length + 2) {
+                currentRow.getCell(col).alignment = middleRightAlignment;
             } else {
                 currentRow.getCell(col).alignment = middleCenterAlignment;
             }
@@ -431,6 +568,70 @@ function addProcessStatusDataTableExcel(workbook, processingStatusLine, general)
         worksheet.getCell(`E${startTotalSectionRow + (2 + index)}`).value = generalData[3].toString();
         worksheet.getCell(`F${startTotalSectionRow + (2 + index)}`).value = generalData[4].toString();
         worksheet.getCell(`G${startTotalSectionRow + (2 + index)}`).value = generalData[5].toString();
+    });
+}
+
+function addDownTimeShiftDataTableExcel(workbook, downTimeShiftData) {
+    // Add new Worksheet
+    let worksheet = workbook.addWorksheet('Down_Time_Shift_Data');
+
+    let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+    let middleRightAlignment = {vertical: 'middle', horizontal: 'right'};
+
+    worksheet.mergeCells('A1:J1');
+    worksheet.getCell('A1').value = "DOWN TIME BY SHIFT";
+
+    worksheet.mergeCells('A2:A3');
+    worksheet.getCell('A2').value = "SHIFT NO.";
+
+    worksheet.mergeCells('B2:I2');
+    worksheet.getCell('B2').value = "STATION";
+
+    worksheet.mergeCells('J2:J3');
+    worksheet.getCell('J2').value = "TOTAL";
+
+    for (let col = 1; col <= 1 + downTimeShiftData[0].length; ++col) {
+        worksheet.getColumn(col).width = 14
+    }
+
+    for (let row = 1; row <= 3 + downTimeShiftData.length; ++row) {
+
+        let currentRow = worksheet.getRow(row);
+
+        for (let col = 1; col <= 1 + downTimeShiftData[0].length; ++col) {
+            currentRow.getCell(col).border = {
+                top: row === 1 ? {style: 'thick'} : {style: 'thin'},
+                left: col === 1 ? {style: 'thick'} : {style: 'thin'},
+                bottom: row === 3 + downTimeShiftData.length ? {style: 'thick'} : {style: 'thin'},
+                right: col === 1 + downTimeShiftData[0].length ? {style: 'thick'} : {style: 'thin'}
+            };
+
+            if (row > 3 && col > 1) {
+                currentRow.getCell(col).alignment = middleRightAlignment;
+            } else {
+                currentRow.getCell(col).alignment = middleCenterAlignment;
+            }
+
+            if (row < 4 || col === 1 || col === 1 + downTimeShiftData[0].length) {
+                currentRow.getCell(col).font = {
+                    bold: true
+                }
+            }
+        }
+    }
+
+    for (let col = 2; col <= downTimeShiftData[0].length; ++col) {
+        worksheet.getRow(3).getCell(col).value = col - 1;
+    }
+    for (let row = 4; row <= 3 + downTimeShiftData.length; ++row) {
+        worksheet.getRow(row).getCell(1).value = row - 3;
+    }
+
+    downTimeShiftData.forEach((shiftData, index) => {
+        let currentRow = worksheet.getRow(4 + index);
+        shiftData.forEach((value, index) => {
+            currentRow.getCell(1 + index + 1).value = value;
+        })
     });
 }
 

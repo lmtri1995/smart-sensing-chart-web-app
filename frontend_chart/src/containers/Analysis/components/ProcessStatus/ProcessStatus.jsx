@@ -405,17 +405,17 @@ class ProcessStatus extends Component {
 
                 processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idLine']);
                 processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idStation']);
-                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['temp_avg']);
-                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['temp_stdev']);
-                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['pre_avg']);
-                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['pre_stdev']);
-                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['cur_avg']);
-                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['cur_stdev']);
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['temp_avg'], "°C"));
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevTemperatureArray[i], "°C"));
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['pre_avg']));
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevPreparingTimeArray[i]));
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['cur_avg']));
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevCuringTimeArray[i]));
             }
             processStatusDataToDownload.general = [
-                [this.roundNumber(avgAvgTemp), this.roundNumber(avgStddevTemp), this.roundNumber(avgAvgPrep), this.roundNumber(avgStddevPrep), this.roundNumber(avgAvgCuringTime), this.roundNumber(avgStddevCurringTime)],
-                [this.roundNumber(maxAvgTemp), this.roundNumber(maxStddevTemp), this.roundNumber(maxAvgPrep), this.roundNumber(maxStddevPrep), this.roundNumber(maxAvgCuringTime), this.roundNumber(maxStddevCurringTime)],
-                [this.roundNumber(minAvgTemp), this.roundNumber(minStddevTemp), this.roundNumber(minAvgPrep), this.roundNumber(minStddevPrep), this.roundNumber(minAvgCuringTime), this.roundNumber(minStddevCurringTime)],
+                [changeNumberFormat(avgAvgTemp, "°C"), changeNumberFormat(avgStddevTemp, "°C"), changeNumberFormat(avgAvgPrep), changeNumberFormat(avgStddevPrep), changeNumberFormat(avgAvgCuringTime), changeNumberFormat(avgStddevCurringTime)],
+                [changeNumberFormat(maxAvgTemp, "°C"), changeNumberFormat(maxStddevTemp, "°C"), changeNumberFormat(maxAvgPrep), changeNumberFormat(maxStddevPrep), changeNumberFormat(maxAvgCuringTime), changeNumberFormat(maxStddevCurringTime)],
+                [changeNumberFormat(minAvgTemp, "°C"), changeNumberFormat(minStddevTemp, "°C"), changeNumberFormat(minAvgPrep), changeNumberFormat(minStddevPrep), changeNumberFormat(minAvgCuringTime), changeNumberFormat(minStddevCurringTime)],
                 ["-", "-", "-", "-", "-", "-"],
             ];
             // Push Process Status Data to Redux Store to Export Data later

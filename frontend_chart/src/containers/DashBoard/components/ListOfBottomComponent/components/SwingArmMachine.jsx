@@ -141,6 +141,9 @@ export class SwingArmMachine extends Component {
                     //Make sure that the length is more than 15
                     let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
                     let displayDatasets = returnData[0];
+                    if (displayDatasets.length < 1){
+                        displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    }
                     console.log("displayDatasets: ", displayDatasets, "typeof: ", typeof (displayDatasets));
                     this.myChart.data = {
                         labels: displayLabels,

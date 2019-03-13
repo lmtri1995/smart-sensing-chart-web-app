@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
 import {connect} from "react-redux";
 import {SHIFT_OPTIONS} from "../../../constants/constants";
+import * as Utilities from "../../../shared/utils/Utilities";
 
 // Keep a copy of original Production Rate Data Array received from Server
 // To use when filtering data by shift
@@ -26,6 +27,7 @@ class ProductionRateOverview extends Component {
             tempActualProduction = actualProduction.slice();
         }
 
+        let customChartTooltips;
         // Update chart data after applying Shift Filter
         if (tempProductionRate && tempActualProduction) {
             if (tempProductionRate.length >= PRODUCTION_RATE_FOR_DOUGHNUT_CHART.length) {
@@ -73,6 +75,27 @@ class ProductionRateOverview extends Component {
                     (acc, curVal) => acc + curVal, 0
                 ).toString();
             }
+            customChartTooltips = {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        let label = 'Actual: ';
+
+                        let sumActualProduction = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        if (sumActualProduction) {
+                            label += Utilities.changeNumberFormat(sumActualProduction);
+
+                            let percentage = Utilities.changeNumberFormat(
+                                (sumActualProduction / +(totalActualProductionText)) * 100
+                            );
+                            label += ` (${percentage}%)`;
+                        } else {
+                            label += 'N/A';
+                        }
+
+                        return label;
+                    },
+                }
+            };
         }
 
         let chartData = [{
@@ -85,7 +108,7 @@ class ProductionRateOverview extends Component {
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
                     <DoughnutChart labels={chartLabels} data={chartData} centerText={totalActualProductionText}
-                                   showLegend={true} loading={loading}/>
+                                   customTooltips={customChartTooltips} showLegend={true} loading={loading}/>
                 </div>
             </div>
         )

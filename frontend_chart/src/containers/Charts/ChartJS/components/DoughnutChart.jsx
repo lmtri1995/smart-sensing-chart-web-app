@@ -142,7 +142,7 @@ export default class DoughnutChart extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
-            let {labels, data, centerText, showLegend, loading} = this.props;
+            let {labels, data, centerText, customTooltips, showLegend} = this.props;
             if (labels && data && this.canvas) {
                 this.myChart.data = {
                     labels: labels,
@@ -153,6 +153,10 @@ export default class DoughnutChart extends Component {
 
                 if (centerText) {
                     this.myChart.options.elements.center.text = centerText;
+                }
+
+                if (customTooltips) {
+                    this.myChart.options.tooltips = customTooltips;
                 }
 
                 this.myChart.update();

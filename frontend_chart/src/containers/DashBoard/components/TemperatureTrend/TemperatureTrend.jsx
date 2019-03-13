@@ -387,7 +387,7 @@ export default class TemperatureTrend extends Component {
                                     <DropdownItem onClick={this.changeTempTime} dropdownvalue="60">1
                                         Hour</DropdownItem>
                                     <DropdownItem onClick={this.changeTempTime} dropdownvalue="180">3
-                                        Hour</DropdownItem>
+                                        Hours</DropdownItem>
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </ButtonGroup>

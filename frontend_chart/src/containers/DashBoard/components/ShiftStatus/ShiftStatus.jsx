@@ -3,6 +3,7 @@ import ShiftStatusItem from './components/ShiftStatusItem';
 import moment from "moment";
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
+import {specifyCurrentShift} from "../../../../shared/utils/Utilities";
 
 const override = `
     position: absolute;
@@ -111,37 +112,6 @@ export default class ShiftStatus extends Component {
 
     }
 
-    specifyCurrentShift() {
-        let today = new Date();
-        let dd = today.getDate();
-        let mm = today.getMonth();
-        let yyyy = today.getFullYear();
-        let hour = today.getHours();
-        let minute = today.getMinutes();
-        let second = today.getSeconds();
-        //shift 1: 6:00 am - 2:00 pm
-        //shift 2: 2:00 am - 20:00 pm
-        //shift 3: 20:00 pm - 6:00 am
-        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
-        let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
-        let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
-        let shift2From = shift1To;
-        let shift2To = moment.utc([yyyy, mm, dd, 22, 0, 0]).unix();
-        let shift3From = shift2To;
-        let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
-
-        let result = 0;
-        if (currentTime >= shift1From && currentTime < shift1To) {
-            result = 1;
-        } else if (currentTime >= shift2From && currentTime < shift2To) {
-            result = 2;
-        } else if (currentTime >= shift3From && currentTime < shift3To) {
-            result = 3;
-        }
-
-        return result;
-    }
-
     showShiftItem(dataArray, shiftNo, currentShift) {
         let result = "";
         if (dataArray.length > 7) {
@@ -211,7 +181,7 @@ export default class ShiftStatus extends Component {
 
     showShiftTable(dataArray) {
         let result = '';
-        let currentShift = this.specifyCurrentShift();
+        let currentShift = specifyCurrentShift();
         let shift1 = this.showShiftItem(dataArray, 1, currentShift);
         let shift2 = this.showShiftItem(dataArray, 2, currentShift);
         let shift3 = this.showShiftItem(dataArray, 3, currentShift);

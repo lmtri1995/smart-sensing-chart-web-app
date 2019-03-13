@@ -46,6 +46,20 @@ const options = {
             },
         ],
     },
+    tooltips: {
+        callbacks: {
+            label: function (tooltipItem, data) {
+                var value = data.datasets[0].data[tooltipItem.index];
+                var label = data.labels[tooltipItem.index];
+
+                if (value === 0.5) {
+                    value = 0;
+                }
+
+                return label + ': ' + value;
+            }
+        }
+    }
 };
 
 const override = `
@@ -141,10 +155,17 @@ export class SwingArmMachine extends Component {
                     //Make sure that the length is more than 15
                     let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
                     let displayDatasets = returnData[0];
-                    if (displayDatasets.length < 1){
-                        displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    console.log("displayDatasets: ", displayDatasets);
+
+                    if (displayDatasets.length < 1) {
+                        displayDatasets = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
                     }
-                    console.log("displayDatasets: ", displayDatasets, "typeof: ", typeof (displayDatasets));
+                    for (let i = 0; i < displayDatasets.length; i++) {
+                        if (!displayDatasets[i] || displayDatasets[i] == 0) {
+                            displayDatasets[i] = 0.5;
+                        }
+                    }
+                    console.log("displayDatasets: ", displayDatasets);
                     this.myChart.data = {
                         labels: displayLabels,
                         datasets: [{

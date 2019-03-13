@@ -96,6 +96,9 @@ export default class listBottomComponent extends Component {
         //shift 1: 6:00 am - 2:00 pm
         //shift 2: 2:00 am - 22:00 pm
         //shift 3: 20:00 pm - 6:00 am
+
+        console.log("hour: ", hour);
+
         let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
         let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
@@ -104,17 +107,29 @@ export default class listBottomComponent extends Component {
         let shift3From = shift2To;
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 
+        if (hour < 6) {
+            console.log("hour < 6");
+            shift1From = moment.utc([yyyy, mm, dd - 1, 6, 0, 0]).unix();
+            shift1To = moment.utc([yyyy, mm, dd - 1, 14, 0, 0]).unix();
+            shift2From = shift1To;
+            shift2To = moment.utc([yyyy, mm, dd - 1, 22, 0, 0]).unix();
+            shift3From = shift2To;
+            shift3To = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
+        }
+
         if (currentTime >= shift1From && currentTime < shift1To) {
+            console.log("120 th1");
             workingHourShift1 = currentTime - shift1From;
             workingHourShift1 = (workingHourShift1 < 27000)?workingHourShift1:27000;
             workingHourShift2 = 0;
             workingHourShift3 = 0;
         } else if (currentTime >= shift2From && currentTime < shift2To) {
+            console.log("126 th2");
             workingHourShift1 = 27000;
             workingHourShift2 = currentTime - shift2From;
             workingHourShift2 = (workingHourShift2 < 27000)?workingHourShift2:27000;
             workingHourShift3 = 0;
-        } else if (currentTime >= shift3From && currentTime < shift3To) {
+        } else {
             workingHourShift1 = 27000;
             workingHourShift2 = 27000;
             workingHourShift3 = currentTime - shift3From;
@@ -123,17 +138,26 @@ export default class listBottomComponent extends Component {
 
         let result = [workingHourShift1, workingHourShift2, workingHourShift3];
         this.currentWorkingHour = result;
+
+        this.totalWorkingHour = 0;
+        for (let i = 0; i < this.currentWorkingHour.length; i++){
+            this.totalWorkingHour += this.currentWorkingHour[i];
+        }
     }
 
     countStandardCycleTime() {
-        let param = {};
+        let today = new Date();
+        let todayYMD = moment(today.toISOString()).format("YYYYMMDD");
+        let param = {
+            from_workdate: todayYMD,
+            to_workdate: todayYMD,
+        };
         let standardCycleTime1 = 0, standardCycleTime2 = 0, standardCycleTime3 = 0,
             standardCycleTime4 = 0,
             standardCycleTime5 = 0, standardCycleTime6 = 0, standardCycleTime7 = 0,
             standardCycleTime8 = 0;
         API(this.standardCycleTimeUrl, 'POST', param).then((response) => {
             let dataArray = response.data.data;
-
             if (dataArray && dataArray.length > 0) {
                 dataArray.map(item => {
                     //{STATION_NO: 7, STD_CURING_TM: 0, STD_TEMP: 0, STD_PREPARING_TM: 0,
@@ -166,16 +190,15 @@ export default class listBottomComponent extends Component {
                     }
                 });
             }
+            this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
+                standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
         }).catch((err) => console.log('err:', err));
-        this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
-            standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
     }
 
     handleReturnArray(dataArray){
         this.countCurrentWorkingHour();
-        for (let i = 0; i < this.currentWorkingHour.length; i++){
-            this.totalWorkingHour += this.currentWorkingHour[i];
-        }
+        console.log("185 185 185");
+        console.log("this.totalWorkingHour: ", this.totalWorkingHour);
         let stoppingHour1 = 0, productCount1 = 0, preparingTime1 = 0,
             cycleCount1 = 0, defect1 = 0,
             standardCycleTime1 = this.standardCycleTimeArray[0];
@@ -203,91 +226,99 @@ export default class listBottomComponent extends Component {
 
         if (dataArray && dataArray.length > 0) {
             dataArray.map(item => {
+                let stopping_hr = item.stopping_hr?item.stopping_hr:0;
+                let count = item.count?item.count:0;
+                /*console.log("count: ", count);
+                console.log("item: ", item);*/
+                let preparingtime = item.preparingtime?item.preparingtime:0;
+                let cycle_count = item.cycle_count?item.cycle_count:0;
+                let defect = item.defect?item.defect:0;
                 if (item.idStation == 1){
-                    stoppingHour1 += parseFloat(item.stopping_hr);
-                    productCount1 += parseInt(item.count1) + parseInt(item.count2);
-                    preparingTime1 += parseInt(item.preparingtime);
-                    cycleCount1 += parseInt(item.cycle_count);
-                    defect1 += parseInt(item.defect);
+                    stoppingHour1 += parseFloat(stopping_hr);
+                    productCount1 += parseInt(count);
+                    preparingTime1 += parseInt(preparingtime);
+                    cycleCount1 += parseInt(cycle_count);
+                    defect1 += parseInt(defect);
                 } else if (item.idStation == 2){
-                    stoppingHour2 += parseFloat(item.stopping_hr);
-                    productCount2 += parseInt(item.count);
-                    preparingTime2 += parseInt(item.preparingtime);
-                    cycleCount2 += parseInt(item.cycle_count);
-                    defect2 += parseInt(item.defect);
+                    stoppingHour2 += parseFloat(stopping_hr);
+                    productCount2 += parseInt(count);
+                    preparingTime2 += parseInt(preparingtime);
+                    cycleCount2 += parseInt(cycle_count);
+                    defect2 += parseInt(defect);
                 } else if (item.idStation == 3){
-                    stoppingHour3 += parseFloat(item.stopping_hr);
-                    productCount3 += parseInt(item.count);
-                    preparingTime3 += parseInt(item.preparingtime);
-                    cycleCount3 += parseInt(item.cycle_count);
-                    defect3 += parseInt(item.defect);
+                    stoppingHour3 += parseFloat(stopping_hr);
+                    productCount3 += parseInt(count);
+                    preparingTime3 += parseInt(preparingtime);
+                    cycleCount3 += parseInt(cycle_count);
+                    defect3 += parseInt(defect);
                 } else if (item.idStation == 4){
-                    stoppingHour4 += parseFloat(item.stopping_hr);
-                    productCount4 += parseInt(item.count);
-                    preparingTime4 += parseInt(item.preparingtime);
-                    cycleCount4 += parseInt(item.cycle_count);
-                    defect4 += parseInt(item.defect);
+                    stoppingHour4 += parseFloat(stopping_hr);
+                    productCount4 += parseInt(count);
+                    preparingTime4 += parseInt(preparingtime);
+                    cycleCount4 += parseInt(cycle_count);
+                    defect4 += parseInt(defect);
                 } else if (item.idStation == 5){
-                    stoppingHour5 += parseFloat(item.stopping_hr);
-                    productCount5 += parseInt(item.count);
-                    preparingTime5 += parseInt(item.preparingtime);
-                    cycleCount5 += parseInt(item.cycle_count);
-                    defect5 += parseInt(item.defect);
+                    stoppingHour5 += parseFloat(stopping_hr);
+                    productCount5 += parseInt(count);
+                    preparingTime5 += parseInt(preparingtime);
+                    cycleCount5 += parseInt(cycle_count);
+                    defect5 += parseInt(defect);
                 } else if (item.idStation == 6){
-                    stoppingHour6 += parseFloat(item.stopping_hr);
-                    productCount6 += parseInt(item.count);
-                    preparingTime6 += parseInt(item.preparingtime);
-                    cycleCount6 += parseInt(item.cycle_count);
-                    defect6 += parseInt(item.defect);
+                    stoppingHour6 += parseFloat(stopping_hr);
+                    productCount6 += parseInt(count);
+                    preparingTime6 += parseInt(preparingtime);
+                    cycleCount6 += parseInt(cycle_count);
+                    defect6 += parseInt(defect);
                 } else if (item.idStation == 7){
-                    stoppingHour7 += parseFloat(item.stopping_hr);
-                    productCount7 += parseInt(item.count);
-                    preparingTime7 += parseInt(item.preparingtime);
-                    cycleCount7 += parseInt(item.cycle_count);
-                    defect7 += parseInt(item.defect);
+                    stoppingHour7 += parseFloat(stopping_hr);
+                    productCount7 += parseInt(count);
+                    preparingTime7 += parseInt(preparingtime);
+                    cycleCount7 += parseInt(cycle_count);
+                    defect7 += parseInt(defect);
                 } else if (item.idStation == 8){
-                    stoppingHour8 += parseFloat(item.stopping_hr);
-                    productCount8 += parseInt(item.count);
-                    preparingTime8 += parseInt(item.preparingtime);
-                    cycleCount8 += parseInt(item.cycle_count);
-                    defect8 += parseInt(item.defect);
+                    stoppingHour8 += parseFloat(stopping_hr);
+                    productCount8 += parseInt(count);
+                    preparingTime8 += parseInt(preparingtime);
+                    cycleCount8 += parseInt(cycle_count);
+                    defect8 += parseInt(defect);
                 }
             });
         }
 
         let availability1 = (this.totalWorkingHour - stoppingHour1)/this.totalWorkingHour * 100,
-            performance1 = (standardCycleTime1 * productCount1)/(this.totalWorkingHour - stoppingHour1) * 100,
+            performance1 = (standardCycleTime1 * productCount1)/((this.totalWorkingHour - stoppingHour1) * 8) * 100,
             quality1 = (productCount1 - defect1)/productCount1 * 100,
             OEE1 = availability1 * performance1 * quality1,
             workLost1 = preparingTime1 / (standardCycleTime1 * cycleCount1) * 100;
+        console.log("standardCycleTime1: ", standardCycleTime1, " productCount1: ", productCount1, "this.totalWorkingHour: ", this.totalWorkingHour, " stoppingHour1: ", stoppingHour1);
 
         let availability2 = (this.totalWorkingHour - stoppingHour2)/this.totalWorkingHour * 100,
-            performance2 = (standardCycleTime2 * productCount2)/(this.totalWorkingHour - stoppingHour2) * 100,
+            performance2 = (standardCycleTime2 * productCount2)/((this.totalWorkingHour - stoppingHour2) * 8) * 100,
             quality2 = (productCount2 - defect2)/productCount2 * 100,
             OEE2 = availability2 * performance2 * quality2,
             workLost2 = preparingTime2 / (standardCycleTime2 * cycleCount2) * 100;
 
         let availability3 = (this.totalWorkingHour - stoppingHour3)/this.totalWorkingHour * 100,
-            performance3 = (standardCycleTime3 * productCount3)/(this.totalWorkingHour - stoppingHour3) * 100,
+            performance3 = (standardCycleTime3 * productCount3)/((this.totalWorkingHour - stoppingHour3) * 8) * 100,
             quality3 = (productCount3 - defect3)/productCount3 * 100,
             OEE3 = availability3 * performance3 * quality3,
             workLost3 = preparingTime3 / (standardCycleTime3 * cycleCount3) * 100;
 
 
         let availability4 = (this.totalWorkingHour - stoppingHour4)/this.totalWorkingHour * 100,
-            performance4 = (standardCycleTime4 * productCount4)/(this.totalWorkingHour - stoppingHour4) * 100,
+            performance4 = (standardCycleTime4 * productCount4)/((this.totalWorkingHour - stoppingHour4) * 8) * 100,
             quality4 = (productCount4 - defect4)/productCount4 * 100,
             OEE4 = availability4 * performance4 * quality4,
             workLost4 = preparingTime4 / (standardCycleTime4 * cycleCount4) * 100;
 
         let availability5 = (this.totalWorkingHour - stoppingHour5)/this.totalWorkingHour * 100,
-            performance5 = (standardCycleTime5 * productCount5)/(this.totalWorkingHour - stoppingHour5) * 100,
+            performance5 = (standardCycleTime5 * productCount5)/((this.totalWorkingHour - stoppingHour5) * 8) * 100,
             quality5 = (productCount5 - defect5)/productCount5 * 100,
             OEE5 = availability5 * performance5 * quality5,
             workLost5 = preparingTime5 / (standardCycleTime5 * cycleCount5) * 100;
 
         let availability6 = (this.totalWorkingHour - stoppingHour6)/this.totalWorkingHour * 100,
-            performance6 = (standardCycleTime6 * productCount6)/(this.totalWorkingHour - stoppingHour6) * 100,
+            performance6 = (standardCycleTime6 * productCount6)/((this.totalWorkingHour - stoppingHour6) * 8) * 100,
             quality6 = (productCount6 - defect6)/productCount6 * 100,
             OEE6 = availability6 * performance6 * quality6,
             workLost6 = preparingTime6 / (standardCycleTime6 * cycleCount6) * 100;
@@ -299,10 +330,18 @@ export default class listBottomComponent extends Component {
             workLost7 = preparingTime7 / (standardCycleTime7 * cycleCount7) * 100;
 
         let availability8 = (this.totalWorkingHour - stoppingHour8)/this.totalWorkingHour * 100,
-            performance8 = (standardCycleTime8 * productCount8)/(this.totalWorkingHour - stoppingHour8) * 100,
+            performance8 = (standardCycleTime8 * productCount8)/((this.totalWorkingHour - stoppingHour8) * 8) * 100,
             quality8 = (productCount8 - defect8)/productCount8 * 100,
             OEE8 = availability8 * performance8 * quality8,
             workLost8 = preparingTime8 / (standardCycleTime8 * cycleCount8) * 100;
+        console.log("performance1:",performance1);
+        console.log("performance2:",performance2);
+        console.log("performance3:",performance3);
+        console.log("performance4:",performance4);
+        console.log("performance5:",performance5);
+        console.log("performance6:",performance6);
+        console.log("performance7:",performance7);
+        console.log("performance8:",performance8);
 
         let summaryArray = [
             [availability1, performance1, quality1, OEE1, workLost1],
@@ -341,6 +380,11 @@ export default class listBottomComponent extends Component {
                 let returnData = JSON.parse(response.trim());
                 if (returnData.success) {
                     let data = returnData.data;
+                    console.log("264 264");
+                    console.log("264 264");
+                    console.log("264 264");
+                    console.log("264 264");
+                    console.log("data: ", data);
                     let summaryArray = this.handleReturnArray(data);
 
                     let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
@@ -353,7 +397,7 @@ export default class listBottomComponent extends Component {
                     });
                     this.setState({
                         availabilityNumber: Math.round(availability/8 * 100)/100,
-                        performanceNumber: Math.round(performance/8 * 100)/100,
+                        performanceNumber: Math.round(performance * 100)/100,
                         qualityNumber: Math.round(quality/8 * 100)/100,
                         OEENumber: Math.round(OEE/8 * 100)/100,
                         workLossNumber: Math.round(workLost/8 * 100)/100,

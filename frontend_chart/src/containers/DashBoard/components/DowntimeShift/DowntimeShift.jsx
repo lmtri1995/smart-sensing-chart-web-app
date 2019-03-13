@@ -3,6 +3,7 @@ import DowntimeShiftItem from './components/DowntimeShiftItem';
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
 import {ClipLoader} from 'react-spinners';
+import {specifyCurrentShift} from "../../../../shared/utils/Utilities";
 
 const override = `
     position: absolute;
@@ -133,12 +134,13 @@ export default class DowntimeShift extends Component {
         let shift3From = shift2To;
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 
+
         let result = 0;
         if (currentTime >= shift1From && currentTime < shift1To) {
             result = 1;
         } else if (currentTime >= shift2From && currentTime < shift2To) {
             result = 2;
-        } else if (currentTime >= shift3From && currentTime < shift3To) {
+        } else {
             result = 3;
         }
 
@@ -256,7 +258,7 @@ export default class DowntimeShift extends Component {
 
     showDowntimeShiftTable(dataArray) {
         let result = '';
-        let currentShift = this.specifyCurrentShift();
+        let currentShift = specifyCurrentShift();
         let processData = this.handleData(dataArray);
         let shift1 = this.showDowntimeShiftItem(processData, 1, currentShift);
         let shift2 = this.showDowntimeShiftItem(processData, 2, currentShift);

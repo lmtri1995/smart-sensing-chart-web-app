@@ -218,6 +218,7 @@ class ProcessStatus extends Component {
                 });
                 this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
                     standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
+                console.log("this.standardCycleTimeArray: ", this.standardCycleTimeArray);
             }
         }).catch((err) => console.log('err:', err));
     }

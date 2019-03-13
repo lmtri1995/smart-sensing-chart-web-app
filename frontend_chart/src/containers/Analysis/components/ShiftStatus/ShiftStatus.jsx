@@ -210,7 +210,6 @@ class ShiftStatus extends Component {
 
     showShiftTable(dataArray) {
         let result = '';
-        //let currentShift = this.specifyCurrentShift(dataArray);
         let shift1 = this.showShiftItem(dataArray, 1);
         let shift2 = this.showShiftItem(dataArray, 2);
         let shift3 = this.showShiftItem(dataArray, 3);

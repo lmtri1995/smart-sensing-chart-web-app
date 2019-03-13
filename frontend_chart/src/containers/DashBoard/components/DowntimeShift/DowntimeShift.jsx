@@ -264,7 +264,7 @@ export default class DowntimeShift extends Component {
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {
-            result = <tbody>{shift1}{shift3}{shift2}</tbody>;
+            result = <tbody>{shift3}{shift1}{shift2}</tbody>;
         } else if (currentShift == 3) {
             result = <tbody>{shift1}{shift2}{shift3}</tbody>;
         }

@@ -7,6 +7,7 @@ import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import moment from "moment";
 import API from "../../../../services/api";
+import {changeNumberFormat} from "../../../../shared/utils/Utilities";
 
 const override = `
     position: absolute;
@@ -217,9 +218,6 @@ class ProcessStatus extends Component {
                 });
                 this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
                     standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
-                console.log("this.standardPreparingTimeArray: ", this.standardPreparingTimeArray);
-                console.log("this.standardCuringTimeArray: ", this.standardCuringTimeArray);
-                console.log("this.standardTemperatureArray: ", this.standardTemperatureArray);
             }
         }).catch((err) => console.log('err:', err));
     }
@@ -228,10 +226,12 @@ class ProcessStatus extends Component {
         let temp_stdev = this.standardTemperatureArray[stationId - 1] - data.temp_avg;
         let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
         let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
-        let result = <LineSummaryItem stationId={stationId} avgTemp={Math.round(data.temp_avg * 100)/100}
-                                      stddevTemp={Math.round(temp_stdev * 100)/100} avgPreparing={Math.round(data.pre_avg * 100)/100}
-                                      stddevPreparing={Math.round(pre_stdev * 100)/100} avgCuringTime={Math.round(data.cur_avg * 100)/100}
-                                      stddevCurringTime={Math.round(cur_stdev * 100)/100}/>;
+
+        let result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg, '°C')}
+                                      stddevTemp={changeNumberFormat(temp_stdev, '°C')} avgPreparing={changeNumberFormat(pre_stdev)}
+                                      stddevPreparing={changeNumberFormat(pre_stdev)}
+                                      avgCuringTime={changeNumberFormat(data.cur_avg)}
+                                      stddevCurringTime={changeNumberFormat(cur_stdev)}/>;
         return result;
     }
 
@@ -246,7 +246,7 @@ class ProcessStatus extends Component {
     }
 
     roundNumber(number){
-        return Math.round(number * 100)/100;
+            return Math.round(number * 100)/100;
     }
 
     showLineTable(dataArray) {
@@ -321,9 +321,9 @@ class ProcessStatus extends Component {
 
             //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
             for (let i = 0; i < numbersOfStation; i++){
-                this.stdevTemperatureArray[i] = parseFloat(dataArray[i].temp_avg - this.standardTemperatureArray[i]);
-                this.stdevPreparingTimeArray[i] = parseFloat(dataArray[i].pre_avg - this.standardPreparingTimeArray[i]);
-                this.stdevCuringTimeArray[i] = parseFloat(dataArray[i].cur_avg - this.standardCuringTimeArray[i]);
+                this.stdevTemperatureArray[i] = parseFloat(this.standardTemperatureArray[i] - dataArray[i].temp_avg);
+                this.stdevPreparingTimeArray[i] = parseFloat(this.standardPreparingTimeArray[i] - dataArray[i].pre_avg);
+                this.stdevCuringTimeArray[i] = parseFloat(this.standardCuringTimeArray[i] - dataArray[i].cur_avg);
 
                 totalStddevTemp += parseFloat(this.stdevTemperatureArray[i]);
                 totalStddevPrep += parseFloat(this.stdevPreparingTimeArray[i]);
@@ -426,15 +426,23 @@ class ProcessStatus extends Component {
                 <th>AVG</th>
                 <th>STDEV</th>
             </tr>
-            <GeneralSummaryItem spec={'AVG'} data1={this.roundNumber(avgAvgTemp)} data2={this.roundNumber(avgStddevTemp)}
-                                data3={this.roundNumber(avgAvgPrep)} data4={this.roundNumber(avgStddevPrep)} data5={this.roundNumber(avgAvgCuringTime)}
-                                data6={this.roundNumber(avgStddevCurringTime)}/>
-            <GeneralSummaryItem spec={'MAX'} data1={this.roundNumber(maxAvgTemp)} data2={this.roundNumber(maxStddevTemp)}
-                                data3={this.roundNumber(maxAvgPrep)} data4={this.roundNumber(maxStddevPrep)} data5={this.roundNumber(maxAvgCuringTime)}
-                                data6={this.roundNumber(maxStddevCurringTime)}/>
-            <GeneralSummaryItem spec={'MIN'} data1={this.roundNumber(minAvgTemp)} data2={this.roundNumber(minStddevTemp)}
-                                data3={this.roundNumber(minAvgPrep)} data4={this.roundNumber(minStddevPrep)} data5={this.roundNumber(minAvgCuringTime)}
-                                data6={this.roundNumber(minStddevCurringTime)}/>
+            <GeneralSummaryItem spec={'AVG'} data1={changeNumberFormat(avgAvgTemp, "°C")}
+                                data2={changeNumberFormat(avgStddevTemp, "°C")}
+                                data3={changeNumberFormat(avgAvgPrep)}
+                                data4={changeNumberFormat(avgStddevPrep)}
+                                data5={changeNumberFormat(avgAvgCuringTime)}
+                                data6={changeNumberFormat(avgStddevCurringTime)}/>
+            <GeneralSummaryItem spec={'MAX'} data1={changeNumberFormat(maxAvgTemp, "°C")}
+                                data2={changeNumberFormat(maxStddevTemp, "°C")}
+                                data3={changeNumberFormat(maxAvgPrep)} data4={(maxStddevPrep)}
+                                data5={changeNumberFormat(maxAvgCuringTime)}
+                                data6={changeNumberFormat(maxStddevCurringTime)}/>
+            <GeneralSummaryItem spec={'MIN'}
+                                data1={changeNumberFormat(minAvgTemp, "°C")}
+                                data2={changeNumberFormat(minStddevTemp, "°C")}
+                                data3={changeNumberFormat(minAvgPrep)} data4={changeNumberFormat(minStddevPrep)}
+                                data5={changeNumberFormat(minAvgCuringTime)}
+                                data6={changeNumberFormat(minStddevCurringTime)}/>
             <GeneralSummaryItem spec={'STDEV'} data1="-" data2="-"
                                 data3="-" data4="-" data5="-"
                                 data6="-" />

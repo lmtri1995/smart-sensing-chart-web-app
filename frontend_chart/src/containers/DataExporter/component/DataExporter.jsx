@@ -97,12 +97,16 @@ class DataExporter extends Component {
 
     exportPDFFile(props, location) {
         let fileName = '';
-        let processStatusData = null;
+        let stationStatusData = null, shiftStatusData= null,
+            processStatusData = null, downTimeShiftData = null;
         let imageExportContainerElements = null;
         switch (location.pathname) {
             case ROUTE.Dashboard:
                 fileName = 'Dashboard';
+                stationStatusData = props.downloadDataStore.stationStatusData;
+                shiftStatusData = props.downloadDataStore.shiftStatusData;
                 processStatusData = props.downloadDataStore.processStatusData;
+                downTimeShiftData = props.downloadDataStore.downTimeShiftData;
                 imageExportContainerElements = [];
                 imageExportContainerElements.push(document.getElementById(DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID));
                 imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_1_2_ID));
@@ -116,7 +120,10 @@ class DataExporter extends Component {
                 break;
             case ROUTE.Analysis:
                 fileName = 'Analysis';
+                stationStatusData = props.downloadDataStore.stationStatusData;
+                shiftStatusData = props.downloadDataStore.shiftStatusData;
                 processStatusData = props.downloadDataStore.processStatusData;
+                downTimeShiftData = props.downloadDataStore.downTimeShiftData;
                 imageExportContainerElements = [];
                 imageExportContainerElements.push(document.getElementById(ANALYSIS_SHIFT_STATUS_ID));
                 imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID));
@@ -154,7 +161,6 @@ class DataExporter extends Component {
                 html2canvas(element).then((canvas) => mapOfContainerCanvas.set(index, canvas));
             });
             var saveDocInterval = setInterval(() => {
-                console.log("SAVE_DOC_INTERVAL=============================",);
                 switch (location.pathname) {
                     case ROUTE.Dashboard:
                         if (mapOfContainerCanvas.size === 9) {
@@ -176,11 +182,26 @@ class DataExporter extends Component {
                                     doc.addPage();  // Add new page
                                 }
                             });
+                            if (stationStatusData) {
+                                doc.addPage();  // Add new page
+
+                                addStationStatusDataTablePDF(doc, tableStyle, stationStatusData);
+                            }
+                            if (shiftStatusData) {
+                                doc.addPage();  // Add new page
+
+                                addShiftStatusDataTablePDF(doc, tableStyle, shiftStatusData);
+                            }
                             if (processStatusData) {
                                 doc.addPage();  // Add new page
 
                                 let {processingStatusLine, general} = processStatusData;
                                 addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
+                            }
+                            if (downTimeShiftData) {
+                                doc.addPage();  // Add new page
+
+                                addDownTimeShiftDataTablePDF(doc, tableStyle, downTimeShiftData);
                             }
 
                             doc.save(
@@ -208,11 +229,26 @@ class DataExporter extends Component {
                                     doc.addPage();  // Add new page
                                 }
                             });
+                            if (stationStatusData) {
+                                doc.addPage();  // Add new page
+
+                                addStationStatusDataTablePDF(doc, tableStyle, stationStatusData);
+                            }
+                            if (shiftStatusData) {
+                                doc.addPage();  // Add new page
+
+                                addShiftStatusDataTablePDF(doc, tableStyle, shiftStatusData);
+                            }
                             if (processStatusData) {
                                 doc.addPage();  // Add new page
 
                                 let {processingStatusLine, general} = processStatusData;
                                 addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
+                            }
+                            if (downTimeShiftData) {
+                                doc.addPage();  // Add new page
+
+                                addDownTimeShiftDataTablePDF(doc, tableStyle, downTimeShiftData);
                             }
 
                             doc.save(
@@ -635,6 +671,283 @@ function addDownTimeShiftDataTableExcel(workbook, downTimeShiftData) {
     });
 }
 
+function addStationStatusDataTablePDF(doc, tableStyle, stationStatusData) {
+    let middleCenterStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'center',
+    };
+
+    let body = [
+        {
+            col1: {
+                content: 'STATION STATUS',
+                colSpan: 3,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: '',
+            col3: '',
+        },
+        {
+            col1: {
+                content: 'STATION',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: 'STATUS',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: {
+                content: 'TIME',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+    ];
+
+    stationStatusData.forEach((station) => {
+        body.push({
+            col1: {
+                content: station[0],
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: station[1] === 1 ? 'On' : 'Off',
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+            col3: {
+                content: station[2],
+                styles: {
+                    ...middleCenterStyle,
+                },
+            },
+        });
+    });
+
+    // Add Table of Data
+    doc.autoTable({
+        body: body,
+        theme: 'grid',
+    });
+}
+
+function addShiftStatusDataTablePDF(doc, tableStyle, shiftStatusData) {
+    let middleRightStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'right',
+    };
+    let middleCenterStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'center',
+    };
+
+    let body = [
+        {
+            col1: {
+                content: 'STATION STATUS',
+                colSpan: 1 + shiftStatusData[0].length,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: '',
+            col3: '',
+            col4: '',
+            col5: '',
+            col6: '',
+            col7: '',
+            col8: '',
+            col9: '',
+            col10: '',
+        },
+        {
+            col1: {
+                content: 'SHIFT NO.',
+                rowSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: 'STATION',
+                colSpan: shiftStatusData[0].length - 1,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: '',
+            col4: '',
+            col5: '',
+            col6: '',
+            col7: '',
+            col8: '',
+            col9: '',
+            col10: {
+                content: 'TOTAL',
+                rowSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+        {
+            col1: '',
+            col2: {
+                content: '1',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: {
+                content: '2',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col4: {
+                content: '3',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: {
+                content: '4',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col6: {
+                content: '5',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col7: {
+                content: '6',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col8: {
+                content: '7',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col9: {
+                content: '8',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col10: '',
+        },
+    ];
+
+    shiftStatusData.forEach((shiftData, index) => {
+        body.push({
+            col1: {
+                content: index + 1,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: shiftData[0],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col3: {
+                content: shiftData[1],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col4: {
+                content: shiftData[2],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col5: {
+                content: shiftData[3],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col6: {
+                content: shiftData[4],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col7: {
+                content: shiftData[5],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col8: {
+                content: shiftData[6],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col9: {
+                content: shiftData[7],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col10: {
+                content: shiftData[8],
+                styles: {
+                    ...middleRightStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        });
+    });
+
+    // Add Table of Data
+    doc.autoTable({
+        body: body,
+        theme: 'grid',
+    });
+}
+
 function addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general) {
     let middleLeftStyle = {
         ...tableStyle,
@@ -912,6 +1225,207 @@ function addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, gen
                 content: generalData[5],
                 styles: {
                     ...middleCenterStyle,
+                },
+            },
+        });
+    });
+
+    // Add Table of Data
+    doc.autoTable({
+        body: body,
+        theme: 'grid',
+    });
+}
+
+function addDownTimeShiftDataTablePDF(doc, tableStyle, downTimeShiftData) {
+    let middleRightStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'right',
+    };
+    let middleCenterStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'center',
+    };
+
+    let body = [
+        {
+            col1: {
+                content: 'DOWN TIME BY SHIFT',
+                colSpan: 1 + downTimeShiftData[0].length,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: '',
+            col3: '',
+            col4: '',
+            col5: '',
+            col6: '',
+            col7: '',
+            col8: '',
+            col9: '',
+            col10: '',
+        },
+        {
+            col1: {
+                content: 'SHIFT NO.',
+                rowSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: 'STATION',
+                colSpan: downTimeShiftData[0].length - 1,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: '',
+            col4: '',
+            col5: '',
+            col6: '',
+            col7: '',
+            col8: '',
+            col9: '',
+            col10: {
+                content: 'TOTAL',
+                rowSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+        {
+            col1: '',
+            col2: {
+                content: '1',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: {
+                content: '2',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col4: {
+                content: '3',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: {
+                content: '4',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col6: {
+                content: '5',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col7: {
+                content: '6',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col8: {
+                content: '7',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col9: {
+                content: '8',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col10: '',
+        },
+    ];
+
+    downTimeShiftData.forEach((shiftData, index) => {
+        body.push({
+            col1: {
+                content: index + 1,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: shiftData[0],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col3: {
+                content: shiftData[1],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col4: {
+                content: shiftData[2],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col5: {
+                content: shiftData[3],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col6: {
+                content: shiftData[4],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col7: {
+                content: shiftData[5],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col8: {
+                content: shiftData[6],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col9: {
+                content: shiftData[7],
+                styles: {
+                    ...middleRightStyle,
+                },
+            },
+            col10: {
+                content: shiftData[8],
+                styles: {
+                    ...middleRightStyle,
+                    fontStyle: 'bold',
                 },
             },
         });

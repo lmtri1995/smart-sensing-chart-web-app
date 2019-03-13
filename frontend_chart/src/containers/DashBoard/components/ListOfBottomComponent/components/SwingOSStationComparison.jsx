@@ -64,10 +64,9 @@ const options = {
                 var value = data.datasets[0].data[tooltipItem.index];
                 var label = data.labels[tooltipItem.index];
 
-                if (value === 1) {
+                if (value == 0.5) {
                     value = 0;
                 }
-
                 return label + ': ' + value;
             }
         }
@@ -120,17 +119,11 @@ export class SwingArmMachine extends Component {
 
     handleReturnData = (returnData) => {
         let result = [];
-        let swingArmArray = [], osPessArray = [];
+        let swingArmArray = [0.5, 0.5, 0.5], osPessArray = [0.5, 0.5, 0.5];
         let currentShift = specifyCurrentShift();
         if (returnData && returnData.length > 0){
             returnData.map(item => {
                 if (item) {
-                    if (!item[1] || item[1] == 0) {
-                        item[1] = 1;
-                    }
-                    if (!item[2] || item[2] == 0) {
-                        item[2] = 1;
-                    }
                     if (currentShift == 1) {//2, 3, 1
                         if (item[0] == 1) {
                             swingArmArray[2] = item[1];
@@ -168,6 +161,7 @@ export class SwingArmMachine extends Component {
                 }
             });
         }
+
         result.push(swingArmArray);
         result.push(osPessArray);
         return result;
@@ -227,6 +221,17 @@ export class SwingArmMachine extends Component {
                     let returnData = JSON.parse(dataArray[0].data);
                     if (returnData.length > 0){
                         let displayArray = this.handleReturnData(returnData);
+
+
+                        if (displayDatasets.length < 1) {
+                            displayDatasets = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
+                        }
+                        for (let i = 0; i < displayDatasets.length; i++) {
+                            if (!displayDatasets[i] || displayDatasets[i] == 0) {
+                                displayDatasets[i] = 0.5;
+                            }
+                        }
+
                         this.myChart.data = {
                             labels: this.labelArray,
                             datasets: [

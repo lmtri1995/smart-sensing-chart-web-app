@@ -67,7 +67,6 @@ const options = {
                 if (value == 0.5) {
                     value = 0;
                 }
-
                 return label + ': ' + value;
             }
         }
@@ -112,21 +111,21 @@ export class SwingArmMachine extends Component {
         this.state = {
             loading: true
         };
+        this.scale = 0.5;
     }
 
+
     handleReturnData = (returnData) => {
-        console.log("returnData 102: ", returnData);
         let result = [];
-        let swingArmArray = [], osPessArray = [];
+        let swingArmArray = [0.5, 0.5, 0.5], osPessArray = [0.5, 0.5, 0.5];
+        let min = 0.5, max = 0.5;
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
-                if (item) {
-                    if (!item[1] || item[1] == 0) {
-                        item[1] = 0.5;
-                    }
-                    if (!item[2] || item[2] == 0) {
-                        item[2] = 0.5;
-                    }
+                    item[1] = item[1]?item[1]:0.5;
+                    item[2] = item[2]?item[2]:0.5;
+                    min = Math.min(min, item[1], item[2]);
+                    max = Math.max(max, item[1], item[2]);
+
                     if (item[0] == 1) {
                         swingArmArray[0] = item[1];
                         osPessArray[0] = item[2];
@@ -139,13 +138,11 @@ export class SwingArmMachine extends Component {
                     }
 
                 }
-            });
-        } else {
-            swingArmArray = [0.5, 0.5, 0.5];
-            osPessArray = [0.5, 0.5, 0.5];
+            )
         }
         result.push(swingArmArray);
         result.push(osPessArray);
+        this.scale = max - min;
         return result;
 
     }
@@ -156,10 +153,10 @@ export class SwingArmMachine extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
-            if (this.role == 'os'){
+            if (this.role == 'os') {
                 let {startDate, endDate} = this.props.globalDateFilter;
                 let fromTimeDevice = moment(startDate.toISOString()).unix();
-                let toTimedevice   = moment(endDate.toISOString()).unix();
+                let toTimedevice = moment(endDate.toISOString()).unix();
 
                 let param = {
                     "from_timedevice": fromTimeDevice,
@@ -221,7 +218,7 @@ export class SwingArmMachine extends Component {
         if (this.role == 'os') {
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
-            let toTimedevice   = moment(endDate.toISOString()).unix();
+            let toTimedevice = moment(endDate.toISOString()).unix();
 
             let param = {
                 "from_timedevice": fromTimeDevice,

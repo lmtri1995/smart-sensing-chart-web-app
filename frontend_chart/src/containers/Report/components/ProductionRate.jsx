@@ -2,10 +2,15 @@ import React, {Component} from 'react'
 import MixedLineBarChart from "../../Charts/ChartJS/components/MixedLineBarChart";
 import {connect} from "react-redux";
 import {SHIFT_OPTIONS} from "../../../constants/constants";
+import * as Utilities from "../../../shared/utils/Utilities";
 
 // Keep a copy of original Production Rate Data Array received from Server
 // To use when filtering data by shift
 var PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = [];
+
+// Keep a copy of original Target Production Data Array received from Server
+// To use when filtering data by shift
+var TARGET_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = [];
 
 // Keep a copy of original Actual Production Data Array received from Server
 // To use when filtering data by shift
@@ -13,28 +18,39 @@ var ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = [];
 
 class ProductionRate extends Component {
     render() {
-        let {labels, productionRate, actualProduction} = this.props;
+        let {labels, productionRate, targetProduction, actualProduction} = this.props;
+        let tempTargetProduction = [];
+        if (targetProduction) {
+            tempTargetProduction = targetProduction.slice();
+        }
         let tempActualProduction = [];
         if (actualProduction) {
             tempActualProduction = actualProduction.slice();
         }
         // Update Actual Production on tooltips of the chart after applying Shift Filter
-        if (tempActualProduction.length > 0) {
+        if (tempTargetProduction.length > 0 && tempActualProduction.length > 0) {
+            if (tempTargetProduction.length >= TARGET_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART.length) {
+                TARGET_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = tempTargetProduction.slice();
+            }
             if (tempActualProduction.length >= ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART.length) {
                 ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = tempActualProduction.slice();
             }
             // Selected option is Not All Shifts
             if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
+                tempTargetProduction.length = 0;
                 tempActualProduction.length = 0;
 
                 switch (this.props.globalShiftFilter.selectedShift) {
                     case SHIFT_OPTIONS[1]:
+                        tempTargetProduction.push(TARGET_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[0]);
                         tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[0]);
                         break;
                     case SHIFT_OPTIONS[2]:
+                        tempTargetProduction.push(TARGET_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[1]);
                         tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[1]);
                         break;
                     case SHIFT_OPTIONS[3]:
+                        tempTargetProduction.push(TARGET_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[2]);
                         tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[2]);
                         break;
                 }
@@ -43,21 +59,27 @@ class ProductionRate extends Component {
         let customChartTooltips = {
             callbacks: {
                 label: function (tooltipItem, data) {
-                    let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                    let label = data.datasets[tooltipItem.datasetIndex].label + ' Production Rate' || '';
                     if (label) {
                         label += ': ';
                     }
                     label += `${tooltipItem.yLabel}%`;
                     return label;
                 },
-                afterLabel: function (tooltipItem, data) {
-                    let label = 'Actual Production: ';
+                afterLabel: function(tooltipItem, data) {
+                    let actualProductionLabel = 'Actual: ';
                     if (tempActualProduction[tooltipItem.datasetIndex] && tempActualProduction.length > 0) {
-                        label += tempActualProduction[tooltipItem.datasetIndex][tooltipItem.index];
+                        actualProductionLabel += Utilities.changeNumberFormat(tempActualProduction[tooltipItem.datasetIndex][tooltipItem.index]);
                     } else {
-                        label += 'N/A';
+                        actualProductionLabel += 'N/A';
                     }
-                    return label;
+                    let targetProductionLabel = 'Target: ';
+                    if (tempTargetProduction[tooltipItem.datasetIndex] && tempTargetProduction.length > 0) {
+                        targetProductionLabel += Utilities.changeNumberFormat(tempTargetProduction[tooltipItem.datasetIndex][tooltipItem.index]);
+                    } else {
+                        targetProductionLabel += 'N/A';
+                    }
+                    return [targetProductionLabel, actualProductionLabel];
                 },
             }
         };

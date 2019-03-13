@@ -97,8 +97,6 @@ export default class listBottomComponent extends Component {
         //shift 2: 2:00 am - 22:00 pm
         //shift 3: 20:00 pm - 6:00 am
 
-        console.log("hour: ", hour);
-
         let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
         let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
         let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
@@ -108,7 +106,6 @@ export default class listBottomComponent extends Component {
         let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
 
         if (hour < 6) {
-            console.log("hour < 6");
             shift1From = moment.utc([yyyy, mm, dd - 1, 6, 0, 0]).unix();
             shift1To = moment.utc([yyyy, mm, dd - 1, 14, 0, 0]).unix();
             shift2From = shift1To;
@@ -118,13 +115,11 @@ export default class listBottomComponent extends Component {
         }
 
         if (currentTime >= shift1From && currentTime < shift1To) {
-            console.log("120 th1");
             workingHourShift1 = currentTime - shift1From;
             workingHourShift1 = (workingHourShift1 < 27000)?workingHourShift1:27000;
             workingHourShift2 = 0;
             workingHourShift3 = 0;
         } else if (currentTime >= shift2From && currentTime < shift2To) {
-            console.log("126 th2");
             workingHourShift1 = 27000;
             workingHourShift2 = currentTime - shift2From;
             workingHourShift2 = (workingHourShift2 < 27000)?workingHourShift2:27000;
@@ -147,7 +142,11 @@ export default class listBottomComponent extends Component {
 
     countStandardCycleTime() {
         let today = new Date();
+        let hour = today.getHours();
         let todayYMD = moment(today.toISOString()).format("YYYYMMDD");
+        if (hour < 6){
+            todayYMD = moment(todayYMD).subtract(1, "days").format("YYYYMMDD");
+        }
         let param = {
             from_workdate: todayYMD,
             to_workdate: todayYMD,
@@ -197,8 +196,6 @@ export default class listBottomComponent extends Component {
 
     handleReturnArray(dataArray){
         this.countCurrentWorkingHour();
-        console.log("185 185 185");
-        console.log("this.totalWorkingHour: ", this.totalWorkingHour);
         let stoppingHour1 = 0, productCount1 = 0, preparingTime1 = 0,
             cycleCount1 = 0, defect1 = 0,
             standardCycleTime1 = this.standardCycleTimeArray[0];
@@ -228,8 +225,6 @@ export default class listBottomComponent extends Component {
             dataArray.map(item => {
                 let stopping_hr = item.stopping_hr?item.stopping_hr:0;
                 let count = item.count?item.count:0;
-                /*console.log("count: ", count);
-                console.log("item: ", item);*/
                 let preparingtime = item.preparingtime?item.preparingtime:0;
                 let cycle_count = item.cycle_count?item.cycle_count:0;
                 let defect = item.defect?item.defect:0;
@@ -290,7 +285,6 @@ export default class listBottomComponent extends Component {
             quality1 = (productCount1 - defect1)/productCount1 * 100,
             OEE1 = availability1 * performance1 * quality1,
             workLost1 = preparingTime1 / (standardCycleTime1 * cycleCount1) * 100;
-        console.log("standardCycleTime1: ", standardCycleTime1, " productCount1: ", productCount1, "this.totalWorkingHour: ", this.totalWorkingHour, " stoppingHour1: ", stoppingHour1);
 
         let availability2 = (this.totalWorkingHour - stoppingHour2)/this.totalWorkingHour * 100,
             performance2 = (standardCycleTime2 * productCount2)/((this.totalWorkingHour - stoppingHour2) * 8) * 100,
@@ -334,14 +328,6 @@ export default class listBottomComponent extends Component {
             quality8 = (productCount8 - defect8)/productCount8 * 100,
             OEE8 = availability8 * performance8 * quality8,
             workLost8 = preparingTime8 / (standardCycleTime8 * cycleCount8) * 100;
-        console.log("performance1:",performance1);
-        console.log("performance2:",performance2);
-        console.log("performance3:",performance3);
-        console.log("performance4:",performance4);
-        console.log("performance5:",performance5);
-        console.log("performance6:",performance6);
-        console.log("performance7:",performance7);
-        console.log("performance8:",performance8);
 
         let summaryArray = [
             [availability1, performance1, quality1, OEE1, workLost1],
@@ -380,11 +366,6 @@ export default class listBottomComponent extends Component {
                 let returnData = JSON.parse(response.trim());
                 if (returnData.success) {
                     let data = returnData.data;
-                    console.log("264 264");
-                    console.log("264 264");
-                    console.log("264 264");
-                    console.log("264 264");
-                    console.log("data: ", data);
                     let summaryArray = this.handleReturnArray(data);
 
                     let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;

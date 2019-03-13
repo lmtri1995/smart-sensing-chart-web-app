@@ -223,12 +223,12 @@ export class SwingArmMachine extends Component {
                         let displayArray = this.handleReturnData(returnData);
 
 
-                        if (displayDatasets && displayDatasets.length < 1) {
-                            displayDatasets = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
+                        if (displayArray && displayArray.length < 1) {
+                            displayArray = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
                         }
-                        for (let i = 0; i < displayDatasets.length; i++) {
-                            if (!displayDatasets[i] || displayDatasets[i] == 0) {
-                                displayDatasets[i] = 0.5;
+                        for (let i = 0; i < displayArray.length; i++) {
+                            if (!displayArray[i] || displayArray[i] == 0) {
+                                displayArray[i] = 0.5;
                             }
                         }
 

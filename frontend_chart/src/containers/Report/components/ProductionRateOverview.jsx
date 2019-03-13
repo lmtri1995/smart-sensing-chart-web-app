@@ -7,61 +7,76 @@ import {SHIFT_OPTIONS} from "../../../constants/constants";
 // To use when filtering data by shift
 var PRODUCTION_RATE_FOR_DOUGHNUT_CHART = [];
 
+// Keep a copy of original Actual Production Data Array received from Server
+// To use when filtering data by shift
+var ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART = [];
+
 class ProductionRateOverview extends Component {
     render() {
-        let {productionRate, loading} = this.props;
+        let {productionRate, actualProduction, loading} = this.props;
         let chartLabels = [], backgroundColor = [];
-        let averageProductionRatesByShift = [], average = 0, averageProductionRateText = 'N/A';
+        let actualProductionsByShift = [], sumActualProduction = 0, totalActualProductionText = 'N/A';
 
         // Because React pass props by reference
         // -> Affect Production Rate Mixed Line Bar Chart
         // -> Copy to temporary variable
-        let tempProductionRate = [];
+        let tempProductionRate = [], tempActualProduction = [];
         if (productionRate) {
             tempProductionRate = productionRate.slice();
+            tempActualProduction = actualProduction.slice();
         }
 
         // Update chart data after applying Shift Filter
-        if (tempProductionRate) {
+        if (tempProductionRate && tempActualProduction) {
             if (tempProductionRate.length >= PRODUCTION_RATE_FOR_DOUGHNUT_CHART.length) {
                 PRODUCTION_RATE_FOR_DOUGHNUT_CHART = tempProductionRate.slice();
+            }
+            if (tempActualProduction.length >= ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART.length) {
+                ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART = tempActualProduction.slice();
             }
             // Selected option is NOT All Shifts
             if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
                 tempProductionRate.length = 0;  // Empty Array
+                tempActualProduction.length = 0;  // Empty Array
 
                 PRODUCTION_RATE_FOR_DOUGHNUT_CHART.forEach((element) => {
                     if (this.props.globalShiftFilter.selectedShift === element.label) {
                         tempProductionRate.push(element);
                     }
                 });
+                switch (this.props.globalShiftFilter.selectedShift) {
+                    case SHIFT_OPTIONS[1]:
+                        tempActualProduction.push(ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART[0]);
+                        break;
+                    case SHIFT_OPTIONS[2]:
+                        tempActualProduction.push(ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART[1]);
+                        break;
+                    case SHIFT_OPTIONS[3]:
+                        tempActualProduction.push(ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART[2]);
+                        break;
+                }
             } else {    // Selected option is All Shifts
                 tempProductionRate.pop();
             }
-            if (tempProductionRate.length > 0) {
+            if (tempProductionRate.length > 0 && tempActualProduction.length > 0) {
                 tempProductionRate.forEach((element) => {
                     chartLabels.push(element.label);
                     backgroundColor.push(element.backgroundColor);
-
-                    average = element.data.reduce(    // sum all production rates of current shift
-                        (accumulator, currentValue) => accumulator + currentValue,
-                        0
-                    ) / element.data.length;
-                    // Round to 2 decimal places
-                    average = average % 1 === 0 ? average : Math.round(average * 100) / 100;
-
-                    averageProductionRatesByShift.push(average);
                 });
-                let averageProductionRate =
-                    averageProductionRatesByShift.reduce((acc, curVal) => acc + curVal, 0) / averageProductionRatesByShift.length;
-                averageProductionRateText = averageProductionRate % 1 !== 0
-                    ? averageProductionRate.toFixed(2)
-                    : averageProductionRate.toString();
+                tempActualProduction.forEach((actualProductionsOfCurrentShift) => {
+                    sumActualProduction = actualProductionsOfCurrentShift.reduce(
+                        (acc, curVal) => acc + curVal, 0
+                    );
+                    actualProductionsByShift.push(sumActualProduction);
+                });
+                totalActualProductionText = actualProductionsByShift.reduce(
+                    (acc, curVal) => acc + curVal, 0
+                ).toString();
             }
         }
 
         let chartData = [{
-            data: averageProductionRatesByShift,
+            data: actualProductionsByShift,
             backgroundColor: backgroundColor
         }];
 
@@ -69,7 +84,7 @@ class ProductionRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={chartData} centerText={averageProductionRateText}
+                    <DoughnutChart labels={chartLabels} data={chartData} centerText={totalActualProductionText}
                                    showLegend={true} loading={loading}/>
                 </div>
             </div>

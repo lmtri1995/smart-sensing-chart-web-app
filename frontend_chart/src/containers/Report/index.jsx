@@ -445,6 +445,7 @@ class ReportPage extends Component {
                             </div>
                             <div className="col-3">
                                 <ProductionRateOverview productionRate={this.state.productionRate}
+                                                        actualProduction={this.state.actualProduction}
                                                         loading={this.state.productionRateLoading}/>
                             </div>
                         </div>

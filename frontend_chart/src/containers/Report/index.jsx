@@ -62,10 +62,19 @@ class ReportPage extends Component {
         if (this.props !== prevProps) {
             let {startDate, endDate} = this.props.globalDateFilter;
 
+            let startMoment = moment(startDate.toISOString());
+            let endMoment = moment(endDate.toISOString());
+
+            // If Date Range > 7 days => subtract endDate => Max Date Range is 7 days
+            if (endMoment.diff(startMoment, "days") > 6) {
+                let tempStartMoment = moment(startMoment);
+                endMoment = moment(tempStartMoment.add(7, "days").subtract(1, "seconds"));
+            }
+
             // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
             let param = {
-                from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
-                to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
+                from_workdate: startMoment.format("YYYYMMDD"),
+                to_workdate: endMoment.subtract(1, "days").format("YYYYMMDD"),
             };
 
             this.requestProductionRates(param);

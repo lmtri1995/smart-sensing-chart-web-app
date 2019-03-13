@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import StationStatusItem from './components/StationStatusItem';
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
+import {storeStationStatusData} from "../../../../redux/actions/downloadDataStoreActions";
+import {connect} from "react-redux";
 
 const override = `
     position: absolute;
@@ -11,7 +13,7 @@ const override = `
     z-index: 100000;
 `;
 
-export default class stationStatus extends Component {
+class StationStatus extends Component {
     static socket = null;
     static loginData = null;
     static role = null;
@@ -206,7 +208,20 @@ export default class stationStatus extends Component {
                     <StationStatusItem stationId={8} status={status8}
                                        spaceTime={space_time8}/>
                 </div>
-            </div>
+            </div>;
+
+            // Prepare to dispatch Data to Redux Store to Export Data later
+            let stationStatusData = [
+                [1, status1, space_time1],
+                [2, status2, space_time2],
+                [3, status3, space_time3],
+                [4, status4, space_time4],
+                [5, status5, space_time5],
+                [6, status6, space_time6],
+                [7, status7, space_time7],
+                [8, status8, space_time8],
+            ];
+            this.props.dispatch(storeStationStatusData(stationStatusData));
         }
         return result;
     }
@@ -253,3 +268,5 @@ export default class stationStatus extends Component {
         );
     }
 }
+
+export default connect()(StationStatus);

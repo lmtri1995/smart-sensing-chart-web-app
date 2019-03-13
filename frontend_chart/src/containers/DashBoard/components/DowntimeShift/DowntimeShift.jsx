@@ -3,6 +3,8 @@ import DowntimeShiftItem from './components/DowntimeShiftItem';
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
 import {ClipLoader} from 'react-spinners';
+import {storeDownTimeShiftData} from "../../../../redux/actions/downloadDataStoreActions";
+import {connect} from "react-redux";
 
 const override = `
     position: absolute;
@@ -12,7 +14,7 @@ const override = `
     z-index: 100000;
 `;
 
-export default class DowntimeShift extends Component {
+class DowntimeShift extends Component {
 
     constructor(props) {
 
@@ -147,8 +149,6 @@ export default class DowntimeShift extends Component {
 
     showDowntimeShiftItem(dataArray, shiftNo, currentShift) {
         let result = "";
-
-
         if (dataArray && dataArray.length > 0) {
             if (shiftNo == 1) {
                 result = <DowntimeShiftItem currentShift={currentShift}
@@ -190,6 +190,44 @@ export default class DowntimeShift extends Component {
                                             total ={dataArray[2][8]=="N/A"?"-":dataArray[2][8]}
                 />
             }
+
+            // Prepare to dispatch Data to Redux Store to Export Data later
+            let downTimeShiftData = [
+                [
+                    dataArray[0][0],
+                    dataArray[0][1],
+                    dataArray[0][2],
+                    dataArray[0][3],
+                    dataArray[0][4],
+                    dataArray[0][5],
+                    dataArray[0][6],
+                    dataArray[0][7],
+                    dataArray[0][8]=="N/A"?"-":dataArray[0][8],
+                ],
+                [
+                    dataArray[1][0],
+                    dataArray[1][1],
+                    dataArray[1][2],
+                    dataArray[1][3],
+                    dataArray[1][4],
+                    dataArray[1][5],
+                    dataArray[1][6],
+                    dataArray[1][7],
+                    dataArray[1][8]=="N/A"?"-":dataArray[1][8],
+                ],
+                [
+                    dataArray[2][0],
+                    dataArray[2][1],
+                    dataArray[2][2],
+                    dataArray[2][3],
+                    dataArray[2][4],
+                    dataArray[2][5],
+                    dataArray[2][6],
+                    dataArray[2][7],
+                    dataArray[2][8]=="N/A"?"-":dataArray[2][8],
+                ],
+            ];
+            this.props.dispatch(storeDownTimeShiftData(downTimeShiftData));
         } else {
             result = <DowntimeShiftItem currentShift={currentShift}
                                         shiftNo={shiftNo} total={'-'}
@@ -306,3 +344,5 @@ export default class DowntimeShift extends Component {
         )
     }
 }
+
+export default connect()(DowntimeShift);

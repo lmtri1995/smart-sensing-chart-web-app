@@ -196,6 +196,19 @@ export class SwingArmMachine extends Component {
                                     }
                                 ],
                             };
+                            this.myChart.options.tooltips = {
+                                callbacks: {
+                                    label: function (tooltipItem, data) {
+                                        var value = data.datasets[0].data[tooltipItem.index];
+                                        var label = data.labels[tooltipItem.index];
+
+                                        if (value == 0.5) {
+                                            value = 0;
+                                        }
+                                        return label + ': ' + "truongho";
+                                    }
+                                }
+                            }
                             this.myChart.update();
                             this.setState({loading: false});
                         }
@@ -252,6 +265,7 @@ export class SwingArmMachine extends Component {
                                     data: displayArray[1],
                                 }
                             ],
+
                         };
                         this.myChart.update();
                         this.setState({loading: false});

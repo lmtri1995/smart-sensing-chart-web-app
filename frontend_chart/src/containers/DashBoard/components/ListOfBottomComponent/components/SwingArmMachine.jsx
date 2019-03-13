@@ -157,7 +157,7 @@ export class SwingArmMachine extends Component {
                     let displayDatasets = returnData[0];
                     console.log("displayDatasets: ", displayDatasets);
 
-                    if (displayDatasets.length < 1) {
+                    if (displayDatasets && displayDatasets.length < 1) {
                         displayDatasets = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
                     }
                     for (let i = 0; i < displayDatasets.length; i++) {

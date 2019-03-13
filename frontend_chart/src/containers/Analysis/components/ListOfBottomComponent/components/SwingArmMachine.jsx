@@ -177,7 +177,7 @@ export class SwingArmMachine extends Component {
                                     let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
                                     let displayDatasets = returnData[0];
                                     console.log("displayDatasets: ", displayDatasets);
-                                    if (displayDatasets.length < 1) {
+                                    if (displayDatasets && displayDatasets.length < 1) {
                                         displayDatasets = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
                                     }
                                     for (let i = 0; i < displayDatasets.length; i++) {
@@ -254,7 +254,7 @@ export class SwingArmMachine extends Component {
                             if (returnData && returnData.length > 0) {
                                 let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
                                 let displayDatasets = returnData[0];
-                                if (displayDatasets.length < 1) {
+                                if (displayDatasets && displayDatasets.length < 1) {
                                     displayDatasets = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
                                 }
                                 for (let i = 0; i < displayDatasets.length; i++) {

@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import Singleton from "../../../../../services/Socket";
-import moment from "moment";
 import {ClipLoader} from "react-spinners";
 
 const initialData = {
@@ -70,7 +69,7 @@ export class SwingArmMachine extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.emitEvent = `os_swingarm`;
                 this.eventListen = `sna_${this.emitEvent}`;
@@ -94,7 +93,7 @@ export class SwingArmMachine extends Component {
     }
 
     handleReturnData = (returnData) => {
-        if (returnData && returnData.length > 0){
+        if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 this.labels.push(item[0] + 'h');
                 this.datasets.push(item[1]);
@@ -102,7 +101,7 @@ export class SwingArmMachine extends Component {
         }
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -121,7 +120,7 @@ export class SwingArmMachine extends Component {
             data: initialData,
             options: options
         });
-        if (this.role == "ip"){
+        if (this.role == "ip") {
             this.setState({loading: false});
         } else {
             this.socket.emit(this.emitEvent, {
@@ -135,37 +134,30 @@ export class SwingArmMachine extends Component {
             });
             this.socket.on(this.eventListen, (response) => {
                 response = JSON.parse(response);
-                if (response && response.success=="true"){
-                    let dataArray = response.data;
-                    let returnData = JSON.parse(dataArray[0].data);
-                    this.handleReturnData(returnData);
-                    if (this.labels.length > 0){
-                        //Make sure that the length is more than 15
-                        let displayLabels = [];
-                        let displayDatasets = [];
-                        if (this.labels.length > 15){
-                            displayLabels = this.labels.slice(this.labels.length - 15, this.labels.length);
-                            displayDatasets = this.datasets.slice(this.datasets.length - 15, this.datasets.length);
-                        } else {
-                            displayLabels = this.labels;
-                            displayDatasets = this.datasets;
-                        }
-                        this.myChart.data = {
-                            labels: displayLabels,
-                            datasets: [{
-                                label: 'Swing Arm Data',
-                                backgroundColor: '#C88FFA',
-                                borderColor: '#C88FFA',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayDatasets
-                            }]
-                        };
-                        this.myChart.update();
-                        this.setState({loading: false});
-                    }
+                let dataArray = response.data;
+                let returnData = JSON.parse(dataArray[0].data);
+                //this.handleReturnData(returnData);
+                if (returnData && returnData.length > 0) {
+                    //Make sure that the length is more than 15
+                    let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                    let displayDatasets = returnData[0];
+                    console.log("displayDatasets: ", displayDatasets, "typeof: ", typeof (displayDatasets));
+                    this.myChart.data = {
+                        labels: displayLabels,
+                        datasets: [{
+                            label: 'Swing Arm Data',
+                            backgroundColor: '#C88FFA',
+                            borderColor: '#C88FFA',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayDatasets
+                        }]
+                    };
+                    this.myChart.update();
+                    this.setState({loading: false});
                 }
+
             });
         }
     }

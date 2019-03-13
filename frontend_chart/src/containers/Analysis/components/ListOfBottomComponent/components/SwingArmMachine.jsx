@@ -130,10 +130,6 @@ export class SwingArmMachine extends Component {
 
     handleReturnData = (returnData) => {
         if (returnData && returnData.length > 0){
-            console.log("133 133 133")
-            console.log("133 133 133")
-            console.log("133 133 133")
-            console.log("returnData: ", returnData);
             returnData.map(item => {
                 this.labels.push(item[0] + 'h');
                 this.datasets.push(item[1]);
@@ -148,28 +144,43 @@ export class SwingArmMachine extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
             if (this.role == 'os'){
+                this.setState({loading: true});
                 let {startDate, endDate} = this.props.globalDateFilter;
                 let fromTimeDevice = moment(startDate.toISOString()).unix();
                 let toTimedevice   = moment(endDate.toISOString()).unix();
 
-                this.setState({
-                    loading: true,
-                });
-                console.log("fromTimeDevice: ", fromTimeDevice);
-                console.log("toTimedevice: ", toTimedevice);
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice
                 };
                 API('api/os/swingarm', 'POST', param)
                     .then((response) => {
-                        if (response.data.success) {
+                        if (response && response.data){
                             let dataArray = response.data.data;
-                            let returnData = JSON.parse(dataArray[0].data);
-                            this.handleReturnData(returnData);
-
-                            let displayLabels = this.labels;
-                            let displayData = this.data;
+                            if (dataArray && dataArray.length > 0){
+                                let returnData = JSON.parse(dataArray[0].data);
+                                if (returnData && returnData.length > 0) {
+                                    let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                                    let displayDatasets = returnData[0];
+                                    this.myChart.data = {
+                                        labels: displayLabels,
+                                        datasets: [{
+                                            label: 'Swing Arm Data',
+                                            backgroundColor: '#C88FFA',
+                                            borderColor: '#C88FFA',
+                                            borderWidth: 1,
+                                            //hoverBackgroundColor: '#FF6384',
+                                            //hoverBorderColor: '#FF6384',
+                                            data: displayDatasets
+                                        }]
+                                    };
+                                    this.myChart.update();
+                                    this.setState({loading: false});
+                                }
+                            }
+                        } else {
+                            let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                            let displayDatasets = [];
                             this.myChart.data = {
                                 labels: displayLabels,
                                 datasets: [{
@@ -179,8 +190,8 @@ export class SwingArmMachine extends Component {
                                     borderWidth: 1,
                                     //hoverBackgroundColor: '#FF6384',
                                     //hoverBorderColor: '#FF6384',
-                                    data: displayData
-                                }],
+                                    data: displayDatasets
+                                }]
                             };
                             this.myChart.update();
                             this.setState({loading: false});
@@ -206,22 +217,40 @@ export class SwingArmMachine extends Component {
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
-
-
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice
             };
             API('api/os/swingarm', 'POST', param)
                 .then((response) => {
-                    if (response.data.success) {
+                    if (response && response.data){
                         let dataArray = response.data.data;
-                        let returnData = JSON.parse(dataArray[0].data);
-                        this.handleReturnData(returnData);
-                        console.log("this.labels 221: ", this.labels);
-                        console.log("this.data 222: ", this.data);
+                        if (dataArray && dataArray.length > 0){
+                            let returnData = JSON.parse(dataArray[0].data);
+                            if (returnData && returnData.length > 0) {
+                                let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                                let displayDatasets = returnData[0];
+                                this.myChart.data = {
+                                    labels: displayLabels,
+                                    datasets: [{
+                                        label: 'Swing Arm Data',
+                                        backgroundColor: '#C88FFA',
+                                        borderColor: '#C88FFA',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayDatasets
+                                    }]
+                                };
+                                this.myChart.update();
+                                this.setState({loading: false});
+                            }
+                        }
+                    } else {
+                        let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                        let displayDatasets = [];
                         this.myChart.data = {
-                            labels: this.labels,
+                            labels: displayLabels,
                             datasets: [{
                                 label: 'Swing Arm Data',
                                 backgroundColor: '#C88FFA',
@@ -229,8 +258,8 @@ export class SwingArmMachine extends Component {
                                 borderWidth: 1,
                                 //hoverBackgroundColor: '#FF6384',
                                 //hoverBorderColor: '#FF6384',
-                                data: this.datasets
-                            }],
+                                data: displayDatasets
+                            }]
                         };
                         this.myChart.update();
                         this.setState({loading: false});

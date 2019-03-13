@@ -34,20 +34,41 @@ export default class DateRangePicker extends Component {
             },
             lastSelectedStartDate: startDate || new Date(),
             lastSelectedEndDate: endDate || new Date(),
+            minDate: null,
+            maxDate: new Date(),
         };
     }
 
     /*
      * dateRanges = {
-     *      startDate: ...,
-     *      endDate: ...,
-     *      key: 'selection',
+     *      selection: {
+     *          startDate: ...,
+     *          endDate: ...,
+     *          key: 'selection',
+     *      }
      * }
      */
     handleRangeChange(dateRanges) {
-        this.setState({
-            ...dateRanges,
-        });
+        let startDate = dateRanges.selection.startDate;
+        let endDate = dateRanges.selection.endDate;
+        if (dateRanges.selection.startDate.getTime() === dateRanges.selection.endDate.getTime()) {
+            let minDate = new Date(moment(startDate.toISOString()).subtract(9, "days").toISOString());
+            let maxDate = new Date(moment(endDate.toISOString()).add(9, "days").toISOString());
+            if (moment(maxDate.toISOString()).isAfter(moment())) {
+                maxDate = new Date();
+            }
+            this.setState({
+                ...dateRanges,
+                minDate: minDate,
+                maxDate: maxDate,
+            });
+        } else {
+            this.setState({
+                ...dateRanges,
+                minDate: null,
+                maxDate: new Date(),
+            });
+        }
     }
 
     cancel = () => {
@@ -92,15 +113,26 @@ export default class DateRangePicker extends Component {
     render() {
         return (
             <div>
-                <DateRange
-                    onChange={this.handleRangeChange.bind(this)}
-                    showSelectionPreview={false}
-                    moveRangeOnFirstSelection={false}
-                    ranges={[this.state.selection]}
-                    className={'PreviewArea'}
-                    maxDate={new Date()}
-                    showDateDisplay={true}
-                />
+                {
+                    this.state.minDate
+                        ? <DateRange
+                            onChange={this.handleRangeChange.bind(this)}
+                            moveRangeOnFirstSelection={false}
+                            ranges={[this.state.selection]}
+                            className={'PreviewArea'}
+                            minDate={this.state.minDate}
+                            maxDate={this.state.maxDate}
+                            showDateDisplay={true}
+                        />
+                        : <DateRange
+                            onChange={this.handleRangeChange.bind(this)}
+                            moveRangeOnFirstSelection={false}
+                            ranges={[this.state.selection]}
+                            className={'PreviewArea'}
+                            maxDate={this.state.maxDate}
+                            showDateDisplay={true}
+                        />
+                }
                 <div className="container date-range-picker-config">
                     <div className="col">
                         <div className="row">Time range selected</div>

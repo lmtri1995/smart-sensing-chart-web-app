@@ -23,6 +23,7 @@ class ReportPage extends Component {
             activeTab: '1',
             productionRateDateLabels: null,
             productionRate: null,
+            actualProduction: null,
             productionRateLoading: true,
             defectRateDateLabels: null,
             defectByTypeOverTime: null,
@@ -110,12 +111,19 @@ class ReportPage extends Component {
                     let dateLabelsAndProductionRatesMap = new Map();
                     while (startMoment.isSameOrBefore(endMoment)) {
                         // array of 3 (zero) elements for 3 production rates of 3 shifts each day
-                        dateLabelsAndProductionRatesMap.set(startMoment.format('DD/MM/YYYY'), [0, 0, 0]);
+                        dateLabelsAndProductionRatesMap.set(
+                            startMoment.format('DD/MM/YYYY'),
+                            {
+                                productionRate: [0, 0, 0],
+                                actualProduction: [0, 0, 0],
+                            }
+                        );
 
                         startMoment = startMoment.add(1, "days");
                     }
 
                     let shiftDataOfCurrentDay, currentProductionRate = 0;
+                    let currentDayActualProductions;
                     dataArray.map(currentData => {
                         currentProductionRate = currentData['PRODUCTION_RATE'];
                         // Round to 2 decimal places
@@ -125,19 +133,61 @@ class ReportPage extends Component {
 
                         switch (currentData['SHIFT_NO']) {
                             case '1':
-                                shiftDataOfCurrentDay = dateLabelsAndProductionRatesMap.get(currentData['WORK_DATE']);
+                                shiftDataOfCurrentDay = dateLabelsAndProductionRatesMap
+                                    .get(currentData['WORK_DATE'])
+                                    .productionRate;
+                                currentDayActualProductions = dateLabelsAndProductionRatesMap
+                                    .get(currentData['WORK_DATE'])
+                                    .actualProduction;
+
                                 shiftDataOfCurrentDay[0] = currentProductionRate;
-                                dateLabelsAndProductionRatesMap.set(currentData['WORK_DATE'], shiftDataOfCurrentDay);
+                                currentDayActualProductions[0] = currentData['ACTUAL_QTY'];
+
+                                dateLabelsAndProductionRatesMap.set(
+                                    currentData['WORK_DATE'],
+                                    {
+                                        productionRate: shiftDataOfCurrentDay,
+                                        actualProduction: currentDayActualProductions,
+                                    }
+                                );
                                 break;
                             case '2':
-                                shiftDataOfCurrentDay = dateLabelsAndProductionRatesMap.get(currentData['WORK_DATE']);
+                                shiftDataOfCurrentDay = dateLabelsAndProductionRatesMap
+                                    .get(currentData['WORK_DATE'])
+                                    .productionRate;
+                                currentDayActualProductions = dateLabelsAndProductionRatesMap
+                                    .get(currentData['WORK_DATE'])
+                                    .actualProduction;
+
                                 shiftDataOfCurrentDay[1] = currentProductionRate;
-                                dateLabelsAndProductionRatesMap.set(currentData['WORK_DATE'], shiftDataOfCurrentDay);
+                                currentDayActualProductions[1] = currentData['ACTUAL_QTY'];
+
+                                dateLabelsAndProductionRatesMap.set(
+                                    currentData['WORK_DATE'],
+                                    {
+                                        productionRate: shiftDataOfCurrentDay,
+                                        actualProduction: currentDayActualProductions,
+                                    }
+                                );
                                 break;
                             case '3':
-                                shiftDataOfCurrentDay = dateLabelsAndProductionRatesMap.get(currentData['WORK_DATE']);
+                                shiftDataOfCurrentDay = dateLabelsAndProductionRatesMap
+                                    .get(currentData['WORK_DATE'])
+                                    .productionRate;
+                                currentDayActualProductions = dateLabelsAndProductionRatesMap
+                                    .get(currentData['WORK_DATE'])
+                                    .actualProduction;
+
                                 shiftDataOfCurrentDay[2] = currentProductionRate;
-                                dateLabelsAndProductionRatesMap.set(currentData['WORK_DATE'], shiftDataOfCurrentDay);
+                                currentDayActualProductions[2] = currentData['ACTUAL_QTY'];
+
+                                dateLabelsAndProductionRatesMap.set(
+                                    currentData['WORK_DATE'],
+                                    {
+                                        productionRate: shiftDataOfCurrentDay,
+                                        actualProduction: currentDayActualProductions,
+                                    }
+                                );
                                 break;
                         }
                     });
@@ -145,14 +195,24 @@ class ReportPage extends Component {
                     let dateLabels = [];
                     let shift1 = [], shift2 = [], shift3 = [];
                     let averageProductionRate = 0, averageProductionRatesByDay = [];
+                    let actualProductionsShift1 = [], actualProductionsShift2 = [], actualProductionsShift3 = [];
+                    let actualProductions = [];
                     dateLabelsAndProductionRatesMap.forEach((shiftData, date) => {
                         dateLabels.push(date);
 
-                        shift1.push(shiftData[0]);
-                        shift2.push(shiftData[1]);
-                        shift3.push(shiftData[2]);
+                        shift1.push(shiftData.productionRate[0]);
+                        shift2.push(shiftData.productionRate[1]);
+                        shift3.push(shiftData.productionRate[2]);
 
-                        averageProductionRate = (shiftData[0] + shiftData[1] + shiftData[2]) / 3;
+                        actualProductionsShift1.push(shiftData.actualProduction[0]);
+                        actualProductionsShift2.push(shiftData.actualProduction[1]);
+                        actualProductionsShift3.push(shiftData.actualProduction[2]);
+
+                        averageProductionRate = (
+                            shiftData.productionRate[0] +
+                            shiftData.productionRate[1] +
+                            shiftData.productionRate[2]
+                        ) / 3;
 
                         averageProductionRate = averageProductionRate % 1 !== 0
                             ? Math.round(averageProductionRate * 100) / 100
@@ -160,6 +220,7 @@ class ReportPage extends Component {
 
                         averageProductionRatesByDay.push(averageProductionRate);    // Average of 3 shifts
                     });
+                    actualProductions.push(actualProductionsShift1, actualProductionsShift2, actualProductionsShift3);
 
                     let dataToShow = [];
                     // Colors = Shift 1 + Shift 2 + Shift 3 + Average line + Average point background color
@@ -197,6 +258,7 @@ class ReportPage extends Component {
                         ...this.state,
                         productionRateDateLabels: dateLabels,
                         productionRate: dataToShow,
+                        actualProduction: actualProductions,
                         productionRateLoading: false,
                     });
                 }
@@ -339,7 +401,8 @@ class ReportPage extends Component {
                         <div className="row">
                             <div className="col-9">
                                 <ProductionRate labels={this.state.productionRateDateLabels}
-                                                productionRate={this.state.productionRate}/>
+                                                productionRate={this.state.productionRate}
+                                                actualProduction={this.state.actualProduction}/>
                             </div>
                             <div className="col-3">
                                 <ProductionRateOverview productionRate={this.state.productionRate}

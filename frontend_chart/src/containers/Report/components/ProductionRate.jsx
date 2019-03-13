@@ -9,7 +9,7 @@ var PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = [];
 
 class ProductionRate extends Component {
     render() {
-        let {labels, productionRate} = this.props;
+        let {labels, productionRate, actualProduction} = this.props;
         let customChartTooltips = {
             callbacks: {
                 label: function (tooltipItem, data) {
@@ -19,7 +19,10 @@ class ProductionRate extends Component {
                     }
                     label += `${tooltipItem.yLabel}%`;
                     return label;
-                }
+                },
+                afterLabel: function (tooltipItem, data) {
+                    return `Actual Production: ${actualProduction[tooltipItem.datasetIndex][tooltipItem.index]}`;
+                },
             }
         };
 

@@ -461,10 +461,10 @@ class ProcessStatus extends Component {
             for (let i = 0; i < numbersOfStation; ++i) {
                 processStatusDataToDownload.processingStatusLine[i] = [];
 
-                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['idLine']));
-                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['idStation']));
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idLine']);
+                processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idStation']);
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['temp_avg'], "°C"));
-                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevTemperatureArray[i]), "°C");
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevTemperatureArray[i], "°C"));
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['pre_avg']));
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevPreparingTimeArray[i]));
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['cur_avg']));

@@ -13,7 +13,39 @@ var PRODUCTION_RATE_FOR_DOUGHNUT_CHART = [];
 var ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART = [];
 
 class ProductionRateOverview extends Component {
+    drawLegend = () => {
+        if (this.chartData && this.chartData.length > 0) {
+            let dataArray = this.chartData[0];
+            let colorArray = dataArray.backgroundColor;
+            let data = dataArray.data;
+            let total = 0;
+            for (let i = 0; i < data.length; i++) {
+                total += data[i];
+            }
+            let legendValue = "<div>";
+            for (let i = 0; i < colorArray.length; i++) {
+                let color = colorArray[i];
+                let number = data[i];
+                let percent = (data[i] / total) * 100;
+                legendValue += "<div style='margin-top: 5px;'>";
+                legendValue += "<div id='lengendLabel' class='productionrate_legend-box'" +
+                    " style='background-color: " + color + "; display: inline-block;'></div>";
+                legendValue += "<div class='temperature-legend' style='display: inline-block'>" + `Shift ${i + 1}: ` + Utilities.changeNumberFormat(number) + ` (${Utilities.changeNumberFormat(percent)}%)` + "</div>" +
+                    " &nbsp;" +
+                    " &nbsp; ";
+                legendValue += "</div>";
+            }
+            legendValue += "</div>";
+            document.getElementById("productionRate-lengendLabel").innerHTML = legendValue;
+        }
+    }
+
+    componentDidUpdate() {
+        this.drawLegend();
+    }
+
     render() {
+        console.log("render");
         let {productionRate, actualProduction, loading} = this.props;
         let chartLabels = [], backgroundColor = [];
         let actualProductionsByShift = [], sumActualProduction = 0,
@@ -100,7 +132,7 @@ class ProductionRateOverview extends Component {
             };
         }
 
-        let chartData = [{
+        this.chartData = [{
             data: actualProductionsByShift,
             backgroundColor: backgroundColor
         }];
@@ -109,8 +141,13 @@ class ProductionRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={chartData} centerText={totalActualProductionText}
-                                   customTooltips={customChartTooltips} showLegend={true} loading={loading}/>
+                    <DoughnutChart labels={chartLabels} data={this.chartData}
+                                   centerText={totalActualProductionText}
+                                   customTooltips={customChartTooltips} showLegend={false}
+                                   loading={loading} />
+                </div>
+                <div className="col-12">
+                    <div  id={'productionRate-lengendLabel'}></div>
                 </div>
             </div>
         )

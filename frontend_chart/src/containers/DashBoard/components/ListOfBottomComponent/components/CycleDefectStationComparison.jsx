@@ -103,6 +103,7 @@ export class CycleDefectStationComparison extends Component {
         this.state = {
             loading: true
         };
+        this._isMounted = false;
     }
 
     specifyCurrentShift() {
@@ -186,15 +187,17 @@ export class CycleDefectStationComparison extends Component {
     }
 
     componentWillUnmount() {
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                from_timedevice: 0,//1551333600
-                to_timedevice: 0,//1551420000
-                minute: 60,
-                status: 'stop'
-            }
-        });
+        if (this._isMounted){
+            this.socket.emit(this.emitEvent, {
+                msg: {
+                    event: this.eventListen,
+                    from_timedevice: 0,//1551333600
+                    to_timedevice: 0,//1551420000
+                    minute: 60,
+                    status: 'stop'
+                }
+            });
+        }
     }
 
     changeLabelArray(){
@@ -209,6 +212,7 @@ export class CycleDefectStationComparison extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
             type: 'bar',

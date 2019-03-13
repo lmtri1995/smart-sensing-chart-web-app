@@ -146,7 +146,6 @@ export default class DowntimeShift extends Component {
     }
 
     showDowntimeShiftItem(dataArray, shiftNo) {
-        console.log("dataArray: ", dataArray);
         let result = "";
 
 
@@ -207,7 +206,6 @@ export default class DowntimeShift extends Component {
         let downtimeShiftArray1 = ['-', '-', '-', '-', '-', '-', '-', '-', '-'];
         let downtimeShiftArray2 = ['-', '-', '-', '-', '-', '-', '-', '-', '-'];
         let downtimeShiftArray3 = ['-', '-', '-', '-', '-', '-', '-', '-', '-'];
-        let downtimeShiftArraySummary = [];
         if (dataArray && dataArray.length){
             downtimeShiftArray1[8] = dataArray[0].first_shift_total;
             downtimeShiftArray2[8] = dataArray[0].second_shift_total;
@@ -248,7 +246,7 @@ export default class DowntimeShift extends Component {
                 }
             });
         }
-        downtimeShiftArraySummary = [downtimeShiftArray1, downtimeShiftArray2, downtimeShiftArray3];
+        let downtimeShiftArraySummary = [downtimeShiftArray1, downtimeShiftArray2, downtimeShiftArray3];
         return downtimeShiftArraySummary;
     }
 

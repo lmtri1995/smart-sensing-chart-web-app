@@ -5,6 +5,8 @@ import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
 import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
+import moment from "moment";
+import API from "../../../../services/api";
 
 const override = `
     position: absolute;
@@ -34,18 +36,22 @@ class ProcessStatus extends Component {
             case 'admin':
                 this.emitEvent = 'os_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
+                this.standardCycleTimeUrl = 'api/os/std';
                 break;
             case 'ip':
                 this.emitEvent = 'ip_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
+                this.standardCycleTimeUrl = 'api/ip/std';
                 break;
             case 'os':
                 this.emitEvent = 'os_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
+                this.standardCycleTimeUrl = 'api/os/std';
                 break;
             default:
                 this.emitEvent = 'os_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
+                this.standardCycleTimeUrl = 'api/os/std';
                 break;
         }
 
@@ -53,6 +59,14 @@ class ProcessStatus extends Component {
             dataArray: "",
             loading: true
         };
+
+        this.standardPreparingTimeArray = [];
+        this.standardCuringTimeArray = [];
+        this.standardTemperatureArray = [];
+        this.standardCycleTimeArray = [];
+        this.stdevTemperatureArray = [];
+        this.stdevPreparingTimeArray = [];
+        this.stdevCuringTimeArray = [];
     }
 
     componentWillUnmount() {
@@ -73,6 +87,7 @@ class ProcessStatus extends Component {
 
     componentDidMount() {
         this._isMounted = true;
+        this.countStandardCycleTime();
         /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
@@ -118,11 +133,105 @@ class ProcessStatus extends Component {
 
     }
 
+    countStandardCycleTime() {
+        console.log("137 137 137");
+        console.log("137 137 137");
+        console.log("137 137 137");
+        //let {startDate, endDate} = this.props.globalDateFilter;
+        this.standardPreparingTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardCuringTimeArray    = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardTemperatureArray   = [0, 0, 0, 0, 0, 0, 0, 0];
+        // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
+        let today = new Date();
+        let todayYMD = moment(today.toISOString()).format("YYYYMMDD");
+        /*let param = {
+            from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
+            to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
+        };*/
+        let param = {
+            from_workdate: todayYMD,
+            to_workdate: todayYMD,
+        };
+        let standardCycleTime1 = 0, standardCycleTime2 = 0, standardCycleTime3 = 0,
+            standardCycleTime4 = 0,
+            standardCycleTime5 = 0, standardCycleTime6 = 0, standardCycleTime7 = 0,
+            standardCycleTime8 = 0;
+        API(this.standardCycleTimeUrl, 'POST', param).then((response) => {
+            let dataArray = response.data.data;
+            console.log("countStandardCycleTime 156 156 156 156");
+            console.log("dataArray: ", dataArray);
+            if (dataArray && dataArray.length > 0) {
+                dataArray.map(item => {
+                    //{STATION_NO: 7, STD_CURING_TM: 0, STD_TEMP: 0, STD_PREPARING_TM: 0,
+                    // STD_PRESSURE: 0}
+                    switch (item.STATION_NO) {
+                        case 1:
+                            standardCycleTime1 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[0] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[0] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[0] = item.STD_TEMP;
+                            break;
+                        case 2:
+                            standardCycleTime2 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[1] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[1] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[1] = item.STD_TEMP;
+                            break;
+                        case 3:
+                            standardCycleTime3 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[2] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[2] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[2] = item.STD_TEMP;
+                            break;
+                        case 4:
+                            standardCycleTime4 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[3] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[3] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[3] = item.STD_TEMP;
+                            break;
+                        case 5:
+                            standardCycleTime5 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[4] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[4] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[4] = item.STD_TEMP;
+                            break;
+                        case 6:
+                            standardCycleTime6 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[5] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[5] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[5] = item.STD_TEMP;
+                            break;
+                        case 7:
+                            standardCycleTime7 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[6] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[6] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[6] = item.STD_TEMP;
+                            break;
+                        case 8:
+                            standardCycleTime8 += item.STD_PREPARING_TM + item.STD_CURING_TM;
+                            this.standardPreparingTimeArray[7] = item.STD_PREPARING_TM;
+                            this.standardCuringTimeArray[7] = item.STD_CURING_TM;
+                            this.standardTemperatureArray[7] = item.STD_TEMP;
+                            break;
+                    }
+                });
+                this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
+                    standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
+                console.log("this.standardPreparingTimeArray: ", this.standardPreparingTimeArray);
+                console.log("this.standardCuringTimeArray: ", this.standardCuringTimeArray);
+                console.log("this.standardTemperatureArray: ", this.standardTemperatureArray);
+            }
+        }).catch((err) => console.log('err:', err));
+    }
+
     showLineItem(data, stationId) {
-        let result = <LineSummaryItem stationId={stationId} avgTemp={data.temp_avg}
-                                      stddevTemp={Math.round(data.temp_stdev * 100)/100} avgPreparing={data.pre_avg}
-                                      stddevPreparing={data.pre_stdev} avgCuringTime={data.cur_avg}
-                                      stddevCurringTime={data.cur_stdev}/>;
+        let temp_stdev = this.standardTemperatureArray[stationId - 1] - data.temp_avg;
+        let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
+        let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
+        let result = <LineSummaryItem stationId={stationId} avgTemp={Math.round(data.temp_avg * 100)/100}
+                                      stddevTemp={Math.round(temp_stdev * 100)/100} avgPreparing={Math.round(data.pre_avg * 100)/100}
+                                      stddevPreparing={Math.round(pre_stdev * 100)/100} avgCuringTime={Math.round(data.cur_avg * 100)/100}
+                                      stddevCurringTime={Math.round(cur_stdev * 100)/100}/>;
         return result;
     }
 
@@ -196,46 +305,54 @@ class ProcessStatus extends Component {
             let totalAvgTemp = 0, totalStddevTemp = 0, totalAvgPrep = 0, totalStddevPrep = 0,
                 totalAvgCuringTime = 0, totalStddevCurringTime = 0;
 
-            let maxAvgTemp = parseFloat(this.checkNull(dataArray[0].temp_avg)),
-                maxStddevTemp = parseFloat(this.checkNull(dataArray[0].temp_stdev)),
-                maxAvgPrep = parseFloat(this.checkNull(dataArray[0].pre_avg)),
-                maxStddevPrep = parseFloat(this.checkNull(dataArray[0].pre_stdev)),
-                maxAvgCuringTime = parseFloat(this.checkNull(dataArray[0].cur_avg)),
-                maxStddevCurringTime = parseFloat(this.checkNull(dataArray[0].cur_stdev));
+            let maxAvgTemp = parseFloat(dataArray[0].temp_avg),
+                maxStddevTemp = 0,
+                maxAvgPrep = parseFloat(dataArray[0].pre_avg),
+                maxStddevPrep = 0,
+                maxAvgCuringTime = parseFloat(dataArray[0].cur_avg),
+                maxStddevCurringTime = 0;
 
-            let minAvgTemp = parseFloat(this.checkNull(dataArray[0].temp_avg)),
-                minStddevTemp = parseFloat(this.checkNull(dataArray[0].temp_stdev)),
-                minAvgPrep = parseFloat(this.checkNull(dataArray[0].pre_avg)),
-                minStddevPrep = parseFloat(this.checkNull(dataArray[0].pre_stdev)),
-                minAvgCuringTime = parseFloat(this.checkNull(dataArray[0].cur_avg)),
-                minStddevCurringTime = parseFloat(this.checkNull(dataArray[0].cur_stdev));
+            let minAvgTemp = parseFloat(dataArray[0].temp_avg),
+                minStddevTemp = 0,
+                minAvgPrep = parseFloat(dataArray[0].pre_avg),
+                minStddevPrep = 0,
+                minAvgCuringTime = parseFloat(dataArray[0].cur_avg),
+                minStddevCurringTime = 0;
+
+            //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
+            for (let i = 0; i < numbersOfStation; i++){
+                this.stdevTemperatureArray[i] = parseFloat(dataArray[i].temp_avg - this.standardTemperatureArray[i]);
+                this.stdevPreparingTimeArray[i] = parseFloat(dataArray[i].pre_avg - this.standardPreparingTimeArray[i]);
+                this.stdevCuringTimeArray[i] = parseFloat(dataArray[i].cur_avg - this.standardCuringTimeArray[i]);
+
+                totalStddevTemp += parseFloat(this.stdevTemperatureArray[i]);
+                totalStddevPrep += parseFloat(this.stdevPreparingTimeArray[i]);
+                totalStddevCurringTime += parseFloat(this.stdevCuringTimeArray[i]);
+
+                maxStddevTemp = (maxStddevTemp < parseFloat(this.stdevTemperatureArray[i])) ? parseFloat(this.stdevTemperatureArray[i]) : maxStddevTemp;
+                maxStddevPrep = (maxStddevPrep < parseFloat(this.stdevPreparingTimeArray[i])) ? parseFloat(this.stdevPreparingTimeArray[i]) : maxStddevPrep;
+                maxStddevCurringTime = (maxStddevCurringTime < parseFloat(dataArray[i].cur_stdev)) ? parseFloat(dataArray[i].cur_stdev) : maxStddevCurringTime;
+
+                minStddevTemp = (minStddevTemp < parseFloat(this.stdevTemperatureArray[i])) ? minStddevTemp : parseFloat(this.stdevTemperatureArray[i]);
+                minStddevPrep = (minStddevPrep < parseFloat(this.stdevPreparingTimeArray[i])) ? minStddevPrep : parseFloat(this.stdevPreparingTimeArray[i]);
+                minStddevCurringTime = (minStddevCurringTime < parseFloat(this.stdevCuringTimeArray[i])) ? minStddevCurringTime : parseFloat(this.stdevCuringTimeArray[i]);
+            }
 
             for (let i = 0; i < numbersOfStation; i++) {
                 //for average line
-                totalAvgTemp += parseFloat(this.checkNull(dataArray[i].temp_avg));
-                totalStddevTemp += parseFloat(this.checkNull(dataArray[i].temp_stdev));
-                totalAvgPrep += parseFloat(this.checkNull(dataArray[i].pre_avg));
-                totalStddevPrep += parseFloat(this.checkNull(dataArray[i].pre_stdev));
-                totalAvgCuringTime += parseFloat(this.checkNull(dataArray[i].cur_avg));
-                totalStddevCurringTime += parseFloat(this.checkNull(dataArray[i].cur_stdev));
+                totalAvgTemp += parseFloat(dataArray[i].temp_avg);
+                totalAvgPrep += parseFloat(dataArray[i].pre_avg);
+                totalAvgCuringTime += parseFloat(dataArray[i].cur_avg);
 
                 //for max line
                 maxAvgTemp = (maxAvgTemp < parseFloat(dataArray[i].temp_avg)) ? parseFloat(dataArray[i].temp_avg) : maxAvgTemp;
-                maxStddevTemp = (maxStddevTemp < parseFloat(dataArray[i].temp_stdev)) ? parseFloat(dataArray[i].temp_stdev) : maxStddevTemp;
                 maxAvgPrep = (maxAvgPrep < parseFloat(dataArray[i].pre_avg)) ? parseFloat(dataArray[i].pre_avg) : maxAvgPrep;
-                maxStddevPrep = (maxStddevPrep < parseFloat(dataArray[i].pre_stdev)) ? parseFloat(dataArray[i].pre_stdev) : maxStddevPrep;
                 maxAvgCuringTime = (maxAvgCuringTime < parseFloat(dataArray[i].cur_avg)) ? parseFloat(dataArray[i].cur_avg) : maxAvgCuringTime;
-                maxStddevCurringTime = (maxStddevCurringTime < parseFloat(dataArray[i].cur_stdev)) ? parseFloat(dataArray[i].cur_stdev) : maxStddevCurringTime;
 
                 //for min line
                 minAvgTemp = (minAvgTemp < parseFloat(dataArray[i].temp_avg)) ? minAvgTemp : parseFloat(dataArray[i].temp_avg);
-                minStddevTemp = (minStddevTemp < parseFloat(dataArray[i].temp_stdev)) ? minStddevTemp : parseFloat(dataArray[i].temp_stdev);
                 minAvgPrep = (minAvgPrep < parseFloat(dataArray[i].pre_avg)) ? minAvgPrep : parseFloat(dataArray[i].pre_avg);
-                minStddevPrep = (minStddevPrep < parseFloat(dataArray[i].pre_stdev)) ? minStddevPrep : parseFloat(dataArray[i].pre_stdev);
                 minAvgCuringTime = (minAvgCuringTime < parseFloat(dataArray[i].cur_avg)) ? minAvgCuringTime : parseFloat(dataArray[i].cur_avg);
-                minStddevCurringTime = (minStddevCurringTime < parseFloat(dataArray[i].cur_stdev)) ? minStddevCurringTime : parseFloat(dataArray[i].cur_stdev);
-
-                //for stddev line
             }
 
             let avgAvgTemp = totalAvgTemp / numbersOfStation;
@@ -318,9 +435,9 @@ class ProcessStatus extends Component {
             <GeneralSummaryItem spec={'MIN'} data1={this.roundNumber(minAvgTemp)} data2={this.roundNumber(minStddevTemp)}
                                 data3={this.roundNumber(minAvgPrep)} data4={this.roundNumber(minStddevPrep)} data5={this.roundNumber(minAvgCuringTime)}
                                 data6={this.roundNumber(minStddevCurringTime)}/>
-            <GeneralSummaryItem spec={'STDEV'} data1={this.roundNumber(stdAvgTemp)} data2={this.roundNumber(stdStddevTemp)}
-                                data3={this.roundNumber(stdAvgPrep)} data4={this.roundNumber(stdStddevPrep)} data5={this.roundNumber(stdAvgCuringTime)}
-                                data6={this.roundNumber(stdStddevCurringTime)}/>
+            <GeneralSummaryItem spec={'STDEV'} data1="-" data2="-"
+                                data3="-" data4="-" data5="-"
+                                data6="-" />
             </tbody>;
 
             // Prepare to push Process Status Data to Redux Store
@@ -344,7 +461,7 @@ class ProcessStatus extends Component {
                 [this.roundNumber(avgAvgTemp), this.roundNumber(avgStddevTemp), this.roundNumber(avgAvgPrep), this.roundNumber(avgStddevPrep), this.roundNumber(avgAvgCuringTime), this.roundNumber(avgStddevCurringTime)],
                 [this.roundNumber(maxAvgTemp), this.roundNumber(maxStddevTemp), this.roundNumber(maxAvgPrep), this.roundNumber(maxStddevPrep), this.roundNumber(maxAvgCuringTime), this.roundNumber(maxStddevCurringTime)],
                 [this.roundNumber(minAvgTemp), this.roundNumber(minStddevTemp), this.roundNumber(minAvgPrep), this.roundNumber(minStddevPrep), this.roundNumber(minAvgCuringTime), this.roundNumber(minStddevCurringTime)],
-                [this.roundNumber(stdAvgTemp), this.roundNumber(stdStddevTemp), this.roundNumber(stdAvgPrep), this.roundNumber(stdStddevPrep), this.roundNumber(stdAvgCuringTime), this.roundNumber(stdStddevCurringTime)],
+                ["-", "-", "-", "-", "-", "-"],
             ];
             // Push Process Status Data to Redux Store to Export Data later
             this.props.dispatch(storeProcessStatusData(processStatusDataToDownload));
@@ -386,4 +503,8 @@ class ProcessStatus extends Component {
     }
 }
 
-export default connect()(ProcessStatus);
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(ProcessStatus);

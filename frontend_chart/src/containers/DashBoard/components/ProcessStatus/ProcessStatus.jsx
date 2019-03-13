@@ -149,6 +149,10 @@ class ProcessStatus extends Component {
             from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
         };*/
+        let hour = today.getHours();
+        if (hour < 6){
+            todayYMD = moment(todayYMD).subtract(1, "days").format("YYYYMMDD")
+        }
         let param = {
             from_workdate: todayYMD,
             to_workdate: todayYMD,

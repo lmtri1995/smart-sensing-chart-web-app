@@ -46,10 +46,8 @@ class DataExporter extends Component {
                 break;
             case ROUTE.Analysis:
                 fileName = 'Analysis';
-                stationStatusData = props.downloadDataStore.stationStatusData;
                 shiftStatusData = props.downloadDataStore.shiftStatusData;
                 processStatusData = props.downloadDataStore.processStatusData;
-                downTimeShiftData = props.downloadDataStore.downTimeShiftData;
                 break;
             case ROUTE.Report:
                 fileName = 'Report';
@@ -120,10 +118,8 @@ class DataExporter extends Component {
                 break;
             case ROUTE.Analysis:
                 fileName = 'Analysis';
-                stationStatusData = props.downloadDataStore.stationStatusData;
                 shiftStatusData = props.downloadDataStore.shiftStatusData;
                 processStatusData = props.downloadDataStore.processStatusData;
-                downTimeShiftData = props.downloadDataStore.downTimeShiftData;
                 imageExportContainerElements = [];
                 imageExportContainerElements.push(document.getElementById(ANALYSIS_SHIFT_STATUS_ID));
                 imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID));
@@ -229,11 +225,6 @@ class DataExporter extends Component {
                                     doc.addPage();  // Add new page
                                 }
                             });
-                            if (stationStatusData) {
-                                doc.addPage();  // Add new page
-
-                                addStationStatusDataTablePDF(doc, tableStyle, stationStatusData);
-                            }
                             if (shiftStatusData) {
                                 doc.addPage();  // Add new page
 
@@ -244,11 +235,6 @@ class DataExporter extends Component {
 
                                 let {processingStatusLine, general} = processStatusData;
                                 addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
-                            }
-                            if (downTimeShiftData) {
-                                doc.addPage();  // Add new page
-
-                                addDownTimeShiftDataTablePDF(doc, tableStyle, downTimeShiftData);
                             }
 
                             doc.save(

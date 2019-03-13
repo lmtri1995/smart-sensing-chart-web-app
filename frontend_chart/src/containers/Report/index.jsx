@@ -72,13 +72,43 @@ class ReportPage extends Component {
             }
 
             // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
-            let param = {
+            let productionRatesParam = {
                 from_workdate: startMoment.format("YYYYMMDD"),
                 to_workdate: endMoment.subtract(1, "days").format("YYYYMMDD"),
+                model_name: this.props.globalModelFilter.selectedModel[1].key,
             };
 
-            this.requestProductionRates(param);
-            this.requestDefectByTypeOverTime(param);
+            let shiftNo;
+            switch (this.props.globalShiftFilter.selectedShift) {
+                case SHIFT_OPTIONS[0]:
+                    shiftNo = '';
+                    break;
+                case SHIFT_OPTIONS[1]:
+                    shiftNo = 1;
+                    break;
+                case SHIFT_OPTIONS[2]:
+                    shiftNo = 2;
+                    break;
+                case SHIFT_OPTIONS[3]:
+                    shiftNo = 3;
+                    break;
+                default:
+                    shiftNo = '';
+                    break;
+            }
+            let defectRatesParam = shiftNo
+                ? {
+                    shift_no: shiftNo,
+                    from_workdate: startMoment.format("YYYYMMDD"),
+                    to_workdate: endMoment.subtract(1, "days").format("YYYYMMDD"),
+                }
+                : {
+                    from_workdate: startMoment.format("YYYYMMDD"),
+                    to_workdate: endMoment.subtract(1, "days").format("YYYYMMDD"),
+                };
+
+            this.requestProductionRates(productionRatesParam);
+            this.requestDefectByTypeOverTime(defectRatesParam);
         }
     }
 
@@ -438,7 +468,9 @@ class ReportPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalModelFilter: state.globalModelFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default connect(mapStateToProps)(ReportPage);

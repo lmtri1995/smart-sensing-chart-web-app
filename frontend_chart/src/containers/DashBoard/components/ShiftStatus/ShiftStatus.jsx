@@ -4,6 +4,8 @@ import moment from "moment";
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
 import {specifyCurrentShift} from "../../../../shared/utils/Utilities";
+import {storeShiftStatusData} from "../../../../redux/actions/downloadDataStoreActions";
+import {connect} from "react-redux";
 
 const override = `
     position: absolute;
@@ -12,7 +14,8 @@ const override = `
     top :25%;
     z-index: 100000;
 `;
-export default class ShiftStatus extends Component {
+
+class ShiftStatus extends Component {
 
     constructor(props) {
         super(props);
@@ -164,6 +167,44 @@ export default class ShiftStatus extends Component {
                                           count8={dataArray[7].third_shift}
                 />
             }
+
+            // Prepare to dispatch Data to Redux Store to Export Data later
+            let shiftStatusData = [
+                [
+                    dataArray[0].first_shift,
+                    dataArray[1].first_shift,
+                    dataArray[2].first_shift,
+                    dataArray[3].first_shift,
+                    dataArray[4].first_shift,
+                    dataArray[5].first_shift,
+                    dataArray[6].first_shift,
+                    dataArray[7].first_shift,
+                    dataArray.reduce((acc, curData) => acc + +(curData.first_shift), 0),
+                ],
+                [
+                    dataArray[0].second_shift,
+                    dataArray[1].second_shift,
+                    dataArray[2].second_shift,
+                    dataArray[3].second_shift,
+                    dataArray[4].second_shift,
+                    dataArray[5].second_shift,
+                    dataArray[6].second_shift,
+                    dataArray[7].second_shift,
+                    dataArray.reduce((acc, curData) => acc + +(curData.second_shift), 0),
+                ],
+                [
+                    dataArray[0].third_shift,
+                    dataArray[1].third_shift,
+                    dataArray[2].third_shift,
+                    dataArray[3].third_shift,
+                    dataArray[4].third_shift,
+                    dataArray[5].third_shift,
+                    dataArray[6].third_shift,
+                    dataArray[7].third_shift,
+                    dataArray.reduce((acc, curData) => acc + +(curData.third_shift), 0),
+                ],
+            ];
+            this.props.dispatch(storeShiftStatusData(shiftStatusData));
         } else {
             result = <ShiftStatusItem currentShift={currentShift}
                                       shiftNo={shiftNo} total={0}
@@ -237,3 +278,5 @@ export default class ShiftStatus extends Component {
         )
     }
 }
+
+export default connect()(ShiftStatus);

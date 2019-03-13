@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {ExportType, MODEL_NAMES, ROUTE, SHIFT_DESCRIPTIONS} from "../../../constants/constants";
+import {ExportType, MODEL_NAMES, ROUTE, SHIFT_OPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
 import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
@@ -13,13 +13,26 @@ class TopbarFilter extends Component {
     constructor(props) {
         super(props);
 
+        let selectedShifts = new Map([
+            [SHIFT_OPTIONS[0], false],
+            [SHIFT_OPTIONS[1], false],
+            [SHIFT_OPTIONS[2], false],
+            [SHIFT_OPTIONS[3], false],
+        ]);
+
+        selectedShifts.forEach((value, key, map) => {
+            if (key === props.globalShiftFilter.selectedShift) {
+                map.set(key, true);
+            }
+        });
+
         this.state = {
             filterMenuOpen: false,
             modelFilterMenuOpen: false,
             shiftFilterMenuOpen: false,
             downloadMenuOpen: false,
             selectedModels: MODEL_NAMES,
-            selectedShifts: props.globalShiftFilter.selectedShifts,
+            selectedShifts: selectedShifts,
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -79,11 +92,19 @@ class TopbarFilter extends Component {
 
     onShiftItemClicked = (event) => {
         let item = event.target.innerText;
-        this.setState(prevState => ({
-            selectedShifts: prevState.selectedShifts.set(item, !prevState.selectedShifts.get(item))
-        }));
+        let selectedShifts = this.state.selectedShifts;
+        selectedShifts.forEach((value, key, map) => {
+            if (key !== item) {
+                map.set(key, false);
+            } else {
+                map.set(key, true);
+            }
+        });
+        this.setState({
+            selectedShifts: selectedShifts
+        });
         this.props.dispatch(
-            changeGlobalShiftFilter(this.state.selectedShifts)
+            changeGlobalShiftFilter(item)
         );
     };
 
@@ -183,7 +204,8 @@ class TopbarFilter extends Component {
                             location.pathname === ROUTE.Report // Only show Filter by Model & Shift Menu on Report Page
                                 ? (
                                     <span>
-                                        <button className="btn btn-secondary" onClick={this.onModelFilterMenuClicked}>
+                                        <button className="btn btn-secondary"
+                                                onClick={this.onModelFilterMenuClicked}>
                                             Filter: Model <i className="fas fa-caret-down"></i>
                                         </button>
                                         <Collapse isOpen={this.state.modelFilterMenuOpen}
@@ -205,14 +227,23 @@ class TopbarFilter extends Component {
                                                 }
                                             </ListGroup>
                                         </Collapse>
-                                        <button className="btn btn-secondary" onClick={this.onShiftFilterMenuClicked}>
+                                    </span>
+                                )
+                                : null
+                        }
+                        {
+                            location.pathname === ROUTE.Report || location.pathname === ROUTE.Analysis
+                                ? (
+                                    <span>
+                                        <button className="btn btn-secondary"
+                                                onClick={this.onShiftFilterMenuClicked}>
                                             Filter: Shift <i className="fas fa-caret-down"></i>
                                         </button>
                                         <Collapse isOpen={this.state.shiftFilterMenuOpen}
                                                   className="topbar__menu-wrap">
                                             <ListGroup>
                                                 {
-                                                    SHIFT_DESCRIPTIONS.map((shift, index) => {
+                                                    SHIFT_OPTIONS.map((shift, index) => {
                                                         let shiftClassName = 'list-item__unchecked';
                                                         if (this.state.selectedShifts.get(shift)) {
                                                             shiftClassName = 'list-item__checked';
@@ -233,7 +264,8 @@ class TopbarFilter extends Component {
                         <button className="btn btn-secondary" onClick={this.onDownloadMenuClicked}>
                             Download <i className="fas fa-caret-down"></i>
                         </button>
-                        <Collapse isOpen={this.state.downloadMenuOpen} className="topbar__menu-wrap">
+                        <Collapse isOpen={this.state.downloadMenuOpen}
+                                  className="topbar__menu-wrap">
                             <div className="col-12">
                                 <DataExporter exportType={ExportType.EXCEL}/>
                                 <DataExporter exportType={ExportType.PDF}/>

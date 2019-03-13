@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import DayCell from "./DayCell";
 import moment from "moment";
 import PropTypes from "prop-types";
 import {END_WORK_DAY_TIME, START_WORK_DAY_TIME} from "../../../constants/constants";
+import {DateRange} from 'react-date-range';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 
 export default class DateRangePicker extends Component {
     static propTypes = {
@@ -25,145 +27,126 @@ export default class DateRangePicker extends Component {
         );
 
         this.state = {
-            startDate: startDate || new Date(),
-            endDate: endDate || new Date(),
-            numClicks: 0,
+            selection: {
+                startDate: startDate || new Date(),
+                endDate: endDate || new Date(),
+                key: 'selection',
+            },
+            lastSelectedStartDate: startDate || new Date(),
+            lastSelectedEndDate: endDate || new Date(),
+            minDate: null,
+            maxDate: new Date(),
+        };
+    }
+
+    /*
+     * dateRanges = {
+     *      selection: {
+     *          startDate: ...,
+     *          endDate: ...,
+     *          key: 'selection',
+     *      }
+     * }
+     */
+    handleRangeChange(dateRanges) {
+        let startDate = dateRanges.selection.startDate;
+        let endDate = dateRanges.selection.endDate;
+        if (dateRanges.selection.startDate.getTime() === dateRanges.selection.endDate.getTime()) {
+            let minDate = new Date(moment(startDate.toISOString()).subtract(9, "days").toISOString());
+            let maxDate = new Date(moment(endDate.toISOString()).add(9, "days").toISOString());
+            if (moment(maxDate.toISOString()).isAfter(moment())) {
+                maxDate = new Date();
+            }
+            this.setState({
+                ...dateRanges,
+                minDate: minDate,
+                maxDate: maxDate,
+            });
+        } else {
+            this.setState({
+                ...dateRanges,
+                minDate: null,
+                maxDate: new Date(),
+            });
         }
     }
 
-    handleRangeChange(selectedDate) {
-        let selectedMoment = moment(selectedDate.toISOString() || (new Date()).toISOString());
-        let startMoment = moment(this.state.startDate.toISOString());
+    cancel = () => {
+        this.setState({
+            selection: {
+                ...this.state.selection,
+                startDate: this.state.lastSelectedStartDate,
+                endDate: this.state.lastSelectedEndDate,
+            },
+        });
+        this.props.toggleMenu();
+    };
 
-        let startDate, endDate;
-        switch (this.state.numClicks) {
-            case 0:
-                startDate = selectedDate || new Date();
-                endDate = selectedDate || new Date();
-                this.setState({
-                    ...this.state,
-                    startDate: startDate,
-                    endDate: endDate,
-                    numClicks: ++this.state.numClicks,
-                });
-                break;
-            case 1:
-                startDate = selectedMoment.isSameOrAfter(startMoment) ? this.state.startDate : selectedDate;
-                endDate = selectedMoment.isSameOrAfter(startMoment) ? selectedDate : this.state.startDate;
-                this.setState({
-                    ...this.state,
-                    startDate: startDate,
-                    endDate: endDate,
-                    numClicks: ++this.state.numClicks,
-                });
-                break;
-            case 2:
-                startDate = selectedDate || new Date();
-                endDate = selectedDate || new Date();
-                this.setState({
-                    ...this.state,
-                    startDate: startDate,
-                    endDate: endDate,
-                    numClicks: 1,
-                });
-                break;
-        }
+    setDate = () => {
+        this.setState({
+            lastSelectedStartDate: this.state.selection.startDate,
+            lastSelectedEndDate: this.state.selection.endDate,
+        });
 
         // Change Start & End Date before dispatch to Redux Store as per the rule of a shift time of the factory
         // 1 work day: starts at 6:00:00 AM => ends at 5:59:59 AM of the following day
         // Start Date always is 6:00:00 AM of User Selected Date.
-        startDate = new Date(
-            moment(startDate.toISOString())
+        let startDate = new Date(
+            moment(this.state.selection.startDate.toISOString())
                 .startOf("day")
                 .add(START_WORK_DAY_TIME)
                 .toISOString()
         );
         // End Date always is 5:59:59 AM of the Following Day of User Selected Date.
-        endDate = new Date(
-            moment(endDate.toISOString())
+        let endDate = new Date(
+            moment(this.state.selection.endDate.toISOString())
                 .startOf("day")
                 .add({days: 1, ...END_WORK_DAY_TIME})
                 .toISOString()
         );
+
         this.props.changeGlobalDateFilter(startDate, endDate);
-    }
+
+        this.props.toggleMenu();
+    };
 
     render() {
-        let {numWeeks} = this.props;
-
-        // Using moment() for date operation on 1 line
-        // But propagate Javascript Date to children (DayCell)
-        // -> Wrap moment() inside Javascript Date
         return (
             <div>
-                <div className="date-range-picker__container">
-                    <div className="date-range-picker__weekday-cell">Mon</div>
-                    <div className="date-range-picker__weekday-cell">Tue</div>
-                    <div className="date-range-picker__weekday-cell">Wed</div>
-                    <div className="date-range-picker__weekday-cell">Thu</div>
-                    <div className="date-range-picker__weekday-cell">Fri</div>
-                    <div className="date-range-picker__weekday-cell">Sat</div>
-                    <div className="date-range-picker__weekday-cell">Sun</div>
-
-                    {/*Always show 3 weeks in calendar => 7 days * numWeeks = 21 days*/}
-                    {/*isoWeekday: 1: Monday -> 7: Sunday*/}
-                    {/*21 - (7 - currentISOWeekday) - 1: loop from last 2 Mondays until Yesterday*/}
-                    {
-                        [...Array((7 * numWeeks) - (7 - moment().isoWeekday()) - 1).keys()].reverse()
-                            .map(value => value + 1) // Make 0...10 index keys become 1...11 index keys.
-                            .map(value =>
-                                <DayCell key={value}
-                                         disabled={
-                                             moment().isBefore(moment().startOf("day").add(START_WORK_DAY_TIME))
-                                                 ? value > 10
-                                                 : value >= 10
-                                         }
-                                         numWeeks={numWeeks}
-                                         date={new Date(moment().subtract(value, "days").toISOString())}
-                                         onRangeChange={this.handleRangeChange.bind(this)}
-                                         startDate={this.state.startDate}
-                                         endDate={this.state.endDate}
-                                         numClicks={this.state.numClicks}/>
-                            )
-                    }
-
-                    {/*Today*/}
-                    {/*If current time is before 6:00:00 AM => disabled*/}
-                    {/*Else, current time is same or after 6:00:00 AM => enabled*/}
-                    <DayCell disabled={moment().isBefore(moment().startOf("day").add(START_WORK_DAY_TIME))}
-                             numWeeks={numWeeks}
-                             date={new Date()}
-                             onRangeChange={this.handleRangeChange.bind(this)}
-                             startDate={this.state.startDate}
-                             endDate={this.state.endDate}
-                             numClicks={this.state.numClicks}/>
-
-                    {/*Remaining Next Days until Sunday*/}
-                    {
-                        [...Array(7 - moment().isoWeekday()).keys()]
-                            .map(value => value + 1)
-                            .map(value =>
-                                <DayCell key={value}
-                                         disabled={true}
-                                         numWeeks={numWeeks}
-                                         date={new Date(moment().add(value, "days").toISOString())}
-                                         onRangeChange={this.handleRangeChange.bind(this)}
-                                         startDate={this.state.startDate}
-                                         endDate={this.state.endDate}
-                                         numClicks={this.state.numClicks}/>
-                            )
-                    }
-                </div>
+                {
+                    this.state.minDate
+                        ? <DateRange
+                            onChange={this.handleRangeChange.bind(this)}
+                            moveRangeOnFirstSelection={false}
+                            ranges={[this.state.selection]}
+                            className={'PreviewArea'}
+                            minDate={this.state.minDate}
+                            maxDate={this.state.maxDate}
+                            showDateDisplay={true}
+                        />
+                        : <DateRange
+                            onChange={this.handleRangeChange.bind(this)}
+                            moveRangeOnFirstSelection={false}
+                            ranges={[this.state.selection]}
+                            className={'PreviewArea'}
+                            maxDate={this.state.maxDate}
+                            showDateDisplay={true}
+                        />
+                }
                 <div className="container date-range-picker-config">
-                    <div className="row">
-                        <div className="col">
-                            <p>Time range selected</p>
-                            <p>06:00:00--07:00:00</p>
-                            <h4><span>2019/02/19</span>--<span>2019/02/20</span></h4>
-                            <div className="float-right">
-                                <button type="button" className="btn btn-secondary">Cancel</button>
-                                <button type="button" className="btn btn-primary">Set</button>
-                            </div>
+                    <div className="col">
+                        <div className="row">Time range selected</div>
+                        <div className="row">06:00:00--05:59:59</div>
+                        <div className="row">
+                            <h4>
+                                <span>{moment(this.state.selection.startDate.toISOString()).format('DD/MM/YYYY')}</span>
+                                --
+                                <span>{moment(this.state.selection.endDate.toISOString()).format('DD/MM/YYYY')}</span>
+                            </h4>
+                        </div>
+                        <div className="row float-right">
+                            <button type="button" className="btn btn-secondary" onClick={this.cancel}>Cancel</button>
+                            <button type="button" className="btn btn-primary" onClick={this.setDate}>Set</button>
                         </div>
                     </div>
                 </div>

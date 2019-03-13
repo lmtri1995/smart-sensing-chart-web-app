@@ -35,6 +35,7 @@ export function fetchData(user, responseData) {
                 if (value.success === true) {
                     localStorage.setItem('logindata', JSON.stringify(value));
                     var instance1 = Singleton.getInstance(value.token);
+                    window.location.reload();
                 }
 
                 dispatch(getDataSuccess(data.data))

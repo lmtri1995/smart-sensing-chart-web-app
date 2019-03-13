@@ -39,6 +39,9 @@ export const ROUTE = {
 export const START_WORK_DAY_TIME = {hours: 6, minutes: 0, seconds: 0};
 export const END_WORK_DAY_TIME = {hours: 5, minutes: 59, seconds: 59};
 
+// Current Selected Tab (IP or OS) when user role is Admin
+export const ADMIN_TAB_INDEX = [1, 2];
+
 // Model
 export const MODEL_NAMES = new Map([    // initial data
     ['All Models', {   // name to show on screen
@@ -48,7 +51,7 @@ export const MODEL_NAMES = new Map([    // initial data
 ]);
 
 // Shift
-export const SHIFT_DESCRIPTIONS = ['Shift 1', 'Shift 2', 'Shift 3'];
+export const SHIFT_OPTIONS = ['All Shifts', 'Shift 1', 'Shift 2', 'Shift 3'];
 
 // Defect Name
 export const IP_DEFECT_NAME = [

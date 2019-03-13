@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import LineChart from "./TemperatureTrendLine";
 import Refresh from "../../../../../shared/img/Refresh.svg";
 import {ClipLoader} from "react-spinners";
 import Dygraph from "dygraphs/src/dygraph";
@@ -7,6 +6,7 @@ import moment from "moment";
 import API from "../../../../../services/api";
 import Singleton from "../../../../../services/Socket";
 import connect from "react-redux/es/connect/connect";
+import {SHIFT_OPTIONS} from "../../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -30,18 +30,45 @@ class TemperatureTrendItem extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.apiUrl = 'api/os/tempTrend';
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6"];
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
                 // "tempB3"];
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
             case 'ip':
                 this.apiUrl = 'api/ip/tempTrend';
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#FF71CF", "#8C67F6", "#449AFF", "#46D6EA"];
-                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual R.Top Temp", "Acutal R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
+                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual" +
+                " R.Top Temp", "Actual R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom" +
+                " Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting L.Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting L.Bottom Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting R.Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting R.Bottom Temp": {
+                        strokeWidth: 3
+                    },
+                };
                 break;
             case 'os':
                 this.apiUrl = 'api/os/tempTrend';
@@ -49,6 +76,17 @@ class TemperatureTrendItem extends Component {
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
                 // "tempB3"];
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
             default:
                 this.apiUrl = 'api/os/tempTrend';
@@ -56,32 +94,45 @@ class TemperatureTrendItem extends Component {
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1", "tempB2",
                 // "tempB3"];
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
         }
         this.state = {
             loading: true
         };
+
     }
 
-    legendFormatter = (data)=>{
+
+    legendFormatter = (data) => {
         let text = '';
-        if (data.xHTML){
+        if (data.xHTML) {
             text = data.xHTML + "<br/>";
         }
         let series = data.series;
         let numberOfTemp = this.colorArray.length;
-        for (let i = 0; i < numberOfTemp; i++){
-            if (series[i].y){
-                text += "<span style='color:   " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp; &nbsp; &nbsp;";
+        for (let i = 0; i < numberOfTemp; i++) {
+            if (series[i].y) {
+                text += "<span style='color:   " + series[i].color + ";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp; &nbsp; &nbsp;";
             }
-            if (i == (numberOfTemp/2 - 1)){
+            if (i == (numberOfTemp / 2 - 1)) {
                 text += "<br/>";
             }
         }
 
         //console.log("stationId: ", this.props.stationId);
 
-        if (document.getElementById("tooltip" + this.props.stationId)){
+        if (document.getElementById("tooltip" + this.props.stationId)) {
             document.getElementById("tooltip" + this.props.stationId).innerHTML = text;
         }
 
@@ -89,41 +140,93 @@ class TemperatureTrendItem extends Component {
         return html;
     }
 
-    componentWillUpdate(){
-        let {stationId} = this.props;
-        let {startDate, endDate} = this.props.globalDateFilter;
-        let newFromTimeDevice = moment(startDate.toISOString()).unix();
-        let newToTimeDevice = moment(endDate.toISOString()).unix();
-        if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice){
-            this.fromTimeDevice = newFromTimeDevice;
-            this.toTimedevice = newToTimeDevice;
-            let param = {
-                "idStation": stationId,
-                "from_timedevice": this.fromTimeDevice,
-                "to_timedevice": this.toTimedevice
-            };
-            API(this.apiUrl, 'POST', param)
-                .then((response) => {
-                    if (response.data.success) {
-                        let dataArray = response.data.data;
-                        let displayData = '';
-                        if (dataArray[0].data){
-                            displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
-                        }
-
-                        if (displayData) {
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            this.setState({loading: true});
+            let {stationId} = this.props;
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let newFromTimeDevice = moment(startDate.toISOString()).unix();
+            let newToTimeDevice = moment(endDate.toISOString()).unix();
+            let isSelectedShiftChange = this.props.globalShiftFilter.selectedShift != prevProps.globalDateFilter.selectedShift;
+            if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice) {
+                this.fromTimeDevice = newFromTimeDevice;
+                this.toTimedevice = newToTimeDevice;
+                let param = {
+                    "idStation": stationId,
+                    /*"from_timedevice": this.fromTimeDevice,
+                    "to_timedevice": this.toTimedevice*/
+                    "from_timedevice": 0,
+                    "to_timedevice": 0,
+                    "shiftno": 0
+                };
+                API(this.apiUrl, 'POST', param)
+                    .then((response) => {
+                        if (response.data.success) {
+                            let dataArray = response.data.data;
+                            let displayData = '';
+                            if (dataArray[0].data) {
+                                displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
+                            }
                             this.graph.updateOptions(
                                 {
                                     'file': displayData,
                                 },
                             );
-                        }
-                        this.setState({loading: false});
+                            this.setState({loading: false});
 
-                    }
-                })
-                .catch((err) => console.log('err:', err, "stationId: ", stationId));
+                        }
+                    })
+                    .catch((err) => console.log('err:', err, "stationId: ", stationId));
+            } else if (isSelectedShiftChange) {
+                let selectedShift = this.specifySelectedShiftNo();
+                this.fromTimeDevice = newFromTimeDevice;
+                this.toTimedevice = newToTimeDevice;
+                let param = {
+                    "idStation": stationId,
+                    /*"from_timedevice": this.fromTimeDevice,
+                    "to_timedevice": this.toTimedevice*/
+                    "from_timedevice": 0,
+                    "to_timedevice": 0,
+                    "shiftno": selectedShift
+                };
+                API(this.apiUrl, 'POST', param)
+                    .then((response) => {
+                        if (response.data.success) {
+                            let dataArray = response.data.data;
+                            let displayData = '';
+                            displayData = JSON.parse(dataArray[0].data);
+                            this.displayData = displayData;
+                            this.graph.updateOptions(
+                                {
+                                    'file': displayData,
+                                },
+                            );
+                            this.setState({loading: false});
+
+                        }
+                    })
+                    .catch((err) => console.log('err:', err, "stationId: ", stationId));
+            }
         }
+    }
+
+    specifySelectedShiftNo = () => {
+        let result = 0;
+        switch (this.props.globalShiftFilter.selectedShift) {
+            case SHIFT_OPTIONS[0]:
+                result = 0;
+                break;
+            case SHIFT_OPTIONS[1]:
+                result = 1;
+                break;
+            case SHIFT_OPTIONS[2]:
+                result = 2;
+                break;
+            case SHIFT_OPTIONS[3]:
+                result = 3;
+                break;
+        }
+        return result;
     }
 
     componentDidMount() {
@@ -133,11 +236,15 @@ class TemperatureTrendItem extends Component {
 
         let {startDate, endDate} = this.props.globalDateFilter;
         this.fromTimeDevice = moment(startDate.toISOString()).unix();
-        this.toTimedevice   = moment(endDate.toISOString()).unix();
+        this.toTimedevice = moment(endDate.toISOString()).unix();
+        let selectedShift = this.specifySelectedShiftNo();
         let param = {
             "idStation": stationId,
-            "from_timedevice": this.fromTimeDevice,
-            "to_timedevice": this.toTimedevice
+            /*"from_timedevice": this.fromTimeDevice,
+            "to_timedevice": this.toTimedevice*/
+            "from_timedevice": 0,
+            "to_timedevice": 0,
+            "shiftno": selectedShift
         };
 
         let displayData = "X\n";
@@ -153,6 +260,7 @@ class TemperatureTrendItem extends Component {
                 height: 200,
                 labels: this.labelArray,
                 colors: this.colorArray,
+                series: this.seriesOptions,
                 axes: {
                     x: {
                         drawGrid: false,
@@ -178,14 +286,13 @@ class TemperatureTrendItem extends Component {
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
-                    displayData = JSON.parse(dataArray[0].data.replace('],[]', ']]'));
-                    if (displayData) {
-                        this.graph.updateOptions(
-                            {
-                                'file': displayData,
-                            },
-                        );
-                    }
+                    displayData = JSON.parse(dataArray[0].data);
+                    this.graph.updateOptions(
+                        {
+                            'file': displayData,
+                            strokeWidth: '20px',
+                        },
+                    );
                     this.setState({loading: false});
 
                 }
@@ -193,8 +300,8 @@ class TemperatureTrendItem extends Component {
             .catch((err) => console.log('err:', err, "stationId: ", stationId));
     }
 
-    refresh = ()=> {
-        if (this.graph){
+    refresh = () => {
+        if (this.graph) {
             this.graph.resetZoom();
         }
     }
@@ -208,7 +315,8 @@ class TemperatureTrendItem extends Component {
                         <h4 className="float-left">STATION {stationId}: USL/ Value/ LSL</h4>
                     </div>
                     <div className="col-1">
-                        <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
+                        <img className="float-right" src={Refresh} style={{width: '50%'}}
+                             onClick={this.refresh}/>
                     </div>
                 </div>
                 <div className="row">
@@ -222,7 +330,8 @@ class TemperatureTrendItem extends Component {
                     />
                     <div className="container" style={{marginBottom: 40}}>
                         <div className="row">
-                            <div className="temperature-tooltip" style={{position: 'absolute'}} id={'tooltip' + stationId}> </div>
+                            <div className="temperature-tooltip" style={{position: 'absolute'}}
+                                 id={'tooltip' + stationId}></div>
                         </div>
                     </div>
                     <div className="container">
@@ -242,7 +351,8 @@ class TemperatureTrendItem extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default connect(mapStateToProps)(TemperatureTrendItem);

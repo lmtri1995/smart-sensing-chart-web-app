@@ -4,7 +4,7 @@ import DoughnutChart from "../../../../Charts/ChartJS/components/DoughnutChart";
 export default class OEEChart extends Component {
 
     render() {
-        let {availabilityNumber, performanceNumber, qualityNumber} = this.props;
+        let {availabilityNumber, performanceNumber, qualityNumber, loading} = this.props;
         let availabilityChartData = [{
             data: [availabilityNumber, 100 - availabilityNumber],
             backgroundColor: [
@@ -32,9 +32,9 @@ export default class OEEChart extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-12"><h4>OEE</h4></div>
-                        <div className="col-4 align-self-center"><DoughnutChart labels={["Availability", ""]} data={availabilityChartData} centerText={`Availability\n${availabilityNumber}%`}/></div>
-                        <div className="col-4 align-self-center"><DoughnutChart labels={["Performance", ""]} data={performanceChartData} centerText={`Performance\n${performanceNumber}%`}/></div>
-                        <div className="col-4 align-self-center"><DoughnutChart labels={["Quality", ""]} data={qualityChartData} centerText={`Quality\n${qualityNumber}%`}/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart loading={loading} labels={["Availability", ""]} data={availabilityChartData} centerText={`Availability\n${availabilityNumber}%`}/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart loading={loading} labels={["Performance", ""]} data={performanceChartData} centerText={`Performance\n${performanceNumber}%`}/></div>
+                        <div className="col-4 align-self-center"><DoughnutChart loading={loading} labels={["Quality", ""]} data={qualityChartData} centerText={`Quality\n${qualityNumber}%`}/></div>
                     </div>
                 </div>
             </div>

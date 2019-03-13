@@ -4,6 +4,8 @@ import moment from "moment";
 import Singleton from "../../../../services/Socket";
 import API from '../../../../services/api';
 import {ClipLoader} from "react-spinners";
+import connect from "react-redux/es/connect/connect";
+import {SHIFT_OPTIONS} from "./../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -13,7 +15,7 @@ const override = `
     z-index: 100000;
 `;
 
-export default class ShiftStatus extends Component {
+class ShiftStatus extends Component {
     static socket = null;
     static _isMounted = false;
     static loginData = null;
@@ -53,9 +55,49 @@ export default class ShiftStatus extends Component {
         this._isMounted = false;
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let fromTimeDevice = moment(startDate.toISOString()).unix();
+            let toTimedevice   = moment(endDate.toISOString()).unix();
+
+            let param = {
+                /*"from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice,
+                "shiftno": 0,
+                */
+                "from_timedevice": 0,
+                "to_timedevice": 0,
+            };
+            this.setState({
+                loading: true,
+            });
+            API(this.apiUrl, 'POST', param)
+                .then((response) => {
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        this.setState({
+                            dataArray: dataArray,
+                            loading: false,
+                        });
+                    }
+                })
+                .catch((err) => console.log('err:', err));
+
+        }
+    }
+
     componentDidMount() {
+        let {startDate, endDate} = this.props.globalDateFilter;
+        let fromTimeDevice = moment(startDate.toISOString()).unix();
+        let toTimedevice   = moment(endDate.toISOString()).unix();
+
         this._isMounted = true;
         let param = {
+            /*"from_timedevice": fromTimeDevice,
+            "to_timedevice": toTimedevice,
+            "shiftno": 0,
+            */
             "from_timedevice": 0,
             "to_timedevice": 0,
         };
@@ -172,14 +214,22 @@ export default class ShiftStatus extends Component {
         let shift1 = this.showShiftItem(dataArray, 1);
         let shift2 = this.showShiftItem(dataArray, 2);
         let shift3 = this.showShiftItem(dataArray, 3);
-        /*if (currentShift == 1) {
-            result = <tbody>{shift2}{shift3}{shift1}</tbody>;
-        } else if (currentShift == 2) {
-            result = <tbody>{shift3}{shift1}{shift2}</tbody>;
-        } else if (currentShift == 3) {
-            result = <tbody>{shift1}{shift2}{shift3}</tbody>;
-        }*/
-        result = <tbody>{shift1}{shift2}{shift3}</tbody>;
+
+        switch (this.props.globalShiftFilter.selectedShift) {
+            case SHIFT_OPTIONS[0]:
+                result = <tbody>{shift1}{shift2}{shift3}</tbody>;
+                break;
+            case SHIFT_OPTIONS[1]:
+                result = <tbody>{shift1}</tbody>;
+                break;
+            case SHIFT_OPTIONS[2]:
+                result = <tbody>{shift2}</tbody>;
+                break;
+            case SHIFT_OPTIONS[3]:
+                result = <tbody>{shift3}</tbody>;
+                break;
+        }
+
         return result;
     };
 
@@ -220,3 +270,10 @@ export default class ShiftStatus extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
+});
+
+export default connect(mapStateToProps)(ShiftStatus);

@@ -7,6 +7,7 @@ const override = `
     position: absolute;
     display:block;
     left:45%;
+    top: 25%;
     z-index: 100000;
 `;
 
@@ -33,12 +34,15 @@ export default class stationStatus extends Component {
         switch (this.role) {
             case 'admin':
                 this.emitEvent = 'os_machine_status';
+                this.process = 'os-Molding';
                 break;
             case 'ip':
                 this.emitEvent = 'ip_machine_status';
+                this.process = 'imev';
                 break;
             case 'os':
                 this.emitEvent = 'os_machine_status';
+                this.process = 'os-Molding';
                 break;
         }
 
@@ -54,7 +58,7 @@ export default class stationStatus extends Component {
                 'event': 'sna_' + this.emitEvent,
                 'from_timedevice': 0,
                 'to_timedevice': 0,
-                'proccess': '',
+                'proccess': this.process,
                 'status': 'stop',
             }
         });
@@ -105,28 +109,12 @@ export default class stationStatus extends Component {
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
 
-        let proccess = 'os-Molding';
-        switch (this.role) {
-            case 'admin':
-                proccess = 'os-Molding';
-                break;
-            case 'os':
-                proccess = 'os-Molding';
-                break;
-            case 'ip':
-                proccess = 'os-Molding';
-                break;
-            case 'as':
-                proccess = 'os-Molding';
-                break;
-        }
-
         this.socket.emit('machine_status', {
             msg: {
                 'event': 'sna_machine_status',
                 'from_timedevice': 0,
                 'to_timedevice': 0,
-                'proccess': proccess,
+                'proccess': this.process,
                 'status': 'start',
             }
         });
@@ -229,14 +217,6 @@ export default class stationStatus extends Component {
             this.setState({loading: false})
         }
         let dataShow = <div>
-            <ClipLoader
-                css={override}
-                sizeUnit={"px"}
-                size={100}
-                color={'#30D4A4'}
-                loading={this.state.loading}
-                margin-left={300}
-            />
             <div className={(this.state.loading) ? "loader" : ""}>
                 <div className="container">
                     <div className="row">
@@ -244,6 +224,14 @@ export default class stationStatus extends Component {
                             <h4>On/Off</h4>
                         </div>
                     </div>
+                    <ClipLoader
+                        css={override}
+                        sizeUnit={"px"}
+                        size={100}
+                        color={'#30D4A4'}
+                        loading={this.state.loading}
+                        margin-left={300}
+                    />
                     {this.showStationStatusItem(dataArray)}
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
 import {connect} from "react-redux";
+import {SHIFT_OPTIONS} from "../../../constants/constants";
 
 // Keep a copy of original Production Rate Data Array received from Server
 // To use when filtering data by shift
@@ -8,7 +9,7 @@ var PRODUCTION_RATE_FOR_DOUGHNUT_CHART = [];
 
 class ProductionRateOverview extends Component {
     render() {
-        let {productionRate} = this.props;
+        let {productionRate, loading} = this.props;
         let chartLabels = [], backgroundColor = [];
         let averageProductionRatesByShift = [], average = 0, averageProductionRateText = 'N/A';
 
@@ -25,14 +26,20 @@ class ProductionRateOverview extends Component {
             if (tempProductionRate.length >= PRODUCTION_RATE_FOR_DOUGHNUT_CHART.length) {
                 PRODUCTION_RATE_FOR_DOUGHNUT_CHART = tempProductionRate.slice();
             }
-            tempProductionRate.length = 0;
-            PRODUCTION_RATE_FOR_DOUGHNUT_CHART.forEach((element) => {
-                if (this.props.globalShiftFilter.selectedShifts.get(element.label) === true) {
-                    tempProductionRate.push(element);
-                }
-            });
+            // Selected option is NOT All Shifts
+            if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
+                tempProductionRate.length = 0;  // Empty Array
+
+                PRODUCTION_RATE_FOR_DOUGHNUT_CHART.forEach((element) => {
+                    if (this.props.globalShiftFilter.selectedShift === element.label) {
+                        tempProductionRate.push(element);
+                    }
+                });
+            } else {    // Selected option is All Shifts
+                tempProductionRate.pop();
+            }
             if (tempProductionRate.length > 0) {
-                tempProductionRate.map((element) => {
+                tempProductionRate.forEach((element) => {
                     chartLabels.push(element.label);
                     backgroundColor.push(element.backgroundColor);
 
@@ -63,7 +70,7 @@ class ProductionRateOverview extends Component {
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
                     <DoughnutChart labels={chartLabels} data={chartData} centerText={averageProductionRateText}
-                                   showLegend={true}/>
+                                   showLegend={true} loading={loading}/>
                 </div>
             </div>
         )

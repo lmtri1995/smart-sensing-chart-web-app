@@ -6,6 +6,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../services/api";
 import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
+import moment from "moment";
 
 const override = `
     position: absolute;
@@ -54,10 +55,47 @@ class ProcessStatus extends Component {
         this._isMounted = false;
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props !== prevProps) {
+            let {startDate, endDate} = this.props.globalDateFilter;
+            let fromTimeDevice = moment(startDate.toISOString()).unix();
+            let toTimedevice   = moment(endDate.toISOString()).unix();
+
+            let param = {
+                /*"from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice,*/
+                "from_timedevice": 0,
+                "to_timedevice": 0,
+            };
+            this.setState({
+                loading: true,
+            });
+            API(this.apiUrl, 'POST', param)
+                .then((response) => {
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        this.setState({
+                            dataArray: dataArray,
+                            loading: false,
+                        });
+                    }
+                })
+                .catch((err) => console.log('err:', err))
+
+        }
+    }
+
     componentDidMount() {
         this._isMounted = true;
 
+
+        let {startDate, endDate} = this.props.globalDateFilter;
+        let fromTimeDevice = moment(startDate.toISOString()).unix();
+        let toTimedevice   = moment(endDate.toISOString()).unix();
+
         let param = {
+            /*"from_timedevice": fromTimeDevice,
+            "to_timedevice": toTimedevice,*/
             "from_timedevice": 0,
             "to_timedevice": 0,
         };
@@ -321,4 +359,8 @@ class ProcessStatus extends Component {
     }
 }
 
-export default connect()(ProcessStatus);
+const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter
+});
+
+export default connect(mapStateToProps)(ProcessStatus);

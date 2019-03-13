@@ -1,14 +1,45 @@
 import React, {Component} from 'react'
 import MixedLineBarChart from "../../Charts/ChartJS/components/MixedLineBarChart";
 import {connect} from "react-redux";
+import {SHIFT_OPTIONS} from "../../../constants/constants";
 
 // Keep a copy of original Production Rate Data Array received from Server
 // To use when filtering data by shift
 var PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = [];
 
+// Keep a copy of original Actual Production Data Array received from Server
+// To use when filtering data by shift
+var ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = [];
+
 class ProductionRate extends Component {
     render() {
-        let {labels, productionRate} = this.props;
+        let {labels, productionRate, actualProduction} = this.props;
+        let tempActualProduction = [];
+        if (actualProduction) {
+            tempActualProduction = actualProduction.slice();
+        }
+        // Update Actual Production on tooltips of the chart after applying Shift Filter
+        if (tempActualProduction.length > 0) {
+            if (tempActualProduction.length >= ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART.length) {
+                ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART = tempActualProduction.slice();
+            }
+            // Selected option is Not All Shifts
+            if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
+                tempActualProduction.length = 0;
+
+                switch (this.props.globalShiftFilter.selectedShift) {
+                    case SHIFT_OPTIONS[1]:
+                        tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[0]);
+                        break;
+                    case SHIFT_OPTIONS[2]:
+                        tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[1]);
+                        break;
+                    case SHIFT_OPTIONS[3]:
+                        tempActualProduction.push(ACTUAL_PRODUCTIONS_FOR_MIXED_LINE_BAR_CHART[2]);
+                        break;
+                }
+            }
+        }
         let customChartTooltips = {
             callbacks: {
                 label: function (tooltipItem, data) {
@@ -18,7 +49,16 @@ class ProductionRate extends Component {
                     }
                     label += `${tooltipItem.yLabel}%`;
                     return label;
-                }
+                },
+                afterLabel: function (tooltipItem, data) {
+                    let label = 'Actual Production: ';
+                    if (tempActualProduction[tooltipItem.datasetIndex] && tempActualProduction.length > 0) {
+                        label += tempActualProduction[tooltipItem.datasetIndex][tooltipItem.index];
+                    } else {
+                        label += 'N/A';
+                    }
+                    return label;
+                },
             }
         };
 
@@ -31,32 +71,36 @@ class ProductionRate extends Component {
         }
 
         // Update chart data after applying Shift Filter
-        if (tempProductionRate) {
+        if (tempProductionRate.length > 0) {
             if (tempProductionRate.length >= PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.length) {
                 PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART = tempProductionRate.slice();
             }
-            tempProductionRate.length = 0;  // Empty Array
-            let averageProductionRate = 0, averageProductionRatesByDay = [];
-            PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.forEach((element, index, array) => {
-                if (this.props.globalShiftFilter.selectedShifts.get(element.label) === true) {
-                    tempProductionRate.push(element);
-                }
-                // Recalculate Average Production Rates By Date for Filtered Shifts
-                if (index === PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.length - 1 && tempProductionRate && tempProductionRate.length > 0) {
-                    for (let i = 0; i < tempProductionRate[0].data.length; ++i) {
-                        for (let j = 0; j < tempProductionRate.length; ++j) {
-                            averageProductionRate += tempProductionRate[j].data[i];
-                        }
-                        averageProductionRate /= tempProductionRate.length;
-                        averageProductionRatesByDay.push(averageProductionRate);
-                        averageProductionRate = 0;
+            // Selected option is Not All Shifts
+            if (this.props.globalShiftFilter.selectedShift !== SHIFT_OPTIONS[0]) {
+                tempProductionRate.length = 0;  // Empty Array
+
+                let averageProductionRate = 0, averageProductionRatesByDay = [];
+                PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.forEach((element, index, array) => {
+                    if (this.props.globalShiftFilter.selectedShift === element.label) {
+                        tempProductionRate.push(element);
                     }
-                    tempProductionRate.push({
-                        ...array[index],
-                        data: averageProductionRatesByDay,
-                    });
-                }
-            });
+                    // Recalculate Average Production Rates By Date for Filtered Shifts
+                    if (index === PRODUCTION_RATE_FOR_MIXED_LINE_BAR_CHART.length - 1 && tempProductionRate && tempProductionRate.length > 0) {
+                        for (let i = 0; i < tempProductionRate[0].data.length; ++i) {
+                            for (let j = 0; j < tempProductionRate.length; ++j) {
+                                averageProductionRate += tempProductionRate[j].data[i];
+                            }
+                            averageProductionRate /= tempProductionRate.length;
+                            averageProductionRatesByDay.push(averageProductionRate);
+                            averageProductionRate = 0;
+                        }
+                        tempProductionRate.push({
+                            ...array[index],
+                            data: averageProductionRatesByDay,
+                        });
+                    }
+                });
+            }
         }
         return (
             <div className="report-main">

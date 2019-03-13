@@ -34,12 +34,37 @@ export default class TemperatureTrendItem extends Component {
                 " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
                 // "tempB2","tempB3"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
             case 'ip':
                 this.emitEvent = `ip_temp_trend_${stationIdNo}`;
                 this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
                 this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual R.Top Temp", "Acutal R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting L.Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting L.Bottom Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting R.Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting R.Bottom Temp": {
+                        strokeWidth: 3
+                    },
+                };
                 break;
             case 'os':
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
@@ -48,6 +73,17 @@ export default class TemperatureTrendItem extends Component {
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
                 // "tempB2","tempB3"];
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 break;
             default:
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
@@ -55,6 +91,17 @@ export default class TemperatureTrendItem extends Component {
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
                 //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
                 // "tempB2","tempB3"];
+                this.seriesOptions = {
+                    "Setting Top Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Mid Temp": {
+                        strokeWidth: 3
+                    },
+                    "Setting Bottom Temp": {
+                        strokeWidth: 3
+                    }
+                };
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
         }
 
@@ -163,6 +210,7 @@ export default class TemperatureTrendItem extends Component {
                 height: 300,
                 colors: this.colorArray,
                 labels: this.labelArray,
+                series: this.seriesOptions,
                 //legendFormatter,
                 //labelsSeparateLines: true,
                 axes : {

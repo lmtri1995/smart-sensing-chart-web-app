@@ -52,7 +52,7 @@ class ProductionRate extends Component {
                 },
                 afterLabel: function (tooltipItem, data) {
                     let label = 'Actual Production: ';
-                    if (tempActualProduction.length > 0) {
+                    if (tempActualProduction[tooltipItem.datasetIndex] && tempActualProduction.length > 0) {
                         label += tempActualProduction[tooltipItem.datasetIndex][tooltipItem.index];
                     } else {
                         label += 'N/A';

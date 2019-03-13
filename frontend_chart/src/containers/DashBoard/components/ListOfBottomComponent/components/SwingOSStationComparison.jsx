@@ -58,6 +58,20 @@ const options = {
             },
         ],
     },
+    tooltips: {
+        callbacks: {
+            label: function (tooltipItem, data) {
+                var value = data.datasets[0].data[tooltipItem.index];
+                var label = data.labels[tooltipItem.index];
+
+                if (value === 1) {
+                    value = 0;
+                }
+
+                return label + ': ' + value;
+            }
+        }
+    }
 };
 
 const override = `
@@ -111,6 +125,12 @@ export class SwingArmMachine extends Component {
         if (returnData && returnData.length > 0){
             returnData.map(item => {
                 if (item) {
+                    if (!item[1] || item[1] == 0) {
+                        item[1] = 1;
+                    }
+                    if (!item[2] || item[2] == 0) {
+                        item[2] = 1;
+                    }
                     if (currentShift == 1) {//2, 3, 1
                         if (item[0] == 1) {
                             swingArmArray[2] = item[1];

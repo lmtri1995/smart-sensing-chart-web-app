@@ -58,6 +58,20 @@ const options = {
             },
         ],
     },
+    tooltips: {
+        callbacks: {
+            label: function (tooltipItem, data) {
+                var value = data.datasets[0].data[tooltipItem.index];
+                var label = data.labels[tooltipItem.index];
+
+                if (value == 0.5) {
+                    value = 0;
+                }
+
+                return label + ': ' + value;
+            }
+        }
+    }
 };
 
 const override = `
@@ -107,6 +121,12 @@ export class SwingArmMachine extends Component {
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
+                    if (!item[1] || item[1] == 0) {
+                        item[1] = 0.5;
+                    }
+                    if (!item[2] || item[2] == 0) {
+                        item[2] = 0.5;
+                    }
                     if (item[0] == 1) {
                         swingArmArray[0] = item[1];
                         osPessArray[0] = item[2];
@@ -120,6 +140,9 @@ export class SwingArmMachine extends Component {
 
                 }
             });
+        } else {
+            swingArmArray = [0.5, 0.5, 0.5];
+            osPessArray = [0.5, 0.5, 0.5];
         }
         result.push(swingArmArray);
         result.push(osPessArray);

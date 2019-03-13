@@ -16,7 +16,8 @@ class ProductionRateOverview extends Component {
     render() {
         let {productionRate, actualProduction, loading} = this.props;
         let chartLabels = [], backgroundColor = [];
-        let actualProductionsByShift = [], sumActualProduction = 0, totalActualProductionText = 'N/A';
+        let actualProductionsByShift = [], sumActualProduction = 0,
+            totalActualProduction = 0, totalActualProductionText = 'N/A';
 
         // Because React pass props by reference
         // -> Affect Production Rate Mixed Line Bar Chart
@@ -71,9 +72,10 @@ class ProductionRateOverview extends Component {
                     );
                     actualProductionsByShift.push(sumActualProduction);
                 });
-                totalActualProductionText = actualProductionsByShift.reduce(
+                totalActualProduction = actualProductionsByShift.reduce(
                     (acc, curVal) => acc + curVal, 0
-                ).toString();
+                );
+                totalActualProductionText = Utilities.changeNumberFormat(totalActualProduction);
             }
             customChartTooltips = {
                 callbacks: {
@@ -85,7 +87,7 @@ class ProductionRateOverview extends Component {
                             label += Utilities.changeNumberFormat(sumActualProduction);
 
                             let percentage = Utilities.changeNumberFormat(
-                                (sumActualProduction / +(totalActualProductionText)) * 100
+                                (sumActualProduction / totalActualProduction) * 100
                             );
                             label += ` (${percentage}%)`;
                         } else {

@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
+import * as Utilities from "../../../shared/utils/Utilities";
 
 export default class DefectRateOverview extends Component {
     render() {
         let {defectByTypeOverTime, loading} = this.props;
         let chartLabels = [];
-        let sumDefectsByType = [], totalDefectsText = '';
+        let sumDefectsByType = [], totalDefects = 0, totalDefectsText = '';
         if (defectByTypeOverTime) {
             defectByTypeOverTime.map((element, index) => {
                 if (index < defectByTypeOverTime.length - 1) {
@@ -19,9 +20,27 @@ export default class DefectRateOverview extends Component {
                     );
                 }
             });
-            let totalDefects = sumDefectsByType.reduce((acc, curVal) => acc + curVal, 0);
-            totalDefectsText = totalDefects % 1 !== 0 ? totalDefects.toFixed(2) : totalDefects.toString();
+            totalDefects = sumDefectsByType.reduce((acc, curVal) => acc + curVal, 0);
+            totalDefectsText = Utilities.changeNumberFormat(totalDefects);
         }
+
+        let customChartTooltips = {
+            callbacks: {
+                label: function (tooltipItem, data) {
+                    let label = `${data.labels[tooltipItem.index]}: ` || '';
+
+                    if (label && data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]) {
+                        let defectCount = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        label += `${Utilities.changeNumberFormat(defectCount)}`;
+                        label += ` (${Utilities.changeNumberFormat((defectCount / totalDefects) * 100)}%)`
+                    } else {
+                        label += 'N/A';
+                    }
+
+                    return label;
+                },
+            }
+        };
 
         let chartData = [{
             data: sumDefectsByType,
@@ -38,7 +57,7 @@ export default class DefectRateOverview extends Component {
                 <div className="col-12"><h4>Defect Rate Overview</h4></div>
                 <div className="col-12 report-item">
                     <DoughnutChart labels={chartLabels} data={chartData} centerText={totalDefectsText}
-                                   showLegend={true} loading={loading}/>
+                                   customTooltips={customChartTooltips} showLegend={true} loading={loading}/>
                 </div>
             </div>
         )

@@ -3,9 +3,9 @@ import React, {Component} from 'react'
 
 export default class ShiftStatusItem extends Component {
     render() {
-        let {shiftNo, total, count1, count2, count3, count4, count5, count6, count7, count8} = this.props;
+        let {currentShift, shiftNo, total, count1, count2, count3, count4, count5, count6, count7, count8} = this.props;
         return (
-            <tr>
+            <tr className={shiftNo === currentShift ? 'table-highlight' : ''}>
                 <th scope="row">{shiftNo}</th>
                 <td className="cellText">{count1}</td>
                 <td className="cellText">{count2}</td>

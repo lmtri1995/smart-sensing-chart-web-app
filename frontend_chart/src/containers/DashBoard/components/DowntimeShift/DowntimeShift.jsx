@@ -145,13 +145,14 @@ export default class DowntimeShift extends Component {
         return result;
     }
 
-    showDowntimeShiftItem(dataArray, shiftNo) {
+    showDowntimeShiftItem(dataArray, shiftNo, currentShift) {
         let result = "";
 
 
         if (dataArray && dataArray.length > 0) {
             if (shiftNo == 1) {
-                result = <DowntimeShiftItem shiftNo={shiftNo}
+                result = <DowntimeShiftItem currentShift={currentShift}
+                                            shiftNo={shiftNo}
                                             count1={dataArray[0][0]}
                                             count2={dataArray[0][1]}
                                             count3={dataArray[0][2]}
@@ -163,7 +164,8 @@ export default class DowntimeShift extends Component {
                                             total ={dataArray[0][8]=="N/A"?"-":dataArray[0][8]}
                 />
             } else if (shiftNo == 2){
-                result = <DowntimeShiftItem shiftNo={shiftNo}
+                result = <DowntimeShiftItem currentShift={currentShift}
+                                            shiftNo={shiftNo}
                                             count1={dataArray[1][0]}
                                             count2={dataArray[1][1]}
                                             count3={dataArray[1][2]}
@@ -175,7 +177,8 @@ export default class DowntimeShift extends Component {
                                             total ={dataArray[1][8]=="N/A"?"-":dataArray[1][8]}
                 />
             } else if (shiftNo == 3){
-                result = <DowntimeShiftItem shiftNo={shiftNo}
+                result = <DowntimeShiftItem currentShift={currentShift}
+                                            shiftNo={shiftNo}
                                             count1={dataArray[2][0]}
                                             count2={dataArray[2][1]}
                                             count3={dataArray[2][2]}
@@ -188,7 +191,8 @@ export default class DowntimeShift extends Component {
                 />
             }
         } else {
-            result = <DowntimeShiftItem shiftNo={shiftNo} total={'-'}
+            result = <DowntimeShiftItem currentShift={currentShift}
+                                        shiftNo={shiftNo} total={'-'}
                                         count1={'-'}
                                         count2={'-'}
                                         count3={'-'}
@@ -254,9 +258,9 @@ export default class DowntimeShift extends Component {
         let result = '';
         let currentShift = this.specifyCurrentShift();
         let processData = this.handleData(dataArray);
-        let shift1 = this.showDowntimeShiftItem(processData, 1);
-        let shift2 = this.showDowntimeShiftItem(processData, 2);
-        let shift3 = this.showDowntimeShiftItem(processData, 3);
+        let shift1 = this.showDowntimeShiftItem(processData, 1, currentShift);
+        let shift2 = this.showDowntimeShiftItem(processData, 2, currentShift);
+        let shift3 = this.showDowntimeShiftItem(processData, 3, currentShift);
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {

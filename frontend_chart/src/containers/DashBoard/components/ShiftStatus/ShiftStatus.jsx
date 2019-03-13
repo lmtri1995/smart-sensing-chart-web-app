@@ -142,7 +142,7 @@ export default class ShiftStatus extends Component {
         return result;
     }
 
-    showShiftItem(dataArray, shiftNo) {
+    showShiftItem(dataArray, shiftNo, currentShift) {
         let result = "";
         if (dataArray.length > 7) {
             if (shiftNo == 1) {
@@ -150,7 +150,8 @@ export default class ShiftStatus extends Component {
                 for (let i = 0; i < 8; i++) {
                     total += parseInt(dataArray[i].first_shift);
                 }
-                result = <ShiftStatusItem shiftNo={shiftNo} total={total}
+                result = <ShiftStatusItem currentShift={currentShift}
+                                          shiftNo={shiftNo} total={total}
                                           count1={dataArray[0].first_shift}
                                           count2={dataArray[1].first_shift}
                                           count3={dataArray[2].first_shift}
@@ -165,7 +166,8 @@ export default class ShiftStatus extends Component {
                 for (let i = 0; i < 8; i++) {
                     total += parseInt(dataArray[i].second_shift);
                 }
-                result = <ShiftStatusItem shiftNo={shiftNo} total={total}
+                result = <ShiftStatusItem currentShift={currentShift}
+                                          shiftNo={shiftNo} total={total}
                                           count1={dataArray[0].second_shift}
                                           count2={dataArray[1].second_shift}
                                           count3={dataArray[2].second_shift}
@@ -180,7 +182,8 @@ export default class ShiftStatus extends Component {
                 for (let i = 0; i < 8; i++) {
                     total += parseInt(dataArray[i].third_shift);
                 }
-                result = <ShiftStatusItem shiftNo={shiftNo} total={total}
+                result = <ShiftStatusItem currentShift={currentShift}
+                                          shiftNo={shiftNo} total={total}
                                           count1={dataArray[0].third_shift}
                                           count2={dataArray[1].third_shift}
                                           count3={dataArray[2].third_shift}
@@ -192,7 +195,8 @@ export default class ShiftStatus extends Component {
                 />
             }
         } else {
-            result = <ShiftStatusItem shiftNo={shiftNo} total={0}
+            result = <ShiftStatusItem currentShift={currentShift}
+                                      shiftNo={shiftNo} total={0}
                                       count1={0}
                                       count2={0}
                                       count3={0}
@@ -208,9 +212,9 @@ export default class ShiftStatus extends Component {
     showShiftTable(dataArray) {
         let result = '';
         let currentShift = this.specifyCurrentShift();
-        let shift1 = this.showShiftItem(dataArray, 1);
-        let shift2 = this.showShiftItem(dataArray, 2);
-        let shift3 = this.showShiftItem(dataArray, 3);
+        let shift1 = this.showShiftItem(dataArray, 1, currentShift);
+        let shift2 = this.showShiftItem(dataArray, 2, currentShift);
+        let shift3 = this.showShiftItem(dataArray, 3, currentShift);
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {

@@ -325,7 +325,7 @@ class ProcessStatus extends Component {
                 minStddevCurringTime = 0;
 
             //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
-            for (let i = 0; i < numbersOfStation; i++){
+            for (let i = 0; i < dataArray.length; i++){
                 this.stdevTemperatureArray[i] = parseFloat(this.standardTemperatureArray[i] - dataArray[i].temp_avg);
                 this.stdevPreparingTimeArray[i] = parseFloat(this.standardPreparingTimeArray[i] - dataArray[i].pre_avg);
                 this.stdevCuringTimeArray[i] = parseFloat(this.standardCuringTimeArray[i] - dataArray[i].cur_avg);
@@ -343,7 +343,7 @@ class ProcessStatus extends Component {
                 minStddevCurringTime = (minStddevCurringTime < parseFloat(this.stdevCuringTimeArray[i])) ? minStddevCurringTime : parseFloat(this.stdevCuringTimeArray[i]);
             }
 
-            for (let i = 0; i < numbersOfStation; i++) {
+            for (let i = 0; i < dataArray.length; i++) {
                 //for average line
                 totalAvgTemp += parseFloat(dataArray[i].temp_avg);
                 totalAvgPrep += parseFloat(dataArray[i].pre_avg);

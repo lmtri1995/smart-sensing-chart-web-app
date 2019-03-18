@@ -4,6 +4,7 @@ import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import moment from "moment";
 import {specifyCurrentShift} from "../../../../../shared/utils/Utilities";
+import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -57,19 +58,6 @@ const options = {
                 },
             },
         ],
-    },
-    tooltips: {
-        callbacks: {
-            label: function (tooltipItem, data) {
-                var value = data.datasets[0].data[tooltipItem.index];
-                var label = data.labels[tooltipItem.index];
-
-                if (value == 0.5) {
-                    value = 0;
-                }
-                return label + ': ' + value;
-            }
-        }
     }
 };
 
@@ -119,7 +107,7 @@ export class SwingArmMachine extends Component {
 
     handleReturnData = (returnData) => {
         let result = [];
-        let swingArmArray = [0.5, 0.5, 0.5], osPessArray = [0.5, 0.5, 0.5];
+        let swingArmArray = [0, 0, 0], osPessArray = [0, 0, 0];
         let currentShift = specifyCurrentShift();
         if (returnData && returnData.length > 0){
             returnData.map(item => {
@@ -199,7 +187,8 @@ export class SwingArmMachine extends Component {
         this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
-            options: options
+            options: options,
+            //plugins: pluginDrawZeroValue,
         });
 
         if(this.role == 'os'){
@@ -224,12 +213,7 @@ export class SwingArmMachine extends Component {
 
 
                         if (displayArray && displayArray.length < 1) {
-                            displayArray = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
-                        }
-                        for (let i = 0; i < displayArray.length; i++) {
-                            if (!displayArray[i] || displayArray[i] == 0) {
-                                displayArray[i] = 0.5;
-                            }
+                            displayArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         }
 
                         this.myChart.data = {

@@ -4,6 +4,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import moment from "moment";
+import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -111,21 +112,14 @@ export class SwingArmMachine extends Component {
         this.state = {
             loading: true
         };
-        this.scale = 0.5;
     }
 
 
     handleReturnData = (returnData) => {
         let result = [];
-        let swingArmArray = [0.5, 0.5, 0.5], osPessArray = [0.5, 0.5, 0.5];
-        let min = 0.5, max = 0.5;
+        let swingArmArray = [0, 0, 0], osPessArray = [0, 0, 0];
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
-                    item[1] = item[1]?item[1]:0.5;
-                    item[2] = item[2]?item[2]:0.5;
-                    min = Math.min(min, item[1], item[2]);
-                    max = Math.max(max, item[1], item[2]);
-
                     if (item[0] == 1) {
                         swingArmArray[0] = item[1];
                         osPessArray[0] = item[2];
@@ -140,9 +134,9 @@ export class SwingArmMachine extends Component {
                 }
             )
         }
+
         result.push(swingArmArray);
         result.push(osPessArray);
-        this.scale = max - min;
         return result;
 
     }
@@ -205,7 +199,7 @@ export class SwingArmMachine extends Component {
                                         if (value == 0.5) {
                                             value = 0;
                                         }
-                                        return label + ': ' + "truongho";
+                                        return label + ': ' + value;
                                     }
                                 }
                             }
@@ -225,7 +219,8 @@ export class SwingArmMachine extends Component {
         this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
-            options: options
+            options: options,
+            plugins: pluginDrawZeroValue
         });
 
         if (this.role == 'os') {

@@ -414,7 +414,7 @@ export default class listBottomComponent extends Component {
                     </div>
                 </div>
             </div>
-            <div id={DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID}
+            {this.role == 'ip'?'':<div id={DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID}
                  className="row">
                 <div className="col-6">
                     <SwingArmMachine/>
@@ -422,7 +422,7 @@ export default class listBottomComponent extends Component {
                 <div className="col-6">
                     <SwingOSStationComparison/>
                 </div>
-            </div>
+            </div> }
         </div>
     }
 }

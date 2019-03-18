@@ -6,7 +6,7 @@ import {SwingArmMachine} from "./SwingOSStationComparison";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
 
-const initialData = {
+let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
     datasets: [
         {
@@ -73,31 +73,6 @@ const override = `
 
 export class CycleDefectStationComparison extends Component {
 
-    handleReturnData = (returnData) => {
-        let result = [];
-        let idleCycleArray = [], deffectiveArray = [];
-        if (returnData && returnData.length > 0) {
-            returnData.map(item => {
-                if (item) {
-                    if (item[0] === 1) {
-                        deffectiveArray[0] = item[1];
-                        idleCycleArray[0] = item[2];
-                    } else if (item[0] === 2){
-                        deffectiveArray[1] = item[1];
-                        idleCycleArray[1] = item[2];
-                    } else if (item[0] === 3){
-                        deffectiveArray[2] = item[1];
-                        idleCycleArray[2] = item[2];
-                    }
-                }
-            });
-        }
-        result.push(deffectiveArray);
-        result.push(idleCycleArray);
-        return result;
-
-    }
-
     constructor() {
         super();
 
@@ -135,6 +110,50 @@ export class CycleDefectStationComparison extends Component {
         this.state = {
             loading: true
         };
+
+        if (this.role == 'ip'){
+            initialData = {
+                labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+                datasets: [
+                    {
+                        label: 'Defective',
+                        backgroundColor: '#AFEEFF',
+                        borderColor: '#AFEEFF',
+                        borderWidth: 1,
+                        //hoverBackgroundColor: '#FF6384',
+                        //hoverBorderColor: '#FF6384',
+                        data: [0, 0, 0],
+                    },
+                ],
+            };
+        }
+    }
+
+    handleReturnData = (returnData) => {
+        let result = [];
+        let idleCycleArray = [], deffectiveArray = [];
+        if (returnData && returnData.length > 0) {
+            returnData.map(item => {
+                if (item) {
+                    if (item[0] === 1) {
+                        deffectiveArray[0] = item[1];
+                        idleCycleArray[0] = item[2];
+                    } else if (item[0] === 2){
+                        deffectiveArray[1] = item[1];
+                        idleCycleArray[1] = item[2];
+                    } else if (item[0] === 3){
+                        deffectiveArray[2] = item[1];
+                        idleCycleArray[2] = item[2];
+                    }
+                }
+            });
+        }
+        result.push(deffectiveArray);
+        if (this.role != 'ip'){
+            result.push(idleCycleArray);
+        }
+        return result;
+
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -160,9 +179,21 @@ export class CycleDefectStationComparison extends Component {
                         if (returnData && returnData.length > 0) {
                             let displayArray = this.handleReturnData(returnData);
                             let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
-                            this.myChart.data = {
-                                labels: labelArray,
-                                datasets: [
+                            let dataset = {};
+                            if (this.role == 'ip'){
+                                dataset = [
+                                    {
+                                        label: 'Defective',
+                                        backgroundColor: '#4C9EFF',
+                                        borderColor: '#4C9EFF',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayArray[0],
+                                    }
+                                ]
+                            } else {
+                                dataset = [
                                     {
                                         label: 'Defective',
                                         backgroundColor: '#4C9EFF',
@@ -181,7 +212,11 @@ export class CycleDefectStationComparison extends Component {
                                         //hoverBorderColor: '#FF6384',
                                         data: displayArray[1],
                                     }
-                                ],
+                                ];
+                            }
+                            this.myChart.data = {
+                                labels: labelArray,
+                                datasets: dataset
                             };
                             this.myChart.update();
                             this.setState({loading: false});
@@ -218,10 +253,21 @@ export class CycleDefectStationComparison extends Component {
                     if (returnData && returnData.length > 0) {
                         let displayArray = this.handleReturnData(returnData);
                         let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
-                        console.log("displayArray: ", displayArray);
-                        this.myChart.data = {
-                            labels: labelArray,
-                            datasets: [
+                        let dataset = {};
+                        if (this.role == 'ip'){
+                            dataset = [
+                                {
+                                    label: 'Defective',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                }
+                            ];
+                        } else {
+                            dataset = [
                                 {
                                     label: 'Defective',
                                     backgroundColor: '#4C9EFF',
@@ -240,7 +286,11 @@ export class CycleDefectStationComparison extends Component {
                                     //hoverBorderColor: '#FF6384',
                                     data: displayArray[1],
                                 }
-                            ],
+                            ];
+                        }
+                        this.myChart.data = {
+                            labels: labelArray,
+                            datasets: dataset
                         };
                         this.myChart.update();
                         this.setState({loading: false});

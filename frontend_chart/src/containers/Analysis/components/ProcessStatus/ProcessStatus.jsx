@@ -7,7 +7,7 @@ import API from "../../../../services/api";
 import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import moment from "moment";
-import {changeNumberFormat} from "../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
 import {SHIFT_OPTIONS} from "../../../../constants/constants";
 
 const override = `
@@ -56,37 +56,18 @@ class ProcessStatus extends Component {
             dataArray: "",
         };
 
-        this.standardPreparingTimeArray = [];
-        this.standardCuringTimeArray = [];
-        this.standardTemperatureArray = [];
-        this.standardCycleTimeArray = [];
-        this.stdevTemperatureArray = [];
-        this.stdevPreparingTimeArray = [];
-        this.stdevCuringTimeArray = [];
+        this.standardPreparingTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardCuringTimeArray    = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardTemperatureArray   = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardCycleTimeArray     = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.stdevTemperatureArray      = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.stdevPreparingTimeArray    = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.stdevCuringTimeArray       = [0, 0, 0, 0, 0, 0, 0, 0];
     }
 
 
     componentWillUnmount() {
         this._isMounted = false;
-    }
-
-    specifySelectedShiftNo = () => {
-        let result = 0;
-        switch (this.props.globalShiftFilter.selectedShift) {
-            case SHIFT_OPTIONS[0]:
-                result = 0;
-                break;
-            case SHIFT_OPTIONS[1]:
-                result = 1;
-                break;
-            case SHIFT_OPTIONS[2]:
-                result = 2;
-                break;
-            case SHIFT_OPTIONS[3]:
-                result = 3;
-                break;
-        }
-        return result;
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -95,10 +76,13 @@ class ProcessStatus extends Component {
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice   = moment(endDate.toISOString()).unix();
+            let selectedShift = this.props.globalShiftFilter.selectedShift;
+            selectedShift = specifySelectedShiftNo(selectedShift);
 
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
+                "shiftno": selectedShift
                 /*"from_timedevice": 0,
                 "to_timedevice": 0,*/
             };
@@ -128,12 +112,15 @@ class ProcessStatus extends Component {
         let {startDate, endDate} = this.props.globalDateFilter;
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice   = moment(endDate.toISOString()).unix();
+        let selectedShift = this.props.globalShiftFilter.selectedShift;
+        selectedShift = specifySelectedShiftNo(selectedShift);
 
         let param = {
             /*"from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,*/
-            "from_timedevice": 0,
-            "to_timedevice": 0,
+            "from_timedevice": fromTimeDevice,
+            "to_timedevice": toTimedevice,
+            "shiftno": selectedShift,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -152,10 +139,13 @@ class ProcessStatus extends Component {
         let {startDate, endDate} = this.props.globalDateFilter;
         this.standardPreparingTimeArray = [];
         this.standardCuringTimeArray = [];
+        let selectedShift = this.props.globalShiftFilter.selectedShift;
+        selectedShift = specifySelectedShiftNo(selectedShift);
         // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
         let param = {
             from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
+            "shiftno": selectedShift,
         };
         let standardCycleTime1 = 0, standardCycleTime2 = 0, standardCycleTime3 = 0,
             standardCycleTime4 = 0,
@@ -228,15 +218,18 @@ class ProcessStatus extends Component {
     }
 
     showLineItem(data, stationId) {
-        let temp_stdev = this.standardTemperatureArray[stationId - 1] - data.temp_avg;
-        let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
-        let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
+        let result = null;
+        if (data){
+            let temp_stdev = this.standardTemperatureArray[stationId - 1] - data.temp_avg;
+            let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
+            let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
 
-        let result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg, '°C')}
+            result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg, '°C')}
                                       stddevTemp={changeNumberFormat(temp_stdev, '°C')} avgPreparing={changeNumberFormat(data.pre_avg)}
                                       stddevPreparing={changeNumberFormat(pre_stdev)}
                                       avgCuringTime={changeNumberFormat(data.cur_avg)}
                                       stddevCurringTime={changeNumberFormat(cur_stdev)}/>;
+        }
         return result;
     }
 
@@ -320,7 +313,7 @@ class ProcessStatus extends Component {
                 minStddevCurringTime = 0;
 
             //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
-            for (let i = 0; i < numbersOfStation; i++){
+            for (let i = 0; i < dataArray.length; i++){
                 this.stdevTemperatureArray[i] = parseFloat(this.standardTemperatureArray[i] - dataArray[i].temp_avg);
                 this.stdevPreparingTimeArray[i] = parseFloat(this.standardPreparingTimeArray[i] - dataArray[i].pre_avg);
                 this.stdevCuringTimeArray[i] = parseFloat(this.standardCuringTimeArray[i] - dataArray[i].cur_avg);
@@ -338,7 +331,7 @@ class ProcessStatus extends Component {
                 minStddevCurringTime = (minStddevCurringTime < parseFloat(this.stdevCuringTimeArray[i])) ? minStddevCurringTime : parseFloat(this.stdevCuringTimeArray[i]);
             }
 
-            for (let i = 0; i < numbersOfStation; i++) {
+            for (let i = 0; i < dataArray.length; i++) {
                 //for average line
                 totalAvgTemp += parseFloat(dataArray[i].temp_avg);
                 totalAvgPrep += parseFloat(dataArray[i].pre_avg);
@@ -420,7 +413,7 @@ class ProcessStatus extends Component {
                 processingStatusLine: [],
                 general: [],
             };
-            for (let i = 0; i < numbersOfStation; ++i) {
+            for (let i = 0; i < dataArray.length; ++i) {
                 processStatusDataToDownload.processingStatusLine[i] = [];
 
                 processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idLine']);
@@ -475,7 +468,8 @@ class ProcessStatus extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default connect(mapStateToProps)(ProcessStatus);

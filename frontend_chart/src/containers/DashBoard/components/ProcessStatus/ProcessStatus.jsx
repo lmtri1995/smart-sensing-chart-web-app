@@ -382,7 +382,7 @@ class ProcessStatus extends Component {
                 totalSqrStddevPrep = 0,
                 totalSqrAvgCuringTime = 0,
                 totalSqrStddevCurringTime = 0;
-            for (let i = 0; i < numbersOfStation; i++) {
+            for (let i = 0; i < dataArray.length; i++) {
                 totalSqrDiffAvgTemp += (parseFloat(this.checkNull(dataArray[i].temp_avg)) - avgAvgTemp) ** 2;
                 totalSqrStddevTemp += (parseFloat(this.checkNull(dataArray[i].temp_stdev)) - avgStddevTemp) ** 2;
                 totalSqrAvgPrep += (parseFloat(this.checkNull(dataArray[i].pre_avg)) - avgAvgPrep) ** 2;
@@ -458,7 +458,7 @@ class ProcessStatus extends Component {
                 processingStatusLine: [],
                 general: [],
             };
-            for (let i = 0; i < numbersOfStation; ++i) {
+            for (let i = 0; i < dataArray.length; ++i) {
                 processStatusDataToDownload.processingStatusLine[i] = [];
 
                 processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idLine']);

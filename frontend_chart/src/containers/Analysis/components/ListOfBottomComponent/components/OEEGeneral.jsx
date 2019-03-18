@@ -19,6 +19,9 @@ export class OEEGeneral extends Component {
                             <div className="col align-self-center"><i
                                 className="fas fa-arrow-up"></i><span>{OEENumber}</span></div>
                         </div>
+                        <div className="row">
+                            <div className="col align-self-center"><span>OEE = Availability * Performance * Quality</span></div>
+                        </div>
                     </div>
                 </div>
             </div>

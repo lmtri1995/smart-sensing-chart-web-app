@@ -3,7 +3,7 @@ import {Bar} from 'react-chartjs-2';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import moment from "moment";
-import {specifyCurrentShift} from "../../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifyCurrentShift} from "../../../../../shared/utils/Utilities";
 import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
 
 const initialData = {
@@ -58,6 +58,19 @@ const options = {
                 },
             },
         ],
+    },
+    tooltips: {
+        callbacks: {
+            label: function (tooltipItem, data) {
+                let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                if (label) {
+                    label += `: ${changeNumberFormat(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index])}`
+                } else {
+                    label = '0';
+                }
+                return label;
+            },
+        }
     }
 };
 

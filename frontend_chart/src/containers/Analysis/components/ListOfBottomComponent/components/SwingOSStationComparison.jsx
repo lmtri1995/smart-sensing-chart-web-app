@@ -5,6 +5,7 @@ import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import moment from "moment";
 import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
+import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -62,14 +63,14 @@ const options = {
     tooltips: {
         callbacks: {
             label: function (tooltipItem, data) {
-                var value = data.datasets[0].data[tooltipItem.index];
-                var label = data.labels[tooltipItem.index];
-
-                if (value == 0.5) {
-                    value = 0;
+                let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                if (label) {
+                    label += `: ${changeNumberFormat(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index])}`
+                } else {
+                    label = '0';
                 }
-                return label + ': ' + value;
-            }
+                return label;
+            },
         }
     }
 };

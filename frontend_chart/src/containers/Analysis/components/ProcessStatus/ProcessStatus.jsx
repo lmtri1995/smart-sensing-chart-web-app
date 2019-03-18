@@ -8,6 +8,7 @@ import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import moment from "moment";
 import {changeNumberFormat} from "../../../../shared/utils/Utilities";
+import {SHIFT_OPTIONS} from "../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -69,6 +70,25 @@ class ProcessStatus extends Component {
         this._isMounted = false;
     }
 
+    specifySelectedShiftNo = () => {
+        let result = 0;
+        switch (this.props.globalShiftFilter.selectedShift) {
+            case SHIFT_OPTIONS[0]:
+                result = 0;
+                break;
+            case SHIFT_OPTIONS[1]:
+                result = 1;
+                break;
+            case SHIFT_OPTIONS[2]:
+                result = 2;
+                break;
+            case SHIFT_OPTIONS[3]:
+                result = 3;
+                break;
+        }
+        return result;
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
             this.countStandardCycleTime();
@@ -77,10 +97,10 @@ class ProcessStatus extends Component {
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
             let param = {
-                /*"from_timedevice": fromTimeDevice,
-                "to_timedevice": toTimedevice,*/
-                "from_timedevice": 0,
-                "to_timedevice": 0,
+                "from_timedevice": fromTimeDevice,
+                "to_timedevice": toTimedevice,
+                /*"from_timedevice": 0,
+                "to_timedevice": 0,*/
             };
             this.setState({
                 loading: true,

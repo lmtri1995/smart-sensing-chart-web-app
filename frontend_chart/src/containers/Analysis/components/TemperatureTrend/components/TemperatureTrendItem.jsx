@@ -185,8 +185,8 @@ class TemperatureTrendItem extends Component {
                     "idStation": stationId,
                     /*"from_timedevice": this.fromTimeDevice,
                     "to_timedevice": this.toTimedevice*/
-                    "from_timedevice": 0,
-                    "to_timedevice": 0,
+                    "from_timedevice": this.fromTimeDevice,
+                    "to_timedevice": this.toTimedevice,
                     "shiftno": selectedShift
                 };
                 API(this.apiUrl, 'POST', param)
@@ -240,10 +240,8 @@ class TemperatureTrendItem extends Component {
         let selectedShift = this.specifySelectedShiftNo();
         let param = {
             "idStation": stationId,
-            /*"from_timedevice": this.fromTimeDevice,
-            "to_timedevice": this.toTimedevice*/
-            "from_timedevice": 0,
-            "to_timedevice": 0,
+            "from_timedevice": this.fromTimeDevice,
+            "to_timedevice": this.toTimedevice,
             "shiftno": selectedShift
         };
 
@@ -286,7 +284,7 @@ class TemperatureTrendItem extends Component {
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
-                    displayData = JSON.parse(dataArray[0].data);
+                    displayData = JSON.parse(dataArray[0].data.replace(",[]", "]"));
                     this.graph.updateOptions(
                         {
                             'file': displayData,

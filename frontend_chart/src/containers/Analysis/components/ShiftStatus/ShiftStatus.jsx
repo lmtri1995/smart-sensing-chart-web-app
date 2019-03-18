@@ -63,16 +63,16 @@ class ShiftStatus extends Component {
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
             let param = {
-                /*"from_timedevice": fromTimeDevice,
+                "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "shiftno": 0,
-                */
-                "from_timedevice": 0,
-                "to_timedevice": 0,
+                //"shiftno": 0,
+                /*"from_timedevice": 0,
+                "to_timedevice": 0,*/
             };
             this.setState({
                 loading: true,
             });
+            console.log("this.apiUrl: ", this.apiUrl, " param: ", param);
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
                     if (response.data.success) {
@@ -95,12 +95,9 @@ class ShiftStatus extends Component {
 
         this._isMounted = true;
         let param = {
-            /*"from_timedevice": fromTimeDevice,
+            "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
             "shiftno": 0,
-            */
-            "from_timedevice": 0,
-            "to_timedevice": 0,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

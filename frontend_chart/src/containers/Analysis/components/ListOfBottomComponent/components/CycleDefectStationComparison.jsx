@@ -5,6 +5,7 @@ import connect from "react-redux/es/connect/connect";
 import {SwingArmMachine} from "./SwingOSStationComparison";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
+import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -60,6 +61,19 @@ const options = {
                 },
             },
         ],
+    },
+    tooltips: {
+        callbacks: {
+            label: function (tooltipItem, data) {
+                let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                if (label) {
+                    label += `: ${changeNumberFormat(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index])}`
+                } else {
+                    label = '0';
+                }
+                return label;
+            },
+        }
     },
 };
 

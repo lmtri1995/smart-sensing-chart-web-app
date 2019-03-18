@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import moment from "moment";
-import {specifyCurrentShift} from "../../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifyCurrentShift} from "../../../../../shared/utils/Utilities";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -59,6 +59,19 @@ const options = {
                 },
             },
         ],
+    },
+    tooltips: {
+        callbacks: {
+            label: function (tooltipItem, data) {
+                let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                if (label) {
+                    label += `: ${changeNumberFormat(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index])}`
+                } else {
+                    label = '0';
+                }
+                return label;
+            },
+        }
     },
 };
 

@@ -35,9 +35,9 @@ export const ROUTE = {
 
 // Factory Shift time rule: 3 shifts per day
 // Shift 1 => Starts at 6:00:00 AM today
-// Shift 3 => Ends at 5:59:59 AM tomorrow
+// Shift 3 => Ends at 6:00:00 AM tomorrow
 export const START_WORK_DAY_TIME = {hours: 6, minutes: 0, seconds: 0};
-export const END_WORK_DAY_TIME = {hours: 5, minutes: 59, seconds: 59};
+export const END_WORK_DAY_TIME = {hours: 6, minutes: 0, seconds: 0};
 
 // Current Selected Tab (IP or OS) when user role is Admin
 export const ADMIN_TAB_INDEX = [1, 2];

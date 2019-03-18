@@ -97,7 +97,7 @@ export default class DateRangePicker extends Component {
                 .add(START_WORK_DAY_TIME)
                 .toISOString()
         );
-        // End Date always is 5:59:59 AM of the Following Day of User Selected Date.
+        // End Date always is 6:00:00 AM of the Following Day of User Selected Date.
         let endDate = new Date(
             moment(this.state.selection.endDate.toISOString())
                 .startOf("day")

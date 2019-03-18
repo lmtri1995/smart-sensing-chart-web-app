@@ -1,4 +1,5 @@
 import moment from "moment";
+import {SHIFT_OPTIONS} from "../../constants/constants";
 
 export const changeNumberFormat = (input, suffix = "") => {
     let result = input;
@@ -40,5 +41,28 @@ export const specifyCurrentShift = () => {
         result = 3;
     }
 
+    return result;
+}
+
+//Use to get selected shift from the shift list in top bar filter to 0, 1, 2, 3
+export const specifySelectedShiftNo = (selectedShift) => {
+    let result = 0;
+    if (selectedShift){
+        switch (selectedShift) {
+            case SHIFT_OPTIONS[0]:
+                result = 0;
+                break;
+            case SHIFT_OPTIONS[1]:
+                result = 1;
+                break;
+            case SHIFT_OPTIONS[2]:
+                result = 2;
+                break;
+            case SHIFT_OPTIONS[3]:
+                result = 3;
+                break;
+        }
+
+    }
     return result;
 }

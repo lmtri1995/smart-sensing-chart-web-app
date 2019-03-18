@@ -7,6 +7,7 @@ import API from "../../../../../services/api";
 import Singleton from "../../../../../services/Socket";
 import connect from "react-redux/es/connect/connect";
 import {SHIFT_OPTIONS} from "../../../../../constants/constants";
+import {specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
 
 const override = `
     position: absolute;
@@ -178,7 +179,8 @@ class TemperatureTrendItem extends Component {
                     })
                     .catch((err) => console.log('err:', err, "stationId: ", stationId));
             } else if (isSelectedShiftChange) {
-                let selectedShift = this.specifySelectedShiftNo();
+                let selectedShift = this.props.globalShiftFilter.selectedShift;
+                selectedShift = specifySelectedShiftNo(selectedShift);
                 this.fromTimeDevice = newFromTimeDevice;
                 this.toTimedevice = newToTimeDevice;
                 let param = {
@@ -210,25 +212,6 @@ class TemperatureTrendItem extends Component {
         }
     }
 
-    specifySelectedShiftNo = () => {
-        let result = 0;
-        switch (this.props.globalShiftFilter.selectedShift) {
-            case SHIFT_OPTIONS[0]:
-                result = 0;
-                break;
-            case SHIFT_OPTIONS[1]:
-                result = 1;
-                break;
-            case SHIFT_OPTIONS[2]:
-                result = 2;
-                break;
-            case SHIFT_OPTIONS[3]:
-                result = 3;
-                break;
-        }
-        return result;
-    }
-
     componentDidMount() {
         let {stationId} = this.props;
 
@@ -237,7 +220,8 @@ class TemperatureTrendItem extends Component {
         let {startDate, endDate} = this.props.globalDateFilter;
         this.fromTimeDevice = moment(startDate.toISOString()).unix();
         this.toTimedevice = moment(endDate.toISOString()).unix();
-        let selectedShift = this.specifySelectedShiftNo();
+        let selectedShift = this.props.globalShiftFilter.selectedShift;
+        selectedShift = specifySelectedShiftNo(selectedShift);
         let param = {
             "idStation": stationId,
             "from_timedevice": this.fromTimeDevice,

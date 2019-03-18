@@ -71,13 +71,13 @@ class ProductionRate extends Component {
                     if (tempActualProduction[tooltipItem.datasetIndex] && tempActualProduction.length > 0) {
                         actualProductionLabel += Utilities.changeNumberFormat(tempActualProduction[tooltipItem.datasetIndex][tooltipItem.index]);
                     } else {
-                        actualProductionLabel += 'N/A';
+                        actualProductionLabel += '0';
                     }
                     let targetProductionLabel = 'Target: ';
                     if (tempTargetProduction[tooltipItem.datasetIndex] && tempTargetProduction.length > 0) {
                         targetProductionLabel += Utilities.changeNumberFormat(tempTargetProduction[tooltipItem.datasetIndex][tooltipItem.index]);
                     } else {
-                        targetProductionLabel += 'N/A';
+                        targetProductionLabel += '0';
                     }
                     return [targetProductionLabel, actualProductionLabel];
                 },

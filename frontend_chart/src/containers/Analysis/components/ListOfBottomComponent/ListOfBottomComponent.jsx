@@ -13,6 +13,7 @@ import {
 import Singleton from "../../../../services/Socket";
 import {connect} from "react-redux";
 import API from "../../../../services/api";
+import {changeNumberFormat} from "../../../../shared/utils/Utilities";
 
 class listBottomComponent extends Component {
     constructor(props) {
@@ -418,6 +419,11 @@ class listBottomComponent extends Component {
         endDate = moment(endDate).unix();
 
         let {availabilityNumber, performanceNumber, qualityNumber, OEENumber, workLossNumber} = this.state;
+        availabilityNumber = changeNumberFormat(availabilityNumber);
+        performanceNumber = changeNumberFormat(performanceNumber);
+        qualityNumber = changeNumberFormat(qualityNumber);
+        OEENumber = changeNumberFormat(OEENumber);
+        workLossNumber = changeNumberFormat(workLossNumber);
 
         return (
             <div className="container">

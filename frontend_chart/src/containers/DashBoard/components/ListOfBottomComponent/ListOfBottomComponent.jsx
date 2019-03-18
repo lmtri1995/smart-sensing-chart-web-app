@@ -12,6 +12,7 @@ import {
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
 import API from "../../../../services/api";
+import {changeNumberFormat} from "../../../../shared/utils/Utilities";
 
 export default class listBottomComponent extends Component {
     constructor(props) {
@@ -393,6 +394,11 @@ export default class listBottomComponent extends Component {
 
     render() {
         let {availabilityNumber, performanceNumber, qualityNumber, OEENumber, workLossNumber} = this.state;
+        availabilityNumber = changeNumberFormat(availabilityNumber);
+        performanceNumber = changeNumberFormat(performanceNumber);
+        qualityNumber = changeNumberFormat(qualityNumber);
+        OEENumber = changeNumberFormat(OEENumber);
+        workLossNumber = changeNumberFormat(workLossNumber);
         return <div className="container">
             <div
                 id={DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID}

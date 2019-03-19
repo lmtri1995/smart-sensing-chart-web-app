@@ -8,7 +8,15 @@ import API from "../../services/api";
 import moment from "moment";
 import {GlobalFilterProps} from "../../shared/prop-types/ReducerProps";
 import {connect} from "react-redux";
-import {IP_DEFECT_NAME, OS_DEFECT_NAME, SHIFT_OPTIONS} from "../../constants/constants";
+import {
+    IP_DEFECT_NAME,
+    OS_DEFECT_NAME,
+    REPORT_CONTAINER_ID,
+    REPORT_DEFECT_RATE_ID,
+    REPORT_PRODUCTION_RATE_ID,
+    SHIFT_OPTIONS
+} from "../../constants/constants";
+import {storeDefectRateData, storeProductionRateData} from "../../redux/actions/downloadDataStoreActions";
 
 class ReportPage extends Component {
     static propTypes = {
@@ -30,6 +38,9 @@ class ReportPage extends Component {
             defectByTypeOverTime: null,
             defectRateLoading: true,
         };
+
+        this.productionRateDataToDownload = null;
+        this.defectRateDataToDownload = null;
 
         //initiate socket
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
@@ -56,10 +67,32 @@ class ReportPage extends Component {
             this.setState({
                 activeTab: tab
             });
+            switch (tab) {
+                case '1':
+                    this.props.dispatch(storeProductionRateData(this.productionRateDataToDownload));
+                    this.props.dispatch(storeDefectRateData(null));
+                    break;
+                case '2':
+                    this.props.dispatch(storeProductionRateData(null));
+                    this.props.dispatch(storeDefectRateData(this.defectRateDataToDownload));
+                    break;
+            }
         }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state !== prevState) {
+            switch (this.state.activeTab) {
+                case '1':
+                    this.props.dispatch(storeProductionRateData(this.productionRateDataToDownload));
+                    this.props.dispatch(storeDefectRateData(null));
+                    break;
+                case '2':
+                    this.props.dispatch(storeProductionRateData(null));
+                    this.props.dispatch(storeDefectRateData(this.defectRateDataToDownload));
+                    break;
+            }
+        }
         if (this.props !== prevProps) {
             let {startDate, endDate} = this.props.globalDateFilter;
 
@@ -253,7 +286,7 @@ class ReportPage extends Component {
                 });
 
                 let dateLabels = [];
-                let shift1 = [], shift2 = [], shift3 = [];
+                let productionRatesShift1 = [], productionRatesShift2 = [], productionRatesShift3 = [];
                 let averageProductionRate = 0, averageProductionRatesByDay = [];
 
                 let targetProductionsShift1 = [], targetProductionsShift2 = [], targetProductionsShift3 = [];
@@ -261,12 +294,14 @@ class ReportPage extends Component {
 
                 let actualProductionsShift1 = [], actualProductionsShift2 = [], actualProductionsShift3 = [];
                 let actualProductions = [];
+
+                let productionRateDataToDownload = [];
                 dateLabelsAndProductionRatesMap.forEach((shiftData, date) => {
                     dateLabels.push(date);
 
-                    shift1.push(shiftData.productionRate[0]);
-                    shift2.push(shiftData.productionRate[1]);
-                    shift3.push(shiftData.productionRate[2]);
+                    productionRatesShift1.push(shiftData.productionRate[0]);
+                    productionRatesShift2.push(shiftData.productionRate[1]);
+                    productionRatesShift3.push(shiftData.productionRate[2]);
 
                     targetProductionsShift1.push(shiftData.targetProduction[0]);
                     targetProductionsShift2.push(shiftData.targetProduction[1]);
@@ -287,9 +322,44 @@ class ReportPage extends Component {
                         : averageProductionRate;
 
                     averageProductionRatesByDay.push(averageProductionRate);    // Average of 3 shifts
+
+                    productionRateDataToDownload.push([
+                        date,
+                        // Shift 1
+                        shiftData.targetProduction[0],
+                        shiftData.actualProduction[0],
+                        shiftData.productionRate[0],
+                        // Shift 2
+                        shiftData.targetProduction[1],
+                        shiftData.actualProduction[1],
+                        shiftData.productionRate[1],
+                        // Shift 3
+                        shiftData.targetProduction[2],
+                        shiftData.actualProduction[2],
+                        shiftData.productionRate[2],
+                        // Average by date
+                        averageProductionRate,
+                    ]);
                 });
                 targetProductions.push(targetProductionsShift1, targetProductionsShift2, targetProductionsShift3);
                 actualProductions.push(actualProductionsShift1, actualProductionsShift2, actualProductionsShift3);
+                productionRateDataToDownload.push([
+                    "", // This cell in Excel and PDF is for "SUMMARY" string
+                    // Shift 1
+                    targetProductionsShift1.reduce((acc, curVal) => acc + curVal, 0),   // Total Target
+                    actualProductionsShift1.reduce((acc, curVal) => acc + curVal, 0),   // Total Actual
+                    productionRatesShift1.reduce((acc, curVal) => acc + curVal, 0) / productionRatesShift1.length,  // Average Production Rate
+                    // Shift 2
+                    targetProductionsShift2.reduce((acc, curVal) => acc + curVal, 0),   // Total Target
+                    actualProductionsShift2.reduce((acc, curVal) => acc + curVal, 0),   // Total Actual
+                    productionRatesShift2.reduce((acc, curVal) => acc + curVal, 0) / productionRatesShift2.length,  // Average Production Rate
+                    // Shift 3
+                    targetProductionsShift3.reduce((acc, curVal) => acc + curVal, 0),   // Total Target
+                    actualProductionsShift3.reduce((acc, curVal) => acc + curVal, 0),   // Total Actual
+                    productionRatesShift3.reduce((acc, curVal) => acc + curVal, 0) / productionRatesShift3.length,  // Average Production Rate
+                    // Average of All Production Rates in current Date Range
+                    averageProductionRatesByDay.reduce((acc, curVal) => acc + curVal, 0) / averageProductionRatesByDay.length,
+                ]);
 
                 let dataToShow = [];
                 // Colors = Shift 1 + Shift 2 + Shift 3 + Average line + Average point background color
@@ -300,7 +370,7 @@ class ReportPage extends Component {
                             {
                                 label: SHIFT_OPTIONS[i],
                                 backgroundColor: colors[i - 1],
-                                data: eval(`shift${i}`)
+                                data: eval(`productionRatesShift${i}`)
                             }
                         );
                     } else {
@@ -331,6 +401,8 @@ class ReportPage extends Component {
                     actualProduction: actualProductions,
                     productionRateLoading: false,
                 });
+
+                this.productionRateDataToDownload = productionRateDataToDownload;
             })
             .catch((err) => console.log('err:', err));
     };
@@ -387,6 +459,8 @@ class ReportPage extends Component {
                 let dateLabels = [];
                 let defectType1 = [], defectType2 = [], defectType3 = [], defectType4 = [];
                 let totalDefectsByDay = [];
+
+                let defectRateDataToDownload = [];
                 dateLabelsAndDefectRatesMap.forEach((defectRates, date) => {
                     dateLabels.push(date);
 
@@ -396,7 +470,30 @@ class ReportPage extends Component {
                     defectType4.push(defectRates[3]);
 
                     totalDefectsByDay.push(defectRates[0] + defectRates[1] + defectRates[2] + defectRates[3]);
+
+                    defectRateDataToDownload.push([
+                        date,
+                        // Defect Count of Type 1
+                        defectRates[0],
+                        // Defect Count of Type 2
+                        defectRates[1],
+                        // Defect Count of Type 3
+                        defectRates[2],
+                        // Defect Count of Type 4
+                        defectRates[3],
+                        // Total Count by Day
+                        defectRates[0] + defectRates[1] + defectRates[2] + defectRates[3],
+                    ]);
                 });
+                defectRateDataToDownload.push([
+                    "", // This cell in Excel and PDF is for "TOTAL COUNT BY TYPE" string
+                    defectType1.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 1
+                    defectType2.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 2
+                    defectType3.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 3
+                    defectType4.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 4
+                    // Total Count of All Types in current Date Range
+                    totalDefectsByDay.reduce((acc, curVal) => acc + curVal, 0),
+                ]);
 
                 let dataToShow = [];
                 // Colors = Type 1 + Type 2 + Type 3 + Type 4 + Total Defect line + Total Defect point background color
@@ -436,13 +533,15 @@ class ReportPage extends Component {
                     defectByTypeOverTime: dataToShow,
                     defectRateLoading: false,
                 });
+
+                this.defectRateDataToDownload = defectRateDataToDownload;
             })
             .catch((err) => console.log('err:', err));
     };
 
     render() {
         return (
-            <div className="container report">
+            <div className="container report" id={REPORT_CONTAINER_ID}>
                 <div className="row">
                     <div className="col-10">
                         <h3>Line {this.lineCode}</h3>
@@ -469,7 +568,7 @@ class ReportPage extends Component {
 
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="1">
-                        <div className="row">
+                        <div className="row" id={REPORT_PRODUCTION_RATE_ID}>
                             <div className="col-9">
                                 <ProductionRate labels={this.state.productionRateDateLabels}
                                                 productionRate={this.state.productionRate}
@@ -484,7 +583,7 @@ class ReportPage extends Component {
                         </div>
                     </TabPane>
                     <TabPane tabId="2">
-                        <div className="row">
+                        <div className="row" id={REPORT_DEFECT_RATE_ID}>
                             <div className="col-9">
                                 <DefectRate labels={this.state.defectRateDateLabels}
                                             defectByTypeOverTime={this.state.defectByTypeOverTime}/>

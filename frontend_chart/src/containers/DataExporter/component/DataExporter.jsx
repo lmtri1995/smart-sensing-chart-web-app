@@ -25,17 +25,22 @@ import {
     DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_5_6_ID,
     DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_7_8_ID,
     ExportType,
+    REPORT_CONTAINER_ID,
+    REPORT_DEFECT_RATE_ID,
+    REPORT_PRODUCTION_RATE_ID,
     ROUTE
 } from "../../../constants/constants";
 import {connect} from "react-redux";
 import {withRouter} from 'react-router-dom';
+import {changeNumberFormat} from "../../../shared/utils/Utilities";
 
 class DataExporter extends Component {
 
     exportExcelFile(props, location) {
         let fileName = '';
-        let stationStatusData = null, shiftStatusData= null,
+        let stationStatusData = null, shiftStatusData = null,
             processStatusData = null, downTimeShiftData = null;
+        let productionRateData = null, defectRateData = null;
         switch (location.pathname) {
             case ROUTE.Dashboard:
                 fileName = 'Dashboard';
@@ -51,6 +56,8 @@ class DataExporter extends Component {
                 break;
             case ROUTE.Report:
                 fileName = 'Report';
+                productionRateData = props.downloadDataStore.productionRateData;
+                defectRateData = props.downloadDataStore.defectRateData;
                 break;
         }
 
@@ -78,8 +85,17 @@ class DataExporter extends Component {
         if (downTimeShiftData) {
             addDownTimeShiftDataTableExcel(workbook, downTimeShiftData);
         }
+        // Add Production Rate Data Worksheet
+        if (productionRateData) {
+            addProductionRateDataTableExcel(workbook, productionRateData);
+        }
+        // Add Defect Rate Data Worksheet
+        if (defectRateData) {
+            addDefectRateDataTableExcel(workbook, defectRateData);
+        }
 
-        if (!stationStatusData && !shiftStatusData && !processStatusData && !downTimeShiftData) {
+        if (!stationStatusData && !shiftStatusData && !processStatusData && !downTimeShiftData
+            && !productionRateData && !defectRateData) {
             workbook.addWorksheet('Empty Sheet');
         }
 
@@ -95,8 +111,9 @@ class DataExporter extends Component {
 
     exportPDFFile(props, location) {
         let fileName = '';
-        let stationStatusData = null, shiftStatusData= null,
+        let stationStatusData = null, shiftStatusData = null,
             processStatusData = null, downTimeShiftData = null;
+        let productionRateData = null, defectRateData = null;
         let imageExportContainerElements = null;
         switch (location.pathname) {
             case ROUTE.Dashboard:
@@ -132,6 +149,15 @@ class DataExporter extends Component {
                 break;
             case ROUTE.Report:
                 fileName = 'Report';
+                productionRateData = props.downloadDataStore.productionRateData;
+                defectRateData = props.downloadDataStore.defectRateData;
+                imageExportContainerElements = [];
+                if (productionRateData) {
+                    imageExportContainerElements.push(document.getElementById(REPORT_PRODUCTION_RATE_ID));
+                }
+                if (defectRateData) {
+                    imageExportContainerElements.push(document.getElementById(REPORT_DEFECT_RATE_ID));
+                }
                 break;
         }
 
@@ -243,8 +269,40 @@ class DataExporter extends Component {
                         }
                         break;
                     case ROUTE.Report:
-                        // todo Export PDF for Report
-                        saveDocInterval.clearInterval();
+                        if (mapOfContainerCanvas.size === 1) {
+                            clearInterval(saveDocInterval);
+
+                            let mapCanvasAscending = new Map([...mapOfContainerCanvas.entries()].sort());
+                            mapCanvasAscending.forEach((canvas, key, mapCanvas) => {
+                                const screenShotData = canvas.toDataURL('image/png');
+
+                                let width = doc.internal.pageSize.getWidth();
+                                let height = canvas.height > doc.internal.pageSize.getHeight()
+                                    ? doc.internal.pageSize.getHeight()
+                                    : canvas.height;
+
+                                // Add snapshot of full page
+                                doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+                                if (key !== mapCanvas.size - 1) {
+                                    doc.addPage();  // Add new page
+                                }
+                            });
+                            if (productionRateData) {
+                                doc.addPage();  // Add new page
+
+                                addProductionRateDataTablePDF(doc, tableStyle, productionRateData);
+                            }
+                            if (defectRateData) {
+                                doc.addPage();  // Add new page
+
+                                addDefectRateDataTablePDF(doc, tableStyle, defectRateData);
+                            }
+
+                            doc.save(
+                                fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
+                            );
+                        }
                         break;
                 }
             }, 1000);
@@ -265,6 +323,7 @@ class DataExporter extends Component {
                 break;
             case ROUTE.Report:
                 fileName = 'Report';
+                imageExportContainerID = document.getElementById(REPORT_CONTAINER_ID);
                 break;
         }
 
@@ -654,6 +713,217 @@ function addDownTimeShiftDataTableExcel(workbook, downTimeShiftData) {
         shiftData.forEach((value, index) => {
             currentRow.getCell(1 + index + 1).value = value;
         })
+    });
+}
+
+function addProductionRateDataTableExcel(workbook, productionRateData) {
+    // Add new Worksheet
+    let worksheet = workbook.addWorksheet('Production_Rate_Data');
+
+    let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+    let middleRightAlignment = {vertical: 'middle', horizontal: 'right'};
+
+    worksheet.mergeCells('A1:K1');
+    worksheet.getCell('A1').value = "PRODUCTION RATE";
+
+    worksheet.getColumn('A').width = 14;
+    worksheet.mergeCells('A2:A4');
+    worksheet.getCell('A2').value = "DATE";
+
+    worksheet.mergeCells('B2:J2');
+    worksheet.getCell('B2').value = "SHIFT";
+
+    worksheet.getRow(4).height = 34;
+
+    worksheet.getColumn('K').width = 18;
+    worksheet.mergeCells('K2:K4');
+    worksheet.getCell('K2').value = "AVG. PRODUCTION\r\nRATE BY DATE";
+
+    worksheet.mergeCells('B3:D3');
+    worksheet.getCell('B3').value = "SHIFT 1";
+
+    worksheet.getCell('B4').value = "Target";
+    worksheet.getCell('C4').value = "Actual";
+    worksheet.getColumn('D').width = 12;
+    worksheet.getCell('D4').value = "Production\r\nRate";
+
+    worksheet.mergeCells('E3:G3');
+    worksheet.getCell('E3').value = "SHIFT 2";
+
+    worksheet.getCell('E4').value = "Target";
+    worksheet.getCell('F4').value = "Actual";
+    worksheet.getColumn('G').width = 12;
+    worksheet.getCell('G4').value = "Production\r\nRate";
+
+    worksheet.mergeCells('H3:J3');
+    worksheet.getCell('H3').value = "SHIFT 3";
+
+    worksheet.getCell('H4').value = "Target";
+    worksheet.getCell('I4').value = "Actual";
+    worksheet.getColumn('J').width = 12;
+    worksheet.getCell('J4').value = "Production\r\nRate";
+
+    let startSummaryRow = 4 + productionRateData.length;
+
+    worksheet.mergeCells(`A${startSummaryRow}:A${startSummaryRow + 1}`);
+    worksheet.getCell(`A${startSummaryRow}`).value = "SUMMARY";
+
+    worksheet.mergeCells(`B${startSummaryRow}:C${startSummaryRow}`);
+    worksheet.getCell(`B${startSummaryRow}`).value = "TOTAL";
+
+    worksheet.getCell(`D${startSummaryRow}`).value = "AVERAGE";
+
+    worksheet.mergeCells(`E${startSummaryRow}:F${startSummaryRow}`);
+    worksheet.getCell(`E${startSummaryRow}`).value = "TOTAL";
+
+    worksheet.getCell(`G${startSummaryRow}`).value = "AVERAGE";
+
+    worksheet.mergeCells(`H${startSummaryRow}:I${startSummaryRow}`);
+    worksheet.getCell(`H${startSummaryRow}`).value = "TOTAL";
+
+    worksheet.getCell(`J${startSummaryRow}`).value = "AVERAGE";
+
+    worksheet.getCell(`K${startSummaryRow}`).value = "AVERAGE";
+
+    for (let row = 1; row <= 4 + productionRateData.length + 1; ++row) {
+
+        let currentRow = worksheet.getRow(row);
+
+        for (let col = 1; col <= productionRateData[0].length; ++col) {
+            currentRow.getCell(col).border = {
+                top: row === 1 ? {style: 'thick'} : {style: 'thin'},
+                left: col === 1 ? {style: 'thick'} : {style: 'thin'},
+                bottom: row === 4 + productionRateData.length + 1 ? {style: 'thick'} : {style: 'thin'},
+                right: col === productionRateData[0].length ? {style: 'thick'} : {style: 'thin'}
+            };
+
+            if (col > 1
+                && ((row > 4 && row < 4 + productionRateData.length)
+                    || (row > 4 + productionRateData.length))) {
+                currentRow.getCell(col).alignment = middleRightAlignment;
+            } else {
+                currentRow.getCell(col).alignment = middleCenterAlignment;
+            }
+
+            if (row <= 4 || row >= 4 + productionRateData.length
+                || col === 1 || col === productionRateData[0].length) {
+                currentRow.getCell(col).font = {
+                    bold: true
+                }
+            }
+        }
+    }
+
+    worksheet.getCell('D4').alignment = {...middleCenterAlignment, wrapText: true};
+    worksheet.getCell('G4').alignment = {...middleCenterAlignment, wrapText: true};
+    worksheet.getCell('J4').alignment = {...middleCenterAlignment, wrapText: true};
+    worksheet.getCell('K2').alignment = {...middleCenterAlignment, wrapText: true};
+
+    productionRateData.forEach((rowData, index) => {
+        if (index < productionRateData.length - 1) {
+            let currentRow = worksheet.getRow(5 + index);
+            rowData.forEach((value, index) => {
+                currentRow.getCell(1 + index).value =
+                    index !== 0 && (index % 3 === 0 || index === rowData.length - 1)
+                        ? changeNumberFormat(value, '%')
+                        : value;
+            });
+        } else {
+            let currentRow = worksheet.getRow(5 + index + 1);
+            rowData.forEach((value, index) => {
+                if (index > 0) {
+                    currentRow.getCell(1 + index).value =
+                        index !== 0 && (index % 3 === 0 || index === rowData.length - 1)
+                            ? changeNumberFormat(value, '%')
+                            : value;
+                }
+            });
+        }
+    });
+}
+
+function addDefectRateDataTableExcel(workbook, defectRateData) {
+    // Add new Worksheet
+    let worksheet = workbook.addWorksheet('Defect_Rate_Data');
+
+    let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
+    let middleRightAlignment = {vertical: 'middle', horizontal: 'right'};
+
+    worksheet.mergeCells('A1:F1');
+    worksheet.getCell('A1').value = "DEFECT RATE";
+
+    worksheet.mergeCells('A2:A3');
+    worksheet.getCell('A2').value = "DATE";
+
+    worksheet.mergeCells('B2:B3');
+    worksheet.getCell('B2').value = "TYPE 1\r\nCOUNT";
+
+    worksheet.mergeCells('C2:C3');
+    worksheet.getCell('C2').value = "TYPE 2\r\nCOUNT";
+
+    worksheet.mergeCells('D2:D3');
+    worksheet.getCell('D2').value = "TYPE 3\r\nCOUNT";
+
+    worksheet.mergeCells('E2:E3');
+    worksheet.getCell('E2').value = "TYPE 4\r\nCOUNT";
+
+    worksheet.mergeCells('F2:F3');
+    worksheet.getCell('F2').value = "TOTAL COUNT\r\nBY DATE";
+
+    worksheet.getCell(`A${3 + defectRateData.length}`).value = "TOTAL BY TYPE";
+
+    for (let col = 1; col <= defectRateData[0].length; ++col) {
+        worksheet.getColumn(col).width = 14
+    }
+
+    for (let row = 1; row <= 3 + defectRateData.length; ++row) {
+
+        let currentRow = worksheet.getRow(row);
+
+        for (let col = 1; col <= defectRateData[0].length; ++col) {
+            currentRow.getCell(col).border = {
+                top: row === 1 ? {style: 'thick'} : {style: 'thin'},
+                left: col === 1 ? {style: 'thick'} : {style: 'thin'},
+                bottom: row === 3 + defectRateData.length ? {style: 'thick'} : {style: 'thin'},
+                right: col === defectRateData[0].length ? {style: 'thick'} : {style: 'thin'}
+            };
+
+            if (row > 3 && col > 1) {
+                currentRow.getCell(col).alignment = middleRightAlignment;
+            } else {
+                currentRow.getCell(col).alignment = middleCenterAlignment;
+            }
+
+            if (row < 4 || row === 3 + defectRateData.length
+                || col === 1 || col === defectRateData[0].length) {
+                currentRow.getCell(col).font = {
+                    bold: true
+                }
+            }
+        }
+    }
+
+    worksheet.getCell('B2').alignment = {...middleCenterAlignment, wrapText: true};
+    worksheet.getCell('C2').alignment = {...middleCenterAlignment, wrapText: true};
+    worksheet.getCell('D2').alignment = {...middleCenterAlignment, wrapText: true};
+    worksheet.getCell('E2').alignment = {...middleCenterAlignment, wrapText: true};
+    worksheet.getCell('F2').alignment = {...middleCenterAlignment, wrapText: true};
+
+    defectRateData.forEach((rowData, index) => {
+        let currentRow = worksheet.getRow(4 + index);
+
+        if (index < defectRateData.length - 1) {
+            rowData.forEach((value, index) => {
+                currentRow.getCell(1 + index).value = value;
+            });
+        } else {
+            rowData.forEach((value, index) => {
+                if (index > 0) {
+                    currentRow.getCell(1 + index).value =
+                        `${value} (${changeNumberFormat((value / rowData[rowData.length - 1]) * 100)}%)`;
+                }
+            });
+        }
     });
 }
 
@@ -1409,6 +1679,535 @@ function addDownTimeShiftDataTablePDF(doc, tableStyle, downTimeShiftData) {
             },
             col10: {
                 content: shiftData[8],
+                styles: {
+                    ...middleRightStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        });
+    });
+
+    // Add Table of Data
+    doc.autoTable({
+        body: body,
+        theme: 'grid',
+    });
+}
+
+function addProductionRateDataTablePDF(doc, tableStyle, productionRateData) {
+    let middleRightStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'right',
+    };
+    let middleCenterStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'center',
+    };
+
+    let body = [
+        {
+            col1: {
+                content: 'PRODUCTION RATE',
+                colSpan: productionRateData[0].length,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: '',
+            col3: '',
+            col4: '',
+            col5: '',
+            col6: '',
+            col7: '',
+            col8: '',
+            col9: '',
+            col10: '',
+            col11: '',
+        },
+        {
+            col1: {
+                content: 'DATE',
+                rowSpan: 3,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: 'SHIFT',
+                colSpan: productionRateData[0].length - 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: '',
+            col4: '',
+            col5: '',
+            col6: '',
+            col7: '',
+            col8: '',
+            col9: '',
+            col10: '',
+            col11: {
+                content: 'AVG. PRODUCTION\r\nRATE BY DATE',
+                rowSpan: 3,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+        {
+            col1: '',
+            col2: {
+                content: 'SHIFT 1',
+                colSpan: 3,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: '',
+            col4: '',
+            col5: {
+                content: 'SHIFT 2',
+                colSpan: 3,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col6: '',
+            col7: '',
+            col8: {
+                content: 'SHIFT 3',
+                colSpan: 3,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col9: '',
+            col10: '',
+            col11: {
+                content: 'AVG. PRODUCTION\r\nRATE BY DATE',
+                rowSpan: 3,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+        {
+            col1: '',
+            col2: {
+                content: 'Target',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: {
+                content: 'Actual',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col4: {
+                content: 'Production\r\nRate',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: {
+                content: 'Target',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col6: {
+                content: 'Actual',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col7: {
+                content: 'Production\r\nRate',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col8: {
+                content: 'Target',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col9: {
+                content: 'Actual',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col10: {
+                content: 'Production\r\nRate',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col11: '',
+        },
+    ];
+
+    productionRateData.forEach((rowData, index, array) => {
+        if (index < array.length - 1) {
+            body.push({
+                col1: {
+                    content: rowData[0],
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+                col2: {
+                    content: rowData[1],
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col3: {
+                    content: rowData[2],
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col4: {
+                    content: `${rowData[3]}%`,
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col5: {
+                    content: rowData[4],
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col6: {
+                    content: rowData[5],
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col7: {
+                    content: `${rowData[6]}%`,
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col8: {
+                    content: rowData[7],
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col9: {
+                    content: rowData[8],
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col10: {
+                    content: `${rowData[9]}%`,
+                    styles: {
+                        ...middleRightStyle,
+                    },
+                },
+                col11: {
+                    content: `${rowData[10]}%`,
+                    styles: {
+                        ...middleRightStyle,
+                        fontStyle: 'bold',
+                    },
+                },
+            });
+        }
+    });
+
+    body.push({
+        col1: {
+            content: 'SUMMARY',
+            rowSpan: 2,
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col2: {
+            content: 'TOTAL',
+            colSpan: 2,
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col3: '',
+        col4: {
+            content: 'AVERAGE',
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col5: {
+            content: 'TOTAL',
+            colSpan: 2,
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col6: '',
+        col7: {
+            content: 'AVERAGE',
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col8: {
+            content: 'TOTAL',
+            colSpan: 2,
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col9: '',
+        col10: {
+            content: 'AVERAGE',
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col11: {
+            content: 'AVERAGE',
+            styles: {
+                ...middleCenterStyle,
+                fontStyle: 'bold',
+            },
+        },
+    });
+
+    let summaryData = productionRateData[productionRateData.length - 1];
+    body.push({
+        col1: '',
+        col2: {
+            content: summaryData[1],
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col3: {
+            content: summaryData[2],
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col4: {
+            content: changeNumberFormat(summaryData[3], '%'),
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col5: {
+            content: summaryData[4],
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col6: {
+            content: summaryData[5],
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col7: {
+            content: changeNumberFormat(summaryData[6], '%'),
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col8: {
+            content: summaryData[7],
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col9: {
+            content: summaryData[8],
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col10: {
+            content: changeNumberFormat(summaryData[9], '%'),
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+        col11: {
+            content: changeNumberFormat(summaryData[10], '%'),
+            styles: {
+                ...middleRightStyle,
+                fontStyle: 'bold',
+            },
+        },
+    });
+
+    // Add Table of Data
+    doc.autoTable({
+        body: body,
+        theme: 'grid',
+    });
+}
+
+function addDefectRateDataTablePDF(doc, tableStyle, defectRateData) {
+    let middleRightStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'right',
+    };
+    let middleCenterStyle = {
+        ...tableStyle,
+        valign: 'middle',
+        halign: 'center',
+    };
+
+    let body = [
+        {
+            col1: {
+                content: 'DEFECT RATE',
+                colSpan: defectRateData[0].length,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: '',
+            col3: '',
+            col4: '',
+            col5: '',
+            col6: '',
+        },
+        {
+            col1: {
+                content: 'DATE',
+                rowSpan: 2,
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: 'TYPE 1\r\nCOUNT',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col3: {
+                content: 'TYPE 2\r\nCOUNT',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col4: {
+                content: 'TYPE 3\r\nCOUNT',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col5: {
+                content: 'TYPE 4\r\nCOUNT',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col6: {
+                content: 'TOTAL COUNT\r\nBY DATE',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+        },
+    ];
+
+    defectRateData.forEach((rowData, index, array) => {
+        body.push({
+            col1: {
+                content: index < array.length - 1 ? rowData[0] : 'TOTAL BY TYPE',
+                styles: {
+                    ...middleCenterStyle,
+                    fontStyle: 'bold',
+                },
+            },
+            col2: {
+                content: index < array.length - 1 ? rowData[1] : `${rowData[1]} (${changeNumberFormat((rowData[1] / rowData[5]) * 100, '%')})`,
+                styles: {
+                    ...middleRightStyle,
+                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
+                },
+            },
+            col3: {
+                content: index < array.length - 1 ? rowData[2] : `${rowData[2]} (${changeNumberFormat((rowData[2] / rowData[5]) * 100, '%')})`,
+                styles: {
+                    ...middleRightStyle,
+                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
+                },
+            },
+            col4: {
+                content: index < array.length - 1 ? rowData[3] : `${rowData[3]} (${changeNumberFormat((rowData[3] / rowData[5]) * 100, '%')})`,
+                styles: {
+                    ...middleRightStyle,
+                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
+                },
+            },
+            col5: {
+                content: index < array.length - 1 ? rowData[4] : `${rowData[4]} (${changeNumberFormat((rowData[4] / rowData[5]) * 100, '%')})`,
+                styles: {
+                    ...middleRightStyle,
+                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
+                },
+            },
+            col6: {
+                content: index < array.length - 1 ? rowData[5] : `${rowData[5]} (${changeNumberFormat((rowData[5] / rowData[5]) * 100, '%')})`,
                 styles: {
                     ...middleRightStyle,
                     fontStyle: 'bold',

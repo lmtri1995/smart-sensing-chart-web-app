@@ -228,8 +228,8 @@ class ProcessStatus extends Component {
             let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
             let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
 
-            result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg, '°C')}
-                                      stddevTemp={changeNumberFormat(temp_stdev, '°C')} avgPreparing={changeNumberFormat(data.pre_avg)}
+            result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg)}
+                                      stddevTemp={changeNumberFormat(temp_stdev)} avgPreparing={changeNumberFormat(data.pre_avg)}
                                       stddevPreparing={changeNumberFormat(pre_stdev)}
                                       avgCuringTime={changeNumberFormat(data.cur_avg)}
                                       stddevCurringTime={changeNumberFormat(cur_stdev)}/>;
@@ -250,8 +250,8 @@ class ProcessStatus extends Component {
         let result = <tbody>
         <tr>
             <th>STATION No.</th>
-            <th>AVG</th>
-            <th>STDEV</th>
+            <th>AVG (°C)</th>
+            <th>STDEV (°C)</th>
             <th>AVG</th>
             <th>STDEV</th>
             <th>AVG</th>
@@ -280,8 +280,8 @@ class ProcessStatus extends Component {
             <th scope="col" colSpan="2">Curing Time (s)</th>
         </tr>
         <tr>
-            <th>AVG</th>
-            <th>STDEV</th>
+            <th>AVG (°C)</th>
+            <th>STDEV (°C)</th>
             <th>AVG</th>
             <th>STDEV</th>
             <th>AVG</th>
@@ -390,20 +390,20 @@ class ProcessStatus extends Component {
                 <th>AVG</th>
                 <th>STDEV</th>
             </tr>
-            <GeneralSummaryItem spec={'AVG'} data1={changeNumberFormat(avgAvgTemp, "°C")}
-                                data2={changeNumberFormat(avgStddevTemp, "°C")}
+            <GeneralSummaryItem spec={'AVG'} data1={changeNumberFormat(avgAvgTemp)}
+                                data2={changeNumberFormat(avgStddevTemp)}
                                 data3={changeNumberFormat(avgAvgPrep)}
                                 data4={changeNumberFormat(avgStddevPrep)}
                                 data5={changeNumberFormat(avgAvgCuringTime)}
                                 data6={changeNumberFormat(avgStddevCurringTime)}/>
-            <GeneralSummaryItem spec={'MAX'} data1={changeNumberFormat(maxAvgTemp, "°C")}
-                                data2={changeNumberFormat(maxStddevTemp, "°C")}
+            <GeneralSummaryItem spec={'MAX'} data1={changeNumberFormat(maxAvgTemp)}
+                                data2={changeNumberFormat(maxStddevTemp)}
                                 data3={changeNumberFormat(maxAvgPrep)} data4={(maxStddevPrep)}
                                 data5={changeNumberFormat(maxAvgCuringTime)}
                                 data6={changeNumberFormat(maxStddevCurringTime)}/>
             <GeneralSummaryItem spec={'MIN'}
-                                data1={changeNumberFormat(minAvgTemp, "°C")}
-                                data2={changeNumberFormat(minStddevTemp, "°C")}
+                                data1={changeNumberFormat(minAvgTemp)}
+                                data2={changeNumberFormat(minStddevTemp)}
                                 data3={changeNumberFormat(minAvgPrep)} data4={changeNumberFormat(minStddevPrep)}
                                 data5={changeNumberFormat(minAvgCuringTime)}
                                 data6={changeNumberFormat(minStddevCurringTime)}/>
@@ -422,17 +422,17 @@ class ProcessStatus extends Component {
 
                 processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idLine']);
                 processStatusDataToDownload.processingStatusLine[i].push(dataArray[i]['idStation']);
-                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['temp_avg'], "°C"));
-                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevTemperatureArray[i], "°C"));
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['temp_avg']));
+                processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevTemperatureArray[i]));
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['pre_avg']));
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevPreparingTimeArray[i]));
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(dataArray[i]['cur_avg']));
                 processStatusDataToDownload.processingStatusLine[i].push(changeNumberFormat(this.stdevCuringTimeArray[i]));
             }
             processStatusDataToDownload.general = [
-                [changeNumberFormat(avgAvgTemp, "°C"), changeNumberFormat(avgStddevTemp, "°C"), changeNumberFormat(avgAvgPrep), changeNumberFormat(avgStddevPrep), changeNumberFormat(avgAvgCuringTime), changeNumberFormat(avgStddevCurringTime)],
-                [changeNumberFormat(maxAvgTemp, "°C"), changeNumberFormat(maxStddevTemp, "°C"), changeNumberFormat(maxAvgPrep), changeNumberFormat(maxStddevPrep), changeNumberFormat(maxAvgCuringTime), changeNumberFormat(maxStddevCurringTime)],
-                [changeNumberFormat(minAvgTemp, "°C"), changeNumberFormat(minStddevTemp, "°C"), changeNumberFormat(minAvgPrep), changeNumberFormat(minStddevPrep), changeNumberFormat(minAvgCuringTime), changeNumberFormat(minStddevCurringTime)],
+                [changeNumberFormat(avgAvgTemp), changeNumberFormat(avgStddevTemp), changeNumberFormat(avgAvgPrep), changeNumberFormat(avgStddevPrep), changeNumberFormat(avgAvgCuringTime), changeNumberFormat(avgStddevCurringTime)],
+                [changeNumberFormat(maxAvgTemp), changeNumberFormat(maxStddevTemp), changeNumberFormat(maxAvgPrep), changeNumberFormat(maxStddevPrep), changeNumberFormat(maxAvgCuringTime), changeNumberFormat(maxStddevCurringTime)],
+                [changeNumberFormat(minAvgTemp), changeNumberFormat(minStddevTemp), changeNumberFormat(minAvgPrep), changeNumberFormat(minStddevPrep), changeNumberFormat(minAvgCuringTime), changeNumberFormat(minStddevCurringTime)],
                 ["-", "-", "-", "-", "-", "-"],
             ];
             // Push Process Status Data to Redux Store to Export Data later

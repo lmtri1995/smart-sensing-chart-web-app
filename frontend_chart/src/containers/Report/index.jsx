@@ -102,13 +102,16 @@ class ReportPage extends Component {
             // If Date Range > 7 days => subtract endDate => Max Date Range is 7 days
             if (endMoment.diff(startMoment, "days") > 6) {
                 let tempEndMoment = moment(endMoment);
-                startMoment = moment(tempEndMoment.subtract(7, "days").subtract(1, "seconds"));
+                startMoment = moment(tempEndMoment.subtract(7, "days"));
             }
 
             // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
             let productionRatesParam = {
                 from_workdate: startMoment.format("YYYYMMDD"),
-                to_workdate: endMoment.subtract(1, "days").format("YYYYMMDD"),
+                // Copy endMoment to new moment object to prevent from affecting original endMoment object
+                // when subtracting 1 day
+                // => Wrong request params for Defect Rate below
+                to_workdate: moment(endMoment).subtract(1, "days").format("YYYYMMDD"),
                 model_name: this.props.globalModelFilter.selectedModel[1].key,
             };
 
@@ -134,11 +137,11 @@ class ReportPage extends Component {
                 ? {
                     shift_no: shiftNo,
                     from_workdate: startMoment.format("YYYYMMDD"),
-                    to_workdate: endMoment.subtract(1, "days").format("YYYYMMDD"),
+                    to_workdate: moment(endMoment).subtract(1, "days").format("YYYYMMDD"),
                 }
                 : {
                     from_workdate: startMoment.format("YYYYMMDD"),
-                    to_workdate: endMoment.subtract(1, "days").format("YYYYMMDD"),
+                    to_workdate: moment(endMoment).subtract(1, "days").format("YYYYMMDD"),
                 };
 
             this.requestProductionRates(productionRatesParam);

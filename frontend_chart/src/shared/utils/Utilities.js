@@ -66,3 +66,26 @@ export const specifySelectedShiftNo = (selectedShift) => {
     }
     return result;
 }
+
+//Specify current datetime
+//Used to call axios API before call socket
+export const specifyCurrentTimeDevice = () => {
+    let from_timedevice = moment().startOf("day").add(6, "hours").unix();
+    let to_timedevice = moment().startOf("day").add({days: 1, hours: 6}).unix();
+    if (moment().isSameOrAfter(moment().startOf("day")) && moment().isBefore(moment().startOf("day").add(6, "hours"))){
+        from_timedevice = moment().startOf("day").subtract({days: 1}).unix();
+        to_timedevice = moment().startOf("day").add({hours: 6}).unix();
+    }
+    return [from_timedevice, to_timedevice];
+
+}
+
+
+//Specify 30 minutes before current moment to current moment
+//Used to call axios API before call socket
+export const specify30minutesToCurrentTimeDevice = () => {
+    let from_timedevice = moment().subtract({minutes: 30}).unix();
+    let to_timedevice = moment().unix();
+    return [from_timedevice, to_timedevice];
+
+}

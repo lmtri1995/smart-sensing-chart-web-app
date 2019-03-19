@@ -228,15 +228,22 @@ class ProcessStatus extends Component {
     }
 
     showLineItem(data, stationId) {
-        let temp_stdev = this.standardTemperatureArray[stationId - 1] - data.temp_avg;
-        let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
-        let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
+        let result = <LineSummaryItem stationId={stationId} avgTemp='-'
+                                      stddevTemp='-' avgPreparing='-'
+                                      stddevPreparing='-'
+                                      avgCuringTime='-'
+                                      stddevCurringTime='-' />;
+        if (data){
+            let temp_stdev = this.standardTemperatureArray[stationId - 1] - data.temp_avg;
+            let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
+            let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
 
-        let result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg, '°C')}
+            result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg, '°C')}
                                       stddevTemp={changeNumberFormat(temp_stdev, '°C')} avgPreparing={changeNumberFormat(data.pre_avg)}
                                       stddevPreparing={changeNumberFormat(pre_stdev)}
                                       avgCuringTime={changeNumberFormat(data.cur_avg)}
                                       stddevCurringTime={changeNumberFormat(cur_stdev)}/>;
+        }
         return result;
     }
 

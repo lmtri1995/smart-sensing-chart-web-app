@@ -250,8 +250,8 @@ class ProcessStatus extends Component {
         let result = <tbody>
         <tr>
             <th>STATION No.</th>
-            <th>AVG (°C)</th>
-            <th>STDEV (°C)</th>
+            <th>AVG</th>
+            <th>STDEV</th>
             <th>AVG</th>
             <th>STDEV</th>
             <th>AVG</th>
@@ -275,13 +275,13 @@ class ProcessStatus extends Component {
                          stddevPreparing={0} avgCuringTime={0} stddevCurringTime={0}/>
         <tr>
             <th scope="col" rowSpan="2">Processing Status</th>
-            <th scope="col" colSpan="2">Temperature</th>
+            <th scope="col" colSpan="2">Temperature (°C)</th>
             <th scope="col" colSpan="2">Preparing (s)</th>
             <th scope="col" colSpan="2">Curing Time (s)</th>
         </tr>
         <tr>
-            <th>AVG (°C)</th>
-            <th>STDEV (°C)</th>
+            <th>AVG</th>
+            <th>STDEV</th>
             <th>AVG</th>
             <th>STDEV</th>
             <th>AVG</th>
@@ -378,7 +378,7 @@ class ProcessStatus extends Component {
             {this.showLineItem(dataArray[7], 8)}
             <tr>
                 <th scope="col" rowSpan="2">Processing Status</th>
-                <th scope="col" colSpan="2">Temperature</th>
+                <th scope="col" colSpan="2">Temperature (°C)</th>
                 <th scope="col" colSpan="2">Preparing (s)</th>
                 <th scope="col" colSpan="2">Curing Time (s)</th>
             </tr>
@@ -459,7 +459,7 @@ class ProcessStatus extends Component {
                     <thead>
                     <tr>
                         <th scope="col" rowSpan="2">Processing Status</th>
-                        <th scope="col" colSpan="2">Temperature</th>
+                        <th scope="col" colSpan="2">Temperature (°C)</th>
                         <th scope="col" colSpan="2">Preparing (s)</th>
                         <th scope="col" colSpan="2">Curing Time (s)</th>
                     </tr>

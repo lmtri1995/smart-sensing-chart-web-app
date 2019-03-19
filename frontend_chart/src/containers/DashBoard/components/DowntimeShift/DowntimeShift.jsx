@@ -88,7 +88,6 @@ class DowntimeShift extends Component {
         });
 
         this.socket.on('sna_down_shift', (data) => {
-            console.log("data 88: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -246,7 +245,6 @@ class DowntimeShift extends Component {
     }
 
     handleData(dataArray){
-        console.log("handledata 206: ", dataArray);
         let downtimeShiftArray1 = ['-', '-', '-', '-', '-', '-', '-', '-', '-'];
         let downtimeShiftArray2 = ['-', '-', '-', '-', '-', '-', '-', '-', '-'];
         let downtimeShiftArray3 = ['-', '-', '-', '-', '-', '-', '-', '-', '-'];

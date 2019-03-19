@@ -135,9 +135,6 @@ class ProcessStatus extends Component {
     }
 
     countStandardCycleTime() {
-        console.log("137 137 137");
-        console.log("137 137 137");
-        console.log("137 137 137");
         //let {startDate, endDate} = this.props.globalDateFilter;
         this.standardPreparingTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
         this.standardCuringTimeArray    = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -163,8 +160,6 @@ class ProcessStatus extends Component {
             standardCycleTime8 = 0;
         API(this.standardCycleTimeUrl, 'POST', param).then((response) => {
             let dataArray = response.data.data;
-            console.log("countStandardCycleTime 156 156 156 156");
-            console.log("dataArray: ", dataArray);
             if (dataArray && dataArray.length > 0) {
                 dataArray.map(item => {
                     //{STATION_NO: 7, STD_CURING_TM: 0, STD_TEMP: 0, STD_PREPARING_TM: 0,
@@ -222,7 +217,6 @@ class ProcessStatus extends Component {
                 });
                 this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
                     standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
-                console.log("this.standardCycleTimeArray: ", this.standardCycleTimeArray);
             }
         }).catch((err) => console.log('err:', err));
     }

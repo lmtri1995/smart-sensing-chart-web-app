@@ -4,6 +4,8 @@ import Dygraph from "dygraphs/src/dygraph";
 import moment from "moment";
 import Refresh from "../../../../../shared/img/Refresh.svg";
 import {ClipLoader} from "react-spinners";
+import API from "../../../../../services/api";
+import {specify30minutesToCurrentTimeDevice} from "../../../../../shared/utils/Utilities";
 
 const override = `
     position: absolute;
@@ -27,6 +29,7 @@ export default class TemperatureTrendItem extends Component {
         let {stationIdNo} = this.props;
         switch(this.role) {
             case 'admin':
+                this.apiUrl = 'api/os/tempTrend';
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
@@ -47,6 +50,7 @@ export default class TemperatureTrendItem extends Component {
                 };
                 break;
             case 'ip':
+                this.apiUrl = 'api/ip/tempTrend';
                 this.emitEvent = `ip_temp_trend_${stationIdNo}`;
                 this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
@@ -67,6 +71,7 @@ export default class TemperatureTrendItem extends Component {
                 };
                 break;
             case 'os':
+                this.apiUrl = 'api/os/tempTrend';
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
@@ -86,6 +91,7 @@ export default class TemperatureTrendItem extends Component {
                 };
                 break;
             default:
+                this.apiUrl = 'api/os/tempTrend';
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
                 this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
                 this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
@@ -178,22 +184,70 @@ export default class TemperatureTrendItem extends Component {
         return html;
     }
 
-    drawLegend = () => {
-        let stationId = this.props.stationIdNo;
-        let legendValue = "<div class='legend-container'>";
-        for (let i = 0; i < this.colorArray.length; i++){
-            let color = this.colorArray[i];
-            let label = this.labelArray[i+1];
-            legendValue += "<div id='"+ label + stationId +"' class='legend-box'" +
-                " style='background-color: " + color + ";'></div>";
-            legendValue += "<div class='temperature-legend'>" + label + "</div> &nbsp; &nbsp; ";
-        }
-        legendValue += "</div>";
-        document.getElementById("lengendLabel" + stationId).innerHTML = legendValue;
+    callAxiosBeforeSocket = (callback) => {
+        let {stationIdNo} = this.props;
+        let currentTimeDevice = specify30minutesToCurrentTimeDevice();
+        let param = {
+            "idStation": stationIdNo,
+            "from_timedevice": currentTimeDevice[0],
+            "to_timedevice": currentTimeDevice[1],
+            "shiftno": 0
+        };
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    let displayData = JSON.parse(dataArray[0].data);
+                    this.displayData = displayData;
+                    this.graph.updateOptions(
+                        {
+                            'file': displayData,
+                        },
+                    );
+                    this.setState({loading: false});
+                    this.callSocket();
+                } else {
+                    return callback();
+                }
+            })
+            .catch((err) => console.log('err:', err, "stationId: ", stationIdNo));
+    }
+
+    callSocket = () => {
+        let {stationIdNo} = this.props;
+        let displayData = "X\n";
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                minute: this.preTempTime,
+                //minute: -10,
+                status: 'start',
+                idStation:stationIdNo
+            }
+        });
+
+
+        this.socket.on(this.eventListen, (response) => {
+            response = JSON.parse(response);
+            if (response.success){
+                let returnArrayObject = response.data;
+                let returnArray = JSON.parse(returnArrayObject[0].data);
+                if (returnArray && returnArray.length > 0){
+                    if (displayData === "X\n"){
+                        displayData = returnArray;
+                    } else {
+                        displayData = displayData.slice(returnArray.length, displayData.length);
+                        displayData.push(...returnArray);
+                    }
+                    this.graph.updateOptions( { 'file': displayData } );
+                    this.setState({loading: false});
+                }
+            }
+
+        });
     }
 
     componentDidMount() {
-        //this.drawLegend();
 
         let {tempTime, stationIdNo} = this.props;
         this.preTempTime = tempTime;
@@ -233,6 +287,10 @@ export default class TemperatureTrendItem extends Component {
             }
         );
 
+        this.callAxiosBeforeSocket();
+
+        /*
+        Comment temporarily for fixing error loading socket long
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -261,7 +319,7 @@ export default class TemperatureTrendItem extends Component {
                 }
             }
 
-        });
+        });*/
     };
 
     refresh = () => {

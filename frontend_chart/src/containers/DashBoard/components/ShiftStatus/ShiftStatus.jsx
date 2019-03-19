@@ -6,6 +6,7 @@ import {ClipLoader} from 'react-spinners';
 import {specifyCurrentShift} from "../../../../shared/utils/Utilities";
 import {storeShiftStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import {connect} from "react-redux";
+import API from "../../../../services/api";
 
 const override = `
     position: absolute;
@@ -33,27 +34,22 @@ class ShiftStatus extends Component {
 
         switch (this.role) {
             case 'admin':
-                console.log("admin");
                 this.emitEvent = 'os_shift_status';
                 this.eventListen = 'sna_' + this.emitEvent;
                 break;
             case 'ip':
-                console.log("ip");
                 this.emitEvent = 'ip_shift_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             case 'os':
-                console.log("os");
                 this.emitEvent = 'os_shift_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             default:
-                console.log("default");
                 this.emitEvent = 'os_shift_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 break;
         }
-        console.log("ip");
     }
 
     componentWillUnmount() {
@@ -69,13 +65,32 @@ class ShiftStatus extends Component {
         });
     }
 
-    componentDidMount() {
-        this._isMounted = true;
-        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
-        var uDateFrom = mDateFrom.unix();
-        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();*/
+    callAxiosBeforeSocket = () => {
+        /*let {startDate, endDate} = this.props.globalDateFilter;
+        let fromTimeDevice = moment(startDate.toISOString()).unix();
+        let toTimedevice   = moment(endDate.toISOString()).unix();*/
 
+        this._isMounted = true;
+        let param = {
+            "from_timedevice": 0,
+            "to_timedevice": 0,
+            "shiftno": 0,
+        };
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    this.setState({
+                        dataArray: dataArray,
+                        loading: false,
+                    });
+                    this.callSocket();
+                }
+            })
+            .catch((err) => console.log('err:', err))
+    }
+
+    callSocket = () => {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -104,6 +119,16 @@ class ShiftStatus extends Component {
                 });
             }
         });
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+
+        this.callSocket();
+        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
+        var uDateFrom = mDateFrom.unix();
+        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
+        var uDateTo = mDateTo.unix();*/
 
         /*this.socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);

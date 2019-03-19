@@ -4,6 +4,7 @@ import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
 import {storeStationStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import {connect} from "react-redux";
+import API from "../../../../services/api";
 
 const override = `
     position: absolute;
@@ -33,10 +34,12 @@ class StationStatus extends Component {
             loading: true
         };
 
+        this.apiUrl = 'api/db/machinestatus';
+
         switch (this.role) {
             case 'admin':
                 this.emitEvent = 'os_machine_status';
-                this.process = 'os-Molding';
+                this.process = 'os-molding';
                 break;
             case 'ip':
                 this.emitEvent = 'ip_machine_status';
@@ -44,7 +47,7 @@ class StationStatus extends Component {
                 break;
             case 'os':
                 this.emitEvent = 'os_machine_status';
-                this.process = 'os-Molding';
+                this.process = 'os-molding';
                 break;
         }
 
@@ -103,14 +106,39 @@ class StationStatus extends Component {
         return result;
     }*/
 
-    componentDidMount() {
-        this._isMounted = true;
+    callAxiosBeforeSocket = () => {
+        let param = {
+            "proccess": this.process
+        };
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    this.displayData = dataArray;
+                    if (this.displayData.length > 0){
+                        this.displayData.sort(function (a, b) {
+                            if (parseInt(a.idStation) < parseInt(b.idStation)) {
+                                return -1;
+                            }
+                            if (parseInt(a.idStation) > parseInt(b.idStation)) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
+                    this.setState({
+                        dataArray: this.displayData,
+                    });
+                    this.callSocket();
+                }/* else {
+                    console.log("call callback");
+                    this.callAxiosBeforeSocket();
+                }*/
+            })
+            .catch((err) => console.log('err:', err));
+    }
 
-        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
-        var uDateFrom = mDateFrom.unix();
-        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();*/
-
+    callSocket = () => {
         this.socket.emit('machine_status', {
             msg: {
                 'event': 'sna_machine_status',
@@ -139,6 +167,47 @@ class StationStatus extends Component {
                 });
             }
         });
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+
+        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
+        var uDateFrom = mDateFrom.unix();
+        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
+        var uDateTo = mDateTo.unix();*/
+        this.callAxiosBeforeSocket();
+
+        /*
+        Create socket
+        this.socket.emit('machine_status', {
+            msg: {
+                'event': 'sna_machine_status',
+                'from_timedevice': 0,
+                'to_timedevice': 0,
+                'proccess': this.process,
+                'status': 'start',
+            }
+        });
+
+        this.socket.on('sna_machine_status', (data) => {
+            if (this._isMounted) {
+                let returnArray = JSON.parse(data);
+                let dataArray = returnArray.data;
+                dataArray.sort(function (a, b) {
+                    if (parseInt(a.idStation) < parseInt(b.idStation)) {
+                        return -1;
+                    }
+                    if (parseInt(a.idStation) > parseInt(b.idStation)) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                this.setState({
+                    dataArray: dataArray,
+                });
+            }
+        });*/
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);

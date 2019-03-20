@@ -7,11 +7,8 @@ import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import moment from "moment";
 import API from "../../../../services/api";
-import {
-    changeNumberFormat,
-    specify30minutesToCurrentTimeDevice, specifySelectedShiftNo,
-    specifyTheShiftStartHour,
-} from "../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifyTheShiftStartHour,} from "../../../../shared/utils/Utilities";
+import {standardDeviation} from "../../../../shared/utils/dataCalculator"
 
 const override = `
     position: absolute;
@@ -76,6 +73,10 @@ class ProcessStatus extends Component {
         this.stdevTemperatureArray = [];
         this.stdevPreparingTimeArray = [];
         this.stdevCuringTimeArray = [];
+
+        this.avgTemperatureArray = [];
+        this.avgPreparingTimeArray = [];
+        this.avgCurringTimeArray = [];
     }
 
     componentWillUnmount() {
@@ -153,7 +154,7 @@ class ProcessStatus extends Component {
 
     componentDidMount() {
         this._isMounted = true;
-        this.countStandardCycleTime();
+        //this.countStandardCycleTime();
 
         this.callAxiosBeforeSocket();
 
@@ -261,15 +262,11 @@ class ProcessStatus extends Component {
                                       avgCuringTime='-'
                                       stddevCurringTime='-' />;
         if (data){
-            let temp_stdev = this.standardTemperatureArray[stationId - 1] - data.temp_avg;
-            let pre_stdev = this.standardPreparingTimeArray[stationId - 1] - data.pre_avg;
-            let cur_stdev = this.standardCuringTimeArray[stationId - 1] - data.cur_avg;
-
             result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg)}
-                                      stddevTemp={changeNumberFormat(temp_stdev)} avgPreparing={changeNumberFormat(data.pre_avg)}
-                                      stddevPreparing={changeNumberFormat(pre_stdev)}
+                                      stddevTemp={changeNumberFormat(data.temp_stdev)} avgPreparing={changeNumberFormat(data.pre_avg)}
+                                      stddevPreparing={changeNumberFormat(data.pre_stdev)}
                                       avgCuringTime={changeNumberFormat(data.cur_avg)}
-                                      stddevCurringTime={changeNumberFormat(cur_stdev)}/>;
+                                      stddevCurringTime={changeNumberFormat(data.cur_stdev)}/>;
         }
         return result;
     }
@@ -360,9 +357,13 @@ class ProcessStatus extends Component {
 
             //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
             for (let i = 0; i < dataArray.length; i++){
-                this.stdevTemperatureArray[i] = parseFloat(this.standardTemperatureArray[i] - dataArray[i].temp_avg);
-                this.stdevPreparingTimeArray[i] = parseFloat(this.standardPreparingTimeArray[i] - dataArray[i].pre_avg);
-                this.stdevCuringTimeArray[i] = parseFloat(this.standardCuringTimeArray[i] - dataArray[i].cur_avg);
+                this.stdevTemperatureArray[i] = parseFloat(dataArray[i].temp_stdev);
+                this.stdevPreparingTimeArray[i] = parseFloat(dataArray[i].pre_stdev);
+                this.stdevCuringTimeArray[i] = parseFloat(dataArray[i].cur_stdev);
+
+                this.avgTemperatureArray[i] = parseFloat(dataArray[i].temp_avg);
+                this.avgPreparingTimeArray[i] = parseFloat(dataArray[i].pre_avg);
+                this.avgCurringTimeArray[i] = parseFloat(dataArray[i].cur_avg);
 
                 totalStddevTemp += parseFloat(this.stdevTemperatureArray[i]);
                 totalStddevPrep += parseFloat(this.stdevPreparingTimeArray[i]);
@@ -370,7 +371,7 @@ class ProcessStatus extends Component {
 
                 maxStddevTemp = (maxStddevTemp < parseFloat(this.stdevTemperatureArray[i])) ? parseFloat(this.stdevTemperatureArray[i]) : maxStddevTemp;
                 maxStddevPrep = (maxStddevPrep < parseFloat(this.stdevPreparingTimeArray[i])) ? parseFloat(this.stdevPreparingTimeArray[i]) : maxStddevPrep;
-                maxStddevCurringTime = (maxStddevCurringTime < parseFloat(dataArray[i].cur_stdev)) ? parseFloat(dataArray[i].cur_stdev) : maxStddevCurringTime;
+                maxStddevCurringTime = (maxStddevCurringTime < parseFloat(this.stdevCuringTimeArray[i])) ? parseFloat(this.stdevCuringTimeArray[i]) : maxStddevCurringTime;
 
                 minStddevTemp = (minStddevTemp < parseFloat(this.stdevTemperatureArray[i])) ? minStddevTemp : parseFloat(this.stdevTemperatureArray[i]);
                 minStddevPrep = (minStddevPrep < parseFloat(this.stdevPreparingTimeArray[i])) ? minStddevPrep : parseFloat(this.stdevPreparingTimeArray[i]);
@@ -401,37 +402,13 @@ class ProcessStatus extends Component {
             let avgAvgCuringTime = totalAvgCuringTime / numbersOfStation;
             let avgStddevCurringTime = totalStddevCurringTime / numbersOfStation;
 
+            let stdAvgTemp = standardDeviation(this.avgTemperatureArray, avgAvgTemp, true);
+            let stdStddevTemp = standardDeviation(this.stdevTemperatureArray, avgStddevTemp, true);
+            let stdAvgPrep = standardDeviation(this.avgPreparingTimeArray, avgAvgPrep, true);
+            let stdStddevPrep = standardDeviation(this.stdevPreparingTimeArray, avgStddevPrep, true);
+            let stdAvgCuringTime = standardDeviation(this.avgCurringTimeArray, avgAvgCuringTime, true);
+            let stdStddevCurringTime = standardDeviation(this.stdevCuringTimeArray, avgStddevCurringTime, true);
 
-            //count standard deviation
-            let stdAvgTemp = 0,
-                stdStddevTemp = 0,
-                stdAvgPrep = 0,
-                stdStddevPrep = 0,
-                stdAvgCuringTime = 0,
-                stdStddevCurringTime = 0;
-
-            let totalSqrDiffAvgTemp = 0,
-                totalSqrStddevTemp = 0,
-                totalSqrAvgPrep = 0,
-                totalSqrStddevPrep = 0,
-                totalSqrAvgCuringTime = 0,
-                totalSqrStddevCurringTime = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-                totalSqrDiffAvgTemp += (parseFloat(this.checkNull(dataArray[i].temp_avg)) - avgAvgTemp) ** 2;
-                totalSqrStddevTemp += (parseFloat(this.checkNull(dataArray[i].temp_stdev)) - avgStddevTemp) ** 2;
-                totalSqrAvgPrep += (parseFloat(this.checkNull(dataArray[i].pre_avg)) - avgAvgPrep) ** 2;
-                totalSqrStddevPrep += (parseFloat(this.checkNull(dataArray[i].pre_stdev)) - avgStddevPrep) ** 2;
-                totalSqrAvgCuringTime += (parseFloat(this.checkNull(dataArray[i].cur_avg)) - avgAvgCuringTime) ** 2;
-                totalSqrStddevCurringTime += (parseFloat(this.checkNull(dataArray[i].cur_stdev)) - avgStddevCurringTime) ** 2;
-            }
-            if (numbersOfStation > 0) {
-                stdAvgTemp = Math.sqrt(totalSqrDiffAvgTemp / numbersOfStation);
-                stdStddevTemp = Math.sqrt(totalSqrStddevTemp / numbersOfStation);
-                stdAvgPrep = Math.sqrt(totalSqrAvgPrep / numbersOfStation);
-                stdStddevPrep = Math.sqrt(totalSqrStddevPrep / numbersOfStation);
-                stdAvgCuringTime = Math.sqrt(totalSqrAvgCuringTime / numbersOfStation);
-                stdStddevCurringTime = Math.sqrt(totalSqrStddevCurringTime / numbersOfStation);
-            }
 
             result = <tbody>
             <tr>
@@ -482,9 +459,13 @@ class ProcessStatus extends Component {
                                 data3={changeNumberFormat(minAvgPrep)} data4={changeNumberFormat(minStddevPrep)}
                                 data5={changeNumberFormat(minAvgCuringTime)}
                                 data6={changeNumberFormat(minStddevCurringTime)}/>
-            <GeneralSummaryItem spec={'STDEV'} data1="-" data2="-"
-                                data3="-" data4="-" data5="-"
-                                data6="-" />
+            <GeneralSummaryItem spec={'STDEV'}
+                                data1={changeNumberFormat(stdAvgTemp)}
+                                data2={changeNumberFormat(stdStddevTemp)}
+                                data3={changeNumberFormat(stdAvgPrep)}
+                                data4={changeNumberFormat(stdStddevPrep)}
+                                data5={changeNumberFormat(stdAvgCuringTime)}
+                                data6={changeNumberFormat(stdStddevCurringTime)} />
             </tbody>;
 
             // Prepare to push Process Status Data to Redux Store
@@ -508,7 +489,7 @@ class ProcessStatus extends Component {
                 [changeNumberFormat(avgAvgTemp), changeNumberFormat(avgStddevTemp), changeNumberFormat(avgAvgPrep), changeNumberFormat(avgStddevPrep), changeNumberFormat(avgAvgCuringTime), changeNumberFormat(avgStddevCurringTime)],
                 [changeNumberFormat(maxAvgTemp), changeNumberFormat(maxStddevTemp), changeNumberFormat(maxAvgPrep), changeNumberFormat(maxStddevPrep), changeNumberFormat(maxAvgCuringTime), changeNumberFormat(maxStddevCurringTime)],
                 [changeNumberFormat(minAvgTemp), changeNumberFormat(minStddevTemp), changeNumberFormat(minAvgPrep), changeNumberFormat(minStddevPrep), changeNumberFormat(minAvgCuringTime), changeNumberFormat(minStddevCurringTime)],
-                ["-", "-", "-", "-", "-", "-"],
+                [changeNumberFormat(stdAvgTemp), changeNumberFormat(stdStddevTemp), changeNumberFormat(stdAvgPrep), changeNumberFormat(stdStddevPrep), changeNumberFormat(stdAvgCuringTime), changeNumberFormat(stdStddevCurringTime)],
             ];
             // Push Process Status Data to Redux Store to Export Data later
             this.props.dispatch(storeProcessStatusData(processStatusDataToDownload));

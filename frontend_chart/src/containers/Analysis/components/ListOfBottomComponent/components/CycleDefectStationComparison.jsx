@@ -5,7 +5,7 @@ import connect from "react-redux/es/connect/connect";
 import {SwingArmMachine} from "./SwingOSStationComparison";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
-import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -175,12 +175,15 @@ export class CycleDefectStationComparison extends Component {
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice   = moment(endDate.toISOString()).unix();
+            let selectedShift = this.props.globalShiftFilter.selectedShift;
+            selectedShift = specifySelectedShiftNo(selectedShift);
 
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
                 "istatus": this.istatus,
-                "proccess": this.process
+                "proccess": this.process,
+                "shiftno": selectedShift
             };
             this.setState({
                 loading: true,
@@ -253,11 +256,15 @@ export class CycleDefectStationComparison extends Component {
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice   = moment(endDate.toISOString()).unix();
 
+        let selectedShift = this.props.globalShiftFilter.selectedShift;
+        selectedShift = specifySelectedShiftNo(selectedShift);
+
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
             "istatus": this.istatus,
-            "proccess": this.process
+            "proccess": this.process,
+            "shiftno": selectedShift
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -335,7 +342,8 @@ export class CycleDefectStationComparison extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default connect(mapStateToProps)(CycleDefectStationComparison);

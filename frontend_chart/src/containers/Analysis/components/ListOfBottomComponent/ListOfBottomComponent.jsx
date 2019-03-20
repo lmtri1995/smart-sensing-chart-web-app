@@ -14,7 +14,7 @@ import {
 import Singleton from "../../../../services/Socket";
 import {connect} from "react-redux";
 import API from "../../../../services/api";
-import {changeNumberFormat} from "../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
 
 class listBottomComponent extends Component {
     constructor(props) {
@@ -368,9 +368,12 @@ class listBottomComponent extends Component {
         let {startDate, endDate} = this.props.globalDateFilter;
 
         // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
+        let selectedShift = this.props.globalShiftFilter.selectedShift;
+        selectedShift = specifySelectedShiftNo(selectedShift);
         let param = {
             from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
+            "shiftno": selectedShift
         };
         let standardCycleTime1 = 0, standardCycleTime2 = 0, standardCycleTime3 = 0,
             standardCycleTime4 = 0,
@@ -420,10 +423,13 @@ class listBottomComponent extends Component {
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice = moment(endDate.toISOString()).unix();
+            let selectedShift = this.props.globalShiftFilter.selectedShift;
+            selectedShift = specifySelectedShiftNo(selectedShift);
 
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
+                "shiftno": selectedShift
             };
             this.setState({
                 loading: true,
@@ -461,10 +467,13 @@ class listBottomComponent extends Component {
         let {startDate, endDate} = this.props.globalDateFilter;
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice = moment(endDate.toISOString()).unix();
+        let selectedShift = this.props.globalShiftFilter.selectedShift;
+        selectedShift = specifySelectedShiftNo(selectedShift);
 
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
+            "shiftno": selectedShift
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -547,7 +556,8 @@ class listBottomComponent extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default connect(mapStateToProps)(listBottomComponent);

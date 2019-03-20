@@ -5,7 +5,7 @@ import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import moment from "moment";
 import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
-import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -152,10 +152,13 @@ export class SwingArmMachine extends Component {
                 let {startDate, endDate} = this.props.globalDateFilter;
                 let fromTimeDevice = moment(startDate.toISOString()).unix();
                 let toTimedevice = moment(endDate.toISOString()).unix();
+                let selectedShift = this.props.globalShiftFilter.selectedShift;
+                selectedShift = specifySelectedShiftNo(selectedShift);
 
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice,
+                    "shiftno": selectedShift
                 };
                 this.setState({
                     loading: true,
@@ -224,10 +227,13 @@ export class SwingArmMachine extends Component {
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice = moment(endDate.toISOString()).unix();
+            let selectedShift = this.props.globalShiftFilter.selectedShift;
+            selectedShift = specifySelectedShiftNo(selectedShift);
 
             let param = {
                 "from_timedevice": fromTimeDevice,
-                "to_timedevice": toTimedevice
+                "to_timedevice": toTimedevice,
+                "shiftno": selectedShift
             };
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {
@@ -290,7 +296,8 @@ export class SwingArmMachine extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
 });
 
 export default connect(mapStateToProps)(SwingArmMachine);

@@ -77,7 +77,6 @@ export const specifyCurrentTimeDevice = () => {
         to_timedevice = moment().startOf("day").add({hours: 6}).unix();
     }
     return [from_timedevice, to_timedevice];
-
 }
 
 
@@ -87,5 +86,26 @@ export const specify30minutesToCurrentTimeDevice = () => {
     let from_timedevice = moment().subtract({minutes: 30}).unix();
     let to_timedevice = moment().unix();
     return [from_timedevice, to_timedevice];
+}
 
+//Specify the time that start of the shift until current time of the shift
+export const specifyTheShiftStartHour = () => {
+    let from_timedevice = 0;
+    let to_timedevice = 0;
+    let currentShift = specifyCurrentShift();
+    switch (currentShift) {
+        case 1:
+            from_timedevice = moment().startOf("day").add(6, "hours").unix();
+            to_timedevice =  moment().unix();
+            break;
+        case 2:
+            from_timedevice = moment().startOf("day").add(14, "hours").unix();
+            to_timedevice =  moment().unix();
+            break;
+        case 3:
+            from_timedevice = moment().startOf("day").subtract({days: 1, hours: 22}).unix();
+            to_timedevice =  moment().unix();
+            break;
+    }
+    return [from_timedevice, to_timedevice];
 }

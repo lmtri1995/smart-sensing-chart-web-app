@@ -453,7 +453,7 @@ class ProcessStatus extends Component {
             {this.showLineItem(dataArray[7], 8)}
             <tr>
                 <th scope="col" rowSpan="2">Processing Status</th>
-                <th scope="col" colSpan="2">Temperature</th>
+                <th scope="col" colSpan="2">Temperature (°C)</th>
                 <th scope="col" colSpan="2">Preparing (s)</th>
                 <th scope="col" colSpan="2">Curing Time (s)</th>
             </tr>

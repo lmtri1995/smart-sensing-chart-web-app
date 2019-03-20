@@ -60,91 +60,71 @@ class listBottomComponent extends Component {
 
     countCurrentWorkingHour() {
         let {startDate, endDate} = this.props.globalDateFilter;
-        let today = new Date();
-        let workingHourShift1 = 0, workingHourShift2 = 0, workingHourShift3 = 0;
 
-        let startDateYMD = moment(startDate.toISOString()).format("YYYYMMDD");
-        let endDateYMD = moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD");
-        let todayYMD = moment(today.toISOString()).format("YYYYMMDD");
-        if (endDateYMD == startDateYMD) {
-            if (endDateYMD == todayYMD) {
-                let dd = today.getDate();
-                let mm = today.getMonth();
-                let yyyy = today.getFullYear();
-                let hour = today.getHours();
-                let minute = today.getMinutes();
-                let second = today.getSeconds();
-                //shift 1: 6:00 am - 2:00 pm
-                //shift 2: 2:00 am - 22:00 pm
-                //shift 3: 20:00 pm - 6:00 am
-                let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
-                let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
-                let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
-                let shift2From = shift1To;
-                let shift2To = moment.utc([yyyy, mm, dd, 22, 0, 0]).unix();
-                let shift3From = shift2To;
-                let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
+        let startMoment = moment(startDate.toISOString()),
+            endMoment = moment(endDate.toISOString());
 
-                if (hour < 6) {
-                    shift1From = moment.utc([yyyy, mm, dd - 1, 6, 0, 0]).unix();
-                    shift1To = moment.utc([yyyy, mm, dd - 1, 14, 0, 0]).unix();
-                    shift2From = shift1To;
-                    shift2To = moment.utc([yyyy, mm, dd - 1, 22, 0, 0]).unix();
-                    shift3From = shift2To;
-                    shift3To = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
+        // Shift 1: 6:00 AM - 13:30 PM -> 30 minutes break
+        // Shift 2: 14:00 PM - 21:30 PM -> 30 minutes break
+        // Shift 3: 22:00 PM - 5:30 AM -> 30 minutes break
+        let rangeShift1 = [moment(START_WORK_DAY_TIME), moment({hours: 14})],
+            rangeShift2 = [moment({hours: 14}), moment({hours: 22})],
+            rangeShift3 = [moment({hours: 22}), moment(START_WORK_DAY_TIME).add({days: 1})];
+
+        let totalWorkHoursInSecondsShift1 = 0,
+            totalWorkHoursInSecondsShift2 = 0,
+            totalWorkHoursInSecondsShift3 = 0;
+
+        let curMoment = moment();
+        let endMomentRange = [moment(endMoment).subtract({days: 1}), endMoment];
+        if (curMoment.isSameOrAfter(endMomentRange[0]) && curMoment.isBefore(endMomentRange[1])) {  // If curMoment is between endMoment start work day and endMoment end work day
+            if (curMoment.isSameOrAfter(rangeShift1[0]) && curMoment.isBefore(rangeShift1[1])) {  // 6:00 AM <= curTime < 14:00 PM
+                if (curMoment.isSameOrBefore(moment(rangeShift1[1]).subtract({minutes: 30}))) {    // curTime <= 13:30 PM
+                    totalWorkHoursInSecondsShift1 += curMoment.diff(rangeShift1[0], "seconds");
+                } else {    // 13:30 PM < curTime
+                    totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                        .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
                 }
-
-                if (currentTime >= shift1From && currentTime < shift1To) {
-                    workingHourShift1 = currentTime - shift1From;
-                    workingHourShift1 = (workingHourShift1 < 27000) ? workingHourShift1 : 27000;
-                    workingHourShift2 = 0;
-                    workingHourShift3 = 0;
-                } else if (currentTime >= shift2From && currentTime < shift2To) {
-                    workingHourShift1 = 27000;
-                    workingHourShift2 = currentTime - shift2From;
-                    workingHourShift2 = (workingHourShift2 < 27000) ? workingHourShift2 : 27000;
-                    workingHourShift3 = 0;
-                } else {
-                    workingHourShift1 = 27000;
-                    workingHourShift2 = 27000;
-                    workingHourShift3 = currentTime - shift3From;
-                    workingHourShift3 = (workingHourShift3 < 27000) ? workingHourShift3 : 27000;
+            } else if (curMoment.isSameOrAfter(rangeShift2[0]) && curMoment.isBefore(rangeShift2[1])) {   // 14:00 PM <= curTime < 22:00 PM
+                totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                    .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
+                if (curMoment.isSameOrBefore(moment(rangeShift2[1]).subtract({minutes: 30}))) {  // curTime <= 21:30 PM
+                    totalWorkHoursInSecondsShift2 += curMoment.diff(rangeShift2[0], "seconds");
+                } else {    // 21:30 PM < curTime
+                    totalWorkHoursInSecondsShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                        .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
                 }
-
-                let result = [workingHourShift1, workingHourShift2, workingHourShift3];
-                let sundayShiftsSeconds = this.countSundayShiftSeconds(startDate, endDate);
-                result.forEach((_, index, array) => {
-                    array[index] -= sundayShiftsSeconds[index];
-                });
-                this.currentWorkingHour = result;
-            } else {
-                workingHourShift1 = 27000;
-                workingHourShift2 = 27000;
-                workingHourShift3 = 27000;
-                let result = [workingHourShift1, workingHourShift2, workingHourShift3];
-                let sundayShiftsSeconds = this.countSundayShiftSeconds(startDate, endDate);
-                result.forEach((_, index, array) => {
-                    array[index] -= sundayShiftsSeconds[index];
-                });
-                this.currentWorkingHour = result;
+            } else {    // 22:00 PM <= curTime < 6:00 AM
+                totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                    .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
+                totalWorkHoursInSecondsShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                    .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
+                if (curMoment.isSameOrBefore(moment(rangeShift3[1]).subtract({minutes: 30}))) {  // curTime <= 5:30 PM
+                    totalWorkHoursInSecondsShift3 += curMoment.diff(rangeShift3[0], "seconds");
+                } else {    // 5:30 PM < curTime
+                    totalWorkHoursInSecondsShift3 += moment(rangeShift3[1]).subtract({minutes: 30})
+                        .diff(rangeShift3[0], "seconds");   // 27000 seconds = 7.5 hours
+                }
             }
-        } else {
-            let startMomentUnix = moment(startDate.toISOString()).unix();
-            let endMomentUnix = moment(endDate.toISOString()).unix();
-
-            let differenceInSeconds = endMomentUnix - startMomentUnix;
-            let differenceInDays = ((differenceInSeconds / 60) / 60) / 24;
-            differenceInDays = Math.round(differenceInDays);
-            workingHourShift1 = 27000 * differenceInDays;
-            workingHourShift2 = 27000 * differenceInDays;
-            workingHourShift3 = 27000 * differenceInDays;
-            let result = [workingHourShift1, workingHourShift2, workingHourShift3];
-            let sundayShiftsSeconds = this.countSundayShiftSeconds(startDate, endDate);
-            result.forEach((_, index, array) => {
-                array[index] -= sundayShiftsSeconds[index];
-            });
-            this.currentWorkingHour = result;
         }
+
+        while (startMoment.isBefore(moment(endMoment).subtract({days: 1}))) {
+            totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                .diff(rangeShift1[0], "seconds");   // 27000 seconds = 7.5 hours
+            totalWorkHoursInSecondsShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
+            totalWorkHoursInSecondsShift3 += moment(rangeShift3[1]).subtract({minutes: 30})
+                .diff(rangeShift3[0], "seconds");   // 27000 seconds = 7.5 hours
+
+            startMoment.add(1, "days");
+        }
+
+        let result = [totalWorkHoursInSecondsShift1, totalWorkHoursInSecondsShift2, totalWorkHoursInSecondsShift3];
+        let totalSundayWorkHoursInSeconds = this.countSundayShiftSeconds(startDate, endDate);
+        result.forEach((_, index, array) => {
+            array[index] -= totalSundayWorkHoursInSeconds[index];
+        });
+        this.currentWorkingHour = result;
     }
 
     countSundayShiftSeconds(startDate, endDate) {

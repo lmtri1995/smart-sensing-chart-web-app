@@ -66,7 +66,7 @@ class listBottomComponent extends Component {
         let endDateYMD = moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD");
         let todayYMD = moment(today.toISOString()).format("YYYYMMDD");
         if (endDateYMD == startDateYMD) {
-            if (endDateYMD == todayYMD){
+            if (endDateYMD == todayYMD) {
                 let dd = today.getDate();
                 let mm = today.getMonth();
                 let yyyy = today.getFullYear();
@@ -166,11 +166,11 @@ class listBottomComponent extends Component {
 
         if (dataArray && dataArray.length > 0) {
             dataArray.map(item => {
-                let stopping_hr = item.stopping_hr?item.stopping_hr:0;
-                let count = item.count?item.count:0;
-                let preparingtime = item.preparingtime?item.preparingtime:0;
-                let cycle_count = item.cycle_count?item.cycle_count:0;
-                let defect = item.defect?item.defect:0;
+                let stopping_hr = item.stopping_hr ? item.stopping_hr : 0;
+                let count = item.count ? item.count : 0;
+                let preparingtime = item.preparingtime ? item.preparingtime : 0;
+                let cycle_count = item.cycle_count ? item.cycle_count : 0;
+                let defect = item.defect ? item.defect : 0;
                 if (item.idStation == 1) {
                     stoppingHour1 += parseFloat(stopping_hr);
                     productCount1 += parseInt(count);
@@ -453,8 +453,8 @@ class listBottomComponent extends Component {
                         </div>
                     </div>
                 </div>
-                {(this.role == 'ip')?'':<div id={ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID}
-                                             className="row">
+                {(this.role == 'ip') ? '' : <div id={ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID}
+                                                 className="row">
                     <div className="col-6">
                         <SwingArmMachine startDate={startDate} endDate={endDate}/>
                     </div>

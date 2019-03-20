@@ -451,10 +451,10 @@ class ReportPage extends Component {
                 dataArray.map(currentDay => {
                     defectRatesOfCurrentDay = dateLabelsAndDefectRatesMap.get(currentDay['WORK_DATE']);
 
-                    defectRatesOfCurrentDay[0] = currentDay['DEFECT_COUNT1'];
-                    defectRatesOfCurrentDay[1] = currentDay['DEFECT_COUNT2'];
-                    defectRatesOfCurrentDay[2] = currentDay['DEFECT_COUNT3'];
-                    defectRatesOfCurrentDay[3] = currentDay['DEFECT_COUNT4'];
+                    defectRatesOfCurrentDay[0] += currentDay['DEFECT_COUNT1'];
+                    defectRatesOfCurrentDay[1] += currentDay['DEFECT_COUNT2'];
+                    defectRatesOfCurrentDay[2] += currentDay['DEFECT_COUNT3'];
+                    defectRatesOfCurrentDay[3] += currentDay['DEFECT_COUNT4'];
 
                     dateLabelsAndDefectRatesMap.set(currentDay['WORK_DATE'], defectRatesOfCurrentDay);
                 });

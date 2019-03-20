@@ -8,7 +8,8 @@ import SwingOSStationComparison from "./components/SwingOSStationComparison";
 import moment from "moment";
 import {
     ANALYSIS_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID,
-    ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID
+    ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID,
+    START_WORK_DAY_TIME
 } from "../../../../constants/constants";
 import Singleton from "../../../../services/Socket";
 import {connect} from "react-redux";
@@ -111,27 +112,105 @@ class listBottomComponent extends Component {
                 }
 
                 let result = [workingHourShift1, workingHourShift2, workingHourShift3];
+                let sundayShiftsSeconds = this.countSundayShiftSeconds(startDate, endDate);
+                result.forEach((_, index, array) => {
+                    array[index] -= sundayShiftsSeconds[index];
+                });
                 this.currentWorkingHour = result;
             } else {
                 workingHourShift1 = 27000;
                 workingHourShift2 = 27000;
                 workingHourShift3 = 27000;
                 let result = [workingHourShift1, workingHourShift2, workingHourShift3];
+                let sundayShiftsSeconds = this.countSundayShiftSeconds(startDate, endDate);
+                result.forEach((_, index, array) => {
+                    array[index] -= sundayShiftsSeconds[index];
+                });
                 this.currentWorkingHour = result;
             }
         } else {
-            startDate = moment(startDate.toISOString()).unix();
-            endDate = moment(endDate.toISOString()).unix();
+            let startMomentUnix = moment(startDate.toISOString()).unix();
+            let endMomentUnix = moment(endDate.toISOString()).unix();
 
-            let differenceInSeconds = endDate - startDate;
+            let differenceInSeconds = endMomentUnix - startMomentUnix;
             let differenceInDays = ((differenceInSeconds / 60) / 60) / 24;
             differenceInDays = Math.round(differenceInDays);
             workingHourShift1 = 27000 * differenceInDays;
             workingHourShift2 = 27000 * differenceInDays;
             workingHourShift3 = 27000 * differenceInDays;
             let result = [workingHourShift1, workingHourShift2, workingHourShift3];
+            let sundayShiftsSeconds = this.countSundayShiftSeconds(startDate, endDate);
+            result.forEach((_, index, array) => {
+                array[index] -= sundayShiftsSeconds[index];
+            });
             this.currentWorkingHour = result;
         }
+    }
+
+    countSundayShiftSeconds(startDate, endDate) {
+        // Subtract all Sundays (Day-offs)
+        let startMoment = moment(startDate.toISOString()),
+            endMoment = moment(endDate.toISOString());
+        // Shift 1: 6:00 AM - 13:30 PM -> 30 minutes break
+        // Shift 2: 14:00 PM - 21:30 PM -> 30 minutes break
+        // Shift 3: 22:00 PM - 5:30 AM -> 30 minutes break
+        let rangeShift1 = [moment(START_WORK_DAY_TIME), moment({hours: 14})],
+            rangeShift2 = [moment({hours: 14}), moment({hours: 22})],
+            rangeShift3 = [moment({hours: 22}), moment(START_WORK_DAY_TIME).add({days: 1})];
+        let totalSundaySecondsCountShift1 = 0,
+            totalSundaySecondsCountShift2 = 0,
+            totalSundaySecondsCountShift3 = 0;
+        // If current time is Sunday and is same or after 6:00 AM
+        // OR Monday and before 6:00 AM
+        let curMoment = moment();
+        if (curMoment.isoWeekday() === 7 && curMoment.isSameOrAfter(moment(START_WORK_DAY_TIME))
+            || curMoment.isoWeekday() === 1 && curMoment.isBefore(moment(START_WORK_DAY_TIME))) {
+
+            endMoment.subtract(2, "days");  // This Sunday will be calculated as following, so ignore it later.
+
+            if (curMoment.isSameOrAfter(rangeShift1[0]) && curMoment.isBefore(rangeShift1[1])) {  // 6:00 AM <= curTime < 14:00 PM
+                if (curMoment.isSameOrBefore(moment(rangeShift1[1]).subtract({minutes: 30}))) {    // curTime <= 13:30 PM
+                    totalSundaySecondsCountShift1 += curMoment.diff(rangeShift1[0], "seconds");
+                } else {    // 13:30 PM < curTime
+                    totalSundaySecondsCountShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                        .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
+                }
+            } else if (curMoment.isSameOrAfter(rangeShift2[0]) && curMoment.isBefore(rangeShift2[1])) {   // 14:00 PM <= curTime < 22:00 PM
+                totalSundaySecondsCountShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                    .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
+                if (curMoment.isSameOrBefore(moment(rangeShift2[1]).subtract({minutes: 30}))) {  // curTime <= 21:30 PM
+                    totalSundaySecondsCountShift2 += curMoment.diff(rangeShift2[0], "seconds");
+                } else {    // 21:30 PM < curTime
+                    totalSundaySecondsCountShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                        .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
+                }
+            } else {    // 22:00 PM <= curTime < 6:00 AM
+                totalSundaySecondsCountShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                    .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
+                totalSundaySecondsCountShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                    .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
+                if (curMoment.isSameOrBefore(moment(rangeShift3[1]).subtract({minutes: 30}))) {  // curTime <= 5:30 PM
+                    totalSundaySecondsCountShift3 += curMoment.diff(rangeShift3[0], "seconds");
+                } else {    // 5:30 PM < curTime
+                    totalSundaySecondsCountShift3 += moment(rangeShift3[1]).subtract({minutes: 30})
+                        .diff(rangeShift3[0], "seconds");   // 27000 seconds = 7.5 hours
+                }
+            }
+        }
+
+        // (Shift 1 (7.5h) + Shift 2 (7.5h) + Shift 3 (7.5h)) * number of Sundays
+        while (startMoment.isBefore(endMoment)) {
+            if (startMoment.isoWeekday() === 7) {
+                totalSundaySecondsCountShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                    .diff(rangeShift1[0], "seconds");   // 27000 seconds = 7.5 hours
+                totalSundaySecondsCountShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                    .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
+                totalSundaySecondsCountShift3 += moment(rangeShift3[1]).subtract({minutes: 30})
+                    .diff(rangeShift3[0], "seconds");   // 27000 seconds = 7.5 hours
+            }
+            startMoment.add(1, "days");
+        }
+        return [totalSundaySecondsCountShift1, totalSundaySecondsCountShift2, totalSundaySecondsCountShift3];
     }
 
     handleReturnArray(dataArray) {

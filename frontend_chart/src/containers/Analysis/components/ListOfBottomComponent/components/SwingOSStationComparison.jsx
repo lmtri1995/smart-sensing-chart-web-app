@@ -162,12 +162,10 @@ export class SwingArmMachine extends Component {
                 });
                 API('api/os/stationcomparision', 'POST', param)
                     .then((response) => {
-                        console.log("response 137: ", response);
                         if (response.data.success) {
                             let dataArray = response.data.data;
                             let returnData = JSON.parse(dataArray[0].data);
                             let displayArray = this.handleReturnData(returnData);
-                            console.log("displayArray: ", displayArray);
                             this.myChart.data = {
                                 labels: ['Shift 1', 'Shift 2', 'Shift 3'],
                                 datasets: [
@@ -210,8 +208,6 @@ export class SwingArmMachine extends Component {
                     })
                     .catch((err) => console.log('err:', err))
             }
-
-
         }
     }
 

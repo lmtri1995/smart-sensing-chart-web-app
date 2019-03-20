@@ -12,7 +12,7 @@ import {
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
 import API from "../../../../services/api";
-import {changeNumberFormat} from "../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifyTheShiftStartHour} from "../../../../shared/utils/Utilities";
 
 export default class listBottomComponent extends Component {
     constructor(props) {
@@ -28,6 +28,7 @@ export default class listBottomComponent extends Component {
 
         switch (this.role) {
             case 'admin':
+                this.apiUrl = `api/os/oeedata`;
                 this.emitEvent = `os_swingarm_oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 this.standardCycleTimeUrl = 'api/os/std';
@@ -35,6 +36,7 @@ export default class listBottomComponent extends Component {
                 this.process = 'os-Molding';
                 break;
             case 'ip':
+                this.apiUrl = `api/ip/oeedata`;
                 this.emitEvent = `ip_swingarm_oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 this.standardCycleTimeUrl = 'api/ip/std';
@@ -42,6 +44,7 @@ export default class listBottomComponent extends Component {
                 this.process = 'imev';
                 break;
             case 'os':
+                this.apiUrl = `api/os/oeedata`;
                 this.emitEvent = `os_swingarm_oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 this.standardCycleTimeUrl = 'api/os/std';
@@ -49,6 +52,7 @@ export default class listBottomComponent extends Component {
                 this.process = 'os-Molding';
                 break;
             default:
+                this.apiUrl = `api/os/oeedata`;
                 this.emitEvent = `os_swingarm_oeedata`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 this.standardCycleTimeUrl = 'api/os/std';
@@ -343,13 +347,46 @@ export default class listBottomComponent extends Component {
         return summaryArray;
     }
 
-    componentDidMount() {
-        //this.countCurrentRunningTime()
-        /*setInterval(_ => {
-            this.countCurrentWorkingHour();
-            console.log("currentTime: ", this.currentWorkingHour);
-        }, 100);*/
+    callAxiosBeforeSocket = (callback) => {
+        let timeFromStartOfShift = specifyTheShiftStartHour();
 
+        let param = {
+            "from_timedevice": timeFromStartOfShift[0],
+            "to_timedevice": timeFromStartOfShift[1],
+        };
+        this.setState({
+            loading: true,
+        });
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let data = response.data.data;
+                    let summaryArray = this.handleReturnArray(data);
+                    let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
+                    summaryArray.map(item => {
+                        availability += (item[0] ? item[0] : 0);
+                        performance += (item[1] ? item[1] : 0);
+                        quality += (item[2] ? item[2] : 0);
+                        OEE += (item[3] ? item[3] : 0);
+                        workLost += (item[4] ? item[4] : 0);
+                    });
+                    this.setState({
+                        availabilityNumber: Math.round(availability / 8 * 100) / 100,
+                        performanceNumber: Math.round(performance * 100) / 100,
+                        qualityNumber: Math.round(quality / 8 * 100) / 100,
+                        OEENumber: Math.round(OEE / 8 * 100) / 100,
+                        workLossNumber: Math.round(workLost / 8 * 100) / 100,
+                        loading: false,
+                    });
+                    this.callSocket();
+                } else {
+                    callback();
+                }
+            })
+            .catch((err) => console.log('err:', err))
+    }
+
+    callSocket = () => {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -388,8 +425,15 @@ export default class listBottomComponent extends Component {
                 }
             }
         });
+    }
 
-
+    componentDidMount() {
+        this.callAxiosBeforeSocket();
+        //this.countCurrentRunningTime()
+        /*setInterval(_ => {
+            this.countCurrentWorkingHour();
+            console.log("currentTime: ", this.currentWorkingHour);
+        }, 100);*/
     }
 
     render() {

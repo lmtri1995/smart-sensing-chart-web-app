@@ -3,8 +3,13 @@ import {Bar} from 'react-chartjs-2';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import moment from "moment";
-import {changeNumberFormat, specifyCurrentShift} from "../../../../../shared/utils/Utilities";
+import {
+    changeNumberFormat,
+    specifyCurrentShift,
+    specifyTheShiftStartHour
+} from "../../../../../shared/utils/Utilities";
 import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
+import API from "../../../../../services/api";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -192,18 +197,60 @@ export class SwingArmMachine extends Component {
         }
     }
 
-    componentDidMount() {
-        const ctx = this.canvas.getContext('2d');
+    callAxiosBeforeSocket = (callback) => {
+        if (this.role == 'os') {
+            let timeFromStartOfShift = specifyTheShiftStartHour();
 
-        this.changeLabelArray();
+            let param = {
+                "from_timedevice": timeFromStartOfShift[0],
+                "to_timedevice": timeFromStartOfShift[1]
+            };
 
-        this.myChart = new Chart(ctx, {
-            type: 'bar',
-            data: initialData,
-            options: options,
-            //plugins: pluginDrawZeroValue,
-        });
+            API('api/os/stationcomparision', 'POST', param)
+                .then((response) => {
+                    console.log("response 211: ", response);
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        let returnData = JSON.parse(dataArray[0].data);
+                        let displayArray = this.handleReturnData(returnData);
+                        this.myChart.data = {
+                            labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+                            datasets: [
+                                {
+                                    label: 'Swing Arm',
+                                    backgroundColor: '#0CD0EB',
+                                    borderColor: '#0CD0EB',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                },
+                                {
+                                    label: 'Os Press',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[1],
+                                }
+                            ],
 
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                        this.callSocket();
+                    } else {
+                        callback();
+                    }
+                })
+                .catch((err) => console.log('err:', err))
+        } else {
+            this.setState({loading: false});
+        }
+    }
+
+    callSocket = () => {
         if(this.role == 'os'){
             this.socket.emit(this.emitEvent, {
                 msg: {
@@ -260,7 +307,21 @@ export class SwingArmMachine extends Component {
         } else {
             this.setState({loading: false});
         }
+    }
 
+    componentDidMount() {
+        const ctx = this.canvas.getContext('2d');
+
+        this.changeLabelArray();
+
+        this.myChart = new Chart(ctx, {
+            type: 'bar',
+            data: initialData,
+            options: options,
+            //plugins: pluginDrawZeroValue,
+        });
+
+        this.callAxiosBeforeSocket();
     }
 
     render() {

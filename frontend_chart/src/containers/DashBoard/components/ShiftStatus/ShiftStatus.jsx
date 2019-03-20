@@ -34,18 +34,22 @@ class ShiftStatus extends Component {
 
         switch (this.role) {
             case 'admin':
+                this.apiUrl = 'api/os/shiftStatus';
                 this.emitEvent = 'os_shift_status';
                 this.eventListen = 'sna_' + this.emitEvent;
                 break;
             case 'ip':
+                this.apiUrl = 'api/ip/shiftStatus';
                 this.emitEvent = 'ip_shift_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             case 'os':
+                this.apiUrl = 'api/os/shiftStatus';
                 this.emitEvent = 'os_shift_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             default:
+                this.apiUrl = 'api/os/shiftStatus';
                 this.emitEvent = 'os_shift_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 break;
@@ -65,7 +69,7 @@ class ShiftStatus extends Component {
         });
     }
 
-    callAxiosBeforeSocket = () => {
+    callAxiosBeforeSocket = (callback) => {
         /*let {startDate, endDate} = this.props.globalDateFilter;
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice   = moment(endDate.toISOString()).unix();*/
@@ -85,6 +89,8 @@ class ShiftStatus extends Component {
                         loading: false,
                     });
                     this.callSocket();
+                } else {
+                    return callback();
                 }
             })
             .catch((err) => console.log('err:', err))
@@ -124,7 +130,7 @@ class ShiftStatus extends Component {
     componentDidMount() {
         this._isMounted = true;
 
-        this.callSocket();
+        this.callAxiosBeforeSocket();
         /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);

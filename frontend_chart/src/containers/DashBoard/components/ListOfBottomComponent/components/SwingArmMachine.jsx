@@ -2,7 +2,8 @@ import React, {Component} from 'react'
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
-import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifyTheShiftStartHour} from "../../../../../shared/utils/Utilities";
+import API from "../../../../../services/api";
 
 const initialData = {
     labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -128,14 +129,70 @@ export class SwingArmMachine extends Component {
         });
     }
 
-    componentDidMount() {
-        const ctx = this.canvas.getContext('2d');
-        this.myChart = new Chart(ctx, {
-            type: 'bar',
-            data: initialData,
-            options: options,
-            plugins: pluginDrawZeroValue,
-        });
+    callAxiosBeforeSocket = (callback) => {
+        let timeFromStartOfShift = specifyTheShiftStartHour();
+        let param = {
+            "from_timedevice": timeFromStartOfShift[0],
+            "to_timedevice": timeFromStartOfShift[1],
+        };
+        API('api/os/swingarm', 'POST', param)
+            .then((response) => {
+                if (response && response.data) {
+                    let dataArray = response.data.data;
+                    if (dataArray && dataArray.length > 0) {
+                        let returnData = JSON.parse(dataArray[0].data);
+                        if (returnData && returnData.length > 0) {
+                            let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                            let displayDatasets = returnData[0];
+                            if (displayDatasets && displayDatasets.length < 1) {
+                                displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                            }
+                            for (let i = 0; i < displayDatasets.length; i++) {
+                                if (!displayDatasets[i] || displayDatasets[i] == 0) {
+                                    displayDatasets[i] = 0;
+                                }
+                            }
+                            this.myChart.data = {
+                                labels: displayLabels,
+                                datasets: [{
+                                    label: 'Swing Arm Data',
+                                    backgroundColor: '#C88FFA',
+                                    borderColor: '#C88FFA',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayDatasets
+                                }]
+                            };
+                            this.myChart.update();
+                            this.callSocket();
+                            this.setState({loading: false});
+                        }
+                    }
+                } else {
+                    let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                    let displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    this.myChart.data = {
+                        labels: displayLabels,
+                        datasets: [{
+                            label: 'Swing Arm Data',
+                            backgroundColor: '#C88FFA',
+                            borderColor: '#C88FFA',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayDatasets
+                        }]
+                    };
+                    this.myChart.update();
+                    this.callSocket();
+                    this.setState({loading: false});
+                }
+            })
+            .catch((err) => console.log('err:', err))
+    }
+
+    callSocket = () => {
         if (this.role == "ip") {
             this.setState({loading: false});
         } else {
@@ -157,15 +214,6 @@ export class SwingArmMachine extends Component {
                     //Make sure that the length is more than 15
                     let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
                     let displayDatasets = returnData[0];
-
-                    /*if (displayDatasets && displayDatasets.length < 1) {
-                        displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                    }
-                    for (let i = 0; i < displayDatasets.length; i++) {
-                        if (!displayDatasets[i] || displayDatasets[i] == 0) {
-                            displayDatasets[i] = 0;
-                        }
-                    }*/
                     this.myChart.data = {
                         labels: displayLabels,
                         datasets: [{
@@ -184,6 +232,18 @@ export class SwingArmMachine extends Component {
 
             });
         }
+    }
+
+
+    componentDidMount() {
+        const ctx = this.canvas.getContext('2d');
+        this.myChart = new Chart(ctx, {
+            type: 'bar',
+            data: initialData,
+            options: options,
+            plugins: pluginDrawZeroValue,
+        });
+        this.callAxiosBeforeSocket();
     }
 
     render() {

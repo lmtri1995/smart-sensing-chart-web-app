@@ -106,7 +106,7 @@ class StationStatus extends Component {
         return result;
     }*/
 
-    callAxiosBeforeSocket = () => {
+    callAxiosBeforeSocket = (callback) => {
         let param = {
             "proccess": this.process
         };
@@ -130,10 +130,9 @@ class StationStatus extends Component {
                         dataArray: this.displayData,
                     });
                     this.callSocket();
-                }/* else {
-                    console.log("call callback");
-                    this.callAxiosBeforeSocket();
-                }*/
+                } else {
+                    return callback();
+                }
             })
             .catch((err) => console.log('err:', err));
     }

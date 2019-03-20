@@ -2,7 +2,12 @@ import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import moment from "moment";
-import {changeNumberFormat, specifyCurrentShift} from "../../../../../shared/utils/Utilities";
+import {
+    changeNumberFormat,
+    specifyCurrentShift,
+    specifyTheShiftStartHour
+} from "../../../../../shared/utils/Utilities";
+import API from "../../../../../services/api";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -98,18 +103,22 @@ export class CycleDefectStationComparison extends Component {
 
         switch (this.role) {
             case 'admin':
+                this.apiUrl = `api/os/defectdata`;
                 this.emitEvent = `os_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'ip':
+                this.apiUrl = `api/ip/defectdata`;
                 this.emitEvent = `ip_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             case 'os':
+                this.apiUrl = `api/os/defectdata`;
                 this.emitEvent = `os_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
                 break;
             default:
+                this.apiUrl = `api/os/defectdata`;
                 this.emitEvent = `os_swingarm_idledefect`;
                 this.eventListen = `sna_${this.emitEvent}`;
         }
@@ -215,16 +224,74 @@ export class CycleDefectStationComparison extends Component {
         }
     }
 
-    componentDidMount() {
-        this._isMounted = true;
-        const ctx = this.canvas.getContext('2d');
-        this.myChart = new Chart(ctx, {
-            type: 'bar',
-            data: initialData,
-            options: options
-        });
+    callAxiosBeforeSocket = (callback) => {
+        let timeFromStartOfShift = specifyTheShiftStartHour();
+        let param = {
+            "from_timedevice": timeFromStartOfShift[0],
+            "to_timedevice": timeFromStartOfShift[1],
+            "istatus": this.istatus,
+            "proccess": this.process
+        };
 
-        this.changeLabelArray();
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    let returnData =  JSON.parse(dataArray[0].data);
+                    if (returnData && returnData.length > 0) {
+                        let displayArray = this.handleReturnData(returnData);
+                        let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
+                        let dataset = {};
+                        if (this.role == 'ip'){
+                            dataset = [
+                                {
+                                    label: 'Defective',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                }
+                            ];
+                        } else {
+                            dataset = [
+                                {
+                                    label: 'Defective',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                },
+                                {
+                                    label: 'Idle Cycle',
+                                    backgroundColor: '#AFEEFF',
+                                    borderColor: '#AFEEFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[1],
+                                }
+                            ];
+                        }
+                        this.myChart.data = {
+                            labels: labelArray,
+                            datasets: dataset
+                        };
+                        this.callSocket()
+                        this.myChart.update();
+                        this.setState({loading: false});
+                    }
+                } else {
+                    callback();
+                }
+            })
+            .catch((err) => console.log('err:', err))
+    }
+
+    callSocket = () => {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -294,6 +361,19 @@ export class CycleDefectStationComparison extends Component {
                 }
             }
         });
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+        const ctx = this.canvas.getContext('2d');
+        this.myChart = new Chart(ctx, {
+            type: 'bar',
+            data: initialData,
+            options: options
+        });
+
+        this.changeLabelArray();
+        this.callAxiosBeforeSocket();
     }
 
     render() {

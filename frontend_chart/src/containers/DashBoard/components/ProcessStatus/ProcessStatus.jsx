@@ -7,7 +7,11 @@ import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import moment from "moment";
 import API from "../../../../services/api";
-import {changeNumberFormat} from "../../../../shared/utils/Utilities";
+import {
+    changeNumberFormat,
+    specify30minutesToCurrentTimeDevice, specifySelectedShiftNo,
+    specifyTheShiftStartHour,
+} from "../../../../shared/utils/Utilities";
 
 const override = `
     position: absolute;
@@ -35,21 +39,25 @@ class ProcessStatus extends Component {
 
         switch (this.role) {
             case 'admin':
+                this.apiUrl = 'api/os/processStatus';
                 this.emitEvent = 'os_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 this.standardCycleTimeUrl = 'api/os/std';
                 break;
             case 'ip':
+                this.apiUrl = 'api/ip/processStatus';
                 this.emitEvent = 'ip_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 this.standardCycleTimeUrl = 'api/ip/std';
                 break;
             case 'os':
+                this.apiUrl = 'api/os/processStatus';
                 this.emitEvent = 'os_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 this.standardCycleTimeUrl = 'api/os/std';
                 break;
             default:
+                this.apiUrl = 'api/os/processStatus';
                 this.emitEvent = 'os_process_status';
                 this.listenEvent = 'sna_' + this.emitEvent;
                 this.standardCycleTimeUrl = 'api/os/std';
@@ -86,15 +94,33 @@ class ProcessStatus extends Component {
         //this.socket.removeListener('sna_process_status');
     }
 
-    componentDidMount() {
-        this._isMounted = true;
-        this.countStandardCycleTime();
-        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
-        var uDateFrom = mDateFrom.unix();
-        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();*/
+    callAxiosBeforeSocket = (callback) => {
+        let timeFromStartOfShift = specifyTheShiftStartHour();
 
+        let param = {
+            /*"from_timedevice": fromTimeDevice,
+            "to_timedevice": toTimedevice,*/
+            "from_timedevice": timeFromStartOfShift[0],
+            "to_timedevice": timeFromStartOfShift[1],
+            "shiftno": 0
+        };
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    this.setState({
+                        dataArray: dataArray,
+                        loading: false,
+                    });
+                    this.callSocket();
+                } else {
+                    return callback();
+                }
+            })
+            .catch((err) => console.log('err:', err))
+    }
 
+    callSocket = () => {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -123,6 +149,13 @@ class ProcessStatus extends Component {
                 });
             }
         });
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+        this.countStandardCycleTime();
+
+        this.callAxiosBeforeSocket();
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);

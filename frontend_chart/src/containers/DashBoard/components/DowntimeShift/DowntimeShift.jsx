@@ -3,9 +3,10 @@ import DowntimeShiftItem from './components/DowntimeShiftItem';
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
 import {ClipLoader} from 'react-spinners';
-import {specifyCurrentShift} from "../../../../shared/utils/Utilities";
+import {specifyCurrentShift, specifyTheShiftStartHour} from "../../../../shared/utils/Utilities";
 import {storeDownTimeShiftData} from "../../../../redux/actions/downloadDataStoreActions";
 import {connect} from "react-redux";
+import API from "../../../../services/api";
 
 const override = `
     position: absolute;
@@ -32,6 +33,7 @@ class DowntimeShift extends Component {
             loading: true,
         }
 
+        this.apiUrl = "api/db/downshift";
         switch (this.role) {
             case 'admin':
                 /*this.emitEvent = `os_temp_trend_${stationIdNo}`;
@@ -70,19 +72,42 @@ class DowntimeShift extends Component {
         });
     }
 
-    componentDidMount() {
-        this._isMounted = true;
-        /*var mDateFrom = moment.utc([2019, 0, 2, 10, 6, 40]);
-        var uDateFrom = mDateFrom.unix();
-        var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
-        var uDateTo = mDateTo.unix();*/
+    callAxiosBeforeSocket = (callback) => {
+        let param = {
+            "proccess": this.process
+        };
+        API(this.apiUrl, 'POST', param)
+            .then((response) => {
+                if (response.data.success) {
+                    let dataArray = response.data.data;
+                    dataArray.sort(function (a, b) {
+                        if (parseInt(a.idStation) < parseInt(b.idStation)) {
+                            return -1;
+                        }
+                        if (parseInt(a.idStation) > parseInt(b.idStation)) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    this.setState({
+                        dataArray: dataArray,
+                        loading: false,
+                    });
+                    this.callSocket();
+                } else {
+                    return callback();
+                }
+            })
+            .catch((err) => console.log('err:', err))
+    }
 
+    callSocket = () => {
         this.socket.emit('down_shift', {
             msg: {
                 event: 'sna_down_shift',
                 from_timedevice: 0,
                 to_timedevice: 0,
-                proccess: 'os-Molding',
+                proccess: this.process,
                 status: 'start'
             }
         });
@@ -106,6 +131,11 @@ class DowntimeShift extends Component {
                 });
             }
         });
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+        this.callAxiosBeforeSocket();
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
@@ -114,38 +144,6 @@ class DowntimeShift extends Component {
                 window.location.href = (ROUTE.Logout);
             }
         });*/
-    }
-
-    specifyCurrentShift() {
-        let today = new Date();
-        let dd = today.getDate();
-        let mm = today.getMonth();
-        let yyyy = today.getFullYear();
-        let hour = today.getHours();
-        let minute = today.getMinutes();
-        let second = today.getSeconds();
-        //shift 1: 6:00 am - 2:00 pm
-        //shift 2: 2:00 am - 22:00 pm
-        //shift 3: 20:00 pm - 6:00 am
-        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
-        let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
-        let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
-        let shift2From = shift1To;
-        let shift2To = moment.utc([yyyy, mm, dd, 22, 0, 0]).unix();
-        let shift3From = shift2To;
-        let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
-
-
-        let result = 0;
-        if (currentTime >= shift1From && currentTime < shift1To) {
-            result = 1;
-        } else if (currentTime >= shift2From && currentTime < shift2To) {
-            result = 2;
-        } else {
-            result = 3;
-        }
-
-        return result;
     }
 
     showDowntimeShiftItem(dataArray, shiftNo, currentShift) {

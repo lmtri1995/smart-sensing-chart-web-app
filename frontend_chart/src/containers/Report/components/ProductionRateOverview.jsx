@@ -13,39 +13,26 @@ var PRODUCTION_RATE_FOR_DOUGHNUT_CHART = [];
 var ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART = [];
 
 class ProductionRateOverview extends Component {
-    drawLegend = () => {
-        if (this.chartData && this.chartData.length > 0) {
-            let dataArray = this.chartData[0];
-            let colorArray = dataArray.backgroundColor;
-            let data = dataArray.data;
-            let total = 0;
-            for (let i = 0; i < data.length; i++) {
-                total += data[i];
-            }
-            let legendValue = "<div>";
-            for (let i = 0; i < colorArray.length; i++) {
-                let color = colorArray[i];
-                let number = data[i];
-                let percent = (data[i] / total) * 100;
-                legendValue += "<div style='margin-top: 5px;'>";
-                legendValue += "<div id='lengendLabel' class='productionrate_legend-box'" +
-                    " style='background-color: " + color + "; display: inline-block;'></div>";
-                legendValue += "<div class='temperature-legend' style='display: inline-block'>" + `Shift ${i + 1}: ` + Utilities.changeNumberFormat(number) + ` (${Utilities.changeNumberFormat(percent)}%)` + "</div>" +
-                    " &nbsp;" +
-                    " &nbsp; ";
-                legendValue += "</div>";
-            }
+    drawLegend = (chartLabels, chartData, backgroundColors) => {
+        let total = chartData.reduce((acc, curVal) => acc + curVal, 0);
+        let legendValue = "<div>";
+        chartLabels.forEach((label, index) => {
+            let color = backgroundColors[index];
+            let number = chartData[index];
+            let percent = (chartData[index] / total) * 100;
+            legendValue += "<div style='margin-top: 5px;'>";
+            legendValue += "<div id='lengendLabel' class='productionrate_legend-box'" +
+                " style='background-color: " + color + "; display: inline-block;'></div>";
+            legendValue += "<div class='temperature-legend' style='display: inline-block'>" + `${label}: ` + Utilities.changeNumberFormat(number) + ` (${Utilities.changeNumberFormat(percent)}%)` + "</div>" +
+                " &nbsp;" +
+                " &nbsp; ";
             legendValue += "</div>";
-            document.getElementById("productionRate-lengendLabel").innerHTML = legendValue;
-        }
-    }
-
-    componentDidUpdate() {
-        this.drawLegend();
-    }
+        });
+        legendValue += "</div>";
+        document.getElementById("productionRate-lengendLabel").innerHTML = legendValue;
+    };
 
     render() {
-        console.log("render");
         let {productionRate, actualProduction, loading} = this.props;
         let chartLabels = [], backgroundColor = [];
         let actualProductionsByShift = [], sumActualProduction = 0,
@@ -108,31 +95,34 @@ class ProductionRateOverview extends Component {
                     (acc, curVal) => acc + curVal, 0
                 );
                 totalActualProductionText = Utilities.changeNumberFormat(totalActualProduction);
+
+                this.drawLegend(chartLabels, actualProductionsByShift, backgroundColor);
+
+                customChartTooltips = {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            let label = 'Actual: ';
+
+                            let sumActualProduction = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            if (sumActualProduction) {
+                                label += Utilities.changeNumberFormat(sumActualProduction);
+
+                                let percentage = Utilities.changeNumberFormat(
+                                    (sumActualProduction / totalActualProduction) * 100
+                                );
+                                label += ` (${percentage}%)`;
+                            } else {
+                                label += 'N/A';
+                            }
+
+                            return label;
+                        },
+                    }
+                };
             }
-            customChartTooltips = {
-                callbacks: {
-                    label: function (tooltipItem, data) {
-                        let label = 'Actual: ';
-
-                        let sumActualProduction = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                        if (sumActualProduction) {
-                            label += Utilities.changeNumberFormat(sumActualProduction);
-
-                            let percentage = Utilities.changeNumberFormat(
-                                (sumActualProduction / totalActualProduction) * 100
-                            );
-                            label += ` (${percentage}%)`;
-                        } else {
-                            label += 'N/A';
-                        }
-
-                        return label;
-                    },
-                }
-            };
         }
 
-        this.chartData = [{
+        let chartData = [{
             data: actualProductionsByShift,
             backgroundColor: backgroundColor
         }];
@@ -141,13 +131,13 @@ class ProductionRateOverview extends Component {
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
                 <div className="col-12 report-item">
-                    <DoughnutChart labels={chartLabels} data={this.chartData}
+                    <DoughnutChart labels={chartLabels} data={chartData}
                                    centerText={totalActualProductionText}
                                    customTooltips={customChartTooltips} showLegend={false}
                                    loading={loading} />
                 </div>
                 <div className="col-12">
-                    <div  id={'productionRate-lengendLabel'}></div>
+                    <div id={'productionRate-lengendLabel'}></div>
                 </div>
             </div>
         )

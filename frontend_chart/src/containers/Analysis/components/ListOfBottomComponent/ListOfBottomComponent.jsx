@@ -78,6 +78,9 @@ class listBottomComponent extends Component {
         let curMoment = moment();
         let endMomentRange = [moment(endMoment).subtract({days: 1}), endMoment];
         if (curMoment.isSameOrAfter(endMomentRange[0]) && curMoment.isBefore(endMomentRange[1])) {  // If curMoment is between endMoment start work day and endMoment end work day
+
+            endMoment.subtract({days: 1});  // This day will be calculated as following, so ignore it later.
+
             if (curMoment.isSameOrAfter(rangeShift1[0]) && curMoment.isBefore(rangeShift1[1])) {  // 6:00 AM <= curTime < 14:00 PM
                 if (curMoment.isSameOrBefore(moment(rangeShift1[1]).subtract({minutes: 30}))) {    // curTime <= 13:30 PM
                     totalWorkHoursInSecondsShift1 += curMoment.diff(rangeShift1[0], "seconds");
@@ -108,7 +111,7 @@ class listBottomComponent extends Component {
             }
         }
 
-        while (startMoment.isBefore(moment(endMoment).subtract({days: 1}))) {
+        while (startMoment.isBefore(endMoment)) {
             totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
                 .diff(rangeShift1[0], "seconds");   // 27000 seconds = 7.5 hours
             totalWorkHoursInSecondsShift2 += moment(rangeShift2[1]).subtract({minutes: 30})

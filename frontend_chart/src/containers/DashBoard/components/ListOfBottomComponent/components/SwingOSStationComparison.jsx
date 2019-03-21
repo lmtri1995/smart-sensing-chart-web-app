@@ -214,7 +214,7 @@ export class SwingArmMachine extends Component {
                         let returnData = JSON.parse(dataArray[0].data);
                         let displayArray = this.handleReturnData(returnData);
                         this.myChart.data = {
-                            labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+                            labels: this.labelArray,
                             datasets: [
                                 {
                                     label: 'Swing Arm',

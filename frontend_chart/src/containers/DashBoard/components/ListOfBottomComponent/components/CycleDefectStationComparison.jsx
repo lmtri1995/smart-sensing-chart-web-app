@@ -240,7 +240,6 @@ export class CycleDefectStationComparison extends Component {
                     let returnData =  JSON.parse(dataArray[0].data);
                     if (returnData && returnData.length > 0) {
                         let displayArray = this.handleReturnData(returnData);
-                        let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
                         let dataset = {};
                         if (this.role == 'ip'){
                             dataset = [
@@ -277,7 +276,7 @@ export class CycleDefectStationComparison extends Component {
                             ];
                         }
                         this.myChart.data = {
-                            labels: labelArray,
+                            labels: this.labelArray,
                             datasets: dataset
                         };
                         this.callSocket()

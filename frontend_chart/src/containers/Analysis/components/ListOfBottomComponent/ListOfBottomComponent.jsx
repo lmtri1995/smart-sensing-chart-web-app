@@ -198,6 +198,7 @@ class listBottomComponent extends Component {
 
     handleReturnArray(dataArray) {
         this.countCurrentWorkingHour();
+        this.totalWorkingHour = 0;
         for (let i = 0; i < this.currentWorkingHour.length; i++) {
             this.totalWorkingHour += this.currentWorkingHour[i];
         }
@@ -285,54 +286,53 @@ class listBottomComponent extends Component {
             });
         }
 
-        let availability1 = (this.totalWorkingHour - stoppingHour1) / this.totalWorkingHour * 100,
-            performance1 = (standardCycleTime1 * productCount1) / ((this.totalWorkingHour - stoppingHour1) * 8) * 100,
-            quality1 = (productCount1 - defect1) / productCount1 * 100,
+        let availability1 = (this.totalWorkingHour - stoppingHour1) / this.totalWorkingHour,
+            performance1 = (standardCycleTime1 * productCount1) / (this.totalWorkingHour - stoppingHour1),
+            quality1 = (productCount1 - defect1) / productCount1,
             OEE1 = availability1 * performance1 * quality1,
-            workLost1 = preparingTime1 / (standardCycleTime1 * cycleCount1) * 100;
+            workLost1 = preparingTime1 / (standardCycleTime1 * cycleCount1);
 
-        let availability2 = (this.totalWorkingHour - stoppingHour2) / this.totalWorkingHour * 100,
-            performance2 = (standardCycleTime2 * productCount2) / ((this.totalWorkingHour - stoppingHour2) * 8) * 100,
-            quality2 = (productCount2 - defect2) / productCount2 * 100,
+        let availability2 = (this.totalWorkingHour - stoppingHour2) / this.totalWorkingHour,
+            performance2 = (standardCycleTime2 * productCount2) / (this.totalWorkingHour - stoppingHour2),
+            quality2 = (productCount2 - defect2) / productCount2,
             OEE2 = availability2 * performance2 * quality2,
-            workLost2 = preparingTime2 / (standardCycleTime2 * cycleCount2) * 100;
+            workLost2 = preparingTime2 / (standardCycleTime2 * cycleCount2);
 
-        let availability3 = (this.totalWorkingHour - stoppingHour3) / this.totalWorkingHour * 100,
-            performance3 = (standardCycleTime3 * productCount3) / ((this.totalWorkingHour - stoppingHour3) * 8) * 100,
-            quality3 = (productCount3 - defect3) / productCount3 * 100,
+        let availability3 = (this.totalWorkingHour - stoppingHour3) / this.totalWorkingHour,
+            performance3 = (standardCycleTime3 * productCount3) / (this.totalWorkingHour - stoppingHour3),
+            quality3 = (productCount3 - defect3) / productCount3,
             OEE3 = availability3 * performance3 * quality3,
-            workLost3 = preparingTime3 / (standardCycleTime3 * cycleCount3) * 100;
+            workLost3 = preparingTime3 / (standardCycleTime3 * cycleCount3);
 
-
-        let availability4 = (this.totalWorkingHour - stoppingHour4) / this.totalWorkingHour * 100,
-            performance4 = (standardCycleTime4 * productCount4) / ((this.totalWorkingHour - stoppingHour4) * 8) * 100,
-            quality4 = (productCount4 - defect4) / productCount4 * 100,
+        let availability4 = (this.totalWorkingHour - stoppingHour4) / this.totalWorkingHour,
+            performance4 = (standardCycleTime4 * productCount4) / (this.totalWorkingHour - stoppingHour4),
+            quality4 = (productCount4 - defect4) / productCount4,
             OEE4 = availability4 * performance4 * quality4,
-            workLost4 = preparingTime4 / (standardCycleTime4 * cycleCount4) * 100;
+            workLost4 = preparingTime4 / (standardCycleTime4 * cycleCount4);
 
-        let availability5 = (this.totalWorkingHour - stoppingHour5) / this.totalWorkingHour * 100,
-            performance5 = (standardCycleTime5 * productCount5) / ((this.totalWorkingHour - stoppingHour5) * 8) * 100,
-            quality5 = (productCount5 - defect5) / productCount5 * 100,
+        let availability5 = (this.totalWorkingHour - stoppingHour5) / this.totalWorkingHour,
+            performance5 = (standardCycleTime5 * productCount5) / (this.totalWorkingHour - stoppingHour5),
+            quality5 = (productCount5 - defect5) / productCount5,
             OEE5 = availability5 * performance5 * quality5,
-            workLost5 = preparingTime5 / (standardCycleTime5 * cycleCount5) * 100;
+            workLost5 = preparingTime5 / (standardCycleTime5 * cycleCount5);
 
-        let availability6 = (this.totalWorkingHour - stoppingHour6) / this.totalWorkingHour * 100,
-            performance6 = (standardCycleTime6 * productCount6) / ((this.totalWorkingHour - stoppingHour6) * 8) * 100,
-            quality6 = (productCount6 - defect6) / productCount6 * 100,
+        let availability6 = (this.totalWorkingHour - stoppingHour6) / this.totalWorkingHour,
+            performance6 = (standardCycleTime6 * productCount6) / (this.totalWorkingHour - stoppingHour6),
+            quality6 = (productCount6 - defect6) / productCount6,
             OEE6 = availability6 * performance6 * quality6,
-            workLost6 = preparingTime6 / (standardCycleTime6 * cycleCount6) * 100;
+            workLost6 = preparingTime6 / (standardCycleTime6 * cycleCount6);
 
-        let availability7 = (this.totalWorkingHour - stoppingHour7) / this.totalWorkingHour * 100,
-            performance7 = (standardCycleTime7 * productCount7) / ((this.totalWorkingHour - stoppingHour7) * 8) * 100,
-            quality7 = (productCount7 - defect7) / productCount7 * 100,
+        let availability7 = (this.totalWorkingHour - stoppingHour7) / this.totalWorkingHour,
+            performance7 = (standardCycleTime7 * productCount7) / (this.totalWorkingHour - stoppingHour7),
+            quality7 = (productCount7 - defect7) / productCount7,
             OEE7 = availability7 * performance7 * quality7,
-            workLost7 = preparingTime7 / (standardCycleTime7 * cycleCount7) * 100;
+            workLost7 = preparingTime7 / (standardCycleTime7 * cycleCount7);
 
-        let availability8 = (this.totalWorkingHour - stoppingHour8) / this.totalWorkingHour * 100,
-            performance8 = (standardCycleTime8 * productCount8) / ((this.totalWorkingHour - stoppingHour8) * 8) * 100,
-            quality8 = (productCount8 - defect8) / productCount8 * 100,
+        let availability8 = (this.totalWorkingHour - stoppingHour8) / this.totalWorkingHour,
+            performance8 = (standardCycleTime8 * productCount8) / (this.totalWorkingHour - stoppingHour8),
+            quality8 = (productCount8 - defect8) / productCount8,
             OEE8 = availability8 * performance8 * quality8,
-            workLost8 = preparingTime8 / (standardCycleTime8 * cycleCount8) * 100;
+            workLost8 = preparingTime8 / (standardCycleTime8 * cycleCount8);
 
         let summaryArray = [
             [availability1, performance1, quality1, OEE1, workLost1],
@@ -395,14 +395,16 @@ class listBottomComponent extends Component {
                             break;
                     }
                 });
+                this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
+                    standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
             }
         }).catch((err) => console.log('err:', err));
-        this.standardCycleTimeArray = [standardCycleTime1, standardCycleTime2, standardCycleTime3, standardCycleTime4,
-            standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
+            this.countStandardCycleTime();
+
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice = moment(endDate.toISOString()).unix();
@@ -431,11 +433,11 @@ class listBottomComponent extends Component {
                             workLost += (item[4] ? item[4] : 0);
                         });
                         this.setState({
-                            availabilityNumber: Math.round(availability / 8 * 100) / 100,
-                            performanceNumber: Math.round(performance * 100) / 100,
-                            qualityNumber: Math.round(quality / 8 * 100) / 100,
-                            OEENumber: Math.round(OEE / 8 * 100) / 100,
-                            workLossNumber: Math.round(workLost / 8 * 100) / 100,
+                            availabilityNumber: Math.round(((availability / summaryArray.length) * 100) * 100) / 100,
+                            performanceNumber: Math.round(((performance / summaryArray.length) * 100) * 100) / 100,
+                            qualityNumber: Math.round(((quality / summaryArray.length) * 100) * 100) / 100,
+                            OEENumber: Math.round(((OEE / summaryArray.length) * 100) * 100) / 100,
+                            workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
                             loading: false,
                         });
                     }
@@ -472,11 +474,11 @@ class listBottomComponent extends Component {
                         workLost += (item[4] ? item[4] : 0);
                     });
                     this.setState({
-                        availabilityNumber: Math.round(availability / 8 * 100) / 100,
-                        performanceNumber: Math.round(performance * 100) / 100,
-                        qualityNumber: Math.round(quality / 8 * 100) / 100,
-                        OEENumber: Math.round(OEE / 8 * 100) / 100,
-                        workLossNumber: Math.round(workLost / 8 * 100) / 100,
+                        availabilityNumber: Math.round(((availability / summaryArray.length) * 100) * 100) / 100,
+                        performanceNumber: Math.round(((performance / summaryArray.length) * 100) * 100) / 100,
+                        qualityNumber: Math.round(((quality / summaryArray.length) * 100) * 100) / 100,
+                        OEENumber: Math.round(((OEE / summaryArray.length) * 100) * 100) / 100,
+                        workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
                         loading: false,
                     });
                 }

@@ -7,7 +7,8 @@ import SwingArmMachine from "./components/SwingArmMachine";
 import SwingOSStationComparison from "./components/SwingOSStationComparison";
 import {
     DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID,
-    DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID
+    DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID,
+    START_WORK_DAY_TIME
 } from "../../../../constants/constants";
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
@@ -70,7 +71,6 @@ export default class listBottomComponent extends Component {
 
         this.countStandardCycleTime();
 
-        this.currentWorkingHour = [];
         this.totalWorkingHour = 0;
     }
 
@@ -90,63 +90,55 @@ export default class listBottomComponent extends Component {
     }
 
     countCurrentWorkingHour() {
-        let workingHourShift1 = 0, workingHourShift2 = 0, workingHourShift3 = 0;
-        let today = new Date();
-        let dd = today.getDate();
-        let mm = today.getMonth();
-        let yyyy = today.getFullYear();
-        let hour = today.getHours();
-        let minute = today.getMinutes();
-        let second = today.getSeconds();
-        //shift 1: 6:00 am - 2:00 pm
-        //shift 2: 2:00 am - 22:00 pm
-        //shift 3: 20:00 pm - 6:00 am
+        // Shift 1: 6:00 AM - 13:30 PM -> 30 minutes break
+        // Shift 2: 14:00 PM - 21:30 PM -> 30 minutes break
+        // Shift 3: 22:00 PM - 5:30 AM -> 30 minutes break
+        let rangeShift1 = [moment(START_WORK_DAY_TIME), moment({hours: 14})],
+            rangeShift2 = [moment({hours: 14}), moment({hours: 22})],
+            rangeShift3 = [moment({hours: 22}), moment(START_WORK_DAY_TIME).add({days: 1})];
 
-        let currentTime = moment.utc([yyyy, mm, dd, hour, minute, second]).unix();
-        let shift1From = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
-        let shift1To = moment.utc([yyyy, mm, dd, 14, 0, 0]).unix();
-        let shift2From = shift1To;
-        let shift2To = moment.utc([yyyy, mm, dd, 22, 0, 0]).unix();
-        let shift3From = shift2To;
-        let shift3To = moment.utc([yyyy, mm, dd + 1, 6, 0, 0]).unix();
+        let totalWorkHoursInSecondsShift1 = 0,
+            totalWorkHoursInSecondsShift2 = 0,
+            totalWorkHoursInSecondsShift3 = 0;
 
-        if (hour < 6) {
-            shift1From = moment.utc([yyyy, mm, dd - 1, 6, 0, 0]).unix();
-            shift1To = moment.utc([yyyy, mm, dd - 1, 14, 0, 0]).unix();
-            shift2From = shift1To;
-            shift2To = moment.utc([yyyy, mm, dd - 1, 22, 0, 0]).unix();
-            shift3From = shift2To;
-            shift3To = moment.utc([yyyy, mm, dd, 6, 0, 0]).unix();
-        }
+        let curMoment = moment();
 
-        if (currentTime >= shift1From && currentTime < shift1To) {
-            workingHourShift1 = currentTime - shift1From;
-            workingHourShift1 = (workingHourShift1 < 27000) ? workingHourShift1 : 27000;
-            workingHourShift2 = 0;
-            workingHourShift3 = 0;
-        } else if (currentTime >= shift2From && currentTime < shift2To) {
-            workingHourShift1 = 27000;
-            workingHourShift2 = currentTime - shift2From;
-            workingHourShift2 = (workingHourShift2 < 27000) ? workingHourShift2 : 27000;
-            workingHourShift3 = 0;
-        } else {
-            workingHourShift1 = 27000;
-            workingHourShift2 = 27000;
-            workingHourShift3 = currentTime - shift3From;
-            workingHourShift3 = (workingHourShift3 < 27000) ? workingHourShift3 : 27000;
-        }
+        // Don't count from 6:00 AM Sunday -> 5:59:59 AM Monday
+        // Count from 6:00 AM Monday -> 5:59:59 AM Sunday
+        if (curMoment.isoWeekday() >= 1 && curMoment.isSameOrAfter(moment(START_WORK_DAY_TIME))
+            || curMoment.isoWeekday() <= 7 && curMoment.isBefore(moment(START_WORK_DAY_TIME))) {
 
-        let result = [workingHourShift1, workingHourShift2, workingHourShift3];
-        this.currentWorkingHour = result;
-
-        this.totalWorkingHour = 0;
-        for (let i = 0; i < this.currentWorkingHour.length; i++) {
-            this.totalWorkingHour += this.currentWorkingHour[i];
+            if (curMoment.isSameOrAfter(rangeShift1[0]) && curMoment.isBefore(rangeShift1[1])) {  // 6:00 AM <= curTime < 14:00 PM
+                if (curMoment.isSameOrBefore(moment(rangeShift1[1]).subtract({minutes: 30}))) {    // curTime <= 13:30 PM
+                    totalWorkHoursInSecondsShift1 += curMoment.diff(rangeShift1[0], "seconds");
+                } else {    // 13:30 PM < curTime
+                    totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                        .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
+                }
+                this.totalWorkingHour = totalWorkHoursInSecondsShift1;
+            } else if (curMoment.isSameOrAfter(rangeShift2[0]) && curMoment.isBefore(rangeShift2[1])) {   // 14:00 PM <= curTime < 22:00 PM
+                if (curMoment.isSameOrBefore(moment(rangeShift2[1]).subtract({minutes: 30}))) {  // curTime <= 21:30 PM
+                    totalWorkHoursInSecondsShift2 += curMoment.diff(rangeShift2[0], "seconds");
+                } else {    // 21:30 PM < curTime
+                    totalWorkHoursInSecondsShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                        .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
+                }
+                this.totalWorkingHour = totalWorkHoursInSecondsShift2;
+            } else {    // 22:00 PM <= curTime < 6:00 AM
+                if (curMoment.isSameOrBefore(moment(rangeShift3[1]).subtract({minutes: 30}))) {  // curTime <= 5:30 PM
+                    totalWorkHoursInSecondsShift3 += curMoment.diff(rangeShift3[0], "seconds");
+                } else {    // 5:30 PM < curTime
+                    totalWorkHoursInSecondsShift3 += moment(rangeShift3[1]).subtract({minutes: 30})
+                        .diff(rangeShift3[0], "seconds");   // 27000 seconds = 7.5 hours
+                }
+                this.totalWorkingHour = totalWorkHoursInSecondsShift3;
+            }
         }
     }
 
     handleReturnArray(dataArray) {
         this.countCurrentWorkingHour();
+
         let stoppingHour1 = 0, productCount1 = 0, preparingTime1 = 0,
             cycleCount1 = 0, defect1 = 0,
             standardCycleTime1 = this.standardCycleTimeArray[0];
@@ -231,54 +223,53 @@ export default class listBottomComponent extends Component {
             });
         }
 
-        let availability1 = (this.totalWorkingHour - stoppingHour1) / this.totalWorkingHour * 100,
-            performance1 = (standardCycleTime1 * productCount1) / ((this.totalWorkingHour - stoppingHour1) * 8) * 100,
-            quality1 = (productCount1 - defect1) / productCount1 * 100,
+        let availability1 = (this.totalWorkingHour - stoppingHour1) / this.totalWorkingHour,
+            performance1 = (standardCycleTime1 * productCount1) / (this.totalWorkingHour - stoppingHour1),
+            quality1 = (productCount1 - defect1) / productCount1,
             OEE1 = availability1 * performance1 * quality1,
-            workLost1 = preparingTime1 / (standardCycleTime1 * cycleCount1) * 100;
+            workLost1 = preparingTime1 / (standardCycleTime1 * cycleCount1);
 
-        let availability2 = (this.totalWorkingHour - stoppingHour2) / this.totalWorkingHour * 100,
-            performance2 = (standardCycleTime2 * productCount2) / ((this.totalWorkingHour - stoppingHour2) * 8) * 100,
-            quality2 = (productCount2 - defect2) / productCount2 * 100,
+        let availability2 = (this.totalWorkingHour - stoppingHour2) / this.totalWorkingHour,
+            performance2 = (standardCycleTime2 * productCount2) / (this.totalWorkingHour - stoppingHour2),
+            quality2 = (productCount2 - defect2) / productCount2,
             OEE2 = availability2 * performance2 * quality2,
-            workLost2 = preparingTime2 / (standardCycleTime2 * cycleCount2) * 100;
+            workLost2 = preparingTime2 / (standardCycleTime2 * cycleCount2);
 
-        let availability3 = (this.totalWorkingHour - stoppingHour3) / this.totalWorkingHour * 100,
-            performance3 = (standardCycleTime3 * productCount3) / ((this.totalWorkingHour - stoppingHour3) * 8) * 100,
-            quality3 = (productCount3 - defect3) / productCount3 * 100,
+        let availability3 = (this.totalWorkingHour - stoppingHour3) / this.totalWorkingHour,
+            performance3 = (standardCycleTime3 * productCount3) / (this.totalWorkingHour - stoppingHour3),
+            quality3 = (productCount3 - defect3) / productCount3,
             OEE3 = availability3 * performance3 * quality3,
-            workLost3 = preparingTime3 / (standardCycleTime3 * cycleCount3) * 100;
+            workLost3 = preparingTime3 / (standardCycleTime3 * cycleCount3);
 
-
-        let availability4 = (this.totalWorkingHour - stoppingHour4) / this.totalWorkingHour * 100,
-            performance4 = (standardCycleTime4 * productCount4) / ((this.totalWorkingHour - stoppingHour4) * 8) * 100,
-            quality4 = (productCount4 - defect4) / productCount4 * 100,
+        let availability4 = (this.totalWorkingHour - stoppingHour4) / this.totalWorkingHour,
+            performance4 = (standardCycleTime4 * productCount4) / (this.totalWorkingHour - stoppingHour4),
+            quality4 = (productCount4 - defect4) / productCount4,
             OEE4 = availability4 * performance4 * quality4,
-            workLost4 = preparingTime4 / (standardCycleTime4 * cycleCount4) * 100;
+            workLost4 = preparingTime4 / (standardCycleTime4 * cycleCount4);
 
-        let availability5 = (this.totalWorkingHour - stoppingHour5) / this.totalWorkingHour * 100,
-            performance5 = (standardCycleTime5 * productCount5) / ((this.totalWorkingHour - stoppingHour5) * 8) * 100,
-            quality5 = (productCount5 - defect5) / productCount5 * 100,
+        let availability5 = (this.totalWorkingHour - stoppingHour5) / this.totalWorkingHour,
+            performance5 = (standardCycleTime5 * productCount5) / (this.totalWorkingHour - stoppingHour5),
+            quality5 = (productCount5 - defect5) / productCount5,
             OEE5 = availability5 * performance5 * quality5,
-            workLost5 = preparingTime5 / (standardCycleTime5 * cycleCount5) * 100;
+            workLost5 = preparingTime5 / (standardCycleTime5 * cycleCount5);
 
-        let availability6 = (this.totalWorkingHour - stoppingHour6) / this.totalWorkingHour * 100,
-            performance6 = (standardCycleTime6 * productCount6) / ((this.totalWorkingHour - stoppingHour6) * 8) * 100,
-            quality6 = (productCount6 - defect6) / productCount6 * 100,
+        let availability6 = (this.totalWorkingHour - stoppingHour6) / this.totalWorkingHour,
+            performance6 = (standardCycleTime6 * productCount6) / (this.totalWorkingHour - stoppingHour6),
+            quality6 = (productCount6 - defect6) / productCount6,
             OEE6 = availability6 * performance6 * quality6,
-            workLost6 = preparingTime6 / (standardCycleTime6 * cycleCount6) * 100;
+            workLost6 = preparingTime6 / (standardCycleTime6 * cycleCount6);
 
-        let availability7 = (this.totalWorkingHour - stoppingHour7) / this.totalWorkingHour * 100,
-            performance7 = (standardCycleTime7 * productCount7) / (this.totalWorkingHour - stoppingHour7) * 100,
-            quality7 = (productCount7 - defect7) / productCount7 * 100,
+        let availability7 = (this.totalWorkingHour - stoppingHour7) / this.totalWorkingHour,
+            performance7 = (standardCycleTime7 * productCount7) / (this.totalWorkingHour - stoppingHour7),
+            quality7 = (productCount7 - defect7) / productCount7,
             OEE7 = availability7 * performance7 * quality7,
-            workLost7 = preparingTime7 / (standardCycleTime7 * cycleCount7) * 100;
+            workLost7 = preparingTime7 / (standardCycleTime7 * cycleCount7);
 
-        let availability8 = (this.totalWorkingHour - stoppingHour8) / this.totalWorkingHour * 100,
-            performance8 = (standardCycleTime8 * productCount8) / ((this.totalWorkingHour - stoppingHour8) * 8) * 100,
-            quality8 = (productCount8 - defect8) / productCount8 * 100,
+        let availability8 = (this.totalWorkingHour - stoppingHour8) / this.totalWorkingHour,
+            performance8 = (standardCycleTime8 * productCount8) / (this.totalWorkingHour - stoppingHour8),
+            quality8 = (productCount8 - defect8) / productCount8,
             OEE8 = availability8 * performance8 * quality8,
-            workLost8 = preparingTime8 / (standardCycleTime8 * cycleCount8) * 100;
+            workLost8 = preparingTime8 / (standardCycleTime8 * cycleCount8);
 
         let summaryArray = [
             [availability1, performance1, quality1, OEE1, workLost1],
@@ -371,11 +362,11 @@ export default class listBottomComponent extends Component {
                         workLost += (item[4] ? item[4] : 0);
                     });
                     this.setState({
-                        availabilityNumber: Math.round(availability / 8 * 100) / 100,
-                        performanceNumber: Math.round(performance * 100) / 100,
-                        qualityNumber: Math.round(quality / 8 * 100) / 100,
-                        OEENumber: Math.round(OEE / 8 * 100) / 100,
-                        workLossNumber: Math.round(workLost / 8 * 100) / 100,
+                        availabilityNumber: Math.round(((availability / summaryArray.length) * 100) * 100) / 100,
+                        performanceNumber: Math.round(((performance / summaryArray.length) * 100) * 100) / 100,
+                        qualityNumber: Math.round(((quality / summaryArray.length) * 100) * 100) / 100,
+                        OEENumber: Math.round(((OEE / summaryArray.length) * 100) * 100) / 100,
+                        workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
                         loading: false,
                     });
                     this.callSocket();
@@ -415,11 +406,11 @@ export default class listBottomComponent extends Component {
                         workLost += (item[4] ? item[4] : 0);
                     });
                     this.setState({
-                        availabilityNumber: Math.round(availability / 8 * 100) / 100,
-                        performanceNumber: Math.round(performance * 100) / 100,
-                        qualityNumber: Math.round(quality / 8 * 100) / 100,
-                        OEENumber: Math.round(OEE / 8 * 100) / 100,
-                        workLossNumber: Math.round(workLost / 8 * 100) / 100,
+                        availabilityNumber: Math.round(((availability / summaryArray.length) * 100) * 100) / 100,
+                        performanceNumber: Math.round(((performance / summaryArray.length) * 100) * 100) / 100,
+                        qualityNumber: Math.round(((quality / summaryArray.length) * 100) * 100) / 100,
+                        OEENumber: Math.round(((OEE / summaryArray.length) * 100) * 100) / 100,
+                        workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
                         loading: false,
                     });
                 }

@@ -82,8 +82,8 @@ export const specifyCurrentTimeDevice = () => {
 
 //Specify 30 minutes before current moment to current moment
 //Used to call axios API before call socket
-export const specify30minutesToCurrentTimeDevice = () => {
-    let from_timedevice = moment().subtract({minutes: 30}).unix();
+export const specifyNminutesToCurrentTimeDevice = (n = 30) => {
+    let from_timedevice = moment().subtract({minutes: n}).unix();
     let to_timedevice = moment().unix();
     return [from_timedevice, to_timedevice];
 }

@@ -99,7 +99,6 @@ class ProcessStatus extends Component {
     }
 
     callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
-        console.log("callAxiosBeforeSocket");
         if (!this.state.loading) {
             this.setState({loading: true});
         }
@@ -209,12 +208,8 @@ class ProcessStatus extends Component {
         if (newSelectededModel) {
             newModelKey = newSelectededModel[1].key;
         }
-        console.log("currentSelectdModel: ", currentSelectdModel, " newSelectededModel: ", newSelectededModel);
-        console.log("currentModelKey: ", currentModelKey);
-        console.log("newModelKey: ", newModelKey);
 
         if (currentModelKey != newModelKey) {
-            console.log("call axios");
             this.callAxiosBeforeSocket(true);
         }
     }
@@ -222,7 +217,6 @@ class ProcessStatus extends Component {
     componentDidMount() {
         this._isMounted = true;
         //this.countStandardCycleTime();
-        console.log("componentDidMount");
         this.callAxiosBeforeSocket(false);
 
         /*socket.on('token', (data) => {

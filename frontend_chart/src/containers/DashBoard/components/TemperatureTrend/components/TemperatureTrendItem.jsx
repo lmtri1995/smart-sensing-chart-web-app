@@ -182,14 +182,17 @@ class TemperatureTrendItem extends Component {
         }
         let {tempTime, stationIdNo} = this.props;
         let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        selectedModelsByArticle = selectedModelsByArticle ? selectedModelsByArticle : '';
+        let modelKey = '';
+        if (selectedModelsByArticle){
+            modelKey = selectedModelsByArticle[1].key;
+        }
         let currentTimeDevice = specifyNminutesToCurrentTimeDevice(tempTime);
         let param = {
             "idStation": stationIdNo,
             "from_timedevice": currentTimeDevice[0],
             "to_timedevice": currentTimeDevice[1],
             "shiftno": 0,
-            "modelname": selectedModelsByArticle
+            "modelname": modelKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

@@ -110,8 +110,10 @@ class StationStatus extends Component {
         let param = {
             "proccess": this.process
         };
+        console.log("param: ", param);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("response 115: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
                     this.displayData = dataArray;

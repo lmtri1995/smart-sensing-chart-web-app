@@ -105,7 +105,10 @@ class ProcessStatus extends Component {
         let timeFromStartOfShift = specifyTheShiftStartHour();
 
         let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        selectedModelsByArticle = selectedModelsByArticle ? selectedModelsByArticle : '';
+        let modelKey = '';
+        if (selectedModelsByArticle){
+            modelKey = selectedModelsByArticle[1].key;
+        }
 
         this.selectedModelsByArticle = selectedModelsByArticle;
 
@@ -115,7 +118,7 @@ class ProcessStatus extends Component {
             "from_timedevice": timeFromStartOfShift[0],
             "to_timedevice": timeFromStartOfShift[1],
             "shiftno": 0,
-            "modelname": this.selectedModelsByArticle
+            "modelname": modelKey
 
         };
         API(this.apiUrl, 'POST', param)

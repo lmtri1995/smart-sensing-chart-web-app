@@ -283,3 +283,8 @@
 tr th {
   text-align: center;
 }
+
+.listgroup__scroll {
+  overflow: scroll;
+  max-height: 300px;
+}

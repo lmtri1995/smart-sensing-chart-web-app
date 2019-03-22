@@ -5,7 +5,8 @@ import moment from "moment";
 import Refresh from "../../../../../shared/img/Refresh.svg";
 import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
-import {specify30minutesToCurrentTimeDevice} from "../../../../../shared/utils/Utilities";
+import {specifyNminutesToCurrentTimeDevice} from "../../../../../shared/utils/Utilities";
+import connect from "react-redux/es/connect/connect";
 
 const override = `
     position: absolute;
@@ -15,7 +16,7 @@ const override = `
     z-index: 100000;
 `;
 
-export default class TemperatureTrendItem extends Component {
+class TemperatureTrendItem extends Component {
     constructor(props) {
         super(props);
 
@@ -25,9 +26,10 @@ export default class TemperatureTrendItem extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
         this.preTempTime = 30;
+        this.selectedModelsByArticle = '';
 
         let {stationIdNo} = this.props;
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.apiUrl = 'api/os/tempTrend';
                 this.emitEvent = `os_temp_trend_${stationIdNo}`;
@@ -110,73 +112,63 @@ export default class TemperatureTrendItem extends Component {
                 };
                 this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
         }
-
-        let parentLoading = this.props.loading;
         this.state = {
-            loading: parentLoading
+            loading: true
         };
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         let {stationIdNo} = this.props;
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
                 minute: this.preTempTime,
                 status: 'stop',
-                idStation:stationIdNo
+                idStation: stationIdNo,
+                modelname: this.selectedModelsByArticle
             }
         });
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot){
+    componentDidUpdate(prevProps, prevState, snapshot) {
+
         let currentTime = this.preTempTime;
         let newTime = this.props.tempTime;
-        if (currentTime !== newTime) {
-            let {tempTime, stationIdNo, parentLoading} = this.props;
 
-            this.socket.emit(this.emitEvent, {
-                msg: {
-                    event: this.eventListen,
-                    minute: this.preTempTime,
-                    status: 'stop',
-                    idStation:stationIdNo
-                }
-            });
+        let currentSelectdModel = this.selectedModelsByArticle;
+        let currentModelKey = '';
+        if (currentSelectdModel){
+            currentModelKey = currentSelectdModel[1].key;
+        }
+        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        let newModelKey = '';
+        if (newSelectededModel){
+            newModelKey = newSelectededModel[1].key;
+        }
 
-            this.socket.emit(this.emitEvent, {
-                msg: {
-                    event: this.eventListen,
-                    minute: tempTime,
-                    status: 'start',
-                    idStation:`${stationIdNo}`
-                }
-            });
-            this.preTempTime = tempTime;
-            this.setState({
-                loading: parentLoading
-            });
+        if (currentTime != newTime || currentModelKey != newModelKey) {
+            this.callAxiosBeforeSocket(true);
         }
     }
 
-    legendFormatter = (data)=>{
+    legendFormatter = (data) => {
         let stationId = this.props.stationIdNo;
         let text = '';
-        if (data.xHTML){
+        if (data.xHTML) {
             text = data.xHTML + "<br/>";
         }
         let series = data.series;
         let numberOfTemp = this.colorArray.length;
-        for (let i = 0; i < numberOfTemp; i++){
-            if (series[i].y){
-                text += "<span style='color:   " + series[i].color +";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp; &nbsp; &nbsp;";
+        for (let i = 0; i < numberOfTemp; i++) {
+            if (series[i].y) {
+                text += "<span style='color:   " + series[i].color + ";'>" + series[i].label + ": </span>" + series[i].y + "&nbsp; &nbsp; &nbsp;";
             }
-            if (i == (numberOfTemp/2 - 1)){
+            if (i == (numberOfTemp / 2 - 1)) {
                 text += "<br/>";
             }
         }
 
-        if (document.getElementById("tooltip" + stationId)){
+        if (document.getElementById("tooltip" + stationId)) {
             document.getElementById("tooltip" + stationId).innerHTML = text;
         }
 
@@ -184,14 +176,20 @@ export default class TemperatureTrendItem extends Component {
         return html;
     }
 
-    callAxiosBeforeSocket = (callback) => {
-        let {stationIdNo} = this.props;
-        let currentTimeDevice = specify30minutesToCurrentTimeDevice();
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
+        let {tempTime, stationIdNo} = this.props;
+        let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        selectedModelsByArticle = selectedModelsByArticle ? selectedModelsByArticle : '';
+        let currentTimeDevice = specifyNminutesToCurrentTimeDevice(tempTime);
         let param = {
             "idStation": stationIdNo,
             "from_timedevice": currentTimeDevice[0],
             "to_timedevice": currentTimeDevice[1],
-            "shiftno": 0
+            "shiftno": 0,
+            "modelname": selectedModelsByArticle
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -204,8 +202,13 @@ export default class TemperatureTrendItem extends Component {
                             'file': displayData,
                         },
                     );
+                    this.displayData = [];
                     this.setState({loading: false});
-                    this.callSocket();
+                    if (!stopCurrentSocket){
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
                 } else {
                     return callback();
                 }
@@ -216,30 +219,38 @@ export default class TemperatureTrendItem extends Component {
     callSocket = () => {
         let {stationIdNo} = this.props;
         let displayData = "X\n";
+
+        let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        let modelKey = '';
+        if (selectedModelsByArticle){
+            modelKey = selectedModelsByArticle[1].key;
+        }
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
                 minute: this.preTempTime,
                 //minute: -10,
                 status: 'start',
-                idStation:stationIdNo
+                idStation: stationIdNo,
+                shiftno: 0,
+                modelname: modelKey
             }
         });
 
 
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
-            if (response.success){
+            if (response.success) {
                 let returnArrayObject = response.data;
                 let returnArray = JSON.parse(returnArrayObject[0].data);
-                if (returnArray && returnArray.length > 0){
-                    if (displayData === "X\n"){
+                if (returnArray && returnArray.length > 0) {
+                    if (displayData === "X\n") {
                         displayData = returnArray;
                     } else {
                         displayData = displayData.slice(returnArray.length, displayData.length);
                         displayData.push(...returnArray);
                     }
-                    this.graph.updateOptions( { 'file': displayData } );
+                    this.graph.updateOptions({'file': displayData});
                     this.setState({loading: false});
                 }
             }
@@ -247,10 +258,48 @@ export default class TemperatureTrendItem extends Component {
         });
     }
 
-    componentDidMount() {
+    //Stop old socket, create new one
+    restartSocket = () => {
+        let currentSelectdModel = this.selectedModelsByArticle;
+        let currentModelKey = '';
+        if (currentSelectdModel){
+            currentModelKey = currentSelectdModel[1].key;
+        }
+        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        let newModelKey = '';
+        if (newSelectededModel){
+            newModelKey = newSelectededModel[1].key;
+        }
 
         let {tempTime, stationIdNo} = this.props;
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                minute: this.preTempTime,
+                status: 'stop',
+                idStation: stationIdNo,
+                modelname: currentModelKey
+            }
+        });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                minute: tempTime,
+                status: 'start',
+                idStation: `${stationIdNo}`,
+                modelname: newModelKey
+            }
+        });
         this.preTempTime = tempTime;
+        this.selectedModelsByArticle = newSelectededModel;
+    }
+
+    componentDidMount() {
+        let {tempTime, stationIdNo} = this.props;
+        this.preTempTime = tempTime;
+
         let displayData = "X\n";
         this.graph = new Dygraph(
             document.getElementById(`station${stationIdNo}`),
@@ -267,13 +316,13 @@ export default class TemperatureTrendItem extends Component {
                 series: this.seriesOptions,
                 //legendFormatter,
                 //labelsSeparateLines: true,
-                axes : {
+                axes: {
                     x: {
                         drawGrid: false,
-                        valueFormatter: function(x) {
+                        valueFormatter: function (x) {
                             return moment.unix(x).format("DD/MM/YYYY HH:mm:ss");
                         },
-                        axisLabelFormatter: function(x) {
+                        axisLabelFormatter: function (x) {
                             return moment.unix(x).format("DD/MM/YYYY HH:mm:ss");
                         },
                     },
@@ -287,7 +336,7 @@ export default class TemperatureTrendItem extends Component {
             }
         );
 
-        this.callAxiosBeforeSocket();
+        this.callAxiosBeforeSocket(false);
 
         /*
         Comment temporarily for fixing error loading socket long
@@ -323,44 +372,55 @@ export default class TemperatureTrendItem extends Component {
     };
 
     refresh = () => {
-        if (this.graph){
+        if (this.graph) {
             this.graph.resetZoom();
         }
     }
 
     render() {
         let stationId = this.props.stationIdNo;
+        //let selectedModelsByArticle =
+        // this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+
         return (
-                <div className="col">
-                    <div className="row" style={{marginTop: 30}}>
-                        <div className="col-11">
-                            <h4 className="float-left">STATION {stationId}: USL/ Value/ LSL</h4>
-                        </div>
-                        <div className="col-1">
-                            <img className="float-right" src={Refresh} style={{width: '50%'}} onClick={this.refresh}/>
+            <div className="col">
+                <div className="row" style={{marginTop: 30}}>
+                    <div className="col-11">
+                        <h4 className="float-left">STATION {stationId}: USL/ Value/ LSL</h4>
+                    </div>
+                    <div className="col-1">
+                        <img className="float-right" src={Refresh} style={{width: '50%'}}
+                             onClick={this.refresh}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <ClipLoader
+                        css={override}
+                        sizeUnit={"px"}
+                        size={100}
+                        color={'#30D4A4'}
+                        loading={this.state.loading}
+                        margin-left={300}
+                    />
+                    <div className="container" style={{marginBottom: 40}}>
+                        <div className="row">
+                            <div className="temperature-tooltip" style={{position: 'absolute'}}
+                                 id={'tooltip' + stationId}></div>
                         </div>
                     </div>
-                    <div className="row">
-                        <ClipLoader
-                            css={override}
-                            sizeUnit={"px"}
-                            size={100}
-                            color={'#30D4A4'}
-                            loading={this.state.loading}
-                            margin-left={300}
-                        />
-                        <div className="container" style={{marginBottom: 40}}>
-                            <div className="row">
-                                <div className="temperature-tooltip" style={{position: 'absolute'}} id={'tooltip' + stationId}> </div>
-                            </div>
-                        </div>
-                        <div className="container">
-                            <div className="row">
-                                <div id={'station' + stationId}  style={{marginBottom: 50}} ></div>
-                            </div>
+                    <div className="container">
+                        <div className="row">
+                            <div id={'station' + stationId} style={{marginBottom: 50}}></div>
                         </div>
                     </div>
                 </div>
+            </div>
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
+});
+
+export default connect(mapStateToProps)(TemperatureTrendItem);

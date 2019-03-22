@@ -77,6 +77,8 @@ class ProcessStatus extends Component {
         this.avgTemperatureArray = [];
         this.avgPreparingTimeArray = [];
         this.avgCurringTimeArray = [];
+
+        this.selectedModelsByArticle = '';
     }
 
     componentWillUnmount() {
@@ -89,21 +91,33 @@ class ProcessStatus extends Component {
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
-                status: 'stop'
+                status: 'stop',
+                modelname: this.selectedModelsByArticle
             }
         });
         //this.socket.removeListener('sna_process_status');
     }
 
-    callAxiosBeforeSocket = (callback) => {
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
+        console.log("callAxiosBeforeSocket");
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
         let timeFromStartOfShift = specifyTheShiftStartHour();
+
+        let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        selectedModelsByArticle = selectedModelsByArticle ? selectedModelsByArticle : '';
+
+        this.selectedModelsByArticle = selectedModelsByArticle;
 
         let param = {
             /*"from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,*/
             "from_timedevice": timeFromStartOfShift[0],
             "to_timedevice": timeFromStartOfShift[1],
-            "shiftno": 0
+            "shiftno": 0,
+            "modelname": this.selectedModelsByArticle
+
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -113,7 +127,11 @@ class ProcessStatus extends Component {
                         dataArray: dataArray,
                         loading: false,
                     });
-                    this.callSocket();
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
                 } else {
                     return callback();
                 }
@@ -128,7 +146,8 @@ class ProcessStatus extends Component {
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
-                status: 'start'
+                status: 'start',
+                modelname: this.selectedModelsByArticle
             }
         });
 
@@ -152,11 +171,59 @@ class ProcessStatus extends Component {
         });
     }
 
+    //Stop old socket, create new one
+    restartSocket = () => {
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.listenEvent,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop',
+                modelname: this.selectedModelsByArticle
+            }
+        });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.listenEvent,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'start',
+                modelname: this.selectedModelsByArticle
+            }
+        });
+
+
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let currentSelectdModel = this.selectedModelsByArticle;
+        let currentModelKey = '';
+        if (currentSelectdModel) {
+            currentModelKey = currentSelectdModel[1].key;
+        }
+        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        let newModelKey = '';
+        if (newSelectededModel) {
+            newModelKey = newSelectededModel[1].key;
+        }
+        console.log("currentSelectdModel: ", currentSelectdModel, " newSelectededModel: ", newSelectededModel);
+        console.log("currentModelKey: ", currentModelKey);
+        console.log("newModelKey: ", newModelKey);
+
+        if (currentModelKey != newModelKey) {
+            console.log("call axios");
+            this.callAxiosBeforeSocket(true);
+        }
+    }
+
     componentDidMount() {
         this._isMounted = true;
         //this.countStandardCycleTime();
-
-        this.callAxiosBeforeSocket();
+        console.log("componentDidMount");
+        this.callAxiosBeforeSocket(false);
 
         /*socket.on('token', (data) => {
             let tokenObject = JSON.parse(data);
@@ -171,8 +238,8 @@ class ProcessStatus extends Component {
     countStandardCycleTime() {
         //let {startDate, endDate} = this.props.globalDateFilter;
         this.standardPreparingTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.standardCuringTimeArray    = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.standardTemperatureArray   = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardCuringTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardTemperatureArray = [0, 0, 0, 0, 0, 0, 0, 0];
         // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
         let today = new Date();
         let todayYMD = moment(today.toISOString()).format("YYYYMMDD");
@@ -181,7 +248,7 @@ class ProcessStatus extends Component {
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
         };*/
         let hour = today.getHours();
-        if (hour < 6){
+        if (hour < 6) {
             todayYMD = moment(todayYMD).subtract(1, "days").format("YYYYMMDD")
         }
         let param = {
@@ -260,13 +327,15 @@ class ProcessStatus extends Component {
                                       stddevTemp='-' avgPreparing='-'
                                       stddevPreparing='-'
                                       avgCuringTime='-'
-                                      stddevCurringTime='-' />;
-        if (data){
-            result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg)}
-                                      stddevTemp={changeNumberFormat(data.temp_stdev)} avgPreparing={changeNumberFormat(data.pre_avg)}
-                                      stddevPreparing={changeNumberFormat(data.pre_stdev)}
-                                      avgCuringTime={changeNumberFormat(data.cur_avg)}
-                                      stddevCurringTime={changeNumberFormat(data.cur_stdev)}/>;
+                                      stddevCurringTime='-'/>;
+        if (data) {
+            result =
+                <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg)}
+                                 stddevTemp={changeNumberFormat(data.temp_stdev)}
+                                 avgPreparing={changeNumberFormat(data.pre_avg)}
+                                 stddevPreparing={changeNumberFormat(data.pre_stdev)}
+                                 avgCuringTime={changeNumberFormat(data.cur_avg)}
+                                 stddevCurringTime={changeNumberFormat(data.cur_stdev)}/>;
         }
         return result;
     }
@@ -281,8 +350,8 @@ class ProcessStatus extends Component {
         return result;
     }
 
-    roundNumber(number){
-            return Math.round(number * 100)/100;
+    roundNumber(number) {
+        return Math.round(number * 100) / 100;
     }
 
     showLineTable(dataArray) {
@@ -356,7 +425,7 @@ class ProcessStatus extends Component {
                 minStddevCurringTime = 0;
 
             //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
-            for (let i = 0; i < dataArray.length; i++){
+            for (let i = 0; i < dataArray.length; i++) {
                 this.stdevTemperatureArray[i] = parseFloat(dataArray[i].temp_stdev);
                 this.stdevPreparingTimeArray[i] = parseFloat(dataArray[i].pre_stdev);
                 this.stdevCuringTimeArray[i] = parseFloat(dataArray[i].cur_stdev);
@@ -456,7 +525,8 @@ class ProcessStatus extends Component {
             <GeneralSummaryItem spec={'MIN'}
                                 data1={changeNumberFormat(minAvgTemp)}
                                 data2={changeNumberFormat(minStddevTemp)}
-                                data3={changeNumberFormat(minAvgPrep)} data4={changeNumberFormat(minStddevPrep)}
+                                data3={changeNumberFormat(minAvgPrep)}
+                                data4={changeNumberFormat(minStddevPrep)}
                                 data5={changeNumberFormat(minAvgCuringTime)}
                                 data6={changeNumberFormat(minStddevCurringTime)}/>
             <GeneralSummaryItem spec={'STDEV'}
@@ -465,7 +535,7 @@ class ProcessStatus extends Component {
                                 data3={changeNumberFormat(stdAvgPrep)}
                                 data4={changeNumberFormat(stdStddevPrep)}
                                 data5={changeNumberFormat(stdAvgCuringTime)}
-                                data6={changeNumberFormat(stdStddevCurringTime)} />
+                                data6={changeNumberFormat(stdStddevCurringTime)}/>
             </tbody>;
 
             // Prepare to push Process Status Data to Redux Store
@@ -532,7 +602,8 @@ class ProcessStatus extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
 });
 
 export default connect(mapStateToProps)(ProcessStatus);

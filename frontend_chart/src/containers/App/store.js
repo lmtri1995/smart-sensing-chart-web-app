@@ -4,7 +4,9 @@ import {
     adminTabReducer,
     downloadDataStoreReducer,
     globalDateFilterReducer,
+    globalArticleFilterReducer,
     globalModelFilterReducer,
+    globalModelsByArticleFilterReducer,
     globalShiftFilterReducer,
     LoginReducer,
     sidebarReducer,
@@ -20,8 +22,10 @@ const reducer = combineReducers({
     adminTab: adminTabReducer,
     globalDateFilter: globalDateFilterReducer,
     downloadDataStore: downloadDataStoreReducer,
+    globalArticleFilter: globalArticleFilterReducer,
     globalModelFilter: globalModelFilterReducer,
     globalShiftFilter: globalShiftFilterReducer,
+    globalModelsByArticleFilterReducer: globalModelsByArticleFilterReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

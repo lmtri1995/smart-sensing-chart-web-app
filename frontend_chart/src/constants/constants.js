@@ -50,6 +50,23 @@ export const MODEL_NAMES = new Map([    // initial data
     }]
 ]);
 
+// Article
+// Model
+export const ARTICLE_NAMES = new Map([    // initial data
+    ['All Articles', {   // name to show on screen
+        key: '%', // key to send request to server, '%' to select All Models in Query on Server
+        selected: true,
+    }]
+]);
+
+// Model
+export const MODELS_BY_ARTICLE = new Map([    // initial data
+    ['All Models', {   // name to show on screen
+        key: '', // key to send request to server, '%' to select All Models in Query on Server
+        selected: true,
+    }]
+]);
+
 // Shift
 export const SHIFT_OPTIONS = ['All Shifts', 'Shift 1', 'Shift 2', 'Shift 3'];
 

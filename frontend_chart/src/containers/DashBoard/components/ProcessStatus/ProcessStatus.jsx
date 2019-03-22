@@ -92,7 +92,7 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'stop',
-                modelname: this.selectedModelsByArticle
+                modelname: ""
             }
         });
         //this.socket.removeListener('sna_process_status');
@@ -142,6 +142,10 @@ class ProcessStatus extends Component {
     }
 
     callSocket = () => {
+        let modelKey = '';
+        if (this.selectedModelsByArticle){
+            modelKey = this.selectedModelsByArticle[1].key;
+        }
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -149,7 +153,7 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: this.selectedModelsByArticle
+                modelname: modelKey
             }
         });
 
@@ -175,6 +179,10 @@ class ProcessStatus extends Component {
 
     //Stop old socket, create new one
     restartSocket = () => {
+        let modelKey = '';
+        if (this.selectedModelsByArticle){
+            modelKey = this.selectedModelsByArticle[1].key;
+        }
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -182,7 +190,7 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'stop',
-                modelname: this.selectedModelsByArticle
+                modelname: ''
             }
         });
 
@@ -193,7 +201,7 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: this.selectedModelsByArticle
+                modelname: modelKey
             }
         });
 

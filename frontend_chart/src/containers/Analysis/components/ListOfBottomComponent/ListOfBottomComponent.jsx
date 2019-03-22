@@ -52,7 +52,7 @@ class listBottomComponent extends Component {
             workLossNumber: 0,
         };
 
-        ///this.countStandardCycleTime();
+        this.countStandardCycleTime();
 
         this.currentWorkingHour = [];
         this.totalWorkingHour = 0;
@@ -447,9 +447,8 @@ class listBottomComponent extends Component {
     }
 
     componentDidMount() {
-        this.countStandardCycleTime();
-
         let {startDate, endDate} = this.props.globalDateFilter;
+
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice = moment(endDate.toISOString()).unix();
         let selectedShift = this.props.globalShiftFilter.selectedShift;

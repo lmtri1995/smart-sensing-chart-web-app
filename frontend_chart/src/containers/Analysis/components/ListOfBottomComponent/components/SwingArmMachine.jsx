@@ -218,7 +218,6 @@ export class SwingArmMachine extends Component {
                     "to_timedevice": toTimedevice,
                     "flag": this.flag
                 };
-                console.log("param: ", param);
                 API('api/os/swingarm', 'POST', param)
                     .then((response) => {
                         if (response && response.data){
@@ -273,15 +272,27 @@ export class SwingArmMachine extends Component {
     }
 
     handleDisplayArray = (returnData) => {
-        for (let i = 0; i < this.labels.length; i++){
-            for (let j = 0; j < returnData.length; j++){
-                if(moment.unix(this.labels[i]).format("DDMMYYYY") == moment.unix(returnData[j][0]).format("DDMMYYYY")){
-                    this.data[i] = parseFloat(returnData[j][1]);
+        if (this.flag == 'D'){
+            for (let i = 0; i < this.labels.length; i++) {
+                for (let j = 0; j < returnData.length; j++){
+                    if(moment.unix(this.labels[i]).format("DDMMYYYY") == moment.unix(returnData[j][0]).format("DDMMYYYY")){
+                        this.data[i] = parseFloat(returnData[j][1]);
+                    }
+                }
+            }
+        } else if (this.flag == 'H'){
+            let dataArray = [];
+            if (returnData && returnData.length > 0){
+                dataArray = returnData[0];
+            }
+            for (let j = 0; j < dataArray.length; j++){
+                if (dataArray[j]){
+                    this.data[j] = parseFloat(dataArray[j]);
                 }
             }
         }
     }
-    
+
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
@@ -307,10 +318,8 @@ export class SwingArmMachine extends Component {
                 "to_timedevice": toTimedevice,
                 flag: this.flag
             };
-            console.log("param: ", param);
             API('api/os/swingarm', 'POST', param)
                 .then((response) => {
-                    console.log("response 314: ", response);
                     if (response && response.data){
                         let dataArray = response.data.data;
                         if (dataArray && dataArray.length > 0){

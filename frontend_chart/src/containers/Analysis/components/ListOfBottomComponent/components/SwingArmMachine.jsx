@@ -8,7 +8,7 @@ import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
 import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
 
 const initialData = {
-    labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    labels: ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"],
     datasets: [
         {
             label: 'Swing Arm',
@@ -17,7 +17,7 @@ const initialData = {
             borderWidth: 1,
             //hoverBackgroundColor: '#FF6384',
             //hoverBorderColor: '#FF6384',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         }
     ],
 };
@@ -35,6 +35,13 @@ const options = {
                     //autoSkip: false,
                     fontColor: '#6D6F74',
                     maxRotation: 0,
+                    callback: function(label, index, labels) {
+                        if (label.toString().includes('h')){
+                            return label;
+                        } else {
+                            return moment.unix(label).format("DD/MM/YYYY");
+                        }
+                    }
                 },
                 barPercentage: 0.7,
             },
@@ -108,6 +115,7 @@ export class SwingArmMachine extends Component {
                 this.eventListen = `sna_${this.emitEvent}`;
         }
 
+        this.flag = 'H';
         this.labels = [];
         this.data = [];
 
@@ -143,17 +151,54 @@ export class SwingArmMachine extends Component {
         }
     }*/
 
-    handleReturnData = (returnData) => {
-        if (returnData && returnData.length > 0){
-            returnData.map(item => {
-                this.labels.push(item[0] + 'h');
-                this.datasets.push(item[1]);
-            });
+    componentWillUnmount(){
+
+    }
+
+    isFilterByHourOrDate = (fromTime, toTime) => {
+        let result = 'H';
+        if (fromTime && toTime){
+            let diff = moment(toTime).diff(moment(fromTime), 'days');
+            if (diff > 1){
+                result = 'D';
+            }
+        }
+        return result;
+    }
+
+    initDateBetweenLabelArray = (fromTime, toTime) => {
+        let dateArray = new Array(),
+            fromDate = new Date(fromTime),
+            toDate = new Date(toTime);
+            toDate.setDate(toDate.getDate() - 1);
+        while (fromDate <= toDate) {
+            dateArray.push(moment(fromDate).unix());
+            fromDate.setDate(fromDate.getDate() + 1);
+        }
+        this.labels = dateArray;
+    }
+
+    initHourLabelArray = _ => {
+        this.labels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+    }
+
+    initDataArray = _ => {
+        this.data = [];
+        for (let i = 0; i < this.labels.length; i++){
+            this.data.push(0);
         }
     }
 
-    componentWillUnmount(){
-
+    initArrayForLabelAndData = (flag = 'H', fromTime, toTime) => {
+        switch (flag) {
+            case 'H':
+                this.labelArray = this.initHourLabelArray();
+                break;
+            case 'D':
+                this.labelArray = this.initDateBetweenLabelArray(fromTime, toTime);
+                break;
+        }
+        this.initDataArray();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -161,13 +206,19 @@ export class SwingArmMachine extends Component {
             if (this.role == 'os'){
                 this.setState({loading: true});
                 let {startDate, endDate} = this.props.globalDateFilter;
+
+                this.flag = this.isFilterByHourOrDate(startDate, endDate);
+                this.initArrayForLabelAndData(this.flag, startDate, endDate);
+
                 let fromTimeDevice = moment(startDate.toISOString()).unix();
                 let toTimedevice   = moment(endDate.toISOString()).unix();
 
                 let param = {
                     "from_timedevice": fromTimeDevice,
-                    "to_timedevice": toTimedevice
+                    "to_timedevice": toTimedevice,
+                    "flag": this.flag
                 };
+                console.log("param: ", param);
                 API('api/os/swingarm', 'POST', param)
                     .then((response) => {
                         if (response && response.data){
@@ -175,20 +226,10 @@ export class SwingArmMachine extends Component {
                             if (dataArray && dataArray.length > 0){
                                 let returnData = JSON.parse(dataArray[0].data);
                                 if (returnData && returnData.length > 0) {
-                                    let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
-                                    let displayDatasets = returnData[0];
-                                    console.log("displayDatasets: ", displayDatasets);
-                                    /*if (displayDatasets && displayDatasets.length < 1) {
-                                        displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                                    }
-                                    for (let i = 0; i < displayDatasets.length; i++) {
-                                        if (!displayDatasets[i] || displayDatasets[i] == 0) {
-                                            displayDatasets[i] = 0;
-                                        }
-                                    }*/
-                                    console.log("displayDatasets: ", displayDatasets);
+                                    this.handleDisplayArray(returnData);
+
                                     this.myChart.data = {
-                                        labels: displayLabels,
+                                        labels: this.labels,
                                         datasets: [{
                                             label: 'Swing Arm Data',
                                             backgroundColor: '#C88FFA',
@@ -196,30 +237,17 @@ export class SwingArmMachine extends Component {
                                             borderWidth: 1,
                                             //hoverBackgroundColor: '#FF6384',
                                             //hoverBorderColor: '#FF6384',
-                                            data: displayDatasets
+                                            data: this.data
                                         }]
                                     };
                                     this.myChart.update();
                                     this.setState({loading: false});
                                 }
+                            } else {
+                                this.handleFailedReturn();
                             }
                         } else {
-                            let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
-                            let displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                            this.myChart.data = {
-                                labels: displayLabels,
-                                datasets: [{
-                                    label: 'Swing Arm Data',
-                                    backgroundColor: '#C88FFA',
-                                    borderColor: '#C88FFA',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayDatasets
-                                }]
-                            };
-                            this.myChart.update();
-                            this.setState({loading: false});
+                            this.handleFailedReturn();
                         }
                     })
                     .catch((err) => console.log('err:', err))
@@ -227,6 +255,33 @@ export class SwingArmMachine extends Component {
         }
     }
 
+    handleFailedReturn = () => {
+        this.myChart.data = {
+            labels: this.labels,
+            datasets: [{
+                label: 'Swing Arm Data',
+                backgroundColor: '#C88FFA',
+                borderColor: '#C88FFA',
+                borderWidth: 1,
+                //hoverBackgroundColor: '#FF6384',
+                //hoverBorderColor: '#FF6384',
+                data: this.data
+            }]
+        };
+        this.myChart.update();
+        this.setState({loading: false});
+    }
+
+    handleDisplayArray = (returnData) => {
+        for (let i = 0; i < this.labels.length; i++){
+            for (let j = 0; j < returnData.length; j++){
+                if(moment.unix(this.labels[i]).format("DDMMYYYY") == moment.unix(returnData[j][0]).format("DDMMYYYY")){
+                    this.data[i] = parseFloat(returnData[j][1]);
+                }
+            }
+        }
+    }
+    
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
         this.myChart = new Chart(ctx, {
@@ -240,32 +295,30 @@ export class SwingArmMachine extends Component {
             this.setState({loading: false});
         } else {
             let {startDate, endDate} = this.props.globalDateFilter;
+
+            this.flag = this.isFilterByHourOrDate(startDate, endDate);
+            this.initArrayForLabelAndData(this.flag, startDate, endDate);
+
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
             let param = {
                 "from_timedevice": fromTimeDevice,
-                "to_timedevice": toTimedevice
+                "to_timedevice": toTimedevice,
+                flag: this.flag
             };
+            console.log("param: ", param);
             API('api/os/swingarm', 'POST', param)
                 .then((response) => {
+                    console.log("response 314: ", response);
                     if (response && response.data){
                         let dataArray = response.data.data;
                         if (dataArray && dataArray.length > 0){
                             let returnData = JSON.parse(dataArray[0].data);
                             if (returnData && returnData.length > 0) {
-                                let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
-                                let displayDatasets = returnData[0];
-                                if (displayDatasets && displayDatasets.length < 1) {
-                                    displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                                }
-                                for (let i = 0; i < displayDatasets.length; i++) {
-                                    if (!displayDatasets[i] || displayDatasets[i] == 0) {
-                                        displayDatasets[i] = 0;
-                                    }
-                                }
+                                this.handleDisplayArray(returnData);
                                 this.myChart.data = {
-                                    labels: displayLabels,
+                                    labels: this.labels,
                                     datasets: [{
                                         label: 'Swing Arm Data',
                                         backgroundColor: '#C88FFA',
@@ -273,31 +326,17 @@ export class SwingArmMachine extends Component {
                                         borderWidth: 1,
                                         //hoverBackgroundColor: '#FF6384',
                                         //hoverBorderColor: '#FF6384',
-                                        data: displayDatasets
+                                        data: this.data
                                     }]
                                 };
                                 this.myChart.update();
                                 this.setState({loading: false});
                             }
+                        } else {
+                            this.handleFailedReturn();
                         }
                     } else {
-                        let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
-                        let displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-                        this.myChart.data = {
-                            labels: displayLabels,
-                            datasets: [{
-                                label: 'Swing Arm Data',
-                                backgroundColor: '#C88FFA',
-                                borderColor: '#C88FFA',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayDatasets
-                            }]
-                        };
-                        this.myChart.update();
-                        this.setState({loading: false});
+                        this.handleFailedReturn();
                     }
                 })
                 .catch((err) => console.log('err:', err))

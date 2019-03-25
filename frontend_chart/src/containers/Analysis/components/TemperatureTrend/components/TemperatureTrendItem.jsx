@@ -149,6 +149,13 @@ class TemperatureTrendItem extends Component {
             let newFromTimeDevice = moment(startDate.toISOString()).unix();
             let newToTimeDevice = moment(endDate.toISOString()).unix();
             let isSelectedShiftChange = this.props.globalShiftFilter.selectedShift != prevProps.globalDateFilter.selectedShift;
+
+            let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+            let modelKey = '';
+            if (newSelectededModel) {
+                modelKey = newSelectededModel[1].key;
+            }
+
             if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice) {
                 this.fromTimeDevice = newFromTimeDevice;
                 this.toTimedevice = newToTimeDevice;
@@ -158,7 +165,8 @@ class TemperatureTrendItem extends Component {
                     "to_timedevice": this.toTimedevice*/
                     "from_timedevice": 0,
                     "to_timedevice": 0,
-                    "shiftno": 0
+                    "shiftno": 0,
+                    "modelname": modelKey
                 };
                 API(this.apiUrl, 'POST', param)
                     .then((response) => {
@@ -189,7 +197,8 @@ class TemperatureTrendItem extends Component {
                     "to_timedevice": this.toTimedevice*/
                     "from_timedevice": this.fromTimeDevice,
                     "to_timedevice": this.toTimedevice,
-                    "shiftno": selectedShift
+                    "shiftno": selectedShift,
+                    "modelname": modelKey
                 };
                 API(this.apiUrl, 'POST', param)
                     .then((response) => {
@@ -222,11 +231,19 @@ class TemperatureTrendItem extends Component {
         this.toTimedevice = moment(endDate.toISOString()).unix();
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
+
+        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        let modelKey = '';
+        if (newSelectededModel) {
+            modelKey = newSelectededModel[1].key;
+        }
+
         let param = {
             "idStation": stationId,
             "from_timedevice": this.fromTimeDevice,
             "to_timedevice": this.toTimedevice,
-            "shiftno": selectedShift
+            "shiftno": selectedShift,
+            "modelname": modelKey
         };
 
         let displayData = "X\n";
@@ -335,6 +352,7 @@ class TemperatureTrendItem extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
+    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
 });
 
 export default connect(mapStateToProps)(TemperatureTrendItem);

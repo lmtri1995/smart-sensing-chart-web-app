@@ -84,10 +84,17 @@ class ProcessStatus extends Component {
             let selectedShift = this.props.globalShiftFilter.selectedShift;
             selectedShift = specifySelectedShiftNo(selectedShift);
 
+            let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+            let modelKey = '';
+            if (newSelectededModel) {
+                modelKey = newSelectededModel[1].key;
+            }
+
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "shiftno": selectedShift
+                "shiftno": selectedShift,
+                "modelname": modelKey
                 /*"from_timedevice": 0,
                 "to_timedevice": 0,*/
             };
@@ -120,12 +127,19 @@ class ProcessStatus extends Component {
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
 
+        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
+        let modelKey = '';
+        if (newSelectededModel) {
+            modelKey = newSelectededModel[1].key;
+        }
+
         let param = {
             /*"from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,*/
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
             "shiftno": selectedShift,
+            "modelname": modelKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -133,6 +147,11 @@ class ProcessStatus extends Component {
                     let dataArray = response.data.data;
                     this.setState({
                         dataArray: dataArray,
+                        loading: false,
+                    });
+                } else {
+                    this.setState({
+                        dataArray: [],
                         loading: false,
                     });
                 }
@@ -304,18 +323,18 @@ class ProcessStatus extends Component {
                 totalAvgCuringTime = 0, totalStddevCurringTime = 0;
 
             let maxAvgTemp = parseFloat(dataArray[0].temp_avg),
-                maxStddevTemp = 0,
+                maxStddevTemp = parseFloat(dataArray[0].temp_stdev),
                 maxAvgPrep = parseFloat(dataArray[0].pre_avg),
-                maxStddevPrep = 0,
+                maxStddevPrep = parseFloat(dataArray[0].pre_stdev),
                 maxAvgCuringTime = parseFloat(dataArray[0].cur_avg),
-                maxStddevCurringTime = 0;
+                maxStddevCurringTime = parseFloat(dataArray[0].cur_stdev);
 
             let minAvgTemp = parseFloat(dataArray[0].temp_avg),
-                minStddevTemp = 0,
+                minStddevTemp = parseFloat(dataArray[0].temp_stdev),
                 minAvgPrep = parseFloat(dataArray[0].pre_avg),
-                minStddevPrep = 0,
+                minStddevPrep = parseFloat(dataArray[0].pre_stdev),
                 minAvgCuringTime = parseFloat(dataArray[0].cur_avg),
-                minStddevCurringTime = 0;
+                minStddevCurringTime = parseFloat(dataArray[0].cur_stdev);
 
             //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
             for (let i = 0; i < dataArray.length; i++){
@@ -489,6 +508,7 @@ class ProcessStatus extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
+    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
 });
 
 export default connect(mapStateToProps)(ProcessStatus);

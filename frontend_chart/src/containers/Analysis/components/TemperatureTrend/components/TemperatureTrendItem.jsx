@@ -163,8 +163,8 @@ class TemperatureTrendItem extends Component {
                     "idStation": stationId,
                     /*"from_timedevice": this.fromTimeDevice,
                     "to_timedevice": this.toTimedevice*/
-                    "from_timedevice": 0,
-                    "to_timedevice": 0,
+                    "from_timedevice": this.fromTimeDevice,
+                    "to_timedevice": this.toTimedevice,
                     "shiftno": 0,
                     "modelname": modelKey
                 };
@@ -182,7 +182,13 @@ class TemperatureTrendItem extends Component {
                                 },
                             );
                             this.setState({loading: false});
-
+                        } else {
+                            this.graph.updateOptions(
+                                {
+                                    'file': [],
+                                },
+                            );
+                            this.setState({loading: false});
                         }
                     })
                     .catch((err) => console.log('err:', err, "stationId: ", stationId));
@@ -213,7 +219,13 @@ class TemperatureTrendItem extends Component {
                                 },
                             );
                             this.setState({loading: false});
-
+                        } else {
+                            this.graph.updateOptions(
+                                {
+                                    'file': [],
+                                },
+                            );
+                            this.setState({loading: false});
                         }
                     })
                     .catch((err) => console.log('err:', err, "stationId: ", stationId));
@@ -245,7 +257,6 @@ class TemperatureTrendItem extends Component {
             "shiftno": selectedShift,
             "modelname": modelKey
         };
-
         let displayData = "X\n";
         this.graph = new Dygraph(
             document.getElementById('station' + stationId),
@@ -272,6 +283,7 @@ class TemperatureTrendItem extends Component {
                     },
                     y: {
                         axisLineColor: '#464d54',
+                        valueRange: [100, 180],
                         //drawAxis: false,
                     }
                 },
@@ -280,7 +292,6 @@ class TemperatureTrendItem extends Component {
                 labelsShowZeroValues: false
             }
         );
-
         API(this.apiUrl, 'POST', param)
             .then((response) => {
                 if (response.data.success) {
@@ -293,7 +304,14 @@ class TemperatureTrendItem extends Component {
                         },
                     );
                     this.setState({loading: false});
-
+                } else {
+                    this.graph.updateOptions(
+                        {
+                            'file': [],
+                            strokeWidth: '20px',
+                        },
+                    );
+                    this.setState({loading: false});
                 }
             })
             .catch((err) => console.log('err:', err, "stationId: ", stationId));

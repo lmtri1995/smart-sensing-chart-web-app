@@ -331,6 +331,7 @@ class TemperatureTrendItem extends Component {
                     },
                     y: {
                         axisLineColor: '#464d54',
+                        valueRange: [100, 180],
                         //drawAxis: false,
                     }
                 },

@@ -5,6 +5,7 @@ import {END_WORK_DAY_TIME, START_WORK_DAY_TIME} from "../../../constants/constan
 import {DateRange} from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import {ROUTE} from "../../../constants/constants";
 
 export default class DateRangePicker extends Component {
     static propTypes = {
@@ -51,9 +52,14 @@ export default class DateRangePicker extends Component {
     handleRangeChange(dateRanges) {
         let startDate = dateRanges.selection.startDate;
         let endDate = dateRanges.selection.endDate;
+        let {pathName} = this.props;
         if (dateRanges.selection.startDate.getTime() === dateRanges.selection.endDate.getTime()) {
             let minDate = new Date(moment(startDate.toISOString()).subtract(9, "days").toISOString());
             let maxDate = new Date(moment(endDate.toISOString()).add(9, "days").toISOString());
+            if (pathName && pathName == ROUTE.Analysis){
+                minDate = new Date(moment(startDate.toISOString()).subtract(2, "months").toISOString());
+                maxDate = new Date(moment(endDate.toISOString()).add(2, "months").toISOString());
+            }
             if (moment(maxDate.toISOString()).isAfter(moment())) {
                 maxDate = new Date();
             }

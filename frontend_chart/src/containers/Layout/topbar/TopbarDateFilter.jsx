@@ -66,7 +66,8 @@ class TopbarDateFilter extends Component {
                         <DateRangePicker toggleMenu={this.toggle}
                                          changeGlobalDateFilter={this.changeGlobalDateFilter.bind(this)}
                                          startDate={startDate}
-                                         endDate={endDate}/>
+                                         endDate={endDate}
+                                         pathName={this.props.location.pathname}/>
                     </div>
                 </Collapse>
             </div>

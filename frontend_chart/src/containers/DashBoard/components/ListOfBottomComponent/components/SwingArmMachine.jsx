@@ -130,11 +130,13 @@ export class SwingArmMachine extends Component {
     }
 
     callAxiosBeforeSocket = (callback) => {
-        let timeFromStartOfShift = specifyTheShiftStartHour();
+        //let timeFromStartOfShift = specifyTheShiftStartHour();
         let param = {
-            "from_timedevice": timeFromStartOfShift[0],
-            "to_timedevice": timeFromStartOfShift[1],
+            "from_timedevice": '',
+            "to_timedevice": '',
+            "flag": 'H'
         };
+        console.log("139 param: ", param);
         API('api/os/swingarm', 'POST', param)
             .then((response) => {
                 if (response && response.data) {

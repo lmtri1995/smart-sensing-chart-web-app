@@ -257,6 +257,18 @@ class TemperatureTrendItem extends Component {
             "shiftno": selectedShift,
             "modelname": modelKey
         };
+
+        let myInteractions = Object.assign({}, Dygraph.defaultInteractionModel, {
+            dblclick: (event, g, context) => {
+                if (this.graph && this.graph.isZoomed()){
+                    this.graph.resetZoom();
+                    this.graph.updateOptions({
+                        valueRange: [100, 180],
+                    });
+                }
+            }
+        });
+
         let displayData = "X\n";
         this.graph = new Dygraph(
             document.getElementById('station' + stationId),
@@ -289,7 +301,8 @@ class TemperatureTrendItem extends Component {
                 },
                 //labelsDiv: `lengendLabel` + stationId,
                 legendFormatter: this.legendFormatter,
-                labelsShowZeroValues: false
+                labelsShowZeroValues: false,
+                interactionModel: myInteractions,
             }
         );
         API(this.apiUrl, 'POST', param)
@@ -318,8 +331,11 @@ class TemperatureTrendItem extends Component {
     }
 
     refresh = () => {
-        if (this.graph) {
+        if (this.graph && this.graph.isZoomed()) {
             this.graph.resetZoom();
+            this.graph.updateOptions({
+                valueRange: [100, 180],
+            });
         }
     }
 

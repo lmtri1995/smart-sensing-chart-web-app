@@ -303,6 +303,17 @@ class TemperatureTrendItem extends Component {
         let {tempTime, stationIdNo} = this.props;
         this.preTempTime = tempTime;
 
+        let myInteractions = Object.assign({}, Dygraph.defaultInteractionModel, {
+            dblclick: (event, g, context) => {
+                if (this.graph && this.graph.isZoomed()){
+                    this.graph.resetZoom();
+                    this.graph.updateOptions({
+                        valueRange: [100, 180],
+                    });
+                }
+            }
+        });
+
         let displayData = "X\n";
         this.graph = new Dygraph(
             document.getElementById(`station${stationIdNo}`),
@@ -336,7 +347,8 @@ class TemperatureTrendItem extends Component {
                     }
                 },
                 legendFormatter: this.legendFormatter,
-                labelsShowZeroValues: false
+                labelsShowZeroValues: false,
+                interactionModel: myInteractions,
             }
         );
 
@@ -376,8 +388,11 @@ class TemperatureTrendItem extends Component {
     };
 
     refresh = () => {
-        if (this.graph) {
+        if (this.graph && this.graph.isZoomed()) {
             this.graph.resetZoom();
+            this.graph.updateOptions({
+                valueRange: [100, 180],
+            });
         }
     }
 

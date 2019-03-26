@@ -40,11 +40,37 @@ class TopbarFilter extends Component {
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
 
-        this.requestModelNamesForFiltering();
+        switch (this.props.location.pathname) {
+            case ROUTE.Dashboard:
+                this.requestModelNamesForFiltering('modelName');
+                break;
+            case ROUTE.Analysis:
+                this.requestModelNamesForFiltering('modelName');
+                break;
+            case ROUTE.Report:
+                this.requestModelNamesForFiltering('modelNameForReport');
+                break;
+        }
     }
 
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.location != prevProps.location) {
+            switch (this.props.location.pathname) {
+                case ROUTE.Dashboard:
+                    this.requestModelNamesForFiltering('modelName');
+                    break;
+                case ROUTE.Analysis:
+                    this.requestModelNamesForFiltering('modelName');
+                    break;
+                case ROUTE.Report:
+                    this.requestModelNamesForFiltering('modelNameForReport');
+                    break;
+            }
+        }
     }
 
     componentWillUnmount() {
@@ -68,7 +94,7 @@ class TopbarFilter extends Component {
 
     onModelItemClicked = (event) => {
         let item = event.target.innerText;
-        let currentSelectedModel = new Map();
+        let currentSelectedModel = [item];
 
         let modelMap = this.state.modelMap;
         let modelKey = modelMap.get(item).key;
@@ -76,7 +102,7 @@ class TopbarFilter extends Component {
             value.selected = key === item;
 
             if (key === item) {
-                currentSelectedModel.set(item, {key: key, selected: true});
+                currentSelectedModel.push(value);
             }
         });
         this.setState({
@@ -85,7 +111,9 @@ class TopbarFilter extends Component {
         this.props.dispatch(
             changeGlobalModelFilter(currentSelectedModel)
         );
-        this.requestArticleNamesByModelForFiltering(modelKey);
+        if (this.props.location.pathname !== ROUTE.Report) {
+            this.requestArticleNamesByModelForFiltering(modelKey);
+        }
     };
 
     onArticleFilterMenuClicked = () => {
@@ -99,21 +127,21 @@ class TopbarFilter extends Component {
 
     onArticleItemClicked = (event) => {
         let item = event.target.innerText;
-        let selectedArticle = [item];
+        let currentSelectedArticle = [item];
 
         let articleMap = this.state.articleMap;
         articleMap.forEach((value, key) => {
             value.selected = key === item;
 
             if (key === item) {
-                selectedArticle.push(value);
+                currentSelectedArticle.push(value);
             }
         });
         this.setState({
             articleMap: articleMap
         });
         this.props.dispatch(
-            changeGlobalArticleFilter(selectedArticle)
+            changeGlobalArticleFilter(currentSelectedArticle)
         );
     };
 
@@ -153,7 +181,7 @@ class TopbarFilter extends Component {
         });
     };
 
-    requestModelNamesForFiltering = () => {
+    requestModelNamesForFiltering = (modelNameURL) => {
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
         this.role = this.loginData.data.role;
 
@@ -169,7 +197,7 @@ class TopbarFilter extends Component {
                 link = 'os';
                 break;
         }
-        API(`api/${link}/modelName`, 'POST', {})
+        API(`api/${link}/${modelNameURL}`, 'POST', {})
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
@@ -252,7 +280,6 @@ class TopbarFilter extends Component {
                         this.setState({
                             articleMap: ARTICLE_NAMES,
                         });
-                        console.log("ARTICLE_NAMES=====================", ARTICLE_NAMES);
 
                         this.props.dispatch(
                             changeGlobalArticleFilter(allArticlesSet)

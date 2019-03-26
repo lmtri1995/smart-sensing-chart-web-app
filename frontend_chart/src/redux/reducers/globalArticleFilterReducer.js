@@ -1,8 +1,8 @@
-import {MODEL_NAMES} from "../../constants/constants";
+import {ARTICLE_NAMES} from "../../constants/constants";
 import {GLOBAL_ARTICLE_FILTER} from "../actions/globalArticleActions";
 
 const initialState = {
-    selectedModel: MODEL_NAMES.entries().next().value,
+    selectedArticle: ARTICLE_NAMES.entries().next().value,
 };
 
 export default function (state = initialState, action) {

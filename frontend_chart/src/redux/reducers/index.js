@@ -5,7 +5,6 @@ import adminTabReducer from './adminTabReducer';
 import globalDateFilterReducer from './globalDateFilterReducer';
 import downloadDataStoreReducer from './downloadDataStoreReducer';
 import globalModelFilterReducer from './globalModelFilterReducer';
-import globalModelsByArticleFilterReducer from './globalModelsByArticleFilterReducer';
 import globalShiftFilterReducer from './globalShiftFilterReducer';
 import globalArticleFilterReducer from './globalArticleFilterReducer';
 
@@ -17,7 +16,6 @@ export {
     globalDateFilterReducer,
     downloadDataStoreReducer,
     globalModelFilterReducer,
-    globalShiftFilterReducer,
     globalArticleFilterReducer,
-    globalModelsByArticleFilterReducer,
+    globalShiftFilterReducer,
 };

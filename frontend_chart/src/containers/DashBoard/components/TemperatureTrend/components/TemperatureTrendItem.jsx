@@ -26,7 +26,7 @@ class TemperatureTrendItem extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
         this.preTempTime = 30;
-        this.selectedModelsByArticle = '';
+        this.currentSelectedArticle = '';
 
         let {stationIdNo} = this.props;
         switch (this.role) {
@@ -125,28 +125,27 @@ class TemperatureTrendItem extends Component {
                 minute: this.preTempTime,
                 status: 'stop',
                 idStation: stationIdNo,
-                modelname: this.selectedModelsByArticle
+                modelname: this.currentSelectedArticle,    // todo: change 'modelname' to 'articlename' on API
             }
         });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-
         let currentTime = this.preTempTime;
         let newTime = this.props.tempTime;
 
-        let currentSelectdModel = this.selectedModelsByArticle;
-        let currentModelKey = '';
-        if (currentSelectdModel){
-            currentModelKey = currentSelectdModel[1].key;
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
         }
-        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let newModelKey = '';
-        if (newSelectededModel){
-            newModelKey = newSelectededModel[1].key;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
         }
 
-        if (currentTime != newTime || currentModelKey != newModelKey) {
+        if (currentTime != newTime || currentArticleKey != newArticleKey) {
             this.callAxiosBeforeSocket(true);
         }
     }
@@ -174,17 +173,17 @@ class TemperatureTrendItem extends Component {
 
         let html = "";
         return html;
-    }
+    };
 
     callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
         if (!this.state.loading) {
             this.setState({loading: true});
         }
         let {tempTime, stationIdNo} = this.props;
-        let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let modelKey = '';
-        if (selectedModelsByArticle){
-            modelKey = selectedModelsByArticle[1].key;
+        let selectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (selectedArticle) {
+            articleKey = selectedArticle[1].key;
         }
         let currentTimeDevice = specifyNminutesToCurrentTimeDevice(tempTime);
         let param = {
@@ -192,7 +191,7 @@ class TemperatureTrendItem extends Component {
             "from_timedevice": currentTimeDevice[0],
             "to_timedevice": currentTimeDevice[1],
             "shiftno": 0,
-            "modelname": modelKey
+            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -207,7 +206,7 @@ class TemperatureTrendItem extends Component {
                     );
                     this.displayData = [];
                     this.setState({loading: false});
-                    if (!stopCurrentSocket){
+                    if (!stopCurrentSocket) {
                         this.callSocket();
                     } else {
                         this.restartSocket();
@@ -217,16 +216,16 @@ class TemperatureTrendItem extends Component {
                 }
             })
             .catch((err) => console.log('err:', err, "stationId: ", stationIdNo));
-    }
+    };
 
     callSocket = () => {
         let {stationIdNo} = this.props;
         let displayData = "X\n";
 
-        let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let modelKey = '';
-        if (selectedModelsByArticle){
-            modelKey = selectedModelsByArticle[1].key;
+        let selectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (selectedArticle) {
+            articleKey = selectedArticle[1].key;
         }
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -236,7 +235,7 @@ class TemperatureTrendItem extends Component {
                 status: 'start',
                 idStation: stationIdNo,
                 shiftno: 0,
-                modelname: modelKey
+                modelname: articleKey,    // todo: change 'modelname' to 'articlename' on API
             }
         });
 
@@ -259,19 +258,19 @@ class TemperatureTrendItem extends Component {
             }
 
         });
-    }
+    };
 
     //Stop old socket, create new one
     restartSocket = () => {
-        let currentSelectdModel = this.selectedModelsByArticle;
-        let currentModelKey = '';
-        if (currentSelectdModel){
-            currentModelKey = currentSelectdModel[1].key;
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
         }
-        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let newModelKey = '';
-        if (newSelectededModel){
-            newModelKey = newSelectededModel[1].key;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
         }
 
         let {tempTime, stationIdNo} = this.props;
@@ -282,7 +281,7 @@ class TemperatureTrendItem extends Component {
                 minute: this.preTempTime,
                 status: 'stop',
                 idStation: stationIdNo,
-                modelname: currentModelKey
+                modelname: currentArticleKey,     // todo: change 'modelname' to 'articlename' on API
             }
         });
 
@@ -292,12 +291,12 @@ class TemperatureTrendItem extends Component {
                 minute: tempTime,
                 status: 'start',
                 idStation: `${stationIdNo}`,
-                modelname: newModelKey
+                modelname: newArticleKey,    // todo: change 'modelname' to 'articlename' on API
             }
         });
         this.preTempTime = tempTime;
-        this.selectedModelsByArticle = newSelectededModel;
-    }
+        this.currentSelectedArticle = newSelectedArticle;
+    };
 
     componentDidMount() {
         let {tempTime, stationIdNo} = this.props;
@@ -394,12 +393,10 @@ class TemperatureTrendItem extends Component {
                 valueRange: [100, 180],
             });
         }
-    }
+    };
 
     render() {
         let stationId = this.props.stationIdNo;
-        //let selectedModelsByArticle =
-        // this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
 
         return (
             <div className="col">
@@ -439,7 +436,7 @@ class TemperatureTrendItem extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(TemperatureTrendItem);

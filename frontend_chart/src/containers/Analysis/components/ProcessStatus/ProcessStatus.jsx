@@ -8,7 +8,6 @@ import {connect} from "react-redux";
 import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import moment from "moment";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
-import {SHIFT_OPTIONS} from "../../../../constants/constants";
 import {standardDeviation} from "../../../../shared/utils/dataCalculator";
 
 const override = `
@@ -58,18 +57,17 @@ class ProcessStatus extends Component {
         };
 
         this.standardPreparingTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.standardCuringTimeArray    = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.standardTemperatureArray   = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.standardCycleTimeArray     = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.stdevTemperatureArray      = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.stdevPreparingTimeArray    = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.stdevCuringTimeArray       = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardCuringTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardTemperatureArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.standardCycleTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.stdevTemperatureArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.stdevPreparingTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.stdevCuringTimeArray = [0, 0, 0, 0, 0, 0, 0, 0];
 
         this.avgTemperatureArray = [];
         this.avgPreparingTimeArray = [];
         this.avgCurringTimeArray = [];
     }
-
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -80,21 +78,21 @@ class ProcessStatus extends Component {
             //this.countStandardCycleTime();
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
-            let toTimedevice   = moment(endDate.toISOString()).unix();
+            let toTimeDevice = moment(endDate.toISOString()).unix();
             let selectedShift = this.props.globalShiftFilter.selectedShift;
             selectedShift = specifySelectedShiftNo(selectedShift);
 
-            let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-            let modelKey = '';
-            if (newSelectededModel) {
-                modelKey = newSelectededModel[1].key;
+            let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectededArticle) {
+                articleKey = newSelectededArticle[1].key;
             }
 
             let param = {
                 "from_timedevice": fromTimeDevice,
-                "to_timedevice": toTimedevice,
+                "to_timedevice": toTimeDevice,
                 "shiftno": selectedShift,
-                "modelname": modelKey
+                "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
                 /*"from_timedevice": 0,
                 "to_timedevice": 0,*/
             };
@@ -112,34 +110,32 @@ class ProcessStatus extends Component {
                     }
                 })
                 .catch((err) => console.log('err:', err))
-
         }
     }
 
-    componentDidMount = () =>{
+    componentDidMount = () => {
         //this.countStandardCycleTime();
         this._isMounted = true;
 
-
         let {startDate, endDate} = this.props.globalDateFilter;
         let fromTimeDevice = moment(startDate.toISOString()).unix();
-        let toTimedevice   = moment(endDate.toISOString()).unix();
+        let toTimeDevice = moment(endDate.toISOString()).unix();
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
 
-        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let modelKey = '';
-        if (newSelectededModel) {
-            modelKey = newSelectededModel[1].key;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[1].key;
         }
 
         let param = {
             /*"from_timedevice": fromTimeDevice,
-            "to_timedevice": toTimedevice,*/
+            "to_timedevice": toTimeDevice,*/
             "from_timedevice": fromTimeDevice,
-            "to_timedevice": toTimedevice,
+            "to_timedevice": toTimeDevice,
             "shiftno": selectedShift,
-            "modelname": modelKey
+            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -157,7 +153,7 @@ class ProcessStatus extends Component {
                 }
             })
             .catch((err) => console.log('err:', err))
-    }
+    };
 
     countStandardCycleTime() {
         let {startDate, endDate} = this.props.globalDateFilter;
@@ -236,9 +232,6 @@ class ProcessStatus extends Component {
                     standardCycleTime5, standardCycleTime6, standardCycleTime7, standardCycleTime8];
             }
         }).catch((err) => console.log('err:', err));
-
-
-
     }
 
     showLineItem(data, stationId) {
@@ -246,10 +239,11 @@ class ProcessStatus extends Component {
                                       stddevTemp='-' avgPreparing='-'
                                       stddevPreparing='-'
                                       avgCuringTime='-'
-                                      stddevCurringTime='-' />;
-        if (data){
+                                      stddevCurringTime='-'/>;
+        if (data) {
             result = <LineSummaryItem stationId={stationId} avgTemp={changeNumberFormat(data.temp_avg)}
-                                      stddevTemp={changeNumberFormat(data.temp_stdev)} avgPreparing={changeNumberFormat(data.pre_avg)}
+                                      stddevTemp={changeNumberFormat(data.temp_stdev)}
+                                      avgPreparing={changeNumberFormat(data.pre_avg)}
                                       stddevPreparing={changeNumberFormat(data.pre_stdev)}
                                       avgCuringTime={changeNumberFormat(data.cur_avg)}
                                       stddevCurringTime={changeNumberFormat(data.cur_stdev)}/>;
@@ -262,8 +256,8 @@ class ProcessStatus extends Component {
         return result;
     }
 
-    roundNumber(number){
-        return Math.round(number * 100)/100;
+    roundNumber(number) {
+        return Math.round(number * 100) / 100;
     }
 
     showLineTable(dataArray) {
@@ -337,7 +331,7 @@ class ProcessStatus extends Component {
                 minStddevCurringTime = parseFloat(dataArray[0].cur_stdev);
 
             //Count for stdevTemperatureArray, stdevpreparingTimeArray, stdevCuringTimeArray
-            for (let i = 0; i < dataArray.length; i++){
+            for (let i = 0; i < dataArray.length; i++) {
                 this.stdevTemperatureArray[i] = parseFloat(dataArray[i].temp_stdev);
                 this.stdevPreparingTimeArray[i] = parseFloat(dataArray[i].pre_stdev);
                 this.stdevCuringTimeArray[i] = parseFloat(dataArray[i].cur_stdev);
@@ -444,7 +438,7 @@ class ProcessStatus extends Component {
                                 data3={changeNumberFormat(stdAvgPrep)}
                                 data4={changeNumberFormat(stdStddevPrep)}
                                 data5={changeNumberFormat(stdAvgCuringTime)}
-                                data6={changeNumberFormat(stdStddevCurringTime)} />
+                                data6={changeNumberFormat(stdStddevCurringTime)}/>
             </tbody>;
 
             // Prepare to push Process Status Data to Redux Store
@@ -508,7 +502,7 @@ class ProcessStatus extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
-    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(ProcessStatus);

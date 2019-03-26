@@ -3,10 +3,9 @@ import {reducer as reduxFormReducer} from 'redux-form';
 import {
     adminTabReducer,
     downloadDataStoreReducer,
-    globalDateFilterReducer,
     globalArticleFilterReducer,
+    globalDateFilterReducer,
     globalModelFilterReducer,
-    globalModelsByArticleFilterReducer,
     globalShiftFilterReducer,
     LoginReducer,
     sidebarReducer,
@@ -22,10 +21,9 @@ const reducer = combineReducers({
     adminTab: adminTabReducer,
     globalDateFilter: globalDateFilterReducer,
     downloadDataStore: downloadDataStoreReducer,
-    globalArticleFilter: globalArticleFilterReducer,
     globalModelFilter: globalModelFilterReducer,
+    globalArticleFilter: globalArticleFilterReducer,
     globalShiftFilter: globalShiftFilterReducer,
-    globalModelsByArticleFilterReducer: globalModelsByArticleFilterReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

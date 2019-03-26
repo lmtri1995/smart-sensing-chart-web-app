@@ -1,4 +1,4 @@
-export const GLOBAL_ARTICLE_FILTER = 'GLOBAL_MODEL_FILTER';
+export const GLOBAL_ARTICLE_FILTER = 'GLOBAL_ARTICLE_FILTER';
 
 export function changeGlobalArticleFilter(selectedArticle) {
     return {

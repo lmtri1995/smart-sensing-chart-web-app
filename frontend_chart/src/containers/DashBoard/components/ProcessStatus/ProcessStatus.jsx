@@ -9,6 +9,7 @@ import moment from "moment";
 import API from "../../../../services/api";
 import {changeNumberFormat, specifyTheShiftStartHour,} from "../../../../shared/utils/Utilities";
 import {standardDeviation} from "../../../../shared/utils/dataCalculator"
+import {ARTICLE_NAMES} from "../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -78,7 +79,7 @@ class ProcessStatus extends Component {
         this.avgPreparingTimeArray = [];
         this.avgCurringTimeArray = [];
 
-        this.selectedModelsByArticle = '';
+        this.currentSelectedArticle = '';
     }
 
     componentWillUnmount() {
@@ -104,13 +105,13 @@ class ProcessStatus extends Component {
         }
         let timeFromStartOfShift = specifyTheShiftStartHour();
 
-        let selectedModelsByArticle = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let modelKey = '';
-        if (selectedModelsByArticle){
-            modelKey = selectedModelsByArticle[1].key;
+        let selectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = ARTICLE_NAMES.values().next().value.key;
+        if (selectedArticle) {
+            articleKey = selectedArticle[1].key;
         }
 
-        this.selectedModelsByArticle = selectedModelsByArticle;
+        this.currentSelectedArticle = selectedArticle;
 
         let param = {
             /*"from_timedevice": fromTimeDevice,
@@ -118,8 +119,7 @@ class ProcessStatus extends Component {
             "from_timedevice": timeFromStartOfShift[0],
             "to_timedevice": timeFromStartOfShift[1],
             "shiftno": 0,
-            "modelname": modelKey
-
+            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -139,12 +139,12 @@ class ProcessStatus extends Component {
                 }
             })
             .catch((err) => console.log('err:', err))
-    }
+    };
 
     callSocket = () => {
-        let modelKey = '';
-        if (this.selectedModelsByArticle){
-            modelKey = this.selectedModelsByArticle[1].key;
+        let articleKey = '';
+        if (this.currentSelectedArticle) {
+            articleKey = this.currentSelectedArticle[1].key;
         }
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -153,7 +153,7 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: modelKey
+                modelname: articleKey,    // todo: change 'modelname' to 'articlename' on API
             }
         });
 
@@ -175,13 +175,13 @@ class ProcessStatus extends Component {
                 });
             }
         });
-    }
+    };
 
     //Stop old socket, create new one
     restartSocket = () => {
-        let modelKey = '';
-        if (this.selectedModelsByArticle){
-            modelKey = this.selectedModelsByArticle[1].key;
+        let articleKey = '';
+        if (this.currentSelectedArticle) {
+            articleKey = this.currentSelectedArticle[1].key;
         }
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -190,7 +190,7 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'stop',
-                modelname: ''
+                modelname: '',    // todo: change 'modelname' to 'articlename' on API
             }
         });
 
@@ -201,26 +201,24 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: modelKey
+                modelname: articleKey,    // todo: change 'modelname' to 'articlename' on API
             }
         });
-
-
-    }
+    };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        let currentSelectdModel = this.selectedModelsByArticle;
-        let currentModelKey = '';
-        if (currentSelectdModel) {
-            currentModelKey = currentSelectdModel[1].key;
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
         }
-        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let newModelKey = '';
-        if (newSelectededModel) {
-            newModelKey = newSelectededModel[1].key;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
         }
 
-        if (currentModelKey != newModelKey) {
+        if (currentArticleKey != newArticleKey) {
             this.callAxiosBeforeSocket(true);
         }
     }
@@ -483,7 +481,6 @@ class ProcessStatus extends Component {
             let stdAvgCuringTime = standardDeviation(this.avgCurringTimeArray, avgAvgCuringTime, true);
             let stdStddevCurringTime = standardDeviation(this.stdevCuringTimeArray, avgStddevCurringTime, true);
 
-
             result = <tbody>
             <tr>
                 <th>STATION No.</th>
@@ -601,14 +598,13 @@ class ProcessStatus extends Component {
                     </table>
                 </div>
             </div>
-
         )
     }
 }
 
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
-    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(ProcessStatus);

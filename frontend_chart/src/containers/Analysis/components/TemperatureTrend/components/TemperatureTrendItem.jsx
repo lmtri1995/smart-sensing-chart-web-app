@@ -6,7 +6,6 @@ import moment from "moment";
 import API from "../../../../../services/api";
 import Singleton from "../../../../../services/Socket";
 import connect from "react-redux/es/connect/connect";
-import {SHIFT_OPTIONS} from "../../../../../constants/constants";
 import {specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
 
 const override = `
@@ -111,7 +110,6 @@ class TemperatureTrendItem extends Component {
         this.state = {
             loading: true
         };
-
     }
 
 
@@ -139,7 +137,7 @@ class TemperatureTrendItem extends Component {
 
         let html = "";
         return html;
-    }
+    };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
@@ -150,10 +148,10 @@ class TemperatureTrendItem extends Component {
             let newToTimeDevice = moment(endDate.toISOString()).unix();
             let isSelectedShiftChange = this.props.globalShiftFilter.selectedShift != prevProps.globalDateFilter.selectedShift;
 
-            let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-            let modelKey = '';
-            if (newSelectededModel) {
-                modelKey = newSelectededModel[1].key;
+            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectedArticle) {
+                articleKey = newSelectedArticle[1].key;
             }
 
             if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice) {
@@ -166,7 +164,7 @@ class TemperatureTrendItem extends Component {
                     "from_timedevice": this.fromTimeDevice,
                     "to_timedevice": this.toTimedevice,
                     "shiftno": 0,
-                    "modelname": modelKey
+                    "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
                 };
                 API(this.apiUrl, 'POST', param)
                     .then((response) => {
@@ -204,7 +202,7 @@ class TemperatureTrendItem extends Component {
                     "from_timedevice": this.fromTimeDevice,
                     "to_timedevice": this.toTimedevice,
                     "shiftno": selectedShift,
-                    "modelname": modelKey
+                    "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
                 };
                 API(this.apiUrl, 'POST', param)
                     .then((response) => {
@@ -244,10 +242,10 @@ class TemperatureTrendItem extends Component {
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
 
-        let newSelectededModel = this.props.globalModelsByArticleFilterReducer.selectedModelsByArticle;
-        let modelKey = '';
-        if (newSelectededModel) {
-            modelKey = newSelectededModel[1].key;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[1].key;
         }
 
         let param = {
@@ -255,7 +253,7 @@ class TemperatureTrendItem extends Component {
             "from_timedevice": this.fromTimeDevice,
             "to_timedevice": this.toTimedevice,
             "shiftno": selectedShift,
-            "modelname": modelKey
+            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
         };
 
         let myInteractions = Object.assign({}, Dygraph.defaultInteractionModel, {
@@ -337,7 +335,7 @@ class TemperatureTrendItem extends Component {
                 valueRange: [100, 180],
             });
         }
-    }
+    };
 
     render() {
         let {stationId} = this.props;
@@ -363,13 +361,16 @@ class TemperatureTrendItem extends Component {
                     />
                     <div className="container" style={{marginBottom: 40}}>
                         <div className="row">
-                            <div className="temperature-tooltip" style={{position: 'absolute'}}
-                                 id={'tooltip' + stationId}></div>
+                            <div id={'tooltip' + stationId}
+                                 className="temperature-tooltip"
+                                 style={{position: 'absolute'}}>
+                            </div>
                         </div>
                     </div>
                     <div className="container">
                         <div className="row">
-                            <div style={{marginBottom: 50}} id={'station' + stationId}></div>
+                            <div id={'station' + stationId} style={{marginBottom: 50}}>
+                            </div>
                         </div>
                     </div>
                     {/*<div className="container" style={{marginBottom: 40}}>
@@ -386,7 +387,7 @@ class TemperatureTrendItem extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
-    globalModelsByArticleFilterReducer: state.globalModelsByArticleFilterReducer,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(TemperatureTrendItem);

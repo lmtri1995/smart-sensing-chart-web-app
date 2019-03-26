@@ -45,7 +45,7 @@ export const ADMIN_TAB_INDEX = [1, 2];
 // Model
 export const MODEL_NAMES = new Map([    // initial data
     ['All Models', {   // name to show on screen
-        key: '%', // key to send request to server, '%' to select All Models in Query on Server
+        key: '', // key to send request to server, '' (empty string) to select All Models in Query on Server
         selected: true,
     }]
 ]);
@@ -54,15 +54,7 @@ export const MODEL_NAMES = new Map([    // initial data
 // Model
 export const ARTICLE_NAMES = new Map([    // initial data
     ['All Articles', {   // name to show on screen
-        key: '%', // key to send request to server, '%' to select All Models in Query on Server
-        selected: true,
-    }]
-]);
-
-// Model
-export const MODELS_BY_ARTICLE = new Map([    // initial data
-    ['All Models', {   // name to show on screen
-        key: '', // key to send request to server, '%' to select All Models in Query on Server
+        key: '', // key to send request to server, '' (empty string) to select All Models in Query on Server
         selected: true,
     }]
 ]);

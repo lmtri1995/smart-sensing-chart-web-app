@@ -46,7 +46,7 @@ export class OEEGeneral extends Component {
                                            centerText={`${OEENumber}%`}
                                            customTooltips={customChartTooltips}/>
                         </div>
-                        <div className="col-12 align-self-center text-white"><span>OEE = Availability * Performance * Quality</span>
+                        <div className="col-12 align-self-center text-white small"><div style={{marginTop:30,}}>OEE = Availability * Performance * Quality</div>
                         </div>
                     </div>
                 </div>

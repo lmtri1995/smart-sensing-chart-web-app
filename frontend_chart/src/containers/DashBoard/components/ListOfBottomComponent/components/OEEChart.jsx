@@ -64,6 +64,11 @@ export default class OEEChart extends Component {
                         <div className="col-4 align-self-center"><DoughnutChart loading={loading} customTooltips={customChartTooltips}  labels={["Performance", ""]} data={performanceChartData} centerText={`Performance\n${performanceNumber}%`}/></div>
                         <div className="col-4 align-self-center"><DoughnutChart loading={loading} customTooltips={customChartTooltips}  labels={["Quality", ""]} data={qualityChartData} centerText={qualityCenterText}/></div>
                     </div>
+                    <div className="col-12 align-self-center text-white small">
+                        <div style={{marginLeft: 100,}}>Availability: (Work Hour- Stop working time)/Work Hour *100</div>
+                        <div style={{marginLeft: 100,}}>Performance: (Std Cycle time*Actual Qty)/Work Hour*100</div>
+                        <div style={{marginLeft: 100,}}>Quality: (Productivity-Defect)/Productivity*100</div>
+                    </div>
                 </div>
             </div>
         )

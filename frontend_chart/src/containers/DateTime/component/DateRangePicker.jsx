@@ -57,8 +57,8 @@ export default class DateRangePicker extends Component {
             let minDate = new Date(moment(startDate.toISOString()).subtract(9, "days").toISOString());
             let maxDate = new Date(moment(endDate.toISOString()).add(9, "days").toISOString());
             if (pathName && pathName == ROUTE.Analysis){
-                minDate = new Date(moment(startDate.toISOString()).subtract(2, "months").toISOString());
-                maxDate = new Date(moment(endDate.toISOString()).add(2, "months").toISOString());
+                minDate = new Date(moment(startDate.toISOString()).subtract(1, "months").toISOString());
+                maxDate = new Date(moment(endDate.toISOString()).add(1, "months").toISOString());
             }
             if (moment(maxDate.toISOString()).isAfter(moment())) {
                 maxDate = new Date();

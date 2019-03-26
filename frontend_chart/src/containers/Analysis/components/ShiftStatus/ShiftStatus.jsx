@@ -72,16 +72,29 @@ class ShiftStatus extends Component {
             this.setState({
                 loading: true,
             });
-            console.log("this.apiUrl: ", this.apiUrl, " param: ", param);
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
-                    if (response.data.success) {
-                        let dataArray = response.data.data;
+                    //console.log("success: ", response.success);
+                    if (response){
+                        if (response.data.success) {
+                            let dataArray = response.data.data;
+                            this.setState({
+                                dataArray: dataArray,
+                                loading: false,
+                            });
+                        } else {
+                            this.setState({
+                                dataArray: [],
+                                loading: false,
+                            });
+                        }
+                    } else {
                         this.setState({
-                            dataArray: dataArray,
+                            dataArray: [],
                             loading: false,
                         });
                     }
+
                 })
                 .catch((err) => console.log('err:', err));
 
@@ -101,13 +114,26 @@ class ShiftStatus extends Component {
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
-                    let dataArray = response.data.data;
+                if (response){
+                    if (response.data.success) {
+                        let dataArray = response.data.data;
+                        this.setState({
+                            dataArray: dataArray,
+                            loading: false,
+                        });
+                    } else {
+                        this.setState({
+                            dataArray: [],
+                            loading: false,
+                        });
+                    }
+                } else {
                     this.setState({
-                        dataArray: dataArray,
+                        dataArray: [],
                         loading: false,
                     });
                 }
+
             })
             .catch((err) => console.log('err:', err))
 

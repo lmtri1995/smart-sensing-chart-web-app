@@ -304,7 +304,7 @@ class TemperatureTrendItem extends Component {
 
         let myInteractions = Object.assign({}, Dygraph.defaultInteractionModel, {
             dblclick: (event, g, context) => {
-                if (this.graph && this.graph.isZoomed()){
+                if (this.graph){
                     this.graph.resetZoom();
                     this.graph.updateOptions({
                         valueRange: [100, 180],
@@ -387,12 +387,14 @@ class TemperatureTrendItem extends Component {
     };
 
     refresh = () => {
-        if (this.graph && this.graph.isZoomed()) {
-            this.graph.resetZoom();
-            this.graph.updateOptions({
-                valueRange: [100, 180],
-            });
-        }
+        this.graph.resetZoom();
+        this.graph.updateOptions({
+            dateWindow: null,
+            valueRange: null
+        });
+        this.graph.updateOptions({
+            valueRange: [100, 180],
+        });
     };
 
     render() {

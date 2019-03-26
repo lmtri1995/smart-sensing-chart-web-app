@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Refresh from "../../../../../shared/img/Refresh.svg";
 import {ClipLoader} from "react-spinners";
+//import Dygraph from "dygraphs/src/dygraph-custom";
 import Dygraph from "dygraphs/src/dygraph";
 import moment from "moment";
 import API from "../../../../../services/api";
@@ -258,7 +259,7 @@ class TemperatureTrendItem extends Component {
 
         let myInteractions = Object.assign({}, Dygraph.defaultInteractionModel, {
             dblclick: (event, g, context) => {
-                if (this.graph && this.graph.isZoomed()){
+                if (this.graph){
                     this.graph.resetZoom();
                     this.graph.updateOptions({
                         valueRange: [100, 180],
@@ -329,12 +330,14 @@ class TemperatureTrendItem extends Component {
     }
 
     refresh = () => {
-        if (this.graph && this.graph.isZoomed()) {
-            this.graph.resetZoom();
-            this.graph.updateOptions({
-                valueRange: [100, 180],
-            });
-        }
+        this.graph.resetZoom();
+        this.graph.updateOptions({
+            dateWindow: null,
+            valueRange: null
+        });
+        this.graph.updateOptions({
+            valueRange: [100, 180],
+        });
     };
 
     render() {

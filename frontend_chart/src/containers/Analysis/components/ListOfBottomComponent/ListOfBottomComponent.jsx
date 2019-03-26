@@ -511,7 +511,8 @@ class listBottomComponent extends Component {
                                                              loading={this.state.loading}/></div>
                             <div className="col-3"><OEEGeneral startDate={startDate}
                                                                endDate={endDate}
-                                                               OEENumber={OEENumber}/></div>
+                                                               OEENumber={OEENumber}
+                                                               loading={this.state.loading}/></div>
                         </div>
                     </div>
                     <div className="col">

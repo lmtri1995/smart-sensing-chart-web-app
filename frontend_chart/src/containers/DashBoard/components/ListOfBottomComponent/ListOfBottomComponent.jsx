@@ -444,7 +444,8 @@ export default class listBottomComponent extends Component {
                                                          performanceNumber={performanceNumber}
                                                          qualityNumber={qualityNumber}
                                                          loading={this.state.loading}/></div>
-                        <div className="col-3"><OEEGeneral OEENumber={OEENumber}/></div>
+                        <div className="col-3"><OEEGeneral OEENumber={OEENumber}
+                                                           loading={this.state.loading}/></div>
                     </div>
                 </div>
                 <div className="col">

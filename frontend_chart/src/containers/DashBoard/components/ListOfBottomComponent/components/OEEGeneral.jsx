@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import DoughnutChart from "../../../../Charts/ChartJS/components/DoughnutChart";
+import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
 
 export class OEEGeneral extends Component {
 
@@ -15,11 +16,15 @@ export class OEEGeneral extends Component {
 
         let customChartTooltips = {
             callbacks: {
-                label: function(tooltipItem, data) {
-                    if (data.datasets[tooltipItem.datasetIndex].data == "0"){
-                        return data.labels[0] + ": " + data.datasets[tooltipItem.datasetIndex].data[0] + '%';
+                label: function (tooltipItem, data) {
+                    if (tooltipItem.index == 1) {
+                        return data.labels[1] + ": " + changeNumberFormat(parseFloat(data.datasets[0].data[1])) + '%';
+                    } else {
+                        if (data.datasets[tooltipItem.datasetIndex].data == "0") {
+                            return data.labels[0] + ": " + changeNumberFormat(parseFloat(data.datasets[0].data[0])) + '%';
+                        }
+                        return data.labels[0] + ": " + changeNumberFormat(parseFloat(data.datasets[0].data[0])) + '%';
                     }
-                    return data.labels[0] + ": " + data.datasets[tooltipItem.datasetIndex].data[0] + '%';
                 },
             }
         };
@@ -43,6 +48,8 @@ export class OEEGeneral extends Component {
             </div>
         )
     }
-}
+    }
 
-export default OEEGeneral
+    export
+    default
+    OEEGeneral

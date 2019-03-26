@@ -1,7 +1,13 @@
 import React, {Component} from 'react';
 import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {ARTICLE_NAMES, ExportType, MODEL_NAMES, ROUTE, SHIFT_OPTIONS} from "../../../constants/constants";
+import {
+    ARTICLE_NAMES,
+    ExportType,
+    MODEL_NAMES,
+    ROUTE,
+    SHIFT_OPTIONS
+} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
 import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
@@ -423,10 +429,12 @@ class TopbarFilter extends Component {
                         </button>
                         <Collapse isOpen={this.state.downloadMenuOpen}
                                   className="topbar__menu-wrap">
-                            <div className="col-12">
-                                <DataExporter exportType={ExportType.EXCEL}/>
-                                <DataExporter exportType={ExportType.PDF}/>
-                                <DataExporter exportType={ExportType.PNG}/>
+                            <div className="bg-white container border align-content-center" style={{marginLeft: 40, width: 220,}}>
+                                <div className="row">
+                                    <DataExporter exportType={ExportType.EXCEL}/>
+                                    <DataExporter exportType={ExportType.PDF}/>
+                                    <DataExporter exportType={ExportType.PNG}/>
+                                </div>
                             </div>
                         </Collapse>
                     </div>

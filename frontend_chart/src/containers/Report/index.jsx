@@ -9,6 +9,7 @@ import moment from "moment";
 import {GlobalFilterProps} from "../../shared/prop-types/ReducerProps";
 import {connect} from "react-redux";
 import {
+    ARTICLE_NAMES,
     IP_DEFECT_NAME,
     OS_DEFECT_NAME,
     REPORT_CONTAINER_ID,
@@ -105,6 +106,9 @@ class ReportPage extends Component {
                 startMoment = moment(tempEndMoment.subtract(7, "days"));
             }
 
+            let articleName = this.props.globalArticleFilter.selectedArticle[0] === ARTICLE_NAMES.keys().next().value
+                ? ''
+                : this.props.globalArticleFilter.selectedArticle[0];
             // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
             let productionRatesParam = {
                 from_workdate: startMoment.format("YYYYMMDD"),
@@ -113,6 +117,7 @@ class ReportPage extends Component {
                 // => Wrong request params for Defect Rate below
                 to_workdate: moment(endMoment).subtract(1, "days").format("YYYYMMDD"),
                 model_name: this.props.globalModelFilter.selectedModel[1].key,
+                article_no: articleName,
             };
 
             let shiftNo;
@@ -606,6 +611,7 @@ class ReportPage extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalModelFilter: state.globalModelFilter,
+    globalArticleFilter: state.globalArticleFilter,
     globalShiftFilter: state.globalShiftFilter,
 });
 

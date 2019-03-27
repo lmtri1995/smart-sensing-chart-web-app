@@ -126,9 +126,7 @@ class TopbarFilter extends Component {
         this.props.dispatch(
             changeGlobalModelFilter(currentSelectedModel)
         );
-        if (this.props.location.pathname !== ROUTE.Report) {
-            this.requestArticleNamesByModelForFiltering(modelKey);
-        }
+        this.requestArticleNamesByModelForFiltering(modelKey);
     };
 
     onArticleFilterMenuClicked = () => {
@@ -370,38 +368,31 @@ class TopbarFilter extends Component {
                                 </ListGroup>
                             </Collapse>
                         </span>
-                        {
-                            // Only show Filter by Article Menu on Analysis & Dashboard Page
-                            location.pathname === ROUTE.Analysis || location.pathname === ROUTE.Dashboard
-                                ? (
-                                    <span>
-                                        <button className="btn btn-secondary"
-                                                onClick={this.onArticleFilterMenuClicked}>
-                                            Filter: Article <i className="fas fa-caret-down"></i>
-                                        </button>
-                                        <Collapse isOpen={this.state.articleFilterMenuOpen}
-                                                  className="topbar__menu-wrap">
-                                            <ListGroup className="listgroup__scroll">
-                                                {
-                                                    articleList.map((name, index) => {
-                                                        let articleClassName = 'list-item__unchecked';
-                                                        let article = this.state.articleMap.get(name);
-                                                        if (article && article.selected) {
-                                                            articleClassName = 'list-item__checked';
-                                                        }
-                                                        return <ListGroupItem key={index}
-                                                                              className={articleClassName}
-                                                                              onClick={this.onArticleItemClicked}>
-                                                            {name}
-                                                        </ListGroupItem>;
-                                                    })
-                                                }
-                                            </ListGroup>
-                                        </Collapse>
-                                    </span>
-                                )
-                                : null
-                        }
+                        <span>
+                            <button className="btn btn-secondary"
+                                    onClick={this.onArticleFilterMenuClicked}>
+                                Filter: Article <i className="fas fa-caret-down"></i>
+                            </button>
+                            <Collapse isOpen={this.state.articleFilterMenuOpen}
+                                      className="topbar__menu-wrap">
+                                <ListGroup className="listgroup__scroll">
+                                    {
+                                        articleList.map((name, index) => {
+                                            let articleClassName = 'list-item__unchecked';
+                                            let article = this.state.articleMap.get(name);
+                                            if (article && article.selected) {
+                                                articleClassName = 'list-item__checked';
+                                            }
+                                            return <ListGroupItem key={index}
+                                                                  className={articleClassName}
+                                                                  onClick={this.onArticleItemClicked}>
+                                                {name}
+                                            </ListGroupItem>;
+                                        })
+                                    }
+                                </ListGroup>
+                            </Collapse>
+                        </span>
                         {
                             // Only show Filter by Shift Menu on Report & Analysis Page
                             location.pathname === ROUTE.Report || location.pathname === ROUTE.Analysis

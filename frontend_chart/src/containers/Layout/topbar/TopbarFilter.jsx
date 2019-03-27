@@ -15,6 +15,7 @@ import {withRouter} from "react-router-dom";
 import API from "../../../services/api";
 import {changeGlobalModelFilter} from "../../../redux/actions/globalModelFilterActions";
 import {changeGlobalArticleFilter} from "../../../redux/actions/globalArticleActions";
+import moment from "moment";
 
 class TopbarFilter extends Component {
     constructor(props) {
@@ -54,7 +55,11 @@ class TopbarFilter extends Component {
                 this.requestModelNamesForFiltering('modelName');
                 break;
             case ROUTE.Report:
-                this.requestModelNamesForFiltering('modelNameForReport');
+                let param = {
+                    from_workdate: moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD"),
+                    to_workdate: moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD"),
+                };
+                this.requestModelNamesForFiltering('modelNameForReport', param);
                 break;
         }
     }
@@ -73,7 +78,11 @@ class TopbarFilter extends Component {
                     this.requestModelNamesForFiltering('modelName');
                     break;
                 case ROUTE.Report:
-                    this.requestModelNamesForFiltering('modelNameForReport');
+                    let param = {
+                        from_workdate: moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD"),
+                        to_workdate: moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD"),
+                    };
+                    this.requestModelNamesForFiltering('modelNameForReport', param);
                     break;
             }
         }
@@ -187,7 +196,7 @@ class TopbarFilter extends Component {
         });
     };
 
-    requestModelNamesForFiltering = (modelNameURL) => {
+    requestModelNamesForFiltering = (modelNameURL, param) => {
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
         this.role = this.loginData.data.role;
 
@@ -203,7 +212,7 @@ class TopbarFilter extends Component {
                 link = 'os';
                 break;
         }
-        API(`api/${link}/${modelNameURL}`, 'POST', {})
+        API(`api/${link}/${modelNameURL}`, 'POST', param ? param : {})
             .then((response) => {
                 if (response.data.success) {
                     let dataArray = response.data.data;
@@ -445,6 +454,7 @@ class TopbarFilter extends Component {
 }
 
 const mapStateToProps = (state) => ({
+    globalDateFilter: state.globalDateFilter,
     globalModelFilter: state.globalModelFilter,
     globalArticleFilter: state.globalArticleFilter,
     globalShiftFilter: state.globalShiftFilter,

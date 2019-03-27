@@ -421,7 +421,7 @@ class listBottomComponent extends Component {
             });
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
-                    if (response.data.success) {
+                    try {
                         let data = response.data.data;
                         let summaryArray = this.handleReturnArray(data);
                         let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
@@ -438,6 +438,16 @@ class listBottomComponent extends Component {
                             qualityNumber: Math.round(((quality / summaryArray.length) * 100) * 100) / 100,
                             OEENumber: Math.round(((OEE / summaryArray.length) * 100) * 100) / 100,
                             workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
+                            loading: false,
+                        });
+                    } catch (e) {
+                        console.log("Error: ", e);
+                        this.setState({
+                            availabilityNumber: 0,
+                            performanceNumber: 0,
+                            qualityNumber: 0,
+                            OEENumber: 0,
+                            workLossNumber: 0,
                             loading: false,
                         });
                     }
@@ -461,7 +471,7 @@ class listBottomComponent extends Component {
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
+                try {
                     let data = response.data.data;
                     let summaryArray = this.handleReturnArray(data);
                     let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
@@ -480,7 +490,18 @@ class listBottomComponent extends Component {
                         workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
                         loading: false,
                     });
+                } catch (e) {
+                    console.log("Error: ", e);
+                    this.setState({
+                        availabilityNumber: 0,
+                        performanceNumber: 0,
+                        qualityNumber: 0,
+                        OEENumber: 0,
+                        workLossNumber: 0,
+                        loading: false,
+                    });
                 }
+
             })
             .catch((err) => console.log('err:', err))
     }

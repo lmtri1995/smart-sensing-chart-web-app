@@ -23,11 +23,12 @@ export class OEEGeneral extends Component {
             callbacks: {
                 label: function(tooltipItem, data) {
                     if (tooltipItem.index == 1){
-                        return data.labels[1] + ": " + changeNumberFormat(parseFloat(data.datasets[0].data[1])) + '%';
-                    } else {
-                        if (data.datasets[tooltipItem.datasetIndex].data == "0"){
+                        if (data.datasets[tooltipItem.datasetIndex].data[0] == "0"){
                             return data.labels[0] + ": " + changeNumberFormat(parseFloat(data.datasets[0].data[0])) + '%';
+                        } else {
+                            return data.labels[1] + ": " + changeNumberFormat(parseFloat(data.datasets[0].data[1])) + '%';
                         }
+                    } else {
                         return data.labels[0] + ": " + changeNumberFormat(parseFloat(data.datasets[0].data[0])) + '%';
                     }
                 },

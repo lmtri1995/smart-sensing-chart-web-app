@@ -197,10 +197,6 @@ export class SwingArmMachine extends Component {
                                     label: function (tooltipItem, data) {
                                         var value = data.datasets[0].data[tooltipItem.index];
                                         var label = data.labels[tooltipItem.index];
-
-                                        if (value == 0.5) {
-                                            value = 0;
-                                        }
                                         return label + ': ' + value;
                                     }
                                 }

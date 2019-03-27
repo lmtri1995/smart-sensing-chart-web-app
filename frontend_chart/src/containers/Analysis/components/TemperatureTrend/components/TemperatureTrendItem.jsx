@@ -207,7 +207,7 @@ class TemperatureTrendItem extends Component {
                 };
                 API(this.apiUrl, 'POST', param)
                     .then((response) => {
-                        if (response.data.success) {
+                        try {
                             let dataArray = response.data.data;
                             let displayData = '';
                             displayData = JSON.parse(dataArray[0].data);
@@ -217,15 +217,15 @@ class TemperatureTrendItem extends Component {
                                     'file': displayData,
                                 },
                             );
-                            this.setState({loading: false});
-                        } else {
+                        } catch (e) {
+                            console.log("Error: ", e);
                             this.graph.updateOptions(
                                 {
                                     'file': [],
                                 },
                             );
-                            this.setState({loading: false});
                         }
+                        this.setState({loading: false});
                     })
                     .catch((err) => console.log('err:', err, "stationId: ", stationId));
             }
@@ -306,7 +306,7 @@ class TemperatureTrendItem extends Component {
         );
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
+                try {
                     let dataArray = response.data.data;
                     displayData = JSON.parse(dataArray[0].data.replace(",[]", "]"));
                     this.graph.updateOptions(
@@ -315,16 +315,16 @@ class TemperatureTrendItem extends Component {
                             strokeWidth: '20px',
                         },
                     );
-                    this.setState({loading: false});
-                } else {
+                } catch (e) {
+                    console.log("Error: ", e);
                     this.graph.updateOptions(
                         {
                             'file': [],
                             strokeWidth: '20px',
                         },
                     );
-                    this.setState({loading: false});
                 }
+                this.setState({loading: false});
             })
             .catch((err) => console.log('err:', err, "stationId: ", stationId));
     }

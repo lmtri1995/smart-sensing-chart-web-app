@@ -101,10 +101,16 @@ class ProcessStatus extends Component {
             });
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
-                    if (response.data.success) {
+                    try {
                         let dataArray = response.data.data;
                         this.setState({
                             dataArray: dataArray,
+                            loading: false,
+                        });
+                    } catch (e) {
+                        console.log("Error: ", e);
+                        this.setState({
+                            dataArray: [],
                             loading: false,
                         });
                     }
@@ -139,13 +145,14 @@ class ProcessStatus extends Component {
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
+                try {
                     let dataArray = response.data.data;
                     this.setState({
                         dataArray: dataArray,
                         loading: false,
                     });
-                } else {
+                } catch (e) {
+                    console.log("Error: ", e);
                     this.setState({
                         dataArray: [],
                         loading: false,

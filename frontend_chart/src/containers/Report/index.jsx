@@ -15,9 +15,11 @@ import {
     REPORT_CONTAINER_ID,
     REPORT_DEFECT_RATE_ID,
     REPORT_PRODUCTION_RATE_ID,
+    REPORT_TABS,
     SHIFT_OPTIONS
 } from "../../constants/constants";
 import {storeDefectRateData, storeProductionRateData} from "../../redux/actions/downloadDataStoreActions";
+import {changeReportSelectedTab} from "../../redux/actions/reportSelectedTabActions";
 
 class ReportPage extends Component {
     static propTypes = {
@@ -29,7 +31,7 @@ class ReportPage extends Component {
 
         this.toggle = this.toggle.bind(this);
         this.state = {
-            activeTab: '1',
+            activeTab: REPORT_TABS[0],
             productionRateDateLabels: null,
             productionRate: null,
             targetProduction: null,
@@ -69,11 +71,13 @@ class ReportPage extends Component {
                 activeTab: tab
             });
             switch (tab) {
-                case '1':
+                case REPORT_TABS[0]:
+                    this.props.dispatch(changeReportSelectedTab(REPORT_TABS[0]));
                     this.props.dispatch(storeProductionRateData(this.productionRateDataToDownload));
                     this.props.dispatch(storeDefectRateData(null));
                     break;
-                case '2':
+                case REPORT_TABS[1]:
+                    this.props.dispatch(changeReportSelectedTab(REPORT_TABS[1]));
                     this.props.dispatch(storeProductionRateData(null));
                     this.props.dispatch(storeDefectRateData(this.defectRateDataToDownload));
                     break;
@@ -84,11 +88,11 @@ class ReportPage extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.state !== prevState) {
             switch (this.state.activeTab) {
-                case '1':
+                case REPORT_TABS[0]:
                     this.props.dispatch(storeProductionRateData(this.productionRateDataToDownload));
                     this.props.dispatch(storeDefectRateData(null));
                     break;
-                case '2':
+                case REPORT_TABS[1]:
                     this.props.dispatch(storeProductionRateData(null));
                     this.props.dispatch(storeDefectRateData(this.defectRateDataToDownload));
                     break;
@@ -557,16 +561,16 @@ class ReportPage extends Component {
                     <div className="col-2">
                         <div className="btn-group">
                             <button type="button"
-                                    className={(this.state.activeTab === '1') ? "btn btn-primary active" : "btn btn-secondary"}
+                                    className={(this.state.activeTab === REPORT_TABS[0]) ? "btn btn-primary active" : "btn btn-secondary"}
                                     onClick={() => {
-                                        this.toggle('1');
+                                        this.toggle(REPORT_TABS[0]);
                                     }}
                             >Productivity
                             </button>
                             <button type="button"
-                                    className={(this.state.activeTab === '2') ? "btn btn-primary active" : "btn btn-secondary"}
+                                    className={(this.state.activeTab === REPORT_TABS[1]) ? "btn btn-primary active" : "btn btn-secondary"}
                                     onClick={() => {
-                                        this.toggle('2');
+                                        this.toggle(REPORT_TABS[1]);
                                     }}
                             >Defect
                             </button>
@@ -609,6 +613,7 @@ class ReportPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
+    reportSelectedTab: state.reportSelectedTab,
     globalDateFilter: state.globalDateFilter,
     globalModelFilter: state.globalModelFilter,
     globalArticleFilter: state.globalArticleFilter,

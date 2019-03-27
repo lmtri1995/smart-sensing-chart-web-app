@@ -8,6 +8,7 @@ import {
     globalModelFilterReducer,
     globalShiftFilterReducer,
     LoginReducer,
+    reportSelectedTabReducer,
     sidebarReducer,
     themeReducer,
 } from '../../redux/reducers/index';
@@ -19,6 +20,7 @@ const reducer = combineReducers({
     sidebar: sidebarReducer,
     login: LoginReducer,
     adminTab: adminTabReducer,
+    reportSelectedTab: reportSelectedTabReducer,
     globalDateFilter: globalDateFilterReducer,
     downloadDataStore: downloadDataStoreReducer,
     globalModelFilter: globalModelFilterReducer,

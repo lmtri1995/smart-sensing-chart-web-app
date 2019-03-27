@@ -42,6 +42,9 @@ export const END_WORK_DAY_TIME = {hours: 6, minutes: 0, seconds: 0};
 // Current Selected Tab (IP or OS) when user role is Admin
 export const ADMIN_TAB_INDEX = [1, 2];
 
+// Current Selected Tab (Productivity or Defect) on Report Page
+export const REPORT_TABS = ['1', '2'];
+
 // Model
 export const MODEL_NAMES = new Map([    // initial data
     ['All Models', {   // name to show on screen

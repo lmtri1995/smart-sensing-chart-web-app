@@ -1,13 +1,7 @@
 import React, {Component} from 'react';
 import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {
-    ARTICLE_NAMES,
-    ExportType,
-    MODEL_NAMES,
-    ROUTE,
-    SHIFT_OPTIONS
-} from "../../../constants/constants";
+import {ARTICLE_NAMES, ExportType, MODEL_NAMES, REPORT_TABS, ROUTE, SHIFT_OPTIONS} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
 import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
@@ -343,56 +337,70 @@ class TopbarFilter extends Component {
                 </button>
                 <Collapse isOpen={this.state.filterMenuOpen} className="topbar__menu-wrap">
                     <div className="topbar_filter_menu">
-                        <span>
-                            <button className="btn btn-secondary"
-                                    onClick={this.onModelFilterMenuClicked}>
-                                Filter: Model <i className="fas fa-caret-down"></i>
-                            </button>
-                            <Collapse isOpen={this.state.modelFilterMenuOpen}
-                                      className="topbar__menu-wrap">
-                                <ListGroup>
-                                    {
-                                        modelList.map((name, index) => {    // Show Filter by Model Menu on All Pages
-                                            let modelClassName = 'list-item__unchecked';
-                                            let model = this.state.modelMap.get(name);
-                                            if (model && model.selected) {
-                                                modelClassName = 'list-item__checked';
-                                            }
-                                            return <ListGroupItem key={index}
-                                                                  className={modelClassName}
-                                                                  onClick={this.onModelItemClicked}>
-                                                {name}
-                                            </ListGroupItem>;
-                                        })
-                                    }
-                                </ListGroup>
-                            </Collapse>
-                        </span>
-                        <span>
-                            <button className="btn btn-secondary"
-                                    onClick={this.onArticleFilterMenuClicked}>
-                                Filter: Article <i className="fas fa-caret-down"></i>
-                            </button>
-                            <Collapse isOpen={this.state.articleFilterMenuOpen}
-                                      className="topbar__menu-wrap">
-                                <ListGroup className="listgroup__scroll">
-                                    {
-                                        articleList.map((name, index) => {
-                                            let articleClassName = 'list-item__unchecked';
-                                            let article = this.state.articleMap.get(name);
-                                            if (article && article.selected) {
-                                                articleClassName = 'list-item__checked';
-                                            }
-                                            return <ListGroupItem key={index}
-                                                                  className={articleClassName}
-                                                                  onClick={this.onArticleItemClicked}>
-                                                {name}
-                                            </ListGroupItem>;
-                                        })
-                                    }
-                                </ListGroup>
-                            </Collapse>
-                        </span>
+                        {
+                            // Only show Filter by Model Menu on Report Page when Productivity Tab is selected
+                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0]
+                                ? (
+                                    <span>
+                                        <button className="btn btn-secondary"
+                                                onClick={this.onModelFilterMenuClicked}>
+                                            Filter: Model <i className="fas fa-caret-down"></i>
+                                        </button>
+                                        <Collapse isOpen={this.state.modelFilterMenuOpen}
+                                                  className="topbar__menu-wrap">
+                                            <ListGroup>
+                                                {
+                                                    modelList.map((name, index) => {    // Show Filter by Model Menu on All Pages
+                                                        let modelClassName = 'list-item__unchecked';
+                                                        let model = this.state.modelMap.get(name);
+                                                        if (model && model.selected) {
+                                                            modelClassName = 'list-item__checked';
+                                                        }
+                                                        return <ListGroupItem key={index}
+                                                                              className={modelClassName}
+                                                                              onClick={this.onModelItemClicked}>
+                                                            {name}
+                                                        </ListGroupItem>;
+                                                    })
+                                                }
+                                            </ListGroup>
+                                        </Collapse>
+                                    </span>
+                                )
+                                : null
+                        }
+                        {
+                            // Only show Filter by Article Menu on Report Page when Productivity Tab is selected
+                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0]
+                                ? (
+                                    <span>
+                                        <button className="btn btn-secondary"
+                                                onClick={this.onArticleFilterMenuClicked}>
+                                            Filter: Article <i className="fas fa-caret-down"></i>
+                                        </button>
+                                        <Collapse isOpen={this.state.articleFilterMenuOpen}
+                                                  className="topbar__menu-wrap">
+                                            <ListGroup className="listgroup__scroll">
+                                                {
+                                                    articleList.map((name, index) => {
+                                                        let articleClassName = 'list-item__unchecked';
+                                                        let article = this.state.articleMap.get(name);
+                                                        if (article && article.selected) {
+                                                            articleClassName = 'list-item__checked';
+                                                        }
+                                                        return <ListGroupItem key={index}
+                                                                              className={articleClassName}
+                                                                              onClick={this.onArticleItemClicked}>
+                                                            {name}
+                                                        </ListGroupItem>;
+                                                    })
+                                                }
+                                            </ListGroup>
+                                        </Collapse>
+                                    </span>
+                                )
+                                : null
+                        }
                         {
                             // Only show Filter by Shift Menu on Report & Analysis Page
                             location.pathname === ROUTE.Report || location.pathname === ROUTE.Analysis
@@ -429,7 +437,8 @@ class TopbarFilter extends Component {
                         </button>
                         <Collapse isOpen={this.state.downloadMenuOpen}
                                   className="topbar__menu-wrap">
-                            <div className="bg-white container border align-content-center" style={{marginLeft: 40, width: 220,}}>
+                            <div className="bg-white container border align-content-center"
+                                 style={{marginLeft: 40, width: 220,}}>
                                 <div className="row">
                                     <DataExporter exportType={ExportType.EXCEL}/>
                                     <DataExporter exportType={ExportType.PDF}/>
@@ -445,6 +454,7 @@ class TopbarFilter extends Component {
 }
 
 const mapStateToProps = (state) => ({
+    reportSelectedTab: state.reportSelectedTab,
     globalDateFilter: state.globalDateFilter,
     globalModelFilter: state.globalModelFilter,
     globalArticleFilter: state.globalArticleFilter,

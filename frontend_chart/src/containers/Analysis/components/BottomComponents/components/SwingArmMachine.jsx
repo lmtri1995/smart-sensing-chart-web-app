@@ -5,7 +5,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
-import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
+import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
 
 const initialData = {
     labels: ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"],
@@ -213,14 +213,24 @@ export class SwingArmMachine extends Component {
                 let fromTimeDevice = moment(startDate.toISOString()).unix();
                 let toTimedevice = moment(endDate.toISOString()).unix();
 
+                let selectedShift = this.props.globalShiftFilter.selectedShift;
+                selectedShift = specifySelectedShiftNo(selectedShift);
+
+                let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+                let articleKey = '';
+                if (newSelectedArticle) {
+                    articleKey = newSelectedArticle[1].key;
+                }
+
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice,
-                    "flag": this.flag
+                    "flag": this.flag,
+                    "shiftno": selectedShift,
+                    "modelname":articleKey
                 };
                 API('api/os/swingarm', 'POST', param)
                     .then((response) => {
-                        console.log("response: ", response);
                         try {
                             let dataArray = response.data.data;
 
@@ -311,10 +321,21 @@ export class SwingArmMachine extends Component {
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice = moment(endDate.toISOString()).unix();
 
+            let selectedShift = this.props.globalShiftFilter.selectedShift;
+            selectedShift = specifySelectedShiftNo(selectedShift);
+
+            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectedArticle) {
+                articleKey = newSelectedArticle[1].key;
+            }
+
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                flag: this.flag
+                "flag": this.flag,
+                "shiftno": selectedShift,
+                "modelname":articleKey
             };
             API('api/os/swingarm', 'POST', param)
                 .then((response) => {
@@ -368,7 +389,9 @@ export class SwingArmMachine extends Component {
 
 
 const mapStateToProps = (state) => ({
-    globalDateFilter: state.globalDateFilter
+    globalDateFilter: state.globalDateFilter,
+    globalShiftFilter: state.globalShiftFilter,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(SwingArmMachine);

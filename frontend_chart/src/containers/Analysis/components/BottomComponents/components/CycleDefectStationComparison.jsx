@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
-import {SwingArmMachine} from "./SwingOSStationComparison";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
@@ -125,7 +124,7 @@ export class CycleDefectStationComparison extends Component {
             loading: true
         };
 
-        if (this.role == 'ip'){
+        if (this.role == 'ip') {
             initialData = {
                 labels: ['Shift 1', 'Shift 2', 'Shift 3'],
                 datasets: [
@@ -145,17 +144,17 @@ export class CycleDefectStationComparison extends Component {
 
     handleReturnData = (returnData) => {
         let result = [];
-        let idleCycleArray = [], deffectiveArray = [];
+        let idleCycleArray = [0, 0, 0], deffectiveArray = [0, 0, 0];
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
                     if (item[0] === 1) {
                         deffectiveArray[0] = item[1];
                         idleCycleArray[0] = item[2];
-                    } else if (item[0] === 2){
+                    } else if (item[0] === 2) {
                         deffectiveArray[1] = item[1];
                         idleCycleArray[1] = item[2];
-                    } else if (item[0] === 3){
+                    } else if (item[0] === 3) {
                         deffectiveArray[2] = item[1];
                         idleCycleArray[2] = item[2];
                     }
@@ -163,81 +162,93 @@ export class CycleDefectStationComparison extends Component {
             });
         }
         result.push(deffectiveArray);
-        if (this.role != 'ip'){
+        if (this.role != 'ip') {
             result.push(idleCycleArray);
         }
         return result;
 
     }
 
+    displayData = (displayArray) => {
+        let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
+        let dataset = {};
+        if (this.role == 'ip') {
+            dataset = [
+                {
+                    label: 'Defective',
+                    backgroundColor: '#4C9EFF',
+                    borderColor: '#4C9EFF',
+                    borderWidth: 1,
+                    //hoverBackgroundColor: '#FF6384',
+                    //hoverBorderColor: '#FF6384',
+                    data: displayArray[0],
+                }
+            ]
+        } else {
+            dataset = [
+                {
+                    label: 'Defective',
+                    backgroundColor: '#4C9EFF',
+                    borderColor: '#4C9EFF',
+                    borderWidth: 1,
+                    //hoverBackgroundColor: '#FF6384',
+                    //hoverBorderColor: '#FF6384',
+                    data: displayArray[0],
+                },
+                {
+                    label: 'Idle Cycle',
+                    backgroundColor: '#AFEEFF',
+                    borderColor: '#AFEEFF',
+                    borderWidth: 1,
+                    //hoverBackgroundColor: '#FF6384',
+                    //hoverBorderColor: '#FF6384',
+                    data: displayArray[1],
+                }
+            ];
+        }
+        this.myChart.data = {
+            labels: labelArray,
+            datasets: dataset
+        };
+        this.myChart.update();
+        this.setState({loading: false});
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
             let {startDate, endDate} = this.props.globalDateFilter;
             let fromTimeDevice = moment(startDate.toISOString()).unix();
-            let toTimedevice   = moment(endDate.toISOString()).unix();
+            let toTimedevice = moment(endDate.toISOString()).unix();
             let selectedShift = this.props.globalShiftFilter.selectedShift;
             selectedShift = specifySelectedShiftNo(selectedShift);
+
+            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectedArticle) {
+                articleKey = newSelectedArticle[1].key;
+            }
 
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
                 "istatus": this.istatus,
                 "proccess": this.process,
-                "shiftno": selectedShift
+                "shiftno": selectedShift,
+                "modelname":articleKey
             };
             this.setState({
                 loading: true,
             });
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
-                    if (response.data.success) {
+                    try {
                         let dataArray = response.data.data;
-                        let returnData =  JSON.parse(dataArray[0].data);
-                        if (returnData && returnData.length > 0) {
-                            let displayArray = this.handleReturnData(returnData);
-                            let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
-                            let dataset = {};
-                            if (this.role == 'ip'){
-                                dataset = [
-                                    {
-                                        label: 'Defective',
-                                        backgroundColor: '#4C9EFF',
-                                        borderColor: '#4C9EFF',
-                                        borderWidth: 1,
-                                        //hoverBackgroundColor: '#FF6384',
-                                        //hoverBorderColor: '#FF6384',
-                                        data: displayArray[0],
-                                    }
-                                ]
-                            } else {
-                                dataset = [
-                                    {
-                                        label: 'Defective',
-                                        backgroundColor: '#4C9EFF',
-                                        borderColor: '#4C9EFF',
-                                        borderWidth: 1,
-                                        //hoverBackgroundColor: '#FF6384',
-                                        //hoverBorderColor: '#FF6384',
-                                        data: displayArray[0],
-                                    },
-                                    {
-                                        label: 'Idle Cycle',
-                                        backgroundColor: '#AFEEFF',
-                                        borderColor: '#AFEEFF',
-                                        borderWidth: 1,
-                                        //hoverBackgroundColor: '#FF6384',
-                                        //hoverBorderColor: '#FF6384',
-                                        data: displayArray[1],
-                                    }
-                                ];
-                            }
-                            this.myChart.data = {
-                                labels: labelArray,
-                                datasets: dataset
-                            };
-                            this.myChart.update();
-                            this.setState({loading: false});
-                        }
+                        let returnData = JSON.parse(dataArray[0].data);
+                        let displayArray = this.handleReturnData(returnData);
+                        this.displayData(displayArray);
+                    } catch (e) {
+                        let displayArray = this.handleReturnData();
+                        this.displayData(displayArray);
                     }
                 })
                 .catch((err) => console.log('err:', err))
@@ -254,68 +265,35 @@ export class CycleDefectStationComparison extends Component {
 
         let {startDate, endDate} = this.props.globalDateFilter;
         let fromTimeDevice = moment(startDate.toISOString()).unix();
-        let toTimedevice   = moment(endDate.toISOString()).unix();
+        let toTimedevice = moment(endDate.toISOString()).unix();
 
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
+
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[1].key;
+        }
 
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
             "istatus": this.istatus,
             "proccess": this.process,
-            "shiftno": selectedShift
+            "shiftno": selectedShift,
+            "modelname":articleKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
+                try {
                     let dataArray = response.data.data;
-                    let returnData =  JSON.parse(dataArray[0].data);
-                    if (returnData && returnData.length > 0) {
-                        let displayArray = this.handleReturnData(returnData);
-                        let labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
-                        let dataset = {};
-                        if (this.role == 'ip'){
-                            dataset = [
-                                {
-                                    label: 'Defective',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
-                                }
-                            ];
-                        } else {
-                            dataset = [
-                                {
-                                    label: 'Defective',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
-                                },
-                                {
-                                    label: 'Idle Cycle',
-                                    backgroundColor: '#AFEEFF',
-                                    borderColor: '#AFEEFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[1],
-                                }
-                            ];
-                        }
-                        this.myChart.data = {
-                            labels: labelArray,
-                            datasets: dataset
-                        };
-                        this.myChart.update();
-                        this.setState({loading: false});
-                    }
+                    let returnData = JSON.parse(dataArray[0].data);
+                    let displayArray = this.handleReturnData(returnData);
+                    this.displayData(displayArray);
+                } catch (e) {
+                    let displayArray = this.handleReturnData();
+                    this.displayData(displayArray);
                 }
             })
             .catch((err) => console.log('err:', err))
@@ -344,6 +322,7 @@ export class CycleDefectStationComparison extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(CycleDefectStationComparison);

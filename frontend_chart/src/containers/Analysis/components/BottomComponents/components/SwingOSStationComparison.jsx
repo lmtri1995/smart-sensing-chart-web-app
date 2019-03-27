@@ -146,6 +146,43 @@ export class SwingArmMachine extends Component {
 
     }
 
+    displayData = (displayArray) => {
+        this.myChart.data = {
+            labels: ['Shift 1', 'Shift 2', 'Shift 3'],
+            datasets: [
+                {
+                    label: 'Swing Arm',
+                    backgroundColor: '#0CD0EB',
+                    borderColor: '#0CD0EB',
+                    borderWidth: 1,
+                    //hoverBackgroundColor: '#FF6384',
+                    //hoverBorderColor: '#FF6384',
+                    data: displayArray[0],
+                },
+                {
+                    label: 'Os Press',
+                    backgroundColor: '#4C9EFF',
+                    borderColor: '#4C9EFF',
+                    borderWidth: 1,
+                    //hoverBackgroundColor: '#FF6384',
+                    //hoverBorderColor: '#FF6384',
+                    data: displayArray[1],
+                }
+            ],
+        };
+        this.myChart.options.tooltips = {
+            callbacks: {
+                label: function (tooltipItem, data) {
+                    var value = data.datasets[0].data[tooltipItem.index];
+                    var label = data.labels[tooltipItem.index];
+                    return label + ': ' + value;
+                }
+            }
+        };
+        this.myChart.update();
+        this.setState({loading: false});
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props !== prevProps) {
             if (this.role == 'os') {
@@ -154,55 +191,31 @@ export class SwingArmMachine extends Component {
                 let toTimedevice = moment(endDate.toISOString()).unix();
                 let selectedShift = this.props.globalShiftFilter.selectedShift;
                 selectedShift = specifySelectedShiftNo(selectedShift);
+                let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+                let articleKey = '';
+                if (newSelectedArticle) {
+                    articleKey = newSelectedArticle[1].key;
+                }
 
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice,
-                    "shiftno": selectedShift
+                    "shiftno": selectedShift,
+                    "modelname":articleKey
                 };
                 this.setState({
                     loading: true,
                 });
                 API('api/os/stationcomparision', 'POST', param)
                     .then((response) => {
-                        if (response.data.success) {
+                        try {
                             let dataArray = response.data.data;
                             let returnData = JSON.parse(dataArray[0].data);
                             let displayArray = this.handleReturnData(returnData);
-                            this.myChart.data = {
-                                labels: ['Shift 1', 'Shift 2', 'Shift 3'],
-                                datasets: [
-                                    {
-                                        label: 'Swing Arm',
-                                        backgroundColor: '#0CD0EB',
-                                        borderColor: '#0CD0EB',
-                                        borderWidth: 1,
-                                        //hoverBackgroundColor: '#FF6384',
-                                        //hoverBorderColor: '#FF6384',
-                                        data: displayArray[0],
-                                    },
-                                    {
-                                        label: 'Os Press',
-                                        backgroundColor: '#4C9EFF',
-                                        borderColor: '#4C9EFF',
-                                        borderWidth: 1,
-                                        //hoverBackgroundColor: '#FF6384',
-                                        //hoverBorderColor: '#FF6384',
-                                        data: displayArray[1],
-                                    }
-                                ],
-                            };
-                            this.myChart.options.tooltips = {
-                                callbacks: {
-                                    label: function (tooltipItem, data) {
-                                        var value = data.datasets[0].data[tooltipItem.index];
-                                        var label = data.labels[tooltipItem.index];
-                                        return label + ': ' + value;
-                                    }
-                                }
-                            }
-                            this.myChart.update();
-                            this.setState({loading: false});
+                            this.displayData(displayArray);
+                        } catch (e) {
+                            let displayArray = this.handleReturnData();
+                            this.displayData(displayArray);
                         }
                     })
                     .catch((err) => console.log('err:', err))
@@ -226,43 +239,28 @@ export class SwingArmMachine extends Component {
             let selectedShift = this.props.globalShiftFilter.selectedShift;
             selectedShift = specifySelectedShiftNo(selectedShift);
 
+            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectedArticle) {
+                articleKey = newSelectedArticle[1].key;
+            }
+
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "shiftno": selectedShift
+                "shiftno": selectedShift,
+                "modelname":articleKey
             };
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {
-                    if (response.data.success) {
+                    try {
                         let dataArray = response.data.data;
                         let returnData = JSON.parse(dataArray[0].data);
                         let displayArray = this.handleReturnData(returnData);
-                        this.myChart.data = {
-                            labels: ['Shift 1', 'Shift 2', 'Shift 3'],
-                            datasets: [
-                                {
-                                    label: 'Swing Arm',
-                                    backgroundColor: '#0CD0EB',
-                                    borderColor: '#0CD0EB',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
-                                },
-                                {
-                                    label: 'Os Press',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[1],
-                                }
-                            ],
-
-                        };
-                        this.myChart.update();
-                        this.setState({loading: false});
+                        this.displayData(displayArray);
+                    } catch (e) {
+                        let displayArray = this.handleReturnData();
+                        this.displayData(displayArray);
                     }
                 })
                 .catch((err) => console.log('err:', err))
@@ -294,6 +292,7 @@ export class SwingArmMachine extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(SwingArmMachine);

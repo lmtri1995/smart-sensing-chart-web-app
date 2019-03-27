@@ -7,6 +7,7 @@ import {ClipLoader} from "react-spinners";
 import connect from "react-redux/es/connect/connect";
 import {SHIFT_OPTIONS} from "./../../../../constants/constants";
 import {storeShiftStatusData} from "../../../../redux/actions/downloadDataStoreActions";
+import {specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
 
 const override = `
     position: absolute;
@@ -62,9 +63,17 @@ class ShiftStatus extends Component {
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
+            let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectededArticle) {
+                articleKey = newSelectededArticle[1].key;
+            }
+
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
+                "modelname": articleKey,
+                "shiftno": 0,
                 //"shiftno": 0,
                 /*"from_timedevice": 0,
                 "to_timedevice": 0,*/
@@ -106,11 +115,18 @@ class ShiftStatus extends Component {
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice   = moment(endDate.toISOString()).unix();
 
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
         this._isMounted = true;
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
             "shiftno": 0,
+            "modelname": articleKey,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -335,6 +351,7 @@ class ShiftStatus extends Component {
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
+    globalArticleFilter: state.globalArticleFilter,
 });
 
 export default connect(mapStateToProps)(ShiftStatus);

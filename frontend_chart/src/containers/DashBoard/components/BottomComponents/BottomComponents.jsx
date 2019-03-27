@@ -13,9 +13,10 @@ import {
 import Singleton from "../../../../services/Socket";
 import moment from "moment";
 import API from "../../../../services/api";
-import {changeNumberFormat, specifyTheShiftStartHour} from "../../../../shared/utils/Utilities";
+import {changeNumberFormat} from "../../../../shared/utils/Utilities";
+import {connect} from "react-redux";
 
-export default class listBottomComponent extends Component {
+class BottomComponents extends Component {
     constructor(props) {
         super(props);
 
@@ -117,23 +118,31 @@ export default class listBottomComponent extends Component {
                 }
                 this.totalWorkingHour = totalWorkHoursInSecondsShift1;
             } else if (curMoment.isSameOrAfter(rangeShift2[0]) && curMoment.isBefore(rangeShift2[1])) {   // 14:00 PM <= curTime < 22:00 PM
+                totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                    .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
                 if (curMoment.isSameOrBefore(moment(rangeShift2[1]).subtract({minutes: 30}))) {  // curTime <= 21:30 PM
                     totalWorkHoursInSecondsShift2 += curMoment.diff(rangeShift2[0], "seconds");
                 } else {    // 21:30 PM < curTime
                     totalWorkHoursInSecondsShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
                         .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
                 }
-                this.totalWorkingHour = totalWorkHoursInSecondsShift2;
+                this.totalWorkingHour = totalWorkHoursInSecondsShift1 + totalWorkHoursInSecondsShift2;
             } else {    // 22:00 PM <= curTime < 6:00 AM
+                totalWorkHoursInSecondsShift1 += moment(rangeShift1[1]).subtract({minutes: 30})
+                    .diff(rangeShift1[0], "seconds"); // 27000 seconds = 7.5 hours
+                totalWorkHoursInSecondsShift2 += moment(rangeShift2[1]).subtract({minutes: 30})
+                    .diff(rangeShift2[0], "seconds");   // 27000 seconds = 7.5 hours
                 if (curMoment.isSameOrBefore(moment(rangeShift3[1]).subtract({minutes: 30}))) {  // curTime <= 5:30 PM
                     totalWorkHoursInSecondsShift3 += curMoment.diff(rangeShift3[0], "seconds");
                 } else {    // 5:30 PM < curTime
                     totalWorkHoursInSecondsShift3 += moment(rangeShift3[1]).subtract({minutes: 30})
                         .diff(rangeShift3[0], "seconds");   // 27000 seconds = 7.5 hours
                 }
-                this.totalWorkingHour = totalWorkHoursInSecondsShift3;
+                this.totalWorkingHour = totalWorkHoursInSecondsShift1 + totalWorkHoursInSecondsShift2 + totalWorkHoursInSecondsShift3;
             }
         }
+
+        return [totalWorkHoursInSecondsShift1, totalWorkHoursInSecondsShift2, totalWorkHoursInSecondsShift3];
     }
 
     handleReturnArray(dataArray) {
@@ -339,11 +348,38 @@ export default class listBottomComponent extends Component {
     }
 
     callAxiosBeforeSocket = (callback) => {
-        let timeFromStartOfShift = specifyTheShiftStartHour();
+        let currentWorkHours = this.countCurrentWorkingHour();
+        let timeFromStartOfDay = [];
+        let i = currentWorkHours.length - 1;
+        for (; i >= 0; --i) {
+            if (currentWorkHours[i] > 0) {
+                break;
+            }
+        }
+        switch (i) {
+            case 0: // Shift 1
+                timeFromStartOfDay.push(moment(START_WORK_DAY_TIME).unix(), moment().unix());
+                break;
+            case 1: // Shift 2
+                timeFromStartOfDay.push(moment(START_WORK_DAY_TIME).unix(), moment().unix());
+                break;
+            case 2: // Shift 3
+                if (currentWorkHours[2] >= 7200) {  // current moment is on the following day
+                    timeFromStartOfDay.push(moment(START_WORK_DAY_TIME).subtract({days: 1}).unix(), moment().unix());
+                } else {
+                    timeFromStartOfDay.push(moment(START_WORK_DAY_TIME).unix(), moment().unix());
+                }
+                break;
+        }
 
+        let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
+            ? this.props.globalArticleFilter.selectedArticle[1].key
+            : '';
         let param = {
-            "from_timedevice": timeFromStartOfShift[0],
-            "to_timedevice": timeFromStartOfShift[1],
+            "from_timedevice": timeFromStartOfDay[0],
+            "to_timedevice": timeFromStartOfDay[1],
+            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "shiftno": '',
         };
         this.setState({
             loading: true,
@@ -472,3 +508,9 @@ export default class listBottomComponent extends Component {
         </div>
     }
 }
+
+const mapStateToProps = (state) => ({
+    globalArticleFilter: state.globalArticleFilter,
+});
+
+export default connect(mapStateToProps)(BottomComponents);

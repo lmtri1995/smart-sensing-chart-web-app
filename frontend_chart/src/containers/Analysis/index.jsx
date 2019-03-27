@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import ShiftStatus from "./components/ShiftStatus/ShiftStatus";
 import TemperatureTrend from "./components/TemperatureTrend/TemperatureTrend";
 import ProcessStatus from "./components/ProcessStatus/ProcessStatus";
-import ListBottomComponent from "./components/ListOfBottomComponent/ListOfBottomComponent";
+import BottomComponents from "./components/BottomComponents/BottomComponents";
 import {
     ANALYSIS_CONTAINER_ID,
     ANALYSIS_PROCESSING_STATUS_ID,
@@ -31,7 +31,7 @@ class AnalysisPage extends Component {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <ListBottomComponent/>
+                        <BottomComponents/>
                     </div>
                 </div>
             </div>

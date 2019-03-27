@@ -16,7 +16,7 @@ import {connect} from "react-redux";
 import API from "../../../../services/api";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
 
-class listBottomComponent extends Component {
+class BottomComponents extends Component {
     constructor(props) {
         super(props);
 
@@ -350,13 +350,18 @@ class listBottomComponent extends Component {
     countStandardCycleTime() {
         let {startDate, endDate} = this.props.globalDateFilter;
 
-        // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
+
+        let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
+            ? this.props.globalArticleFilter.selectedArticle[1].key
+            : '';
+        // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
         let param = {
             from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
-            "shiftno": selectedShift
+            "modelname": articleKey,
+            "shiftno": selectedShift,
         };
         let standardCycleTime1 = 0, standardCycleTime2 = 0, standardCycleTime3 = 0,
             standardCycleTime4 = 0,
@@ -411,10 +416,14 @@ class listBottomComponent extends Component {
             let selectedShift = this.props.globalShiftFilter.selectedShift;
             selectedShift = specifySelectedShiftNo(selectedShift);
 
+            let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
+                ? this.props.globalArticleFilter.selectedArticle[1].key
+                : '';
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "shiftno": selectedShift
+                "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+                "shiftno": selectedShift,
             };
             this.setState({
                 loading: true,
@@ -464,10 +473,14 @@ class listBottomComponent extends Component {
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
 
+        let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
+            ? this.props.globalArticleFilter.selectedArticle[1].key
+            : '';
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
-            "shiftno": selectedShift
+            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "shiftno": selectedShift,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -563,7 +576,8 @@ class listBottomComponent extends Component {
 
 const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
+    globalArticleFilter: state.globalArticleFilter,
     globalShiftFilter: state.globalShiftFilter,
 });
 
-export default connect(mapStateToProps)(listBottomComponent);
+export default connect(mapStateToProps)(BottomComponents);

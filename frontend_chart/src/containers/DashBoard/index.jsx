@@ -11,7 +11,7 @@ import {
     DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID,
     ROLES
 } from "../../constants/constants";
-import ListBottomComponent from "./components/ListOfBottomComponent/ListOfBottomComponent";
+import BottomComponents from "./components/BottomComponents/BottomComponents";
 
 class DashboardPage extends Component {
     render() {
@@ -42,7 +42,7 @@ class DashboardPage extends Component {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <ListBottomComponent/>
+                        <BottomComponents/>
                     </div>
                 </div>
             </div>

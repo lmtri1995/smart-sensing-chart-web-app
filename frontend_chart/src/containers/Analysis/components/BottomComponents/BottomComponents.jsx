@@ -360,8 +360,8 @@ class BottomComponents extends Component {
         let param = {
             from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
-            "modelname": articleKey,
-            "shiftno": selectedShift,
+            // "modelname": articleKey,
+            // "shiftno": selectedShift,
         };
         let standardCycleTime1 = 0, standardCycleTime2 = 0, standardCycleTime3 = 0,
             standardCycleTime4 = 0,
@@ -422,8 +422,8 @@ class BottomComponents extends Component {
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
-                "shiftno": selectedShift,
+                // "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+                // "shiftno": selectedShift,
             };
             this.setState({
                 loading: true,
@@ -479,8 +479,8 @@ class BottomComponents extends Component {
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
-            "shiftno": selectedShift,
+            // "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            // "shiftno": selectedShift,
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

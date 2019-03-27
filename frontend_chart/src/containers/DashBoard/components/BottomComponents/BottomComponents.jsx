@@ -378,8 +378,8 @@ class BottomComponents extends Component {
         let param = {
             "from_timedevice": timeFromStartOfDay[0],
             "to_timedevice": timeFromStartOfDay[1],
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
-            "shiftno": '',
+            // "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            // "shiftno": '',
         };
         this.setState({
             loading: true,

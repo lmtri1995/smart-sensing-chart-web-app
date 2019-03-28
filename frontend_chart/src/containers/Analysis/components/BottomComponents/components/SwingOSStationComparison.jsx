@@ -4,7 +4,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import moment from "moment";
-import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
+import {pluginDrawZeroValueForSwingArmOsPress} from "../../../../../shared/utils/plugins";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
 
 const initialData = {
@@ -200,8 +200,8 @@ export class SwingArmMachine extends Component {
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice,
-                    "shiftno": selectedShift,
-                    "modelname":articleKey
+                    // "shiftno": selectedShift,
+                    // "modelname":articleKey
                 };
                 this.setState({
                     loading: true,
@@ -229,7 +229,7 @@ export class SwingArmMachine extends Component {
             type: 'bar',
             data: initialData,
             options: options,
-            plugins: pluginDrawZeroValue
+            plugins: pluginDrawZeroValueForSwingArmOsPress
         });
 
         if (this.role == 'os') {
@@ -248,8 +248,8 @@ export class SwingArmMachine extends Component {
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "shiftno": selectedShift,
-                "modelname":articleKey
+                // "shiftno": selectedShift,
+                // "modelname":articleKey
             };
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {

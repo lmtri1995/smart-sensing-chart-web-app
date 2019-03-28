@@ -8,7 +8,7 @@ import {
     specifyCurrentShift,
     specifyTheShiftStartHour
 } from "../../../../../shared/utils/Utilities";
-import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
+import {pluginDrawZeroValueForSwingArmOsPress} from "../../../../../shared/utils/plugins";
 import API from "../../../../../services/api";
 
 const initialData = {
@@ -318,7 +318,7 @@ export class SwingArmMachine extends Component {
             type: 'bar',
             data: initialData,
             options: options,
-            //plugins: pluginDrawZeroValue,
+            plugins: pluginDrawZeroValueForSwingArmOsPress,
         });
 
         this.callAxiosBeforeSocket();

@@ -5,6 +5,7 @@ import connect from "react-redux/es/connect/connect";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
+import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -233,8 +234,8 @@ export class CycleDefectStationComparison extends Component {
                 "to_timedevice": toTimedevice,
                 "istatus": this.istatus,
                 "proccess": this.process,
-                "shiftno": selectedShift,
-                "modelname":articleKey
+                // "shiftno": selectedShift,
+                // "modelname":articleKey
             };
             this.setState({
                 loading: true,
@@ -260,7 +261,8 @@ export class CycleDefectStationComparison extends Component {
         this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
-            options: options
+            options: options,
+            plugins: pluginDrawZeroValue
         });
 
         let {startDate, endDate} = this.props.globalDateFilter;
@@ -281,8 +283,8 @@ export class CycleDefectStationComparison extends Component {
             "to_timedevice": toTimedevice,
             "istatus": this.istatus,
             "proccess": this.process,
-            "shiftno": selectedShift,
-            "modelname":articleKey
+            // "shiftno": selectedShift,
+            // "modelname":articleKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

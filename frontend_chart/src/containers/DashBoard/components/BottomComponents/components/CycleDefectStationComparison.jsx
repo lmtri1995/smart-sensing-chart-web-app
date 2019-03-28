@@ -8,6 +8,8 @@ import {
     specifyTheShiftStartHour
 } from "../../../../../shared/utils/Utilities";
 import API from "../../../../../services/api";
+import connect from "react-redux/es/connect/connect";
+import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -148,7 +150,7 @@ export class CycleDefectStationComparison extends Component {
 
     handleReturnData = (returnData) => {
         let result = [];
-        let idleCycleArray = [], deffectiveArray = [];
+        let idleCycleArray = [0, 0, 0], deffectiveArray = [0, 0, 0];
         let currentShift = specifyCurrentShift();
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
@@ -225,12 +227,19 @@ export class CycleDefectStationComparison extends Component {
     }
 
     callAxiosBeforeSocket = (callback) => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
         let timeFromStartOfShift = specifyTheShiftStartHour();
         let param = {
             "from_timedevice": timeFromStartOfShift[0],
             "to_timedevice": timeFromStartOfShift[1],
             "istatus": this.istatus,
-            "proccess": this.process
+            "proccess": this.process,
+            // "shiftno": 0,
+            // "modelname": articleKey,
         };
 
         API(this.apiUrl, 'POST', param)
@@ -368,7 +377,8 @@ export class CycleDefectStationComparison extends Component {
         this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
-            options: options
+            options: options,
+            plugins: pluginDrawZeroValue
         });
 
         this.changeLabelArray();
@@ -395,4 +405,8 @@ export class CycleDefectStationComparison extends Component {
     }
 }
 
-export default CycleDefectStationComparison
+const mapStateToProps = (state) => ({
+    globalArticleFilter: state.globalArticleFilter,
+});
+
+export default connect(mapStateToProps)(CycleDefectStationComparison);

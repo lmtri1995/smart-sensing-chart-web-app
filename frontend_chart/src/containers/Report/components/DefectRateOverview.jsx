@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import DoughnutChart from "../../Charts/ChartJS/components/DoughnutChart";
 import * as Utilities from "../../../shared/utils/Utilities";
+import {DEFECT_COLORS} from "../../../constants/constants";
 
 export default class DefectRateOverview extends Component {
 
@@ -18,26 +19,25 @@ export default class DefectRateOverview extends Component {
                 let color = colorArray[i];
                 let number = data[i];
                 let percent = (data[i] / total) * 100;
-                let label = "";
-                label = this.chartLabels[i].substring(0, this.chartLabels[i].indexOf('('));
-                if (label == ''){
-                    label = this.chartLabels[i];
-                }
 
-                legendValue += "<div style='margin-top: 5px;'>";
-                legendValue += "<div id='lengendLabel' class='productionrate_legend-box'" +
-                    " style='background-color: " + color + "; display: inline-block;'></div>";
-                legendValue += "<div class='temperature-legend' style='display: inline-block'>" + `${label}: ` + Utilities.changeNumberFormat(number) + ` (${Utilities.changeNumberFormat(percent)}%)` + "</div>" +
-                    " &nbsp;" +
-                    " &nbsp; ";
-                legendValue += "</div>";
+                legendValue += `
+                    <div style='margin-top: 5px;'>
+                        <div id='lengendLabel' class='productionrate_legend-box'
+                             style='background-color: ${color}; display: inline-block;'>
+                        </div>
+                        <div class='temperature-legend' style='display: inline-block'>
+                            ${this.chartLabels[i]}: ${Utilities.changeNumberFormat(number)} (${Utilities.changeNumberFormat(percent)}%)
+                        </div>
+                        &nbsp; &nbsp;
+                    </div> 
+                `;
             }
             legendValue += "</div>";
             document.getElementById("defectRate-lengendLabel").innerHTML = legendValue;
         }
-    }
+    };
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.chartLabels && this.chartLabels.length > 0){
             this.drawLegend();
         }
@@ -46,11 +46,13 @@ export default class DefectRateOverview extends Component {
     render() {
         let {defectByTypeOverTime, loading} = this.props;
         this.chartLabels = [];
+        let colors = [];
         let sumDefectsByType = [], totalDefects = 0, totalDefectsText = '';
         if (defectByTypeOverTime) {
             defectByTypeOverTime.map((element, index) => {
                 if (index < defectByTypeOverTime.length - 1) {
                     this.chartLabels.push(element.label);
+                    colors.push(element.backgroundColor);
 
                     sumDefectsByType.push(
                         element.data.reduce(    // sum all defects of current type
@@ -84,12 +86,7 @@ export default class DefectRateOverview extends Component {
 
         this.chartData = [{
             data: sumDefectsByType,
-            backgroundColor: [
-                "#FF9C64",
-                "#46D6EA",
-                "#F575F7",
-                "#8C67F6",
-            ]
+            backgroundColor: colors,
         }];
 
         return (

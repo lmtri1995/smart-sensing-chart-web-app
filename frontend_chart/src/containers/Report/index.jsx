@@ -10,6 +10,7 @@ import {GlobalFilterProps} from "../../shared/prop-types/ReducerProps";
 import {connect} from "react-redux";
 import {
     ARTICLE_NAMES,
+    DEFECT_COLORS,
     IP_DEFECT_NAME,
     OS_DEFECT_NAME,
     REPORT_CONTAINER_ID,
@@ -451,7 +452,10 @@ class ReportPage extends Component {
                 let dateLabelsAndDefectRatesMap = new Map();
                 while (startMoment.isSameOrBefore(endMoment)) {
                     // array of 4 (zero) elements for 4 defect rates of 4 shifts each day
-                    dateLabelsAndDefectRatesMap.set(startMoment.format('DD/MM/YYYY'), [0, 0, 0, 0]);
+                    dateLabelsAndDefectRatesMap.set(
+                        startMoment.format('DD/MM/YYYY'),
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    );
 
                     startMoment = startMoment.add(1, "days");
                 }
@@ -464,12 +468,19 @@ class ReportPage extends Component {
                     defectRatesOfCurrentDay[1] += currentDay['DEFECT_COUNT2'];
                     defectRatesOfCurrentDay[2] += currentDay['DEFECT_COUNT3'];
                     defectRatesOfCurrentDay[3] += currentDay['DEFECT_COUNT4'];
+                    defectRatesOfCurrentDay[4] += currentDay['DEFECT_COUNT5'];
+                    defectRatesOfCurrentDay[5] += currentDay['DEFECT_COUNT6'];
+                    defectRatesOfCurrentDay[6] += currentDay['DEFECT_COUNT7'];
+                    defectRatesOfCurrentDay[7] += currentDay['DEFECT_COUNT8'];
+                    defectRatesOfCurrentDay[8] += currentDay['DEFECT_COUNT9'];
 
                     dateLabelsAndDefectRatesMap.set(currentDay['WORK_DATE'], defectRatesOfCurrentDay);
                 });
 
                 let dateLabels = [];
-                let defectType1 = [], defectType2 = [], defectType3 = [], defectType4 = [];
+                let defectType1 = [], defectType2 = [], defectType3 = [], defectType4 = [],
+                    defectType5 = [], defectType6 = [], defectType7 = [], defectType8 = [],
+                    defectType9 = [];
                 let totalDefectsByDay = [];
 
                 let defectRateDataToDownload = [];
@@ -480,8 +491,17 @@ class ReportPage extends Component {
                     defectType2.push(defectRates[1]);
                     defectType3.push(defectRates[2]);
                     defectType4.push(defectRates[3]);
+                    defectType5.push(defectRates[4]);
+                    defectType6.push(defectRates[5]);
+                    defectType7.push(defectRates[6]);
+                    defectType8.push(defectRates[7]);
+                    defectType9.push(defectRates[8]);
 
-                    totalDefectsByDay.push(defectRates[0] + defectRates[1] + defectRates[2] + defectRates[3]);
+                    totalDefectsByDay.push(
+                        defectRates[0] + defectRates[1] + defectRates[2] + defectRates[3] +
+                        defectRates[4] + defectRates[5] + defectRates[6] + defectRates[7] +
+                        defectRates[8]
+                    );
 
                     defectRateDataToDownload.push([
                         date,
@@ -493,8 +513,20 @@ class ReportPage extends Component {
                         defectRates[2],
                         // Defect Count of Type 4
                         defectRates[3],
+                        // Defect Count of Type 5
+                        defectRates[4],
+                        // Defect Count of Type 6
+                        defectRates[5],
+                        // Defect Count of Type 7
+                        defectRates[6],
+                        // Defect Count of Type 8
+                        defectRates[7],
+                        // Defect Count of Type 9
+                        defectRates[8],
                         // Total Count by Day
-                        defectRates[0] + defectRates[1] + defectRates[2] + defectRates[3],
+                        defectRates[0] + defectRates[1] + defectRates[2] + defectRates[3] +
+                        defectRates[4] + defectRates[5] + defectRates[6] + defectRates[7] +
+                        defectRates[8],
                     ]);
                 });
                 defectRateDataToDownload.push([
@@ -503,19 +535,22 @@ class ReportPage extends Component {
                     defectType2.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 2
                     defectType3.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 3
                     defectType4.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 4
+                    defectType5.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 5
+                    defectType6.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 6
+                    defectType7.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 7
+                    defectType8.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 8
+                    defectType9.reduce((acc, curVal) => acc + curVal, 0),   // Total Count by Type 9
                     // Total Count of All Types in current Date Range
                     totalDefectsByDay.reduce((acc, curVal) => acc + curVal, 0),
                 ]);
 
                 let dataToShow = [];
-                // Colors = Type 1 + Type 2 + Type 3 + Type 4 + Total Defect line + Total Defect point background color
-                let colors = ['#FF9C64', '#46D6EA', '#F575F7', '#8C67F6', '#EB6A91', '#EBEDF1'];
-                for (let i = 1; i <= 5; ++i) {  // 4 Defect Types + 1 Total Defect
-                    if (i < 5) {
+                for (let i = 1; i <= 10; ++i) {  // 9 Defect Types + 1 Total Defect
+                    if (i < 10) {
                         dataToShow.push(
                             {
                                 label: defectTypes[i - 1],
-                                backgroundColor: colors[i - 1],
+                                backgroundColor: DEFECT_COLORS[i - 1],
                                 data: eval(`defectType${i}`)
                             }
                         );
@@ -523,12 +558,12 @@ class ReportPage extends Component {
                         dataToShow.push(
                             {
                                 label: 'Total Defects',
-                                borderColor: colors[i - 1],
+                                borderColor: DEFECT_COLORS[i - 1],
                                 borderWidth: 2,
                                 pointRadius: 0,
                                 pointBorderWidth: 2,
-                                pointBackgroundColor: colors[i],
-                                pointBorderColor: colors[i - 1],
+                                pointBackgroundColor: DEFECT_COLORS[i],
+                                pointBorderColor: DEFECT_COLORS[i - 1],
                                 data: totalDefectsByDay,
 
                                 type: 'line',
@@ -536,6 +571,17 @@ class ReportPage extends Component {
                                 tension: 0
                             }
                         );
+                    }
+                }
+
+                let isAllZero = true;
+                for (let i = dataToShow.length - 2; i >= 0; --i) {
+                    isAllZero = true;
+
+                    dataToShow[i].data.forEach(val => val > 0 ? isAllZero = false : null);
+
+                    if (isAllZero) {
+                        dataToShow.splice(i, 1);
                     }
                 }
 

@@ -849,28 +849,33 @@ function addDefectRateDataTableExcel(workbook, defectRateData) {
     let middleCenterAlignment = {vertical: 'middle', horizontal: 'center'};
     let middleRightAlignment = {vertical: 'middle', horizontal: 'right'};
 
-    worksheet.mergeCells('A1:F1');
+    worksheet.mergeCells(1, 1, 1, defectRateData[0].length);
     worksheet.getCell('A1').value = "DEFECT RATE";
 
-    worksheet.mergeCells('A2:A3');
-    worksheet.getCell('A2').value = "DATE";
+    // Column Titles
+    defectRateData[0].forEach((_, index, array) => {
+        // mergeCells() parameters:
+        // Top - Bottom: From Row to Row
+        // Left - Right: From Column to Column
+        worksheet.mergeCells(2, 1 + index, 3, 1 + index);
+        if (index === 0) {
+            worksheet.getRow(2)
+                .getCell(1 + index)
+                .value = "DATE";
+        } else if (index === array.length - 1) {
+            worksheet.getRow(2)
+                .getCell(1 + index)
+                .value = "TOTAL COUNT\r\nBY DATE";
+        } else {
+            worksheet.getRow(2)
+                .getCell(1 + index)
+                .value = `TYPE ${index}\r\nCOUNT`;
+        }
+    });
 
-    worksheet.mergeCells('B2:B3');
-    worksheet.getCell('B2').value = "TYPE 1\r\nCOUNT";
-
-    worksheet.mergeCells('C2:C3');
-    worksheet.getCell('C2').value = "TYPE 2\r\nCOUNT";
-
-    worksheet.mergeCells('D2:D3');
-    worksheet.getCell('D2').value = "TYPE 3\r\nCOUNT";
-
-    worksheet.mergeCells('E2:E3');
-    worksheet.getCell('E2').value = "TYPE 4\r\nCOUNT";
-
-    worksheet.mergeCells('F2:F3');
-    worksheet.getCell('F2').value = "TOTAL COUNT\r\nBY DATE";
-
-    worksheet.getCell(`A${3 + defectRateData.length}`).value = "TOTAL BY TYPE";
+    worksheet.getRow(3 + defectRateData.length)
+        .getCell(1)
+        .value = "TOTAL BY TYPE";
 
     for (let col = 1; col <= defectRateData[0].length; ++col) {
         worksheet.getColumn(col).width = 14
@@ -903,24 +908,26 @@ function addDefectRateDataTableExcel(workbook, defectRateData) {
         }
     }
 
-    worksheet.getCell('B2').alignment = {...middleCenterAlignment, wrapText: true};
-    worksheet.getCell('C2').alignment = {...middleCenterAlignment, wrapText: true};
-    worksheet.getCell('D2').alignment = {...middleCenterAlignment, wrapText: true};
-    worksheet.getCell('E2').alignment = {...middleCenterAlignment, wrapText: true};
-    worksheet.getCell('F2').alignment = {...middleCenterAlignment, wrapText: true};
+    defectRateData[0].forEach((_, index) => {
+        if (index > 0) {
+            worksheet.getRow(2)
+                .getCell(1 + index) // Column Number
+                .alignment = {...middleCenterAlignment, wrapText: true};
+        }
+    });
 
     defectRateData.forEach((rowData, index) => {
         let currentRow = worksheet.getRow(4 + index);
 
         if (index < defectRateData.length - 1) {
             rowData.forEach((value, index) => {
-                currentRow.getCell(1 + index).value = value;
+                currentRow.getCell(1 + index).value = changeNumberFormat(value);
             });
         } else {
             rowData.forEach((value, index) => {
                 if (index > 0) {
                     currentRow.getCell(1 + index).value =
-                        `${value} (${changeNumberFormat((value / rowData[rowData.length - 1]) * 100)}%)`;
+                        `${changeNumberFormat(value)} (${changeNumberFormat((value / rowData[rowData.length - 1]) * 100)}%)`;
                 }
             });
         }
@@ -2106,114 +2113,89 @@ function addDefectRateDataTablePDF(doc, tableStyle, defectRateData) {
         halign: 'center',
     };
 
-    let body = [
-        {
-            col1: {
+    let body = [];
+
+    let tempObj = {};
+    defectRateData[0].forEach((_, index) => {
+        if (index === 0) {  // Table Title
+            tempObj[`col${1 + index}`] = {
                 content: 'DEFECT RATE',
                 colSpan: defectRateData[0].length,
                 styles: {
                     ...middleCenterStyle,
                     fontStyle: 'bold',
                 },
-            },
-            col2: '',
-            col3: '',
-            col4: '',
-            col5: '',
-            col6: '',
-        },
-        {
-            col1: {
+            };
+        } else {
+            tempObj[`col${1 + index}`] = '';
+        }
+    });
+    body.push(tempObj);
+
+    tempObj = {};
+    defectRateData[0].forEach((_, index) => {
+        if (index === 0) {  // Date Column
+            tempObj[`col${1 + index}`] = {
                 content: 'DATE',
-                rowSpan: 2,
                 styles: {
                     ...middleCenterStyle,
                     fontStyle: 'bold',
                 },
-            },
-            col2: {
-                content: 'TYPE 1\r\nCOUNT',
-                styles: {
-                    ...middleCenterStyle,
-                    fontStyle: 'bold',
-                },
-            },
-            col3: {
-                content: 'TYPE 2\r\nCOUNT',
-                styles: {
-                    ...middleCenterStyle,
-                    fontStyle: 'bold',
-                },
-            },
-            col4: {
-                content: 'TYPE 3\r\nCOUNT',
-                styles: {
-                    ...middleCenterStyle,
-                    fontStyle: 'bold',
-                },
-            },
-            col5: {
-                content: 'TYPE 4\r\nCOUNT',
-                styles: {
-                    ...middleCenterStyle,
-                    fontStyle: 'bold',
-                },
-            },
-            col6: {
+            };
+        } else if (index === defectRateData[0].length - 1) {    // Total Count By Date Column
+            tempObj[`col${1 + index}`] = {
                 content: 'TOTAL COUNT\r\nBY DATE',
                 styles: {
                     ...middleCenterStyle,
                     fontStyle: 'bold',
                 },
-            },
-        },
-    ];
-
-    defectRateData.forEach((rowData, index, array) => {
-        body.push({
-            col1: {
-                content: index < array.length - 1 ? rowData[0] : 'TOTAL BY TYPE',
+            };
+        } else {    // Defect Count Column
+            tempObj[`col${1 + index}`] = {
+                content: `TYPE ${index}\r\nCOUNT`,
                 styles: {
                     ...middleCenterStyle,
                     fontStyle: 'bold',
                 },
-            },
-            col2: {
-                content: index < array.length - 1 ? rowData[1] : `${rowData[1]} (${changeNumberFormat((rowData[1] / rowData[5]) * 100, '%')})`,
-                styles: {
-                    ...middleRightStyle,
-                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
-                },
-            },
-            col3: {
-                content: index < array.length - 1 ? rowData[2] : `${rowData[2]} (${changeNumberFormat((rowData[2] / rowData[5]) * 100, '%')})`,
-                styles: {
-                    ...middleRightStyle,
-                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
-                },
-            },
-            col4: {
-                content: index < array.length - 1 ? rowData[3] : `${rowData[3]} (${changeNumberFormat((rowData[3] / rowData[5]) * 100, '%')})`,
-                styles: {
-                    ...middleRightStyle,
-                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
-                },
-            },
-            col5: {
-                content: index < array.length - 1 ? rowData[4] : `${rowData[4]} (${changeNumberFormat((rowData[4] / rowData[5]) * 100, '%')})`,
-                styles: {
-                    ...middleRightStyle,
-                    fontStyle: index < array.length - 1 ? 'normal' : 'bold',
-                },
-            },
-            col6: {
-                content: index < array.length - 1 ? rowData[5] : `${rowData[5]} (${changeNumberFormat((rowData[5] / rowData[5]) * 100, '%')})`,
-                styles: {
-                    ...middleRightStyle,
-                    fontStyle: 'bold',
-                },
-            },
+            };
+        }
+    });
+    body.push(tempObj);
+
+    defectRateData.forEach((rowData, index, array) => {
+        tempObj = {};
+        rowData.forEach((value, i, row) => {
+            if (i === 0) {  // Date Column
+                tempObj[`col${1 + i}`] = {
+                    content: index < array.length - 1 ? value : 'TOTAL BY TYPE',
+                    styles: {
+                        ...middleCenterStyle,
+                        fontStyle: 'bold',
+                    },
+                };
+            } else if (i === row.length - 1) {  // Total Count By Date Column
+                tempObj[`col${1 + i}`] = {
+                    content: index < array.length - 1
+                        ? changeNumberFormat(value)
+                        : `${changeNumberFormat(value)} (${changeNumberFormat((value / value) * 100, '%')})`,
+                    styles: {
+                        ...middleRightStyle,
+                        fontStyle: 'bold',
+                    },
+                };
+            } else {
+                tempObj[`col${i + 1}`] = {  // Defect Count Columns
+                    content: index < array.length - 1
+                        ? changeNumberFormat(value)
+                        : `${changeNumberFormat(value)} (${changeNumberFormat((value / row[row.length - 1]) * 100, '%')})`,
+                    styles: {
+                        ...middleRightStyle,
+                        fontStyle: index < array.length - 1 ? 'normal' : 'bold',
+                    },
+                };
+            }
         });
+        body.push(tempObj);
     });
 
     // Add Table of Data

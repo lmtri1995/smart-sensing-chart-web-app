@@ -66,6 +66,20 @@ export const ARTICLE_NAMES = new Map([    // initial data
 export const SHIFT_OPTIONS = ['All Shifts', 'Shift 1', 'Shift 2', 'Shift 3'];
 
 // Defect Name
+// Defect Colors = Type 1 + Type 2 + Type 3 + Type 4 + Type 5 + Type 6 + Type 7 + Type 8 + Type 9 +
+// Total Defect line + Total Defect point background color
+export const DEFECT_COLORS = [
+    '#20DDE9',
+    '#449AFF',
+    '#8C67F6',
+    '#EBEDF1',
+    '#F575F7',
+    '#EB6A91',
+    '#FF9C64',
+    '#F89D9D',
+    '#71D7BE',
+    '#EBEDF1',
+];
 export const IP_DEFECT_NAME = [
     'SHORT LENGTH',
     'LONG LENGTH',
@@ -78,15 +92,15 @@ export const IP_DEFECT_NAME = [
     'LACK OF COMPOUND'
 ];
 export const OS_DEFECT_NAME = [
-    'DIRTY (DUST, CONTAMINANTS ETC.)',
-    'SOIL (OILY, MARKS ETC.)',
+    'DIRTY',
+    'SOIL',
     'COLOR MIGRATION',
     'AIR BUBBLED',
-    'STICKY (OVER CURE)',
+    'STICKY',
     'PRESSING DATE IS VISIBLE',
     'TRIMMING EDGE IS 0.2MM OR LESS',
     'MATCHING WITH SIGNED OUTSOLE MCS',
-    'FINISHED O/S ARE PACKED IN CLEAN POLYBAGS/CATONS'
+    'FINISHED O/S ARE PACKED IN CLEAN POLYBAGS / CATONS'
 ];
 
 // Data Export Type

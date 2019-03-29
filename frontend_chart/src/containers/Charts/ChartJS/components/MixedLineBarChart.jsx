@@ -3,6 +3,7 @@ import 'chartjs-plugin-zoom';
 import Chart from 'chart.js';
 import moment from 'moment';
 import {ClipLoader} from "react-spinners";
+import {pluginDrawZeroLineForReportChart} from "../../../../shared/utils/plugins";
 
 let initialData = {
     labels: [
@@ -113,7 +114,8 @@ export default class MixedLineBarChart extends PureComponent {
         this.myChart = new Chart(ctx, {
             type: 'bar',
             data: initialData,
-            options: options
+            options: options,
+            plugins: pluginDrawZeroLineForReportChart,
         });
     }
 

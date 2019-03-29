@@ -4,7 +4,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import moment from "moment";
-import {pluginDrawZeroValueForSwingArmOsPress} from "../../../../../shared/utils/plugins";
+import {pluginDrawZeroLineForSwingArmOsPress} from "../../../../../shared/utils/plugins";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
 
 const initialData = {
@@ -229,7 +229,7 @@ export class SwingArmMachine extends Component {
             type: 'bar',
             data: initialData,
             options: options,
-            plugins: pluginDrawZeroValueForSwingArmOsPress
+            plugins: pluginDrawZeroLineForSwingArmOsPress
         });
 
         if (this.role == 'os') {

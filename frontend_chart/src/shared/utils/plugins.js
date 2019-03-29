@@ -1,10 +1,10 @@
-export const pluginDrawZeroValue = {
+export const pluginDrawZeroLine = {
     renderZeroCompensation: function (chartInstance, d) {
-        // get postion info from _view
+        // get position info from _view
         const view = d._view;
         const context = chartInstance.chart.ctx;
 
-        // the view.x is the centeral point of the bar, so we need minus half width of the bar.
+        // the view.x is the central point of the bar, so we need minus half width of the bar.
         const startX = view.x - view.width / 2;
         // common canvas API, Check it out on MDN
         context.beginPath();
@@ -24,25 +24,22 @@ export const pluginDrawZeroValue = {
         // also you need get datasets to find which item is 0.
         const dataSet1 = chart.config.data.datasets[0].data;
 
-        console.log("chart.config.data: ", chart.config.data);
-        console.log("dataSet1: ", dataSet1);
-        console.log("meta.data: ", meta.data);
         meta.data.forEach((d, index) => {
-            // for the item which value is 0, reander a line.
-            if(!dataSet1[index]) {
+            // for the item which value is 0, render a line.
+            if (!dataSet1[index]) {
                 this.renderZeroCompensation(chart, d)
             }
         })
     }
 };
 
-export const pluginDrawZeroValueForSwingArmOsPress = {
-    renderZeroCompensation: function (chartInstance, d, arrayNo = 0) {
-        // get postion info from _view
-        const view = d._view
-        const context = chartInstance.chart.ctx
+export const pluginDrawZeroLineForSwingArmOsPress = {
+    renderZeroCompensation: function (chartInstance, d) {
+        // get position info from _view
+        const view = d._view;
+        const context = chartInstance.chart.ctx;
 
-        // the view.x is the centeral point of the bar, so we need minus half width of the bar.
+        // the view.x is the central point of the bar, so we need minus half width of the bar.
         //const startX = view.x - view.width / 2 + arrayNo * 100;
         const startX = view.x - view.width / 2;
         // common canvas API, Check it out on MDN
@@ -50,10 +47,6 @@ export const pluginDrawZeroValueForSwingArmOsPress = {
         // set line color, you can do more custom settings here.
         context.strokeStyle = '#aaaaaa';
         //context.strokeStyle = 'red';
-       /* console.log("view: ", view);
-        console.log("view.height: ", view.height);
-        console.log("chartInstance: ", chartInstance);
-        console.log("d: ", d);*/
         context.moveTo(startX, this.zeroPosY);
         // draw the line!
         context.lineTo(startX + view.width, this.zeroPosY);
@@ -64,16 +57,15 @@ export const pluginDrawZeroValueForSwingArmOsPress = {
     afterDatasetsDraw: function (chart, easing) {
         // get data meta, we need the location info in _view property.
 
-        console.log("chart: ", chart);
-        // also you need get datasets to find which item is 0.
+        // also you need to get datasets to find which item is 0.
         let arrayNo = 0;
         const dataSet1 = chart.config.data.datasets[arrayNo].data;
         let meta = chart.getDatasetMeta(arrayNo);
 
         meta.data.forEach((d, index) => {
-            // for the item which value is 0, reander a line.
-            if(!dataSet1[index]) {
-                this.renderZeroCompensation(chart, d, arrayNo)
+            // for the item which value is 0, render a line.
+            if (!dataSet1[index]) {
+                this.renderZeroCompensation(chart, d)
             }
         });
 
@@ -82,8 +74,7 @@ export const pluginDrawZeroValueForSwingArmOsPress = {
         meta = chart.getDatasetMeta(arrayNo);
 
         if (dataSet1 && dataSet1.length > 0 && dataSet1[0] === 0
-        &&  dataSet2 && dataSet2.length > 0 && dataSet2[0] === 0){
-            console.log("meta.data: ", meta.data);
+            && dataSet2 && dataSet2.length > 0 && dataSet2[0] === 0) {
             try {
                 this.zeroPosY = meta.data[0]._view.y;
             } catch (e) {
@@ -92,10 +83,59 @@ export const pluginDrawZeroValueForSwingArmOsPress = {
         }
 
         meta.data.forEach((d, index) => {
-            // for the item which value is 0, reander a line.
-            if(!dataSet2[index]) {
-                this.renderZeroCompensation(chart, d, arrayNo)
+            // for the item which value is 0, render a line.
+            if (!dataSet2[index]) {
+                this.renderZeroCompensation(chart, d)
             }
+        });
+    }
+};
+
+export const pluginDrawZeroLineForReportChart = {
+    renderZeroCompensation: function (chartInstance, chartElement) {
+        // get position info from _view
+        const view = chartElement._view;
+        const context = chartInstance.chart.ctx;
+
+        // the view.x is the central point of the bar, so we need minus half width of the bar.
+        const startX = view.x - view.width / 2;
+
+        // set line color, you can do more custom settings here.
+        context.strokeStyle = '#aaaaaa';
+
+        // common canvas API, Check it out on MDN
+        context.beginPath();
+
+        context.moveTo(startX, this.zeroPosY);
+        // draw the line!
+        context.lineTo(startX + view.width, this.zeroPosY);
+        // bam！ you will see the lines.
+        context.stroke();
+    },
+
+    afterDatasetsDraw: function (chart, easing) {
+        // get meta data, we need the location info in _view property.
+        let meta = null;
+        chart.config.data.datasets.forEach((curDataset, datasetIndex, datasets) => {
+            meta = chart.getDatasetMeta(datasetIndex);
+            if (datasetIndex < datasets.length - 1) {
+                try {
+                    for (let i = 0; i < curDataset.data.length; ++i) {
+                        if (curDataset.data[i] === 0) {
+                            this.zeroPosY = meta.data[i]._view.y;
+                            break;
+                        }
+                    }
+                } catch (e) {
+                    console.log("Error: ", e);
+                }
+            }
+            meta.data.forEach((chartElement, index) => {
+                // for the item which value is 0, render a line.
+                if (curDataset.data[index] === 0) {
+                    this.renderZeroCompensation(chart, chartElement);
+                }
+            });
         });
     }
 };

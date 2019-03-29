@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
-import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
+import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
 import {changeNumberFormat, specifyTheShiftStartHour} from "../../../../../shared/utils/Utilities";
 import API from "../../../../../services/api";
 
@@ -243,7 +243,7 @@ export class SwingArmMachine extends Component {
             type: 'bar',
             data: initialData,
             options: options,
-            plugins: pluginDrawZeroValue,
+            plugins: pluginDrawZeroLine,
         });
         this.callAxiosBeforeSocket();
     }

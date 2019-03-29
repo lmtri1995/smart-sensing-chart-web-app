@@ -5,7 +5,7 @@ import connect from "react-redux/es/connect/connect";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
-import {pluginDrawZeroValue} from "../../../../../shared/utils/plugins";
+import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -262,7 +262,7 @@ export class CycleDefectStationComparison extends Component {
             type: 'bar',
             data: initialData,
             options: options,
-            plugins: pluginDrawZeroValue
+            plugins: pluginDrawZeroLine
         });
 
         let {startDate, endDate} = this.props.globalDateFilter;

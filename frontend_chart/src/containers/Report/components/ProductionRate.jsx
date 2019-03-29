@@ -127,7 +127,7 @@ class ProductionRate extends Component {
         return (
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate</h4></div>
-                <div className="col-12 report-item">
+                <div className="col-12">
                     <MixedLineBarChart labels={labels} data={tempProductionRate}
                                        customTooltips={customChartTooltips} showLegend={true}/>
                 </div>

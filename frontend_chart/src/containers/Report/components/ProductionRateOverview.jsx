@@ -130,14 +130,12 @@ class ProductionRateOverview extends Component {
         return (
             <div className="report-main">
                 <div className="col-12"><h4>Production Rate Overview</h4></div>
-                <div className="col-12 report-item">
+                <div className="col-12">
                     <DoughnutChart labels={chartLabels} data={chartData}
                                    centerText={totalActualProductionText}
                                    customTooltips={customChartTooltips} showLegend={false}
                                    loading={loading} />
-                </div>
-                <div className="col-12">
-                    <div id={'productionRate-lengendLabel'}></div>
+                    <div id={'productionRate-lengendLabel'}/>
                 </div>
             </div>
         )

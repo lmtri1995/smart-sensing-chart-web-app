@@ -56,8 +56,7 @@ export const pluginDrawZeroLineForSwingArmOsPress = {
 
     afterDatasetsDraw: function (chart, easing) {
         // get data meta, we need the location info in _view property.
-
-        // also you need to get datasets to find which item is 0.
+        // also you need get datasets to find which item is 0.
         let arrayNo = 0;
         const dataSet1 = chart.config.data.datasets[arrayNo].data;
         let meta = chart.getDatasetMeta(arrayNo);

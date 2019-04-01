@@ -79,6 +79,17 @@ export const specifyCurrentTimeDevice = () => {
     return [from_timedevice, to_timedevice];
 }
 
+//Specify current date
+export const specifyCurrentDateDevice = () => {
+    let from_date = moment().startOf("day").add(6, "hours").format("YYYYMMDD");
+    let to_date = moment().startOf("day").add({days: 1, hours: 6}).format("YYYYMMDD");
+    if (moment().isSameOrAfter(moment().startOf("day")) && moment().isBefore(moment().startOf("day").add(6, "hours"))){
+        from_date = moment().startOf("day").subtract({days: 1}).format("YYYYMMDD");
+        to_date = moment().startOf("day").add({hours: 6}).format("YYYYMMDD");
+    }
+    return [from_date, to_date];
+}
+
 
 //Specify 30 minutes before current moment to current moment
 //Used to call axios API before call socket

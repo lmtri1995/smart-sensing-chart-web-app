@@ -85,7 +85,9 @@ class BottomComponents extends Component {
                 istatus: 0,
                 proccess: this.process,
                 type: this.OEEType,
-                status: 'stop'
+                status: 'stop',
+                shiftno: 0,
+                modelname: '',
             }
         });
     }
@@ -347,7 +349,10 @@ class BottomComponents extends Component {
         }).catch((err) => console.log('err:', err));
     }
 
-    callAxiosBeforeSocket = (callback) => {
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
         let currentWorkHours = this.countCurrentWorkingHour();
         let timeFromStartOfDay = [];
         let i = currentWorkHours.length - 1;
@@ -379,7 +384,7 @@ class BottomComponents extends Component {
             "from_timedevice": timeFromStartOfDay[0],
             "to_timedevice": timeFromStartOfDay[1],
             "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
-            "shiftno": '0',
+            "shiftno": 0,
         };
         this.setState({
             loading: true,
@@ -389,7 +394,7 @@ class BottomComponents extends Component {
 
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
+                try {
                     let data = response.data.data;
                     let summaryArray = this.handleReturnArray(data);
                     let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
@@ -408,15 +413,36 @@ class BottomComponents extends Component {
                         workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
                         loading: false,
                     });
-                    this.callSocket();
-                } else {
-                    callback();
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
+                } catch (e) {
+                    this.setState({
+                        availabilityNumber: 0,
+                        performanceNumber: 0,
+                        qualityNumber: 0,
+                        OEENumber: 0,
+                        workLossNumber: 0,
+                        loading: false,
+                    });
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
                 }
             })
             .catch((err) => console.log('err:', err))
     };
 
     callSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -426,36 +452,109 @@ class BottomComponents extends Component {
                 istatus: 0,
                 proccess: this.process,
                 type: this.OEEType,
-                status: 'start'
+                status: 'start',
+                shiftno: 0,
+                modelname: articleKey,
             }
         });
         this.socket.on(this.eventListen, (response) => {
             if (response) {
-                let returnData = JSON.parse(response.trim());
-                if (returnData.success) {
-                    let data = returnData.data;
-                    let summaryArray = this.handleReturnArray(data);
+                try {
+                    let returnData = JSON.parse(response.trim());
+                        let data = returnData.data;
+                        let summaryArray = this.handleReturnArray(data);
 
-                    let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
-                    summaryArray.map(item => {
-                        availability += (item[0] ? item[0] : 0);
-                        performance += (item[1] ? item[1] : 0);
-                        quality += (item[2] ? item[2] : 0);
-                        OEE += (item[3] ? item[3] : 0);
-                        workLost += (item[4] ? item[4] : 0);
-                    });
+                        let availability = 0, performance = 0, quality = 0, OEE = 0, workLost = 0;
+                        summaryArray.map(item => {
+                            availability += (item[0] ? item[0] : 0);
+                            performance += (item[1] ? item[1] : 0);
+                            quality += (item[2] ? item[2] : 0);
+                            OEE += (item[3] ? item[3] : 0);
+                            workLost += (item[4] ? item[4] : 0);
+                        });
+                        this.setState({
+                            availabilityNumber: Math.round(((availability / summaryArray.length) * 100) * 100) / 100,
+                            performanceNumber: Math.round(((performance / summaryArray.length) * 100) * 100) / 100,
+                            qualityNumber: Math.round(((quality / summaryArray.length) * 100) * 100) / 100,
+                            OEENumber: Math.round(((OEE / summaryArray.length) * 100) * 100) / 100,
+                            workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
+                            loading: false,
+                        });
+                } catch (e) {
                     this.setState({
-                        availabilityNumber: Math.round(((availability / summaryArray.length) * 100) * 100) / 100,
-                        performanceNumber: Math.round(((performance / summaryArray.length) * 100) * 100) / 100,
-                        qualityNumber: Math.round(((quality / summaryArray.length) * 100) * 100) / 100,
-                        OEENumber: Math.round(((OEE / summaryArray.length) * 100) * 100) / 100,
-                        workLossNumber: Math.round(((workLost / summaryArray.length) * 100) * 100) / 100,
+                        availabilityNumber: 0,
+                        performanceNumber: 0,
+                        qualityNumber: 0,
+                        OEENumber: 0,
+                        workLossNumber: 0,
                         loading: false,
                     });
                 }
+
             }
         });
     };
+
+    //Stop old socket, create new one
+    restartSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                istatus: 0,
+                proccess: this.process,
+                type: this.OEEType,
+                status: 'stop',
+                shiftno: 0,
+                modelname: '',
+            }
+        });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                istatus: 0,
+                proccess: this.process,
+                type: this.OEEType,
+                status: 'start',
+                shiftno: 0,
+                modelname: articleKey,
+            }
+        });
+        this.currentSelectedArticle = newSelectededArticle;
+    };
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let currentTime = this.preTempTime;
+        let newTime = this.props.tempTime;
+
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
+        }
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        if (currentTime != newTime || currentArticleKey != newArticleKey) {
+            this.currentSelectedArticle = newSelectedArticle;
+            this.callAxiosBeforeSocket(true);
+        }
+    }
 
     componentDidMount() {
         this.callAxiosBeforeSocket();
@@ -469,10 +568,15 @@ class BottomComponents extends Component {
     render() {
         let {availabilityNumber, performanceNumber, qualityNumber, OEENumber, workLossNumber} = this.state;
         availabilityNumber = changeNumberFormat(availabilityNumber);
+        availabilityNumber = availabilityNumber > 100 ? 100 : availabilityNumber;
         performanceNumber = changeNumberFormat(performanceNumber);
+        performanceNumber = performanceNumber > 100 ? 100 : performanceNumber;
         qualityNumber = changeNumberFormat(qualityNumber);
+        qualityNumber = qualityNumber > 100 ? 100 : qualityNumber;
         OEENumber = changeNumberFormat(OEENumber);
+        OEENumber = OEENumber > 100 ? 100 : OEENumber;
         workLossNumber = changeNumberFormat(workLossNumber);
+        workLossNumber = workLossNumber > 100 ? 100 : workLossNumber;
         return <div className="container">
             <div
                 id={DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID}

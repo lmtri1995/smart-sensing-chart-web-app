@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
-import {Bar} from 'react-chartjs-2';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
-import moment from "moment";
 import {
     changeNumberFormat,
     specifyCurrentShift,
@@ -10,6 +8,8 @@ import {
 } from "../../../../../shared/utils/Utilities";
 import {pluginDrawZeroLineForSwingArmOsPress} from "../../../../../shared/utils/plugins";
 import API from "../../../../../services/api";
+import connect from "react-redux/es/connect/connect";
+import {CycleDefectStationComparison} from "./CycleDefectStationComparison";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -100,7 +100,7 @@ export class SwingArmMachine extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch(this.role) {
+        switch (this.role) {
             case 'admin':
                 this.emitEvent = `os_swingarm_stationcomparison`;
                 this.eventListen = `sna_${this.emitEvent}`;
@@ -127,7 +127,7 @@ export class SwingArmMachine extends Component {
         let result = [];
         let swingArmArray = [0, 0, 0], osPessArray = [0, 0, 0];
         let currentShift = specifyCurrentShift();
-        if (returnData && returnData.length > 0){
+        if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
                     if (currentShift == 1) {//2, 3, 1
@@ -174,42 +174,55 @@ export class SwingArmMachine extends Component {
 
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
                 from_timedevice: 0,//1551333600
                 to_timedevice: 0,//1551420000
                 minute: 60,
-                status: 'stop'
+                status: 'stop',
+                shiftno: 0,
+                modelname: '',
             }
         });
     }
 
-    changeLabelArray(){
+    changeLabelArray() {
         let currentShift = specifyCurrentShift();
-        if (currentShift == 1){
+        if (currentShift == 1) {
             this.labelArray = ['Shift 2', 'Shift 3', 'Shift 1'];
-        } else if (currentShift == 2){
+        } else if (currentShift == 2) {
             this.labelArray = ['Shift 3', 'Shift 1', 'Shift 2'];
         } else {
             this.labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
         }
     }
 
-    callAxiosBeforeSocket = (callback) => {
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
         if (this.role == 'os') {
             let timeFromStartOfShift = specifyTheShiftStartHour();
 
+            let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectededArticle) {
+                articleKey = newSelectededArticle[1].key;
+            }
+
             let param = {
                 "from_timedevice": timeFromStartOfShift[0],
-                "to_timedevice": timeFromStartOfShift[1]
+                "to_timedevice": timeFromStartOfShift[1],
+                "shiftno": 0,
+                "modelname": articleKey,
             };
 
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {
                     console.log("response 211: ", response);
-                    if (response.data.success) {
+                    try {
                         let dataArray = response.data.data;
                         let returnData = JSON.parse(dataArray[0].data);
                         let displayArray = this.handleReturnData(returnData);
@@ -239,43 +252,13 @@ export class SwingArmMachine extends Component {
                         };
                         this.myChart.update();
                         this.setState({loading: false});
-                        this.callSocket();
-                    } else {
-                        callback();
-                    }
-                })
-                .catch((err) => console.log('err:', err))
-        } else {
-            this.setState({loading: false});
-        }
-    }
-
-    callSocket = () => {
-        if(this.role == 'os'){
-            this.socket.emit(this.emitEvent, {
-                msg: {
-                    event: this.eventListen,
-                    from_timedevice: 0,//1551333600
-                    to_timedevice: 0,//1551420000
-                    minute: 60,
-                    status: 'start'
-                }
-            });
-            this.socket.on(this.eventListen, (response) => {
-                response = JSON.parse(response);
-                if (response && response.success=="true"){
-                    let dataArray = response.data;
-
-                    console.log("dataArray aaa: ", dataArray);
-                    let returnData = JSON.parse(dataArray[0].data);
-                    if (returnData.length > 0){
-                        let displayArray = this.handleReturnData(returnData);
-
-
-                        if (displayArray && displayArray.length < 1) {
-                            displayArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                        if (!stopCurrentSocket) {
+                            this.callSocket();
+                        } else {
+                            this.restartSocket();
                         }
-
+                    } catch (e) {
+                        console.log("Error: ", e);
                         this.myChart.data = {
                             labels: this.labelArray,
                             datasets: [
@@ -286,7 +269,7 @@ export class SwingArmMachine extends Component {
                                     borderWidth: 1,
                                     //hoverBackgroundColor: '#FF6384',
                                     //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
+                                    data: [0, 0, 0],
                                 },
                                 {
                                     label: 'Os Press',
@@ -295,19 +278,166 @@ export class SwingArmMachine extends Component {
                                     borderWidth: 1,
                                     //hoverBackgroundColor: '#FF6384',
                                     //hoverBorderColor: '#FF6384',
-                                    data: displayArray[1],
+                                    data: [0, 0, 0],
                                 }
                             ],
+
                         };
                         this.myChart.update();
                         this.setState({loading: false});
+                        if (!stopCurrentSocket) {
+                            this.callSocket();
+                        } else {
+                            this.restartSocket();
+                        }
                     }
+                })
+                .catch((err) => console.log('err:', err))
+        } else {
+            this.setState({loading: false});
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let currentTime = this.preTempTime;
+        let newTime = this.props.tempTime;
+
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
+        }
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        if (currentTime != newTime || currentArticleKey != newArticleKey) {
+            this.callAxiosBeforeSocket(true);
+        }
+    }
+
+    callSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+        if (this.role == 'os') {
+            this.socket.emit(this.emitEvent, {
+                msg: {
+                    "event": this.eventListen,
+                    "from_timedevice": 0,//1551333600
+                    "to_timedevice": 0,//1551420000
+                    "minute": 60,
+                    "status": 'start',
+                    "shiftno": 0,
+                    "modelname": articleKey,
+                }
+            });
+            this.socket.on(this.eventListen, (response) => {
+                try {
+                    console.log("321 321 321 321");
+                    console.log("response: ", response);
+                    response = JSON.parse(response);
+                    let dataArray = response.data;
+                    let returnData = JSON.parse(dataArray[0].data);
+                    let displayArray = this.handleReturnData(returnData);
+
+                    this.myChart.data = {
+                        labels: this.labelArray,
+                        datasets: [
+                            {
+                                label: 'Swing Arm',
+                                backgroundColor: '#0CD0EB',
+                                borderColor: '#0CD0EB',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: displayArray[0],
+                            },
+                            {
+                                label: 'Os Press',
+                                backgroundColor: '#4C9EFF',
+                                borderColor: '#4C9EFF',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: displayArray[1],
+                            }
+                        ],
+                    };
+                    this.myChart.update();
+                    this.setState({loading: false});
+
+                } catch (e) {
+                    console.log("Error: ", e);
+
+                    this.myChart.data = {
+                        labels: this.labelArray,
+                        datasets: [
+                            {
+                                label: 'Swing Arm',
+                                backgroundColor: '#0CD0EB',
+                                borderColor: '#0CD0EB',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: [0, 0, 0],
+                            },
+                            {
+                                label: 'Os Press',
+                                backgroundColor: '#4C9EFF',
+                                borderColor: '#4C9EFF',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: [0, 0, 0],
+                            }
+                        ],
+                    };
+                    this.myChart.update();
+                    this.setState({loading: false});
                 }
             });
         } else {
             this.setState({loading: false});
         }
     }
+
+    restartSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop',
+                shiftno: 0,
+                modelname: articleKey,
+            }
+        });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'start',
+                shiftno: 0,
+                modelname: articleKey,
+            }
+        });
+        this.currentSelectedArticle = newSelectededArticle;
+    };
 
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
@@ -344,4 +474,9 @@ export class SwingArmMachine extends Component {
     }
 }
 
-export default SwingArmMachine
+const mapStateToProps = (state) => ({
+    globalArticleFilter: state.globalArticleFilter,
+    globalModelFilterReducer: state.globalModelFilterReducer,
+});
+
+export default connect(mapStateToProps)(SwingArmMachine);

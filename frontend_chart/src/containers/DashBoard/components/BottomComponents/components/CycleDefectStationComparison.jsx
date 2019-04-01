@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
-import moment from "moment";
 import {
     changeNumberFormat,
     specifyCurrentShift,
@@ -130,7 +129,7 @@ export class CycleDefectStationComparison extends Component {
         };
         this._isMounted = false;
 
-        if (this.role == 'ip'){
+        if (this.role == 'ip') {
             initialData = {
                 labels: ['Shift 1', 'Shift 2', 'Shift 3'],
                 datasets: [
@@ -194,39 +193,44 @@ export class CycleDefectStationComparison extends Component {
             });
         }
         result.push(deffectiveArray);
-        if (this.role != 'ip'){
+        if (this.role != 'ip') {
             result.push(idleCycleArray);
         }
-
         return result;
     }
 
     componentWillUnmount() {
-        if (this._isMounted){
+        if (this._isMounted) {
             this.socket.emit(this.emitEvent, {
                 msg: {
                     event: this.eventListen,
                     from_timedevice: 0,//1551333600
                     to_timedevice: 0,//1551420000
-                    minute: 60,
-                    status: 'stop'
+                    minute: 0,
+                    status: 'stop',
+                    shiftno: 0,
+                    "modelname": ''
                 }
             });
         }
     }
 
-    changeLabelArray(){
+    changeLabelArray() {
         let currentShift = specifyCurrentShift();
-        if (currentShift == 1){
+        if (currentShift == 1) {
             this.labelArray = ['Shift 2', 'Shift 3', 'Shift 1'];
-        } else if (currentShift == 2){
+        } else if (currentShift == 2) {
             this.labelArray = ['Shift 3', 'Shift 1', 'Shift 2'];
         } else {
             this.labelArray = ['Shift 1', 'Shift 2', 'Shift 3'];
         }
     }
 
-    callAxiosBeforeSocket = (callback) => {
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
+
         let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (newSelectededArticle) {
@@ -238,95 +242,18 @@ export class CycleDefectStationComparison extends Component {
             "to_timedevice": timeFromStartOfShift[1],
             "istatus": this.istatus,
             "proccess": this.process,
-            // "shiftno": 0,
-            // "modelname": articleKey,
+            "shiftno": 0,
+            "modelname": articleKey,
         };
 
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
+                try {
                     let dataArray = response.data.data;
-                    let returnData =  JSON.parse(dataArray[0].data);
-                    if (returnData && returnData.length > 0) {
-                        let displayArray = this.handleReturnData(returnData);
-                        let dataset = {};
-                        if (this.role == 'ip'){
-                            dataset = [
-                                {
-                                    label: 'Defective',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
-                                }
-                            ];
-                        } else {
-                            dataset = [
-                                {
-                                    label: 'Defective',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
-                                },
-                                {
-                                    label: 'Idle Cycle',
-                                    backgroundColor: '#AFEEFF',
-                                    borderColor: '#AFEEFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[1],
-                                }
-                            ];
-                        }
-                        this.myChart.data = {
-                            labels: this.labelArray,
-                            datasets: dataset
-                        };
-                        this.callSocket()
-                        this.myChart.update();
-                        this.setState({loading: false});
-                    }
-                } else {
-                    callback();
-                }
-            })
-            .catch((err) => console.log('err:', err))
-    }
-
-    callSocket = () => {
-        this.socket.emit(this.emitEvent, {
-            msg: {
-                event: this.eventListen,
-                from_timedevice: 0,//1551333600
-                to_timedevice: 0,//1551420000
-                minute: 60,
-                status: 'start'
-            }
-        });
-        this.socket.on(this.eventListen, (response) => {
-            response = JSON.parse(response);
-            if (response && response.success == "true") {
-                let dataArray = response.data;
-                let returnData = JSON.parse(dataArray[0].data);
-                if (returnData.length > 0) {
+                    let returnData = JSON.parse(dataArray[0].data);
                     let displayArray = this.handleReturnData(returnData);
-                    let totalDefectcount = 0;
-                    if (displayArray[0] && displayArray.length > 0){
-                        displayArray[0].map(item=>{
-                            if (item){
-                                totalDefectcount += parseInt(item);
-                            }
-                        });
-                    }
-                    //localStorage.setItem("totalDefectCount", totalDefectcount);
-                    let dataset = {};
-                    if (this.role == 'ip'){
+                    let dataset = [];
+                    if (this.role == 'ip') {
                         dataset = [
                             {
                                 label: 'Defective',
@@ -366,9 +293,243 @@ export class CycleDefectStationComparison extends Component {
                     };
                     this.myChart.update();
                     this.setState({loading: false});
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
+
+                } catch (e) {
+                    console.log("Error: ", e);
+                    let dataset = [];
+                    if (this.role == 'ip') {
+                        dataset = [
+                            {
+                                label: 'Defective',
+                                backgroundColor: '#4C9EFF',
+                                borderColor: '#4C9EFF',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: [0, 0, 0],
+                            }
+                        ];
+                    } else {
+                        dataset = [
+                            {
+                                label: 'Defective',
+                                backgroundColor: '#4C9EFF',
+                                borderColor: '#4C9EFF',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: [0, 0, 0],
+                            },
+                            {
+                                label: 'Idle Cycle',
+                                backgroundColor: '#AFEEFF',
+                                borderColor: '#AFEEFF',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: [0, 0, 0],
+                            }
+                        ];
+                    }
+                    this.myChart.data = {
+                        labels: this.labelArray,
+                        datasets: dataset
+                    };
+                    this.myChart.update();
+                    this.setState({loading: false});
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
                 }
+            })
+            .catch((err) => console.log('err:', err))
+    }
+
+    //Stop old socket, create new one
+    restartSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                "event": this.eventListen,
+                "from_timedevice": 0,//1551333600
+                "to_timedevice": 0,//1551420000
+                "minute": 0,
+                "status": 'stop',
+                "shiftno": 0,
+                "modelname": articleKey,
             }
         });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                "event": this.eventListen,
+                "from_timedevice": 0,//1551333600
+                "to_timedevice": 0,//1551420000
+                "minute": 0,
+                "status": 'start',
+                "shiftno": 0,
+                "modelname": articleKey,
+            }
+        });
+        this.currentSelectedArticle = newSelectededArticle;
+    };
+
+    callSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                "event": this.eventListen,
+                "from_timedevice": 0,//1551333600
+                "to_timedevice": 0,//1551420000
+                "minute": 0,
+                "status": 'start',
+                "shiftno": 0,
+                "modelname": articleKey,
+            }
+        });
+        this.socket.on(this.eventListen, (response) => {
+            try {
+                response = JSON.parse(response);
+                if (response && response.success == "true") {
+                    let dataArray = response.data;
+                    let returnData = JSON.parse(dataArray[0].data);
+                    if (returnData.length > 0) {
+                        let displayArray = this.handleReturnData(returnData);
+                        let totalDefectcount = 0;
+                        if (displayArray[0] && displayArray.length > 0) {
+                            displayArray[0].map(item => {
+                                if (item) {
+                                    totalDefectcount += parseInt(item);
+                                }
+                            });
+                        }
+                        //localStorage.setItem("totalDefectCount", totalDefectcount);
+                        let dataset = [];
+                        if (this.role == 'ip') {
+                            dataset = [
+                                {
+                                    label: 'Defective',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                }
+                            ];
+                        } else {
+                            dataset = [
+                                {
+                                    label: 'Defective',
+                                    backgroundColor: '#4C9EFF',
+                                    borderColor: '#4C9EFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[0],
+                                },
+                                {
+                                    label: 'Idle Cycle',
+                                    backgroundColor: '#AFEEFF',
+                                    borderColor: '#AFEEFF',
+                                    borderWidth: 1,
+                                    //hoverBackgroundColor: '#FF6384',
+                                    //hoverBorderColor: '#FF6384',
+                                    data: displayArray[1],
+                                }
+                            ];
+                        }
+                        this.myChart.data = {
+                            labels: this.labelArray,
+                            datasets: dataset
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                    }
+                }
+            } catch (e) {
+                console.log("Error: ", e);
+                let dataset = [];
+                if (this.role == 'ip') {
+                    dataset = [
+                        {
+                            label: 'Defective',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[0],
+                        }
+                    ];
+                } else {
+                    dataset = [
+                        {
+                            label: 'Defective',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: [0, 0, 0],
+                        },
+                        {
+                            label: 'Idle Cycle',
+                            backgroundColor: '#AFEEFF',
+                            borderColor: '#AFEEFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: [0, 0, 0],
+                        }
+                    ];
+                }
+                this.myChart.data = {
+                    labels: this.labelArray,
+                    datasets: dataset
+                };
+                this.myChart.update();
+                this.setState({loading: false});
+            }
+
+        });
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let currentTime = this.preTempTime;
+        let newTime = this.props.tempTime;
+
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
+        }
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        if (currentTime != newTime || currentArticleKey != newArticleKey) {
+            this.callAxiosBeforeSocket(true);
+        }
     }
 
     componentDidMount() {
@@ -407,6 +568,7 @@ export class CycleDefectStationComparison extends Component {
 
 const mapStateToProps = (state) => ({
     globalArticleFilter: state.globalArticleFilter,
+    globalModelFilterReducer: state.globalModelFilterReducer,
 });
 
 export default connect(mapStateToProps)(CycleDefectStationComparison);

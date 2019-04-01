@@ -2,8 +2,9 @@ import React, {Component} from 'react'
 import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
-import {changeNumberFormat, specifyTheShiftStartHour} from "../../../../../shared/utils/Utilities";
+import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
 import API from "../../../../../services/api";
+import connect from "react-redux/es/connect/connect";
 
 const initialData = {
     labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -117,61 +118,97 @@ export class SwingArmMachine extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let currentTime = this.preTempTime;
+        let newTime = this.props.tempTime;
+
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
+        }
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        if (currentTime != newTime || currentArticleKey != newArticleKey) {
+            this.callAxiosBeforeSocket(true);
+        }
+    }
+
     componentWillUnmount() {
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
                 from_timedevice: 0,
                 to_timedevice: 0,
-                minute: 60,
-                status: 'stop'
+                minute: 0,
+                status: 'stop',
+                shiftno: 0,
+                modelname: ''
             }
         });
     }
 
-    callAxiosBeforeSocket = (callback) => {
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
         //let timeFromStartOfShift = specifyTheShiftStartHour();
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
+
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
         let param = {
-            "from_timedevice": '',
-            "to_timedevice": '',
-            "flag": 'H'
+            "from_timedevice": 0,
+            "to_timedevice": 0,
+            "flag": 'H',
+            "shiftno": 0,
+            "modelname": articleKey,
         };
-        console.log("139 param: ", param);
         API('api/os/swingarm', 'POST', param)
             .then((response) => {
-                if (response && response.data) {
+                try {
                     let dataArray = response.data.data;
                     if (dataArray && dataArray.length > 0) {
                         let returnData = JSON.parse(dataArray[0].data);
-                        if (returnData && returnData.length > 0) {
-                            let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
-                            let displayDatasets = returnData[0];
-                            if (displayDatasets && displayDatasets.length < 1) {
-                                displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                            }
-                            for (let i = 0; i < displayDatasets.length; i++) {
-                                if (!displayDatasets[i] || displayDatasets[i] == 0) {
-                                    displayDatasets[i] = 0;
-                                }
-                            }
-                            this.myChart.data = {
-                                labels: displayLabels,
-                                datasets: [{
-                                    label: 'Swing Arm Data',
-                                    backgroundColor: '#C88FFA',
-                                    borderColor: '#C88FFA',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayDatasets
-                                }]
-                            };
-                            this.myChart.update();
-                            this.callSocket();
-                            this.setState({loading: false});
+                        let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
+                        let displayDatasets = returnData[0];
+                        if (displayDatasets && displayDatasets.length < 1) {
+                            displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                         }
+                        for (let i = 0; i < displayDatasets.length; i++) {
+                            if (!displayDatasets[i] || displayDatasets[i] == 0) {
+                                displayDatasets[i] = 0;
+                            }
+                        }
+                        this.myChart.data = {
+                            labels: displayLabels,
+                            datasets: [{
+                                label: 'Swing Arm Data',
+                                backgroundColor: '#C88FFA',
+                                borderColor: '#C88FFA',
+                                borderWidth: 1,
+                                //hoverBackgroundColor: '#FF6384',
+                                //hoverBorderColor: '#FF6384',
+                                data: displayDatasets
+                            }]
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                        if (!stopCurrentSocket) {
+                            this.callSocket();
+                        } else {
+                            this.restartSocket();
+                        }
+
                     }
-                } else {
+                } catch (e) {
                     let displayLabels = ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"];
                     let displayDatasets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     this.myChart.data = {
@@ -195,6 +232,12 @@ export class SwingArmMachine extends Component {
     }
 
     callSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
         if (this.role == "ip") {
             this.setState({loading: false});
         } else {
@@ -203,8 +246,10 @@ export class SwingArmMachine extends Component {
                     event: this.eventListen,
                     from_timedevice: 0,
                     to_timedevice: 0,
-                    minute: 60,
-                    status: 'start'
+                    minute: 0,
+                    status: 'start',
+                    "shiftno": 0,
+                    "modelname": articleKey,
                 }
             });
             this.socket.on(this.eventListen, (response) => {
@@ -236,6 +281,38 @@ export class SwingArmMachine extends Component {
         }
     }
 
+    restartSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop',
+                shiftno: 0,
+                modelname: articleKey,
+            }
+        });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.eventListen,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'start',
+                shiftno: 0,
+                modelname: articleKey,
+            }
+        });
+        this.currentSelectedArticle = newSelectededArticle;
+    };
 
     componentDidMount() {
         const ctx = this.canvas.getContext('2d');
@@ -268,4 +345,8 @@ export class SwingArmMachine extends Component {
     }
 }
 
-export default SwingArmMachine
+const mapStateToProps = (state) => ({
+    globalArticleFilter: state.globalArticleFilter,
+});
+
+export default connect(mapStateToProps)(SwingArmMachine);

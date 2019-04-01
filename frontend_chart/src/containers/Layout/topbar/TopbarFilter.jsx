@@ -9,6 +9,7 @@ import {withRouter} from "react-router-dom";
 import API from "../../../services/api";
 import {changeGlobalModelFilter} from "../../../redux/actions/globalModelFilterActions";
 import {changeGlobalArticleFilter} from "../../../redux/actions/globalArticleActions";
+import {specifyCurrentDateDevice} from "../../../shared/utils/Utilities";
 import moment from "moment";
 
 class TopbarFilter extends Component {
@@ -41,17 +42,33 @@ class TopbarFilter extends Component {
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
 
+        let param = {};
         switch (this.props.location.pathname) {
             case ROUTE.Dashboard:
-                this.requestModelNamesForFiltering('modelName');
+                let currentDateDevice = specifyCurrentDateDevice();
+                this.from_workdate = currentDateDevice[0];
+                this.to_workdate = currentDateDevice[1];
+                param = {
+                    from_workdate: this.from_workdate,
+                    to_workdate: this.to_workdate
+                };
+                this.requestModelNamesForFiltering('modelName', param);
                 break;
             case ROUTE.Analysis:
-                this.requestModelNamesForFiltering('modelName');
+                this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+                this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+                param = {
+                    from_workdate: this.from_workdate,
+                    to_workdate: this.to_workdate,
+                };
+                this.requestModelNamesForFiltering('modelName', param);
                 break;
             case ROUTE.Report:
-                let param = {
-                    from_workdate: moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD"),
-                    to_workdate: moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD"),
+                this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+                this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+                param = {
+                    from_workdate: this.from_workdate,
+                    to_workdate: this.to_workdate,
                 };
                 this.requestModelNamesForFiltering('modelNameForReport', param);
                 break;
@@ -63,18 +80,38 @@ class TopbarFilter extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.location != prevProps.location) {
+        let oldStartDate = moment(prevProps.globalDateFilter.startDate.toISOString()).format("YYYYMMDD")
+        let newStartDate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD")
+        let oldEndDate = moment(prevProps.globalDateFilter.startDate.toISOString()).format("YYYYMMDD")
+        let newEndDate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD")
+        if (this.props.location != prevProps.location || oldStartDate != newStartDate || oldEndDate != newEndDate) {
+            let param = {};
             switch (this.props.location.pathname) {
                 case ROUTE.Dashboard:
-                    this.requestModelNamesForFiltering('modelName');
+                    let currentDate = specifyCurrentDateDevice();
+                    this.from_workdate = currentDate[0];
+                    this.to_workdate = currentDate[1];
+                    param = {
+                        from_workdate: this.from_workdate,
+                        to_workdate: this.to_workdate,
+                    }
+                    this.requestModelNamesForFiltering('modelName', param);
                     break;
                 case ROUTE.Analysis:
-                    this.requestModelNamesForFiltering('modelName');
+                    this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+                    this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+                    param = {
+                        from_workdate: this.from_workdate,
+                        to_workdate: this.to_workdate,
+                    };
+                    this.requestModelNamesForFiltering('modelName', param);
                     break;
                 case ROUTE.Report:
-                    let param = {
-                        from_workdate: moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD"),
-                        to_workdate: moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD"),
+                    this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+                    this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+                    param = {
+                        from_workdate: this.from_workdate,
+                        to_workdate: this.to_workdate,
                     };
                     this.requestModelNamesForFiltering('modelNameForReport', param);
                     break;
@@ -257,8 +294,11 @@ class TopbarFilter extends Component {
                 link = 'api/os/articleByModelName';
                 break;
         }
+
         let param = {
-            model_name: modelKey
+            "model_name": modelKey,
+            "from_workdate":this.from_workdate,
+            "to_workdate":this.to_workdate
         };
         API(link, 'POST', param)
             .then((response) => {

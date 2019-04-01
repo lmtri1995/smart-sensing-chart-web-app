@@ -378,12 +378,15 @@ class BottomComponents extends Component {
         let param = {
             "from_timedevice": timeFromStartOfDay[0],
             "to_timedevice": timeFromStartOfDay[1],
-            // "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
-            // "shiftno": '',
+            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "shiftno": '0',
         };
         this.setState({
             loading: true,
         });
+        console.log("param 387: ", param);
+        console.log("this.apiUrl: ", this.apiUrl);
+
         API(this.apiUrl, 'POST', param)
             .then((response) => {
                 if (response.data.success) {

@@ -51,8 +51,39 @@ class StationStatus extends Component {
                 break;
         }
 
-
+        this.currentSelectedArticle = '';
     }
+
+    restartSocket = () => {
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.listenEvent,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop',
+                modelname: '',     // todo: change 'modelname' to 'articlename' on API
+            }
+        });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.listenEvent,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'start',
+                modelname: newArticleKey,
+            }
+        });
+        this.currentSelectedArticle = newSelectedArticle;
+    };
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -65,6 +96,7 @@ class StationStatus extends Component {
                 'to_timedevice': 0,
                 'proccess': this.process,
                 'status': 'stop',
+                'modelname': this.currentSelectedArticle,
             }
         });
 
@@ -106,11 +138,26 @@ class StationStatus extends Component {
         return result;
     }*/
 
-    callAxiosBeforeSocket = (callback) => {
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
+
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
+        this.currentSelectedArticle = newSelectededArticle;
+
         let param = {
-            "proccess": this.process
+            "proccess": this.process,
+            "modelname": articleKey,
+            "shiftno":"0"
         };
-        console.log("param: ", param);
+        console.log("param 115: ", param);
+        console.log("this.apiUrl: ", this.apiUrl);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
                 console.log("response 115: ", response);
@@ -131,7 +178,11 @@ class StationStatus extends Component {
                     this.setState({
                         dataArray: this.displayData,
                     });
-                    this.callSocket();
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
                 } else {
                     return callback();
                 }
@@ -139,13 +190,37 @@ class StationStatus extends Component {
             .catch((err) => console.log('err:', err));
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
+        }
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        if (currentArticleKey != newArticleKey) {
+            this.callAxiosBeforeSocket(true);
+        }
+    }
+
     callSocket = () => {
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
         this.socket.emit('machine_status', {
             msg: {
                 'event': 'sna_machine_status',
                 'from_timedevice': 0,
                 'to_timedevice': 0,
                 'proccess': this.process,
+                "modelname": articleKey,
                 'status': 'start',
             }
         });
@@ -339,4 +414,8 @@ class StationStatus extends Component {
     }
 }
 
-export default connect()(StationStatus);
+const mapStateToProps = (state) => ({
+    globalArticleFilter: state.globalArticleFilter,
+});
+
+export default connect(mapStateToProps)(StationStatus);

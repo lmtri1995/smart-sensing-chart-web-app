@@ -3,7 +3,7 @@ import ShiftStatusItem from './components/ShiftStatusItem';
 import moment from "moment";
 import Singleton from "../../../../services/Socket";
 import {ClipLoader} from 'react-spinners';
-import {specifyCurrentShift} from "../../../../shared/utils/Utilities";
+import {specifyCurrentShift, specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
 import {storeShiftStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import {connect} from "react-redux";
 import API from "../../../../services/api";
@@ -54,6 +54,8 @@ class ShiftStatus extends Component {
                 this.listenEvent = 'sna_' + this.emitEvent;
                 break;
         }
+
+        this.currentSelectedArticle = '';
     }
 
     componentWillUnmount() {
@@ -64,21 +66,64 @@ class ShiftStatus extends Component {
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
-                status: 'stop'
+                status: 'stop',
+                modelname: this.currentSelectedArticle,
             }
         });
     }
 
-    callAxiosBeforeSocket = (callback) => {
+    restartSocket = () => {
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.listenEvent,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'stop',
+                modelname: '',     // todo: change 'modelname' to 'articlename' on API
+            }
+        });
+
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                event: this.listenEvent,
+                from_timedevice: 0,
+                to_timedevice: 0,
+                minute: 0,
+                status: 'start',
+                modelname: newArticleKey,
+            }
+        });
+        this.currentSelectedArticle = newSelectedArticle;
+    };
+
+    callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
         /*let {startDate, endDate} = this.props.globalDateFilter;
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice   = moment(endDate.toISOString()).unix();*/
-
+        if (!this.state.loading) {
+            this.setState({loading: true});
+        }
         this._isMounted = true;
+
+        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectededArticle) {
+            articleKey = newSelectededArticle[1].key;
+        }
+
+        this.currentSelectedArticle = newSelectededArticle;
         let param = {
             "from_timedevice": 0,
             "to_timedevice": 0,
-            "shiftno": 0,
+            "modelname": articleKey,
+            "shiftno":"0"
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -88,7 +133,11 @@ class ShiftStatus extends Component {
                         dataArray: dataArray,
                         loading: false,
                     });
-                    this.callSocket();
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
                 } else {
                     return callback();
                 }
@@ -97,13 +146,20 @@ class ShiftStatus extends Component {
     }
 
     callSocket = () => {
+        let selectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (selectedArticle) {
+            articleKey = selectedArticle[1].key;
+        }
+
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
                 from_timedevice: 0,
                 to_timedevice: 0,
                 minute: 0,
-                status: 'start'
+                status: 'start',
+                modelname: articleKey,
             }
         });
 
@@ -125,6 +181,23 @@ class ShiftStatus extends Component {
                 });
             }
         });
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let currentSelectedArticle = this.currentSelectedArticle;
+        let currentArticleKey = '';
+        if (currentSelectedArticle) {
+            currentArticleKey = currentSelectedArticle[1].key;
+        }
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let newArticleKey = '';
+        if (newSelectedArticle) {
+            newArticleKey = newSelectedArticle[1].key;
+        }
+
+        if (currentArticleKey != newArticleKey) {
+            this.callAxiosBeforeSocket(true);
+        }
     }
 
     componentDidMount() {
@@ -310,4 +383,9 @@ class ShiftStatus extends Component {
     }
 }
 
-export default connect()(ShiftStatus);
+const mapStateToProps = (state) => ({
+    globalShiftFilter: state.globalShiftFilter,
+    globalArticleFilter: state.globalArticleFilter,
+});
+
+export default connect(mapStateToProps)(ShiftStatus);

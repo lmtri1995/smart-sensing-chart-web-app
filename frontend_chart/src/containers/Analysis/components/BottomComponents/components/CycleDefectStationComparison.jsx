@@ -234,8 +234,8 @@ export class CycleDefectStationComparison extends Component {
                 "to_timedevice": toTimedevice,
                 "istatus": this.istatus,
                 "proccess": this.process,
-                // "shiftno": selectedShift,
-                // "modelname":articleKey
+                "shiftno": selectedShift,
+                "modelname":articleKey
             };
             this.setState({
                 loading: true,
@@ -283,8 +283,8 @@ export class CycleDefectStationComparison extends Component {
             "to_timedevice": toTimedevice,
             "istatus": this.istatus,
             "proccess": this.process,
-            // "shiftno": selectedShift,
-            // "modelname":articleKey
+            "shiftno": selectedShift,
+            "modelname":articleKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

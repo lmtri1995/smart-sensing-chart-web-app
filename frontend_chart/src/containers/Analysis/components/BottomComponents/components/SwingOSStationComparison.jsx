@@ -200,12 +200,13 @@ export class SwingArmMachine extends Component {
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice,
-                    // "shiftno": selectedShift,
-                    // "modelname":articleKey
+                    "shiftno": selectedShift,
+                    "modelname":articleKey
                 };
                 this.setState({
                     loading: true,
                 });
+                console.log("param: ", param);
                 API('api/os/stationcomparision', 'POST', param)
                     .then((response) => {
                         try {
@@ -248,9 +249,10 @@ export class SwingArmMachine extends Component {
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                // "shiftno": selectedShift,
-                // "modelname":articleKey
+                "shiftno": selectedShift,
+                "modelname":articleKey
             };
+            console.log("param: ", param);
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {
                     try {

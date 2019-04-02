@@ -7,6 +7,7 @@ import {specifyCurrentShift, specifySelectedShiftNo} from "../../../../shared/ut
 import {storeShiftStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import {connect} from "react-redux";
 import API from "../../../../services/api";
+import {SHIFT_OPTIONS} from "../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -73,11 +74,14 @@ class ShiftStatus extends Component {
     }
 
     restartSocket = () => {
+        console.log("restartSocket restartSocket restartSocket restartSocket");
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
             newArticleKey = newSelectedArticle[1].key;
         }
+
+        console.log("83 83 83 83 83 83 83 83 ");
 
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -90,6 +94,8 @@ class ShiftStatus extends Component {
             }
         });
 
+        console.log("96 96 96 96 96 96 96 96");
+
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -100,6 +106,10 @@ class ShiftStatus extends Component {
                 modelname: newArticleKey,
             }
         });
+
+
+        console.log("110=============================");
+
         this.currentSelectedArticle = newSelectedArticle;
     };
 
@@ -125,10 +135,17 @@ class ShiftStatus extends Component {
             "modelname": articleKey,
             "shiftno":"0"
         };
+        console.log("137 137 137 137 137");
+        console.log("137 137 137 137 137");
+        console.log("param: ", param);
+        console.log("this.apiUrl: ", this.apiUrl);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("143 143 143 143 143");
+                console.log("response: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
+                    console.log("dataArray 147: ", dataArray);
                     this.setState({
                         dataArray: dataArray,
                         loading: false,
@@ -196,6 +213,7 @@ class ShiftStatus extends Component {
         }
 
         if (currentArticleKey != newArticleKey) {
+            console.log("208 208 208 208 208");
             this.callAxiosBeforeSocket(true);
         }
     }
@@ -219,117 +237,49 @@ class ShiftStatus extends Component {
 
     }
 
-    showShiftItem(dataArray, shiftNo, currentShift) {
-        let result = "";
-        if (dataArray.length > 7) {
-            if (shiftNo == 1) {
-                let total = 0;
-                for (let i = 0; i < 8; i++) {
-                    total += parseInt(dataArray[i].first_shift);
-                }
-                result = <ShiftStatusItem currentShift={currentShift}
-                                          shiftNo={shiftNo} total={total}
-                                          count1={dataArray[0].first_shift}
-                                          count2={dataArray[1].first_shift}
-                                          count3={dataArray[2].first_shift}
-                                          count4={dataArray[3].first_shift}
-                                          count5={dataArray[4].first_shift}
-                                          count6={dataArray[5].first_shift}
-                                          count7={dataArray[6].first_shift}
-                                          count8={dataArray[7].first_shift}
-                />
-            } else if (shiftNo == 2) {
-                let total = 0;
-                for (let i = 0; i < 8; i++) {
-                    total += parseInt(dataArray[i].second_shift);
-                }
-                result = <ShiftStatusItem currentShift={currentShift}
-                                          shiftNo={shiftNo} total={total}
-                                          count1={dataArray[0].second_shift}
-                                          count2={dataArray[1].second_shift}
-                                          count3={dataArray[2].second_shift}
-                                          count4={dataArray[3].second_shift}
-                                          count5={dataArray[4].second_shift}
-                                          count6={dataArray[5].second_shift}
-                                          count7={dataArray[6].second_shift}
-                                          count8={dataArray[7].second_shift}
-                />
-            } else if (shiftNo == 3) {
-                let total = 0;
-                for (let i = 0; i < 8; i++) {
-                    total += parseInt(dataArray[i].third_shift);
-                }
-                result = <ShiftStatusItem currentShift={currentShift}
-                                          shiftNo={shiftNo} total={total}
-                                          count1={dataArray[0].third_shift}
-                                          count2={dataArray[1].third_shift}
-                                          count3={dataArray[2].third_shift}
-                                          count4={dataArray[3].third_shift}
-                                          count5={dataArray[4].third_shift}
-                                          count6={dataArray[5].third_shift}
-                                          count7={dataArray[6].third_shift}
-                                          count8={dataArray[7].third_shift}
-                />
+    handleDisplayArray = (dataArray) => {
+        let shift1Array = [0, 0, 0, 0, 0, 0, 0, 0];
+        let shift2Array = [0, 0, 0, 0, 0, 0, 0, 0];
+        let shift3Array = [0, 0, 0, 0, 0, 0, 0, 0];
+        try {
+            for (let i = 0; i < dataArray.length; i++){
+                let station = parseInt(dataArray[i].idstation);
+                shift1Array[station - 1] = parseInt(dataArray[i].first_shift);
+                shift2Array[station - 1] = parseInt(dataArray[i].second_shift);
+                shift3Array[station - 1] = parseInt(dataArray[i].third_shift);
             }
-
-            // Prepare to dispatch Data to Redux Store to Export Data later
-            let shiftStatusData = [
-                [
-                    dataArray[0].first_shift,
-                    dataArray[1].first_shift,
-                    dataArray[2].first_shift,
-                    dataArray[3].first_shift,
-                    dataArray[4].first_shift,
-                    dataArray[5].first_shift,
-                    dataArray[6].first_shift,
-                    dataArray[7].first_shift,
-                    dataArray.reduce((acc, curData) => acc + +(curData.first_shift), 0),
-                ],
-                [
-                    dataArray[0].second_shift,
-                    dataArray[1].second_shift,
-                    dataArray[2].second_shift,
-                    dataArray[3].second_shift,
-                    dataArray[4].second_shift,
-                    dataArray[5].second_shift,
-                    dataArray[6].second_shift,
-                    dataArray[7].second_shift,
-                    dataArray.reduce((acc, curData) => acc + +(curData.second_shift), 0),
-                ],
-                [
-                    dataArray[0].third_shift,
-                    dataArray[1].third_shift,
-                    dataArray[2].third_shift,
-                    dataArray[3].third_shift,
-                    dataArray[4].third_shift,
-                    dataArray[5].third_shift,
-                    dataArray[6].third_shift,
-                    dataArray[7].third_shift,
-                    dataArray.reduce((acc, curData) => acc + +(curData.third_shift), 0),
-                ],
-            ];
-            this.props.dispatch(storeShiftStatusData(shiftStatusData));
-        } else {
-            result = <ShiftStatusItem currentShift={currentShift}
-                                      shiftNo={shiftNo} total={0}
-                                      count1={0}
-                                      count2={0}
-                                      count3={0}
-                                      count4={0}
-                                      count5={0}
-                                      count6={0}
-                                      count7={0}
-                                      count8={0}/>;
+        } catch (e) {
+            console.log("Error: ", e);
         }
-        return result;
+        return [shift1Array, shift2Array, shift3Array];
+    }
+
+    showShiftItem(dataArray, shiftNo) {
+        let total = 0;
+        dataArray.forEach(item => {
+            total += item;
+        });
+        return <ShiftStatusItem shiftNo={shiftNo} total={total}
+                                count1={dataArray[0]}
+                                count2={dataArray[1]}
+                                count3={dataArray[2]}
+                                count4={dataArray[3]}
+                                count5={dataArray[4]}
+                                count6={dataArray[5]}
+                                count7={dataArray[6]}
+                                count8={dataArray[7]}
+        />
     }
 
     showShiftTable(dataArray) {
         let result = '';
         let currentShift = specifyCurrentShift();
-        let shift1 = this.showShiftItem(dataArray, 1, currentShift);
-        let shift2 = this.showShiftItem(dataArray, 2, currentShift);
-        let shift3 = this.showShiftItem(dataArray, 3, currentShift);
+
+        let displayData = this.handleDisplayArray(dataArray);
+        let shift1 = this.showShiftItem(displayData[0], 1);
+        let shift2 = this.showShiftItem(displayData[1], 2);
+        let shift3 = this.showShiftItem(displayData[2], 3);
+
         if (currentShift == 1) {
             result = <tbody>{shift2}{shift3}{shift1}</tbody>;
         } else if (currentShift == 2) {

@@ -189,6 +189,26 @@ class TopbarFilter extends Component {
         );
     };
 
+    onChoosingArticleItemByDefault = (currentArticle) => {
+        let item = currentArticle;
+        let currentSelectedArticle = [item];
+
+        let articleMap = this.state.articleMap;
+        articleMap.forEach((value, key) => {
+            value.selected = key === item;
+
+            if (key === item) {
+                currentSelectedArticle.push(value);
+            }
+        });
+        this.setState({
+            articleMap: articleMap
+        });
+        this.props.dispatch(
+            changeGlobalArticleFilter(currentSelectedArticle)
+        );
+    }
+
     onShiftFilterMenuClicked = () => {
         this.setState({
             modelFilterMenuOpen: false,
@@ -335,6 +355,10 @@ class TopbarFilter extends Component {
                         this.props.dispatch(
                             changeGlobalArticleFilter(allArticlesSet)
                         );
+
+                        if (ARTICLE_NAMES && ARTICLE_NAMES.size > 0){
+                            this.onChoosingArticleItemByDefault(ARTICLE_NAMES.keys().next().value);
+                        }
                     }
                 }
             })

@@ -3,8 +3,9 @@ import Singleton from "../../../../../services/Socket";
 import {ClipLoader} from "react-spinners";
 import {
     changeNumberFormat,
+    specifyCurrentDateDevice,
     specifyCurrentShift,
-    specifyTheShiftStartHour
+    specifyTheShiftStartHour,
 } from "../../../../../shared/utils/Utilities";
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
@@ -151,6 +152,7 @@ export class CycleDefectStationComparison extends Component {
         let result = [];
         let idleCycleArray = [0, 0, 0], deffectiveArray = [0, 0, 0];
         let currentShift = specifyCurrentShift();
+
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
                 if (item) {
@@ -193,9 +195,34 @@ export class CycleDefectStationComparison extends Component {
             });
         }
         result.push(deffectiveArray);
+
         if (this.role != 'ip') {
             result.push(idleCycleArray);
         }
+        return result;
+    }
+
+    arrangeSapByCurrentShift(sapArray){
+        let result = [0, 0, 0];
+        let currentShift = specifyCurrentShift();
+
+        sapArray.map(item => {
+            if (item) {
+                if (currentShift == 1) {//2, 3, 1
+                    result[0] = sapArray[1];
+                    result[1] = sapArray[2];
+                    result[2] = sapArray[0];
+                } else if (currentShift == 2) {//3, 1, 2
+                    result[0] = sapArray[2];
+                    result[1] = sapArray[0];
+                    result[2] = sapArray[1];
+                } else { //1, 2, 3
+                    result[0] = sapArray[0];
+                    result[1] = sapArray[1];
+                    result[2] = sapArray[2];
+                }
+            }
+        });
         return result;
     }
 
@@ -251,6 +278,8 @@ export class CycleDefectStationComparison extends Component {
                 try {
                     let dataArray = response.data.data;
                     let returnData = JSON.parse(dataArray[0].data);
+
+
                     let displayArray = this.handleReturnData(returnData);
                     let dataset = [];
                     if (this.role == 'ip') {
@@ -265,40 +294,81 @@ export class CycleDefectStationComparison extends Component {
                                 data: displayArray[0],
                             }
                         ];
-                    } else {
-                        dataset = [
-                            {
-                                label: 'Defective',
-                                backgroundColor: '#4C9EFF',
-                                borderColor: '#4C9EFF',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[0],
-                            },
-                            {
-                                label: 'Idle Cycle',
-                                backgroundColor: '#AFEEFF',
-                                borderColor: '#AFEEFF',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[1],
-                            }
-                        ];
-                    }
-                    this.myChart.data = {
-                        labels: this.labelArray,
-                        datasets: dataset
-                    };
-                    this.myChart.update();
-                    this.setState({loading: false});
-                    if (!stopCurrentSocket) {
-                        this.callSocket();
-                    } else {
-                        this.restartSocket();
-                    }
 
+                        this.myChart.data = {
+                            labels: this.labelArray,
+                            datasets: dataset
+                        };
+                        this.myChart.update();
+                        this.setState({loading: false});
+                        if (!stopCurrentSocket) {
+                            this.callSocket();
+                        } else {
+                            this.restartSocket();
+                        }
+                    } else {
+                        //Get SAP data for cycle
+                        let currentWorkingDate = specifyCurrentDateDevice();
+                        let param1 = {
+                            "from_workdate": currentWorkingDate[0],
+                            "to_workdate": currentWorkingDate[1],
+                            "model_name": articleKey
+                        };
+                        API(`api/os/sap`, 'POST', param1).then((response1) => {
+                            try {
+                                let responseArray = response1.data.data;
+                                let sapData = [0, 0, 0];
+                                responseArray.map(item => {
+                                    if (item.SHIFT_NO == '1') {
+                                        sapData[0] = item.sap;
+                                    } else if (item.SHIFT_NO == '2') {
+                                        sapData[1] = item.sap;
+                                    } else if (item.SHIFT_NO == '3') {
+                                        sapData[2] = item.sap;
+                                    }
+                                });
+                                sapData = this.arrangeSapByCurrentShift(sapData);
+                                displayArray[1][0] -= sapData[0];
+                                displayArray[1][1] -= sapData[1];
+                                displayArray[1][2] -= sapData[2];
+
+                                dataset = [
+                                    {
+                                        label: 'Defective',
+                                        backgroundColor: '#4C9EFF',
+                                        borderColor: '#4C9EFF',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayArray[0],
+                                    },
+                                    {
+                                        label: 'Idle Cycle',
+                                        backgroundColor: '#AFEEFF',
+                                        borderColor: '#AFEEFF',
+                                        borderWidth: 1,
+                                        //hoverBackgroundColor: '#FF6384',
+                                        //hoverBorderColor: '#FF6384',
+                                        data: displayArray[1],
+                                    }
+                                ];
+
+                                this.myChart.data = {
+                                    labels: this.labelArray,
+                                    datasets: dataset
+                                };
+                                this.myChart.update();
+                                this.setState({loading: false});
+                                if (!stopCurrentSocket) {
+                                    this.callSocket();
+                                } else {
+                                    this.restartSocket();
+                                }
+                            } catch (e) {
+                                console.log("Error: ", e);
+                            }
+                        });
+                    }
                 } catch (e) {
                     console.log("Error: ", e);
                     let dataset = [];
@@ -407,34 +477,63 @@ export class CycleDefectStationComparison extends Component {
         this.socket.on(this.eventListen, (response) => {
             try {
                 response = JSON.parse(response);
-                if (response && response.success == "true") {
-                    let dataArray = response.data;
-                    let returnData = JSON.parse(dataArray[0].data);
-                    if (returnData.length > 0) {
-                        let displayArray = this.handleReturnData(returnData);
-                        let totalDefectcount = 0;
-                        if (displayArray[0] && displayArray.length > 0) {
-                            displayArray[0].map(item => {
-                                if (item) {
-                                    totalDefectcount += parseInt(item);
+                let dataArray = response.data;
+                let returnData = JSON.parse(dataArray[0].data);
+                let displayArray = this.handleReturnData(returnData);
+                let totalDefectcount = 0;
+                if (displayArray[0] && displayArray.length > 0) {
+                    displayArray[0].map(item => {
+                        if (item) {
+                            totalDefectcount += parseInt(item);
+                        }
+                    });
+                }
+                //localStorage.setItem("totalDefectCount", totalDefectcount);
+                let dataset = [];
+                if (this.role == 'ip') {
+                    dataset = [
+                        {
+                            label: 'Defective',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[0],
+                        }
+                    ];
+                    this.myChart.data = {
+                        labels: this.labelArray,
+                        datasets: dataset
+                    };
+                    this.myChart.update();
+                    this.setState({loading: false});
+                } else {
+                    //Get SAP data for cycle
+                    let currentWorkingDate = specifyCurrentDateDevice();
+                    let param1 = {
+                        "from_workdate": currentWorkingDate[0],
+                        "to_workdate": currentWorkingDate[1],
+                        "model_name": articleKey
+                    };
+                    API(`api/os/sap`, 'POST', param1).then((response1) => {
+                        try {
+                            let responseArray = response1.data.data;
+                            let sapData = [0, 0, 0];
+                            responseArray.map(item => {
+                                if (item.SHIFT_NO == '1') {
+                                    sapData[0] = item.sap;
+                                } else if (item.SHIFT_NO == '2') {
+                                    sapData[1] = item.sap;
+                                } else if (item.SHIFT_NO == '3') {
+                                    sapData[2] = item.sap;
                                 }
                             });
-                        }
-                        //localStorage.setItem("totalDefectCount", totalDefectcount);
-                        let dataset = [];
-                        if (this.role == 'ip') {
-                            dataset = [
-                                {
-                                    label: 'Defective',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
-                                }
-                            ];
-                        } else {
+                            sapData = this.arrangeSapByCurrentShift(sapData);
+                            displayArray[1][0] -= sapData[0];
+                            displayArray[1][1] -= sapData[1];
+                            displayArray[1][2] -= sapData[2];
+
                             dataset = [
                                 {
                                     label: 'Defective',
@@ -455,14 +554,17 @@ export class CycleDefectStationComparison extends Component {
                                     data: displayArray[1],
                                 }
                             ];
+
+                            this.myChart.data = {
+                                labels: this.labelArray,
+                                datasets: dataset
+                            };
+                            this.myChart.update();
+                            this.setState({loading: false});
+                        } catch (e) {
+                            console.log("Error: ", e);
                         }
-                        this.myChart.data = {
-                            labels: this.labelArray,
-                            datasets: dataset
-                        };
-                        this.myChart.update();
-                        this.setState({loading: false});
-                    }
+                    });
                 }
             } catch (e) {
                 console.log("Error: ", e);

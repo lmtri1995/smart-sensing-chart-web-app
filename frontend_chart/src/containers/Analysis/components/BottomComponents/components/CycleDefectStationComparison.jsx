@@ -4,7 +4,10 @@ import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import moment from "moment";
 import {ClipLoader} from "react-spinners";
-import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
+import {
+    changeNumberFormat,
+    specifySelectedShiftNo
+} from "../../../../../shared/utils/Utilities";
 import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
 
 let initialData = {
@@ -184,35 +187,82 @@ export class CycleDefectStationComparison extends Component {
                     //hoverBorderColor: '#FF6384',
                     data: displayArray[0],
                 }
-            ]
-        } else {
-            dataset = [
-                {
-                    label: 'Defective',
-                    backgroundColor: '#4C9EFF',
-                    borderColor: '#4C9EFF',
-                    borderWidth: 1,
-                    //hoverBackgroundColor: '#FF6384',
-                    //hoverBorderColor: '#FF6384',
-                    data: displayArray[0],
-                },
-                {
-                    label: 'Idle Cycle',
-                    backgroundColor: '#AFEEFF',
-                    borderColor: '#AFEEFF',
-                    borderWidth: 1,
-                    //hoverBackgroundColor: '#FF6384',
-                    //hoverBorderColor: '#FF6384',
-                    data: displayArray[1],
-                }
             ];
+            this.myChart.data = {
+                labels: labelArray,
+                datasets: dataset
+            };
+            this.myChart.update();
+            this.setState({loading: false});
+        } else {
+            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (newSelectedArticle) {
+                articleKey = newSelectedArticle[1].key;
+            }
+            let {startDate, endDate} = this.props.globalDateFilter;
+            startDate = moment(startDate).format("YYYYMMDD");
+            endDate = moment(endDate).format("YYYYMMDD");
+
+            console.log();
+            let param1 = {
+                "from_workdate": startDate,
+                "to_workdate": endDate,
+                "model_name": articleKey
+            };
+            console.log("param1: ", param1);
+            API(`api/os/sap`, 'POST', param1).then((response1) => {
+                console.log("response1: ", response1);
+                try {
+                    let responseArray = response1.data.data;
+                    let sapData = [0, 0, 0];
+                    responseArray.map(item => {
+                        if (item.SHIFT_NO == '1') {
+                            sapData[0] = item.sap;
+                        } else if (item.SHIFT_NO == '2') {
+                            sapData[1] = item.sap;
+                        } else if (item.SHIFT_NO == '3') {
+                            sapData[2] = item.sap;
+                        }
+                    });
+                    console.log("sapData: ", sapData);
+                    console.log("displayArray: ", displayArray);
+                    displayArray[1][0] -= sapData[0];
+                    displayArray[1][1] -= sapData[1];
+                    displayArray[1][2] -= sapData[2];
+
+                    dataset = [
+                        {
+                            label: 'Defective',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[0],
+                        },
+                        {
+                            label: 'Idle Cycle',
+                            backgroundColor: '#AFEEFF',
+                            borderColor: '#AFEEFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[1],
+                        }
+                    ];
+
+                    this.myChart.data = {
+                        labels: labelArray,
+                        datasets: dataset
+                    };
+                    this.myChart.update();
+                    this.setState({loading: false});
+                } catch (e) {
+                    console.log("Error: ", e);
+                }
+            });
         }
-        this.myChart.data = {
-            labels: labelArray,
-            datasets: dataset
-        };
-        this.myChart.update();
-        this.setState({loading: false});
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -240,6 +290,8 @@ export class CycleDefectStationComparison extends Component {
             this.setState({
                 loading: true,
             });
+            console.log("this.apiUrl: ", this.apiUrl);
+            console.log("param: ", param);
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
                     try {
@@ -286,8 +338,11 @@ export class CycleDefectStationComparison extends Component {
             "shiftno": selectedShift,
             "modelname":articleKey
         };
+        console.log("this.apiUrl: ", this.apiUrl);
+        console.log("param: ", param);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("response: ", response);
                 try {
                     let dataArray = response.data.data;
                     let returnData = JSON.parse(dataArray[0].data);

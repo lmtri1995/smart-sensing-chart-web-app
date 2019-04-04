@@ -525,16 +525,6 @@ class BottomComponents extends Component {
         endDate = moment(endDate).unix();
 
         let {availabilityNumber, performanceNumber, qualityNumber, OEENumber, workLossNumber} = this.state;
-        availabilityNumber = changeNumberFormat(availabilityNumber);
-        availabilityNumber = availabilityNumber > 100 ? 100 : availabilityNumber;
-        performanceNumber = changeNumberFormat(performanceNumber);
-        performanceNumber = performanceNumber > 100 ? 100 : performanceNumber;
-        qualityNumber = changeNumberFormat(qualityNumber);
-        qualityNumber = qualityNumber > 100 ? 100 : qualityNumber;
-        OEENumber = changeNumberFormat(OEENumber);
-        OEENumber = OEENumber > 100 ? 100 : OEENumber;
-        workLossNumber = changeNumberFormat(workLossNumber);
-        workLossNumber = workLossNumber > 100 ? 100 : workLossNumber;
 
         return (
             <div className="container">

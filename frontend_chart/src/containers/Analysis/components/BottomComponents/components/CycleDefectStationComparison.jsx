@@ -204,15 +204,12 @@ export class CycleDefectStationComparison extends Component {
             startDate = moment(startDate).format("YYYYMMDD");
             endDate = moment(endDate).format("YYYYMMDD");
 
-            console.log();
             let param1 = {
                 "from_workdate": startDate,
                 "to_workdate": endDate,
                 "model_name": articleKey
             };
-            console.log("param1: ", param1);
             API(`api/os/sap`, 'POST', param1).then((response1) => {
-                console.log("response1: ", response1);
                 try {
                     let responseArray = response1.data.data;
                     let sapData = [0, 0, 0];
@@ -225,8 +222,6 @@ export class CycleDefectStationComparison extends Component {
                             sapData[2] = item.sap;
                         }
                     });
-                    console.log("sapData: ", sapData);
-                    console.log("displayArray: ", displayArray);
                     displayArray[1][0] -= sapData[0];
                     displayArray[1][1] -= sapData[1];
                     displayArray[1][2] -= sapData[2];
@@ -290,8 +285,6 @@ export class CycleDefectStationComparison extends Component {
             this.setState({
                 loading: true,
             });
-            console.log("this.apiUrl: ", this.apiUrl);
-            console.log("param: ", param);
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
                     try {
@@ -338,11 +331,8 @@ export class CycleDefectStationComparison extends Component {
             "shiftno": selectedShift,
             "modelname":articleKey
         };
-        console.log("this.apiUrl: ", this.apiUrl);
-        console.log("param: ", param);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                console.log("response: ", response);
                 try {
                     let dataArray = response.data.data;
                     let returnData = JSON.parse(dataArray[0].data);

@@ -40,6 +40,8 @@ export default class DefectRateOverview extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.chartLabels && this.chartLabels.length > 0){
             this.drawLegend();
+        } else {
+            document.getElementById("defectRate-lengendLabel").innerHTML = '';
         }
     }
 

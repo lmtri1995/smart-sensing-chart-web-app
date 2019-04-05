@@ -15,10 +15,11 @@ var ACTUAL_PRODUCTION_FOR_DOUGHNUT_CHART = [];
 class ProductionRateOverview extends Component {
     drawLegend = (chartLabels, chartData, backgroundColors) => {
         let total = chartData.reduce((acc, curVal) => acc + curVal, 0);
+        total = total ? total : 1;
         let legendValue = "<div>";
         chartLabels.forEach((label, index) => {
             let color = backgroundColors[index];
-            let number = chartData[index];
+            let number = chartData[index] ? chartData[index] : 0;
             let percent = (chartData[index] / total) * 100;
             legendValue += "<div style='margin-top: 5px;'>";
             legendValue += "<div id='lengendLabel' class='productionrate_legend-box'" +

@@ -586,7 +586,7 @@ export class CycleDefectStationComparison extends Component {
                             borderWidth: 1,
                             //hoverBackgroundColor: '#FF6384',
                             //hoverBorderColor: '#FF6384',
-                            data: displayArray[0],
+                            data: [0, 0, 0],
                         }
                     ];
                 } else {

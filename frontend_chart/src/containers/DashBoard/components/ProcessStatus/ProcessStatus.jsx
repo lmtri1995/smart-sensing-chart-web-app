@@ -123,7 +123,7 @@ class ProcessStatus extends Component {
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                if (response.data.success) {
+                try {
                     let dataArray = response.data.data;
                     this.setState({
                         dataArray: dataArray,
@@ -134,8 +134,16 @@ class ProcessStatus extends Component {
                     } else {
                         this.restartSocket();
                     }
-                } else {
-                    return callback();
+                } catch (e) {
+                    this.setState({
+                        dataArray: [],
+                        loading: false,
+                    });
+                    if (!stopCurrentSocket) {
+                        this.callSocket();
+                    } else {
+                        this.restartSocket();
+                    }
                 }
             })
             .catch((err) => console.log('err:', err))

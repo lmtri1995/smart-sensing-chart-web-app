@@ -407,7 +407,7 @@ class TopbarFilter extends Component {
                     <div className="topbar_filter_menu">
                         {
                             // Only show Filter by Model Menu on Report Page when Productivity Tab is selected
-                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0]
+                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0] || location.pathname === ROUTE.Dashboard || location.pathname === ROUTE.Analysis
                                 ? (
                                     <span>
                                         <button className="btn btn-secondary"
@@ -439,7 +439,7 @@ class TopbarFilter extends Component {
                         }
                         {
                             // Only show Filter by Article Menu on Report Page when Productivity Tab is selected
-                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0]
+                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0] || location.pathname === ROUTE.Dashboard || location.pathname === ROUTE.Analysis
                                 ? (
                                     <span>
                                         <button className="btn btn-secondary"

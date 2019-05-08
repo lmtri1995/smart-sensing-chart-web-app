@@ -187,11 +187,13 @@ class ReportPage extends Component {
         }
         API(`api/${link}/productionRate`, 'POST', param)
             .then((response) => {
+                console.log("response: ", response);
                 // No need to check if(response.data.success)
                 // For Model Filter to work
                 // Because if response.data.success === false
                 // => response.data.data = []   Empty Array
                 let dataArray = response.data.data;
+                console.log("dataArray: ", dataArray);
 
                 let {from_workdate, to_workdate} = param;
                 let startMoment = moment(from_workdate, "YYYYMMDD");
@@ -211,6 +213,7 @@ class ReportPage extends Component {
 
                     startMoment = startMoment.add(1, "days");
                 }
+                console.log("startMoment: ", startMoment);
 
                 let shiftDataOfCurrentDay, currentProductionRate = 0;
                 let currentDayTargetProductions;
@@ -297,6 +300,7 @@ class ReportPage extends Component {
                             break;
                     }
                 });
+                console.log("dataArray: ", dataArray);
 
                 let dateLabels = [];
                 let productionRatesShift1 = [], productionRatesShift2 = [], productionRatesShift3 = [];
@@ -354,6 +358,9 @@ class ReportPage extends Component {
                         averageProductionRate,
                     ]);
                 });
+                console.log("targetProductionsShift1: ", targetProductionsShift1);
+                console.log("targetProductionsShift2: ", targetProductionsShift2);
+                console.log("targetProductionsShift3: ", targetProductionsShift3);
                 targetProductions.push(targetProductionsShift1, targetProductionsShift2, targetProductionsShift3);
                 actualProductions.push(actualProductionsShift1, actualProductionsShift2, actualProductionsShift3);
                 productionRateDataToDownload.push([

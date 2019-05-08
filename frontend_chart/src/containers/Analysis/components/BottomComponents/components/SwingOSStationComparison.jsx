@@ -119,17 +119,18 @@ export class SwingArmMachine extends Component {
     handleReturnData = (returnData) => {
         let result = [];
         let swingArmArray = [0, 0, 0], osPessArray = [0, 0, 0];
+        console.log("returnData: ", returnData);
         if (returnData && returnData.length > 0) {
             returnData.map(item => {
                     if (item[0] == 1) {
-                        swingArmArray[0] = item[1];
-                        osPessArray[0] = item[2];
+                        swingArmArray[0] = item[1]?item[1]:0;
+                        osPessArray[0] = item[2]?item[2]:0;
                     } else if (item[0] == 2) {
-                        swingArmArray[1] = item[1];
-                        osPessArray[1] = item[2];
+                        swingArmArray[1] = item[1]?item[1]:0;
+                        osPessArray[1] = item[2]?item[2]:0;
                     } else if (item[0] == 3) {
-                        swingArmArray[2] = item[1];
-                        osPessArray[2] = item[2];
+                        swingArmArray[2] = item[1]?item[1]:0;
+                        osPessArray[2] = item[2]?item[2]:0;
                     }
 
                 }
@@ -173,7 +174,7 @@ export class SwingArmMachine extends Component {
         this.myChart.options.tooltips = {
             callbacks: {
                 label: function (tooltipItem, data) {
-                    var value = data.datasets[0].data[tooltipItem.index];
+                    var value = tooltipItem.yLabel;
                     var label = data.labels[tooltipItem.index];
                     return label + ': ' + value;
                 }
@@ -206,7 +207,6 @@ export class SwingArmMachine extends Component {
                 this.setState({
                     loading: true,
                 });
-                console.log("param: ", param);
                 API('api/os/stationcomparision', 'POST', param)
                     .then((response) => {
                         try {
@@ -252,7 +252,6 @@ export class SwingArmMachine extends Component {
                 "shiftno": selectedShift,
                 "modelname":articleKey
             };
-            console.log("param: ", param);
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {
                     try {

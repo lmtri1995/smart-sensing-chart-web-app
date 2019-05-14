@@ -9,6 +9,7 @@ import {
     specifySelectedShiftNo
 } from "../../../../../shared/utils/Utilities";
 import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
+import {ARTICLE_NAMES} from "../../../../../constants/constants";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -198,7 +199,7 @@ export class CycleDefectStationComparison extends Component {
             let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
             let articleKey = '';
             if (newSelectedArticle) {
-                articleKey = newSelectedArticle[1].key;
+                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
             }
             let {startDate, endDate} = this.props.globalDateFilter;
             startDate = moment(startDate).format("YYYYMMDD");
@@ -207,7 +208,8 @@ export class CycleDefectStationComparison extends Component {
             let param1 = {
                 "from_workdate": startDate,
                 "to_workdate": endDate,
-                "model_name": articleKey
+                "modelname": '',
+                "articleno": articleKey
             };
             API(`api/os/sap`, 'POST', param1).then((response1) => {
                 try {
@@ -271,7 +273,7 @@ export class CycleDefectStationComparison extends Component {
             let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
             let articleKey = '';
             if (newSelectedArticle) {
-                articleKey = newSelectedArticle[1].key;
+                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
             }
 
             let param = {
@@ -280,7 +282,8 @@ export class CycleDefectStationComparison extends Component {
                 "istatus": this.istatus,
                 "proccess": this.process,
                 "shiftno": selectedShift,
-                "modelname":articleKey
+                "modelname": '',
+                "articleno": articleKey
             };
             this.setState({
                 loading: true,
@@ -320,7 +323,7 @@ export class CycleDefectStationComparison extends Component {
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (newSelectedArticle) {
-            articleKey = newSelectedArticle[1].key;
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         let param = {
@@ -329,7 +332,8 @@ export class CycleDefectStationComparison extends Component {
             "istatus": this.istatus,
             "proccess": this.process,
             "shiftno": selectedShift,
-            "modelname":articleKey
+            "modelname": '',
+            "articleno": articleKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

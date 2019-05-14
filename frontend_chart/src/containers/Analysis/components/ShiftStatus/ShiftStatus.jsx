@@ -8,6 +8,9 @@ import connect from "react-redux/es/connect/connect";
 import {SHIFT_OPTIONS} from "./../../../../constants/constants";
 import {storeShiftStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import {specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
+import {
+    ARTICLE_NAMES,
+} from "../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -63,10 +66,10 @@ class ShiftStatus extends Component {
             let fromTimeDevice = moment(startDate.toISOString()).unix();
             let toTimedevice   = moment(endDate.toISOString()).unix();
 
-            let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
             let articleKey = '';
-            if (newSelectededArticle) {
-                articleKey = newSelectededArticle[1].key;
+            if (newSelectedArticle) {
+                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value? '' : newSelectedArticle[0];
             }
 
             let newSelectededModel = this.props.globalModelFilter.selectedModel;
@@ -74,7 +77,8 @@ class ShiftStatus extends Component {
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "modelname": articleKey,
+                "modelname": '',
+                "articleno": articleKey,
                 "shiftno": 0,
                 //"shiftno": 0,
                 /*"from_timedevice": 0,
@@ -117,20 +121,22 @@ class ShiftStatus extends Component {
         let fromTimeDevice = moment(startDate.toISOString()).unix();
         let toTimedevice   = moment(endDate.toISOString()).unix();
 
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         let newSelectededModel = this.props.globalModelFilter.selectedModel;
+
 
         this._isMounted = true;
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
             "shiftno": 0,
-            "modelname": articleKey,
+            "modelname": '',
+            "articleno": articleKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

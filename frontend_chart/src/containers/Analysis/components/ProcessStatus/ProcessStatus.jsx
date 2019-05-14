@@ -9,6 +9,9 @@ import {storeProcessStatusData} from "../../../../redux/actions/downloadDataStor
 import moment from "moment";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../shared/utils/Utilities";
 import {standardDeviation} from "../../../../shared/utils/dataCalculator";
+import {
+    ARTICLE_NAMES,
+} from "../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -82,17 +85,18 @@ class ProcessStatus extends Component {
             let selectedShift = this.props.globalShiftFilter.selectedShift;
             selectedShift = specifySelectedShiftNo(selectedShift);
 
-            let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
             let articleKey = '';
-            if (newSelectededArticle) {
-                articleKey = newSelectededArticle[1].key;
+            if (newSelectedArticle) {
+                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
             }
 
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimeDevice,
                 "shiftno": selectedShift,
-                "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+                "modelname": '',
+                "articleno": articleKey
                 /*"from_timedevice": 0,
                 "to_timedevice": 0,*/
             };
@@ -132,7 +136,7 @@ class ProcessStatus extends Component {
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (newSelectedArticle) {
-            articleKey = newSelectedArticle[1].key;
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         let param = {
@@ -141,7 +145,8 @@ class ProcessStatus extends Component {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimeDevice,
             "shiftno": selectedShift,
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "modelname": '',
+            "articleno": articleKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {

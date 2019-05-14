@@ -6,6 +6,7 @@ import connect from "react-redux/es/connect/connect";
 import moment from "moment";
 import {pluginDrawZeroLineForSwingArmOsPress} from "../../../../../shared/utils/plugins";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
+import {ARTICLE_NAMES} from "../../../../../constants/constants";
 
 const initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -195,14 +196,15 @@ export class SwingArmMachine extends Component {
                 let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
                 let articleKey = '';
                 if (newSelectedArticle) {
-                    articleKey = newSelectedArticle[1].key;
+                    articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
                 }
 
                 let param = {
                     "from_timedevice": fromTimeDevice,
                     "to_timedevice": toTimedevice,
                     "shiftno": selectedShift,
-                    "modelname":articleKey
+                    "modelname": '',
+                    "articleno": articleKey
                 };
                 this.setState({
                     loading: true,
@@ -243,14 +245,15 @@ export class SwingArmMachine extends Component {
             let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
             let articleKey = '';
             if (newSelectedArticle) {
-                articleKey = newSelectedArticle[1].key;
+                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
             }
 
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
                 "shiftno": selectedShift,
-                "modelname":articleKey
+                "modelname": '',
+                "articleno": articleKey
             };
             API('api/os/stationcomparision', 'POST', param)
                 .then((response) => {

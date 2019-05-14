@@ -376,13 +376,14 @@ class BottomComponents extends Component {
         selectedShift = specifySelectedShiftNo(selectedShift);
 
         let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
-            ? this.props.globalArticleFilter.selectedArticle[1].key
+            ? this.props.globalArticleFilter.selectedArticle[0]
             : '';
         // Subtract 1 day because the Oracle DB is now only store Date in YYYYMMDD format without exact Time
         let param = {
             from_workdate: moment(startDate.toISOString()).format("YYYYMMDD"),
             to_workdate: moment(endDate.toISOString()).subtract(1, "days").format("YYYYMMDD"),
-            "modelname": articleKey,
+            "modelname": '',
+            "articleno": articleKey,
             "shiftno": selectedShift,
         };
         let standardCycleTime1 = 0, standardCycleTime2 = 0, standardCycleTime3 = 0,
@@ -439,19 +440,28 @@ class BottomComponents extends Component {
             selectedShift = specifySelectedShiftNo(selectedShift);
 
             let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
-                ? this.props.globalArticleFilter.selectedArticle[1].key
+                ? this.props.globalArticleFilter.selectedArticle[0]
                 : '';
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
-                "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+                "modelname": '',
+                "articleno": articleKey,
                 "shiftno": selectedShift,
             };
+            console.log("450");
+            console.log("450");
+            console.log("450");
+            console.log("450");
+            console.log("450");
+            console.log("450");
+            console.log("articleKey: ", articleKey);
             this.setState({
                 loading: true,
             });
             API(this.apiUrl, 'POST', param)
                 .then((response) => {
+                    console.log("response: ", response);
                     try {
                         let data = response.data.data;
                         let summaryArray = this.handleReturnArray(data);
@@ -496,16 +506,25 @@ class BottomComponents extends Component {
         selectedShift = specifySelectedShiftNo(selectedShift);
 
         let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
-            ? this.props.globalArticleFilter.selectedArticle[1].key
+            ? this.props.globalArticleFilter.selectedArticle[0]
             : '';
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "modelname": '',
+            "articleno": articleKey,
             "shiftno": selectedShift,
         };
+        console.log("507");
+        console.log("507");
+        console.log("507");
+        console.log("507");
+        console.log("507");
+        console.log("param: ", param);
+        console.log("articleKey: ", articleKey);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("response: ", response);
                 try {
                     let data = response.data.data;
                     let summaryArray = this.handleReturnArray(data);

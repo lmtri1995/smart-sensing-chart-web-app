@@ -8,6 +8,9 @@ import API from "../../../../../services/api";
 import Singleton from "../../../../../services/Socket";
 import connect from "react-redux/es/connect/connect";
 import {specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
+import {
+    ARTICLE_NAMES,
+} from "../../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -152,7 +155,7 @@ class TemperatureTrendItem extends Component {
             let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
             let articleKey = '';
             if (newSelectedArticle) {
-                articleKey = newSelectedArticle[1].key;
+                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
             }
 
             if (this.fromTimeDevice != newFromTimeDevice || this.toTimedevice != newToTimeDevice) {
@@ -165,10 +168,15 @@ class TemperatureTrendItem extends Component {
                     "from_timedevice": this.fromTimeDevice,
                     "to_timedevice": this.toTimedevice,
                     "shiftno": 0,
-                    "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+                    "modelname": '',
+                    "articleno": articleKey
                 };
+                console.log("174");
+                console.log("param: ", param);
+                console.log("this.apiUrl: ", this.apiUrl);
                 API(this.apiUrl, 'POST', param)
                     .then((response) => {
+                        console.log("response 179: ", response);
                         if (response.data.success) {
                             let dataArray = response.data.data;
                             let displayData = '';
@@ -203,10 +211,15 @@ class TemperatureTrendItem extends Component {
                     "from_timedevice": this.fromTimeDevice,
                     "to_timedevice": this.toTimedevice,
                     "shiftno": selectedShift,
-                    "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+                    "modelname": '',
+                    "articleno": articleKey
                 };
+                console.log("217");
+                console.log("param: ", param);
+                console.log("this.apiUrl: ", this.apiUrl);
                 API(this.apiUrl, 'POST', param)
                     .then((response) => {
+                        console.log("response: ", response);
                         try {
                             let dataArray = response.data.data;
                             let displayData = '';
@@ -246,7 +259,7 @@ class TemperatureTrendItem extends Component {
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (newSelectedArticle) {
-            articleKey = newSelectedArticle[1].key;
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         let param = {
@@ -254,7 +267,8 @@ class TemperatureTrendItem extends Component {
             "from_timedevice": this.fromTimeDevice,
             "to_timedevice": this.toTimedevice,
             "shiftno": selectedShift,
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "modelname": '',
+            "articleno": articleKey
         };
 
         let myInteractions = Object.assign({}, Dygraph.defaultInteractionModel, {
@@ -304,8 +318,12 @@ class TemperatureTrendItem extends Component {
                 interactionModel: myInteractions,
             }
         );
+        console.log("313");
+        console.log("this.apiUrl: ", this.apiUrl);
+        console.log("param: ", param);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("response 318: ", response);
                 try {
                     let dataArray = response.data.data;
                     displayData = JSON.parse(dataArray[0].data.replace(",[]", "]"));

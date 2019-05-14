@@ -315,9 +315,10 @@ class TopbarFilter extends Component {
                 break;
         }
 
-        if (this.props.location.pathname == ROUTE.Report){
+        /*if (this.props.location.pathname == ROUTE.Report){
             link += 'ForReport';
-        }
+        }*/
+        link += 'ForReport';
 
         let param = {
             "model_name": modelKey,

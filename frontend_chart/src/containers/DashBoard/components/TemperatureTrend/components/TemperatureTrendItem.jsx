@@ -7,6 +7,7 @@ import {ClipLoader} from "react-spinners";
 import API from "../../../../../services/api";
 import {specifyNminutesToCurrentTimeDevice} from "../../../../../shared/utils/Utilities";
 import connect from "react-redux/es/connect/connect";
+import {ARTICLE_NAMES} from "../../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -125,7 +126,8 @@ class TemperatureTrendItem extends Component {
                 minute: this.preTempTime,
                 status: 'stop',
                 idStation: stationIdNo,
-                modelname: this.currentSelectedArticle,    // todo: change 'modelname' to 'articlename' on API
+                modelname: '',    // todo: change 'modelname' to 'articlename' on API
+                articleno: ''
             }
         });
     }
@@ -176,6 +178,7 @@ class TemperatureTrendItem extends Component {
     };
 
     callAxiosBeforeSocket = (stopCurrentSocket = false, callback) => {
+        console.log("callAxiosBeforeSocket");
         if (!this.state.loading) {
             this.setState({loading: true});
         }
@@ -183,15 +186,16 @@ class TemperatureTrendItem extends Component {
         let selectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (selectedArticle) {
-            articleKey = selectedArticle[1].key;
+            articleKey = selectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : selectedArticle[0];
         }
         let currentTimeDevice = specifyNminutesToCurrentTimeDevice(tempTime);
         let param = {
             "idStation": stationIdNo,
-            "from_timedevice": currentTimeDevice[0],
-            "to_timedevice": currentTimeDevice[1],
+            "from_timedevice": currentTimeDevice[0],//'1557788405',
+            "to_timedevice": currentTimeDevice[1],//'1557788445',
             "shiftno": 0,
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "modelname": '',
+            "articleno": articleKey
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
@@ -235,7 +239,8 @@ class TemperatureTrendItem extends Component {
                 status: 'start',
                 idStation: stationIdNo,
                 shiftno: 0,
-                modelname: articleKey,    // todo: change 'modelname' to 'articlename' on API
+                modelname: '',
+                articleno: articleKey,
             }
         });
 
@@ -265,12 +270,12 @@ class TemperatureTrendItem extends Component {
         let currentSelectedArticle = this.currentSelectedArticle;
         let currentArticleKey = '';
         if (currentSelectedArticle) {
-            currentArticleKey = currentSelectedArticle[1].key;
+            currentArticleKey = currentSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : currentSelectedArticle[0];
         }
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
-            newArticleKey = newSelectedArticle[1].key;
+            newArticleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         let {tempTime, stationIdNo} = this.props;
@@ -281,7 +286,8 @@ class TemperatureTrendItem extends Component {
                 minute: this.preTempTime,
                 status: 'stop',
                 idStation: stationIdNo,
-                modelname: currentArticleKey,     // todo: change 'modelname' to 'articlename' on API
+                modelname: '',
+                articleno: currentArticleKey,
             }
         });
 
@@ -291,7 +297,8 @@ class TemperatureTrendItem extends Component {
                 minute: tempTime,
                 status: 'start',
                 idStation: `${stationIdNo}`,
-                modelname: newArticleKey,    // todo: change 'modelname' to 'articlename' on API
+                modelname: '',
+                articleno: newArticleKey
             }
         });
         this.preTempTime = tempTime;

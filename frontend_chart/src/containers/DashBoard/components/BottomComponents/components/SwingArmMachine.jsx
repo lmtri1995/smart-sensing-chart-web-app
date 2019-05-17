@@ -5,6 +5,7 @@ import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
 import {changeNumberFormat} from "../../../../../shared/utils/Utilities";
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
+import {ARTICLE_NAMES} from "../../../../../constants/constants";
 
 const initialData = {
     labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -125,12 +126,12 @@ export class SwingArmMachine extends Component {
         let currentSelectedArticle = this.currentSelectedArticle;
         let currentArticleKey = '';
         if (currentSelectedArticle) {
-            currentArticleKey = currentSelectedArticle[1].key;
+            currentArticleKey = currentSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : currentSelectedArticle[0];
         }
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
-            newArticleKey = newSelectedArticle[1].key;
+            newArticleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         if (currentTime != newTime || currentArticleKey != newArticleKey) {
@@ -147,7 +148,8 @@ export class SwingArmMachine extends Component {
                 minute: 0,
                 status: 'stop',
                 shiftno: 0,
-                modelname: ''
+                modelname: '',
+                articleno: ''
             }
         });
     }
@@ -158,10 +160,10 @@ export class SwingArmMachine extends Component {
             this.setState({loading: true});
         }
 
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         let param = {
@@ -169,7 +171,8 @@ export class SwingArmMachine extends Component {
             "to_timedevice": 0,
             "flag": 'H',
             "shiftno": 0,
-            "modelname": articleKey,
+            "modelname": '',
+            "articleno": articleKey
         };
         API('api/os/swingarm', 'POST', param)
             .then((response) => {
@@ -232,10 +235,10 @@ export class SwingArmMachine extends Component {
     }
 
     callSocket = () => {
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         if (this.role == "ip") {
@@ -249,7 +252,8 @@ export class SwingArmMachine extends Component {
                     minute: 0,
                     status: 'start',
                     "shiftno": 0,
-                    "modelname": articleKey,
+                    "modelname": '',
+                    "articleno": articleKey
                 }
             });
             this.socket.on(this.eventListen, (response) => {
@@ -282,10 +286,10 @@ export class SwingArmMachine extends Component {
     }
 
     restartSocket = () => {
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         this.socket.emit(this.emitEvent, {
@@ -296,7 +300,8 @@ export class SwingArmMachine extends Component {
                 minute: 0,
                 status: 'stop',
                 shiftno: 0,
-                modelname: articleKey,
+                modelname: '',
+                articleno: ''
             }
         });
 
@@ -308,10 +313,11 @@ export class SwingArmMachine extends Component {
                 minute: 0,
                 status: 'start',
                 shiftno: 0,
-                modelname: articleKey,
+                modelname: '',
+                articleno: articleKey
             }
         });
-        this.currentSelectedArticle = newSelectededArticle;
+        this.currentSelectedArticle = newSelectedArticle;
     };
 
     componentDidMount() {

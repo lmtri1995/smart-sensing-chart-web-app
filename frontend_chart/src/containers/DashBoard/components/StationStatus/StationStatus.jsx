@@ -252,6 +252,7 @@ class StationStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
+        console.log("componentDidMount 255");
         this.callAxiosBeforeSocket();
 
         /*

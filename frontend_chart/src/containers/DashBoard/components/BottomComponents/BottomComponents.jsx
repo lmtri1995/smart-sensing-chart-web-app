@@ -6,6 +6,7 @@ import CycleDefectStationComparison from "./components/CycleDefectStationCompari
 import SwingArmMachine from "./components/SwingArmMachine";
 import SwingOSStationComparison from "./components/SwingOSStationComparison";
 import {
+    ARTICLE_NAMES,
     DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID,
     DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID,
     START_WORK_DAY_TIME
@@ -88,6 +89,7 @@ class BottomComponents extends Component {
                 status: 'stop',
                 shiftno: 0,
                 modelname: '',
+                articleno: ''
             }
         });
     }
@@ -399,15 +401,20 @@ class BottomComponents extends Component {
                 break;
         }
 
-        let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
-            ? this.props.globalArticleFilter.selectedArticle[1].key
-            : '';
+        let selectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = ARTICLE_NAMES.values().next().value.key;
+        if (selectedArticle) {
+            articleKey = selectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : selectedArticle[0];
+        }
         let param = {
             "from_timedevice": timeFromStartOfDay[0],
             "to_timedevice": timeFromStartOfDay[1],
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "modelname": '',
+            "articleno": articleKey,    // todo: change 'modelname' to 'articlename' on API
             "shiftno": 0,
         };
+        console.log("this.props.globalArticleFilter.selectedArticle: ", this.props.globalArticleFilter.selectedArticle);
+        console.log("articleKey: ", articleKey);
         this.setState({
             loading: true,
         });
@@ -416,6 +423,7 @@ class BottomComponents extends Component {
 
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("response 426: ", response);
                 try {
                     let data = response.data.data;
                     let summaryArray = this.handleReturnArray(data);
@@ -460,11 +468,17 @@ class BottomComponents extends Component {
     };
 
     callSocket = () => {
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
+        console.log("call socket 476");
+        console.log("articleKey: ", articleKey);
+        console.log("this.emitEvent: ", this.emitEvent);
+        console.log("this.process: ", this.process);
+        console.log("this.OEEType: ", this.OEEType);
+
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.eventListen,
@@ -476,11 +490,13 @@ class BottomComponents extends Component {
                 type: this.OEEType,
                 status: 'start',
                 shiftno: 0,
-                modelname: articleKey,
+                modelname: '',
+                articleno: articleKey
             }
         });
         this.socket.on(this.eventListen, (response) => {
             if (response) {
+                console.log("response 499: ", response);
                 try {
                     let returnData = JSON.parse(response.trim());
                         let data = returnData.data;
@@ -519,11 +535,13 @@ class BottomComponents extends Component {
 
     //Stop old socket, create new one
     restartSocket = () => {
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
+        console.log("restartSocket");
+        console.log("articleKey: ", articleKey);
 
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -537,6 +555,7 @@ class BottomComponents extends Component {
                 status: 'stop',
                 shiftno: 0,
                 modelname: '',
+                articleno: ''
             }
         });
 
@@ -551,25 +570,28 @@ class BottomComponents extends Component {
                 type: this.OEEType,
                 status: 'start',
                 shiftno: 0,
-                modelname: articleKey,
+                modelname: '',
+                articleno: articleKey
             }
         });
-        this.currentSelectedArticle = newSelectededArticle;
+        this.currentSelectedArticle = newSelectedArticle;
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         let currentTime = this.preTempTime;
         let newTime = this.props.tempTime;
 
+
         let currentSelectedArticle = this.currentSelectedArticle;
         let currentArticleKey = '';
         if (currentSelectedArticle) {
-            currentArticleKey = currentSelectedArticle[1].key;
+            currentArticleKey = currentSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : currentSelectedArticle[0];
         }
+
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
-            newArticleKey = newSelectedArticle[1].key;
+            newArticleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         if (currentTime != newTime || currentArticleKey != newArticleKey) {

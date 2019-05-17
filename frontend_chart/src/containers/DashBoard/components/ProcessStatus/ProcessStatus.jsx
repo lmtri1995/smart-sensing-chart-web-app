@@ -93,7 +93,8 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'stop',
-                modelname: ""
+                modelname: "",
+                articleno: ""
             }
         });
         //this.socket.removeListener('sna_process_status');
@@ -108,19 +109,25 @@ class ProcessStatus extends Component {
         let selectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = ARTICLE_NAMES.values().next().value.key;
         if (selectedArticle) {
-            articleKey = selectedArticle[1].key;
+            articleKey = selectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : selectedArticle[0];
         }
 
         this.currentSelectedArticle = selectedArticle;
 
         let param = {
-            /*"from_timedevice": fromTimeDevice,
-            "to_timedevice": toTimedevice,*/
-            "from_timedevice": timeFromStartOfShift[0],
-            "to_timedevice": timeFromStartOfShift[1],
+            "from_timedevice": '1557788405', //timeFromStartOfShift[0],
+            "to_timedevice": '1557788445', //timeFromStartOfShift[1],
             "shiftno": 0,
-            "modelname": articleKey,    // todo: change 'modelname' to 'articlename' on API
+            "modelname": '',
+            "articleno": articleKey,
         };
+        console.log("123");
+        console.log("123");
+        console.log("123");
+        console.log("123");
+        console.log("123");
+        console.log("123");
+        console.log("articleKey 124: ", articleKey);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
                 try {
@@ -152,7 +159,7 @@ class ProcessStatus extends Component {
     callSocket = () => {
         let articleKey = '';
         if (this.currentSelectedArticle) {
-            articleKey = this.currentSelectedArticle[1].key;
+            articleKey = this.currentSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : this.currentSelectedArticle[0];
         }
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -161,7 +168,8 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: articleKey,    // todo: change 'modelname' to 'articlename' on API
+                modelname: '',
+                articleno: articleKey
             }
         });
 
@@ -189,7 +197,7 @@ class ProcessStatus extends Component {
     restartSocket = () => {
         let articleKey = '';
         if (this.currentSelectedArticle) {
-            articleKey = this.currentSelectedArticle[1].key;
+            articleKey = this.currentSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : this.currentSelectedArticle[0];
         }
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -198,7 +206,8 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'stop',
-                modelname: '',    // todo: change 'modelname' to 'articlename' on API
+                modelname: '',
+                articleno: ''
             }
         });
 
@@ -209,7 +218,8 @@ class ProcessStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: articleKey,    // todo: change 'modelname' to 'articlename' on API
+                modelname: '',
+                articleno: articleKey
             }
         });
     };

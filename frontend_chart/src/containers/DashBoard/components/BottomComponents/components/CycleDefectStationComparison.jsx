@@ -10,6 +10,7 @@ import {
 import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
+import {ARTICLE_NAMES, MODEL_NAMES} from "../../../../../constants/constants";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -244,7 +245,8 @@ export class CycleDefectStationComparison extends Component {
                     minute: 0,
                     status: 'stop',
                     shiftno: 0,
-                    "modelname": ''
+                    modelname: '',
+                    articleno:''
                 }
             });
         }
@@ -266,10 +268,10 @@ export class CycleDefectStationComparison extends Component {
             this.setState({loading: true});
         }
 
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
         let timeFromStartOfShift = specifyTheShiftStartHour();
         let param = {
@@ -278,9 +280,15 @@ export class CycleDefectStationComparison extends Component {
             "istatus": this.istatus,
             "proccess": this.process,
             "shiftno": 0,
-            "modelname": articleKey,
+            "modelname": '',
+            "articleno": articleKey,
         };
 
+        let currentSelectedModel = this.props.globalModelFilter.selectedModel;
+        let currentModelName = '';
+        if (currentSelectedModel){
+            currentModelName = currentModelName[0] === MODEL_NAMES.keys().next().value ? '' : currentModelName[0];
+        }
         API(this.apiUrl, 'POST', param)
             .then((response) => {
                 try {
@@ -320,7 +328,7 @@ export class CycleDefectStationComparison extends Component {
                         let param1 = {
                             "from_workdate": currentWorkingDate[0],
                             "to_workdate": currentWorkingDate[1],
-                            "model_name": articleKey
+                            "model_name": currentModelName
                         };
                         API(`api/os/sap`, 'POST', param1).then((response1) => {
                             try {
@@ -432,10 +440,17 @@ export class CycleDefectStationComparison extends Component {
 
     //Stop old socket, create new one
     restartSocket = () => {
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
+        }
+
+        let newSelectedModel = this.props.globalModelFilter.selectedModel;
+        let modelName = '';
+        if (newSelectedModel) {
+            modelName = newSelectedModel[0] === MODEL_NAMES.keys().next().value ? '' : newSelectedModel[0];
+
         }
 
         this.socket.emit(this.emitEvent, {
@@ -446,7 +461,8 @@ export class CycleDefectStationComparison extends Component {
                 "minute": 0,
                 "status": 'stop',
                 "shiftno": 0,
-                "modelname": articleKey,
+                "modelname": '',
+                "articleno": ''
             }
         });
 
@@ -458,17 +474,25 @@ export class CycleDefectStationComparison extends Component {
                 "minute": 0,
                 "status": 'start',
                 "shiftno": 0,
-                "modelname": articleKey,
+                "modelname": '',
+                "articleno": articleKey
             }
         });
-        this.currentSelectedArticle = newSelectededArticle;
+        this.currentSelectedArticle = newSelectedArticle;
+        this.currentSelectedModel = newSelectedModel;
     };
 
     callSocket = () => {
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
+        }
+
+        let currentSelectedModel = this.currentSelectedModel;
+        let currentModelName = '';
+        if (currentSelectedModel){
+            currentModelName = currentModelName[0];
         }
 
         this.socket.emit(this.emitEvent, {
@@ -479,7 +503,8 @@ export class CycleDefectStationComparison extends Component {
                 "minute": 0,
                 "status": 'start',
                 "shiftno": 0,
-                "modelname": articleKey,
+                "modelname": '',
+                "articleno": articleKey
             }
         });
         this.socket.on(this.eventListen, (response) => {
@@ -522,7 +547,7 @@ export class CycleDefectStationComparison extends Component {
                     let param1 = {
                         "from_workdate": currentWorkingDate[0],
                         "to_workdate": currentWorkingDate[1],
-                        "model_name": articleKey
+                        "model_name": currentModelName
                     };
                     API(`api/os/sap`, 'POST', param1).then((response1) => {
                         try {
@@ -629,15 +654,27 @@ export class CycleDefectStationComparison extends Component {
         let currentSelectedArticle = this.currentSelectedArticle;
         let currentArticleKey = '';
         if (currentSelectedArticle) {
-            currentArticleKey = currentSelectedArticle[1].key;
+            currentArticleKey = currentSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : currentSelectedArticle[0];
         }
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
-            newArticleKey = newSelectedArticle[1].key;
+            newArticleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
-        if (currentTime != newTime || currentArticleKey != newArticleKey) {
+        let currentSelectedModel = this.currentSelectedModel;
+        let currentModelName = '';
+        if (currentSelectedModel){
+            currentModelName = currentSelectedModel[0] === MODEL_NAMES.keys().next().value ? '' : currentSelectedModel[0];
+        }
+
+        let newSelectedModel = this.props.globalModelFilter.selectedModel;
+        let newModelName = '';
+        if (newSelectedModel){
+            newModelName = newSelectedModel[0] === MODEL_NAMES.keys().next().value ? '' : newSelectedModel[0];
+        }
+
+        if (currentTime != newTime || currentArticleKey != newArticleKey || currentModelName != newModelName) {
             this.callAxiosBeforeSocket(true);
         }
     }
@@ -678,7 +715,7 @@ export class CycleDefectStationComparison extends Component {
 
 const mapStateToProps = (state) => ({
     globalArticleFilter: state.globalArticleFilter,
-    globalModelFilterReducer: state.globalModelFilterReducer,
+    globalModelFilter: state.globalModelFilter,
 });
 
 export default connect(mapStateToProps)(CycleDefectStationComparison);

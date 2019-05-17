@@ -7,7 +7,7 @@ import {specifyCurrentShift, specifySelectedShiftNo} from "../../../../shared/ut
 import {storeShiftStatusData} from "../../../../redux/actions/downloadDataStoreActions";
 import {connect} from "react-redux";
 import API from "../../../../services/api";
-import {SHIFT_OPTIONS} from "../../../../constants/constants";
+import {SHIFT_OPTIONS, ARTICLE_NAMES} from "../../../../constants/constants";
 
 const override = `
     position: absolute;
@@ -37,7 +37,7 @@ class ShiftStatus extends Component {
             case 'admin':
                 this.apiUrl = 'api/os/shiftStatus';
                 this.emitEvent = 'os_shift_status';
-                this.eventListen = 'sna_' + this.emitEvent;
+                this.listenEvent = 'sna_' + this.emitEvent;
                 break;
             case 'ip':
                 this.apiUrl = 'api/ip/shiftStatus';
@@ -68,7 +68,8 @@ class ShiftStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'stop',
-                modelname: this.currentSelectedArticle,
+                modelname: '',
+                articleno: ''
             }
         });
     }
@@ -78,7 +79,7 @@ class ShiftStatus extends Component {
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
-            newArticleKey = newSelectedArticle[1].key;
+            newArticleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         console.log("83 83 83 83 83 83 83 83 ");
@@ -91,6 +92,7 @@ class ShiftStatus extends Component {
                 minute: 0,
                 status: 'stop',
                 modelname: '',     // todo: change 'modelname' to 'articlename' on API
+                articleno: ''
             }
         });
 
@@ -103,7 +105,8 @@ class ShiftStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: newArticleKey,
+                modelname: '',
+                articleno: newArticleKey
             }
         });
 
@@ -122,17 +125,18 @@ class ShiftStatus extends Component {
         }
         this._isMounted = true;
 
-        let newSelectededArticle = this.props.globalArticleFilter.selectedArticle;
+        let newSelectedArticle  = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
-        if (newSelectededArticle) {
-            articleKey = newSelectededArticle[1].key;
+        if (newSelectedArticle ) {
+            articleKey = newSelectedArticle [0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle [0];
         }
 
-        this.currentSelectedArticle = newSelectededArticle;
+        this.currentSelectedArticle = newSelectedArticle;
         let param = {
             "from_timedevice": 0,
             "to_timedevice": 0,
-            "modelname": articleKey,
+            "modelname": '',
+            "articleno": articleKey,
             "shiftno":"0"
         };
         console.log("137 137 137 137 137");
@@ -163,12 +167,15 @@ class ShiftStatus extends Component {
     }
 
     callSocket = () => {
+        console.log("call socket 170");
         let selectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (selectedArticle) {
-            articleKey = selectedArticle[1].key;
+            articleKey = selectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : selectedArticle[0];
         }
 
+        console.log("articleKey 177: ", articleKey);
+        console.log("this.emitEvent: ", this.emitEvent);
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -176,11 +183,13 @@ class ShiftStatus extends Component {
                 to_timedevice: 0,
                 minute: 0,
                 status: 'start',
-                modelname: articleKey,
+                modelname: '',
+                articleno: articleKey
             }
         });
 
         this.socket.on(this.listenEvent, (data) => {
+            console.log("data 191: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;

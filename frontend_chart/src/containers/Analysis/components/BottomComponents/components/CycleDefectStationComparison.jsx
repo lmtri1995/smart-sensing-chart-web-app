@@ -9,7 +9,7 @@ import {
     specifySelectedShiftNo
 } from "../../../../../shared/utils/Utilities";
 import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
-import {ARTICLE_NAMES} from "../../../../../constants/constants";
+import {ARTICLE_NAMES, MODEL_NAMES} from "../../../../../constants/constants";
 
 let initialData = {
     labels: ['Shift 1', 'Shift 2', 'Shift 3'],
@@ -201,6 +201,12 @@ export class CycleDefectStationComparison extends Component {
             if (newSelectedArticle) {
                 articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
             }
+            let newSelectedModel = this.props.globalModelFilter.selectedModel;
+            let modelName = '';
+            if (newSelectedModel) {
+                modelName = newSelectedModel[0] === MODEL_NAMES.keys().next().value ? '' : newSelectedModel[0];
+            }
+
             let {startDate, endDate} = this.props.globalDateFilter;
             startDate = moment(startDate).format("YYYYMMDD");
             endDate = moment(endDate).format("YYYYMMDD");
@@ -208,10 +214,12 @@ export class CycleDefectStationComparison extends Component {
             let param1 = {
                 "from_workdate": startDate,
                 "to_workdate": endDate,
-                "modelname": '',
+                "modelname": modelName,
                 "articleno": articleKey
             };
+            console.log("param1: ", param1);
             API(`api/os/sap`, 'POST', param1).then((response1) => {
+                console.log("response1: ", response1);
                 try {
                     let responseArray = response1.data.data;
                     let sapData = [0, 0, 0];
@@ -374,6 +382,7 @@ const mapStateToProps = (state) => ({
     globalDateFilter: state.globalDateFilter,
     globalShiftFilter: state.globalShiftFilter,
     globalArticleFilter: state.globalArticleFilter,
+    globalModelFilter: state.globalModelFilter,
 });
 
 export default connect(mapStateToProps)(CycleDefectStationComparison);

@@ -6,6 +6,7 @@ import API from "../../../../../services/api";
 import connect from "react-redux/es/connect/connect";
 import {pluginDrawZeroLine} from "../../../../../shared/utils/plugins";
 import {changeNumberFormat, specifySelectedShiftNo} from "../../../../../shared/utils/Utilities";
+import {ARTICLE_NAMES} from "../../../../../constants/constants";
 
 const initialData = {
     labels: ["1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h", "24h"],
@@ -219,7 +220,7 @@ export class SwingArmMachine extends Component {
                 let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
                 let articleKey = '';
                 if (newSelectedArticle) {
-                    articleKey = newSelectedArticle[1].key;
+                    articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
                 }
 
                 let param = {
@@ -227,7 +228,8 @@ export class SwingArmMachine extends Component {
                     "to_timedevice": toTimedevice,
                     "flag": this.flag,
                     "shiftno": selectedShift,
-                    "modelname":articleKey
+                    "modelname":'',
+                    "articleno":articleKey
                 };
                 API('api/os/swingarm', 'POST', param)
                     .then((response) => {
@@ -327,7 +329,7 @@ export class SwingArmMachine extends Component {
             let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
             let articleKey = '';
             if (newSelectedArticle) {
-                articleKey = newSelectedArticle[1].key;
+                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
             }
 
             let param = {
@@ -335,7 +337,8 @@ export class SwingArmMachine extends Component {
                 "to_timedevice": toTimedevice,
                 "flag": this.flag,
                 "shiftno": selectedShift,
-                "modelname":articleKey
+                "modelname":'',
+                "articleno":articleKey
             };
             API('api/os/swingarm', 'POST', param)
                 .then((response) => {

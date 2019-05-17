@@ -127,9 +127,6 @@ class ShiftStatus extends Component {
             articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
-        let newSelectededModel = this.props.globalModelFilter.selectedModel;
-
-
         this._isMounted = true;
         let param = {
             "from_timedevice": fromTimeDevice,

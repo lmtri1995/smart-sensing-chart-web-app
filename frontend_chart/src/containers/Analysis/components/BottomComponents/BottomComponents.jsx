@@ -8,7 +8,7 @@ import SwingOSStationComparison from "./components/SwingOSStationComparison";
 import moment from "moment";
 import {
     ANALYSIS_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID,
-    ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID,
+    ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID, ARTICLE_NAMES,
     START_WORK_DAY_TIME
 } from "../../../../constants/constants";
 import Singleton from "../../../../services/Socket";
@@ -439,9 +439,11 @@ class BottomComponents extends Component {
             let selectedShift = this.props.globalShiftFilter.selectedShift;
             selectedShift = specifySelectedShiftNo(selectedShift);
 
-            let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
-                ? this.props.globalArticleFilter.selectedArticle[0]
-                : '';
+            let selectedArticle = this.props.globalArticleFilter.selectedArticle;
+            let articleKey = '';
+            if (selectedArticle) {
+                articleKey = selectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : selectedArticle[0];
+            }
             let param = {
                 "from_timedevice": fromTimeDevice,
                 "to_timedevice": toTimedevice,
@@ -449,13 +451,6 @@ class BottomComponents extends Component {
                 "articleno": articleKey,
                 "shiftno": selectedShift,
             };
-            console.log("450");
-            console.log("450");
-            console.log("450");
-            console.log("450");
-            console.log("450");
-            console.log("450");
-            console.log("articleKey: ", articleKey);
             this.setState({
                 loading: true,
             });
@@ -505,9 +500,11 @@ class BottomComponents extends Component {
         let selectedShift = this.props.globalShiftFilter.selectedShift;
         selectedShift = specifySelectedShiftNo(selectedShift);
 
-        let articleKey = this.props.globalArticleFilter.selectedArticle[1].key
-            ? this.props.globalArticleFilter.selectedArticle[0]
-            : '';
+        let selectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (selectedArticle) {
+            articleKey = selectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : selectedArticle[0];
+        }
         let param = {
             "from_timedevice": fromTimeDevice,
             "to_timedevice": toTimedevice,
@@ -515,11 +512,6 @@ class BottomComponents extends Component {
             "articleno": articleKey,
             "shiftno": selectedShift,
         };
-        console.log("507");
-        console.log("507");
-        console.log("507");
-        console.log("507");
-        console.log("507");
         console.log("param: ", param);
         console.log("articleKey: ", articleKey);
         API(this.apiUrl, 'POST', param)

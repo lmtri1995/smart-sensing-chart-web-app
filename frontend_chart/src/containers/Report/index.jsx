@@ -444,13 +444,23 @@ class ReportPage extends Component {
                 defectTypes = OS_DEFECT_NAME;
                 break;
         }
+        console.log("link 446: ", link);
+        console.log("param: ", param);
+
         API(`api/${link}/defectByTypeOverTime`, 'POST', param)
             .then((response) => {
+                console.log("response 452: ", response);
                 // No need to check if(response.data.success)
                 // For Model Filter to work
                 // Because if response.data.success === false
                 // => response.data.data = []   Empty Array
-                let dataArray = response.data.data;
+
+                let dataArray;
+                if (response && response.data && response.data.data) {
+                    dataArray = response.data.data;
+                } else {
+                    dataArray = null;
+                }
 
                 let {from_workdate, to_workdate} = param;
                 let startMoment = moment(from_workdate, "YYYYMMDD");
@@ -467,22 +477,24 @@ class ReportPage extends Component {
                     startMoment = startMoment.add(1, "days");
                 }
 
-                let defectRatesOfCurrentDay;
-                dataArray.map(currentDay => {
-                    defectRatesOfCurrentDay = dateLabelsAndDefectRatesMap.get(currentDay['WORK_DATE']);
+                if (dataArray) {
+                    let defectRatesOfCurrentDay;
+                    dataArray.map(currentDay => {
+                        defectRatesOfCurrentDay = dateLabelsAndDefectRatesMap.get(currentDay['WORK_DATE']);
 
-                    defectRatesOfCurrentDay[0] += currentDay['DEFECT_COUNT1'];
-                    defectRatesOfCurrentDay[1] += currentDay['DEFECT_COUNT2'];
-                    defectRatesOfCurrentDay[2] += currentDay['DEFECT_COUNT3'];
-                    defectRatesOfCurrentDay[3] += currentDay['DEFECT_COUNT4'];
-                    defectRatesOfCurrentDay[4] += currentDay['DEFECT_COUNT5'];
-                    defectRatesOfCurrentDay[5] += currentDay['DEFECT_COUNT6'];
-                    defectRatesOfCurrentDay[6] += currentDay['DEFECT_COUNT7'];
-                    defectRatesOfCurrentDay[7] += currentDay['DEFECT_COUNT8'];
-                    defectRatesOfCurrentDay[8] += currentDay['DEFECT_COUNT9'];
+                        defectRatesOfCurrentDay[0] += currentDay['DEFECT_COUNT1'];
+                        defectRatesOfCurrentDay[1] += currentDay['DEFECT_COUNT2'];
+                        defectRatesOfCurrentDay[2] += currentDay['DEFECT_COUNT3'];
+                        defectRatesOfCurrentDay[3] += currentDay['DEFECT_COUNT4'];
+                        defectRatesOfCurrentDay[4] += currentDay['DEFECT_COUNT5'];
+                        defectRatesOfCurrentDay[5] += currentDay['DEFECT_COUNT6'];
+                        defectRatesOfCurrentDay[6] += currentDay['DEFECT_COUNT7'];
+                        defectRatesOfCurrentDay[7] += currentDay['DEFECT_COUNT8'];
+                        defectRatesOfCurrentDay[8] += currentDay['DEFECT_COUNT9'];
 
-                    dateLabelsAndDefectRatesMap.set(currentDay['WORK_DATE'], defectRatesOfCurrentDay);
-                });
+                        dateLabelsAndDefectRatesMap.set(currentDay['WORK_DATE'], defectRatesOfCurrentDay);
+                    });
+                }
 
                 let dateLabels = [];
                 let defectType1 = [], defectType2 = [], defectType3 = [], defectType4 = [],
@@ -600,6 +612,8 @@ class ReportPage extends Component {
                 });
 
                 this.defectRateDataToDownload = defectRateDataToDownload;
+
+
             })
             .catch((err) => console.log('err:', err));
     };

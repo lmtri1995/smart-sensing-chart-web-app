@@ -174,8 +174,11 @@ export class SwingArmMachine extends Component {
             "modelname": '',
             "articleno": articleKey
         };
+        console.log("param 177: ", param);
+        console.log("link api 178: api/os/swingarm");
         API('api/os/swingarm', 'POST', param)
             .then((response) => {
+                console.log("response 181: ", response);
                 try {
                     let dataArray = response.data.data;
                     if (dataArray && dataArray.length > 0) {

@@ -75,14 +75,11 @@ class ShiftStatus extends Component {
     }
 
     restartSocket = () => {
-        console.log("restartSocket restartSocket restartSocket restartSocket");
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
             newArticleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
-
-        console.log("83 83 83 83 83 83 83 83 ");
 
         this.socket.emit(this.emitEvent, {
             msg: {
@@ -96,8 +93,6 @@ class ShiftStatus extends Component {
             }
         });
 
-        console.log("96 96 96 96 96 96 96 96");
-
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -109,9 +104,6 @@ class ShiftStatus extends Component {
                 articleno: newArticleKey
             }
         });
-
-
-        console.log("110=============================");
 
         this.currentSelectedArticle = newSelectedArticle;
     };
@@ -139,17 +131,10 @@ class ShiftStatus extends Component {
             "articleno": articleKey,
             "shiftno":"0"
         };
-        console.log("137 137 137 137 137");
-        console.log("137 137 137 137 137");
-        console.log("param: ", param);
-        console.log("this.apiUrl: ", this.apiUrl);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                console.log("143 143 143 143 143");
-                console.log("response: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
-                    console.log("dataArray 147: ", dataArray);
                     this.setState({
                         dataArray: dataArray,
                         loading: false,
@@ -167,15 +152,12 @@ class ShiftStatus extends Component {
     }
 
     callSocket = () => {
-        console.log("call socket 170");
         let selectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (selectedArticle) {
             articleKey = selectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : selectedArticle[0];
         }
 
-        console.log("articleKey 177: ", articleKey);
-        console.log("this.emitEvent: ", this.emitEvent);
         this.socket.emit(this.emitEvent, {
             msg: {
                 event: this.listenEvent,
@@ -189,7 +171,6 @@ class ShiftStatus extends Component {
         });
 
         this.socket.on(this.listenEvent, (data) => {
-            console.log("data 191: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -213,16 +194,15 @@ class ShiftStatus extends Component {
         let currentSelectedArticle = this.currentSelectedArticle;
         let currentArticleKey = '';
         if (currentSelectedArticle) {
-            currentArticleKey = currentSelectedArticle[1].key;
+            currentArticleKey = currentSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : currentSelectedArticle[0];
         }
         let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
         let newArticleKey = '';
         if (newSelectedArticle) {
-            newArticleKey = newSelectedArticle[1].key;
+            newArticleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
 
         if (currentArticleKey != newArticleKey) {
-            console.log("208 208 208 208 208");
             this.callAxiosBeforeSocket(true);
         }
     }

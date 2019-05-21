@@ -115,19 +115,13 @@ class ProcessStatus extends Component {
         this.currentSelectedArticle = selectedArticle;
 
         let param = {
-            "from_timedevice": '1557788405', //timeFromStartOfShift[0],
-            "to_timedevice": '1557788445', //timeFromStartOfShift[1],
+            "from_timedevice": timeFromStartOfShift[0],
+            "to_timedevice": timeFromStartOfShift[1],
             "shiftno": 0,
             "modelname": '',
             "articleno": articleKey,
         };
-        console.log("123");
-        console.log("123");
-        console.log("123");
-        console.log("123");
-        console.log("123");
-        console.log("123");
-        console.log("articleKey 124: ", articleKey);
+
         API(this.apiUrl, 'POST', param)
             .then((response) => {
                 try {

@@ -689,8 +689,7 @@ export class CycleDefectStationComparison extends Component {
             plugins: pluginDrawZeroLine
         });
 
-        this.changeLabelArray();
-        this.callAxiosBeforeSocket();
+         this.callAxiosBeforeSocket();
     }
 
     render() {

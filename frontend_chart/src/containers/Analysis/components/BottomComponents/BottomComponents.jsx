@@ -244,49 +244,49 @@ class BottomComponents extends Component {
                 let preparingtime = item.preparingtime ? item.preparingtime : 0;
                 let cycle_count = item.cycle_count ? item.cycle_count : 0;
                 totalDefect = item.defect ? item.defect : 0;
-                if (item.idStation == 1) {
+                if (item.idstation == 1) {
                     stoppingHour1 += parseFloat(stopping_hr);
                     productCount1 += parseInt(count);
                     preparingTime1 += parseInt(preparingtime);
                     cycleCount1 += parseInt(cycle_count);
                     // defect1 += parseInt(defect);
-                } else if (item.idStation == 2) {
+                } else if (item.idstation == 2) {
                     stoppingHour2 += parseFloat(stopping_hr);
                     productCount2 += parseInt(count);
                     preparingTime2 += parseInt(preparingtime);
                     cycleCount2 += parseInt(cycle_count);
                     // defect2 += parseInt(defect);
-                } else if (item.idStation == 3) {
+                } else if (item.idstation == 3) {
                     stoppingHour3 += parseFloat(stopping_hr);
                     productCount3 += parseInt(count);
                     preparingTime3 += parseInt(preparingtime);
                     cycleCount3 += parseInt(cycle_count);
                     // defect3 += parseInt(defect);
-                } else if (item.idStation == 4) {
+                } else if (item.idstation == 4) {
                     stoppingHour4 += parseFloat(stopping_hr);
                     productCount4 += parseInt(count);
                     preparingTime4 += parseInt(preparingtime);
                     cycleCount4 += parseInt(cycle_count);
                     // defect4 += parseInt(defect);
-                } else if (item.idStation == 5) {
+                } else if (item.idstation == 5) {
                     stoppingHour5 += parseFloat(stopping_hr);
                     productCount5 += parseInt(count);
                     preparingTime5 += parseInt(preparingtime);
                     cycleCount5 += parseInt(cycle_count);
                     // defect5 += parseInt(defect);
-                } else if (item.idStation == 6) {
+                } else if (item.idstation == 6) {
                     stoppingHour6 += parseFloat(stopping_hr);
                     productCount6 += parseInt(count);
                     preparingTime6 += parseInt(preparingtime);
                     cycleCount6 += parseInt(cycle_count);
                     // defect6 += parseInt(defect);
-                } else if (item.idStation == 7) {
+                } else if (item.idstation == 7) {
                     stoppingHour7 += parseFloat(stopping_hr);
                     productCount7 += parseInt(count);
                     preparingTime7 += parseInt(preparingtime);
                     cycleCount7 += parseInt(cycle_count);
                     // defect7 += parseInt(defect);
-                } else if (item.idStation == 8) {
+                } else if (item.idstation == 8) {
                     stoppingHour8 += parseFloat(stopping_hr);
                     productCount8 += parseInt(count);
                     preparingTime8 += parseInt(preparingtime);

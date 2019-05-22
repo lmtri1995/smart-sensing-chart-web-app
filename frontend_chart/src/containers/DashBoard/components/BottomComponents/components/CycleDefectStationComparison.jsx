@@ -294,8 +294,6 @@ export class CycleDefectStationComparison extends Component {
                 try {
                     let dataArray = response.data.data;
                     let returnData = JSON.parse(dataArray[0].data);
-
-
                     let displayArray = this.handleReturnData(returnData);
                     let dataset = [];
                     if (this.role == 'ip') {
@@ -675,6 +673,7 @@ export class CycleDefectStationComparison extends Component {
         }
 
         if (currentTime != newTime || currentArticleKey != newArticleKey || currentModelName != newModelName) {
+            this.changeLabelArray();
             this.callAxiosBeforeSocket(true);
         }
     }
@@ -689,7 +688,8 @@ export class CycleDefectStationComparison extends Component {
             plugins: pluginDrawZeroLine
         });
 
-         this.callAxiosBeforeSocket();
+        this.changeLabelArray();
+        this.callAxiosBeforeSocket();
     }
 
     render() {

@@ -76,8 +76,12 @@ class DowntimeShift extends Component {
         let param = {
             "proccess": this.process
         };
+        console.log("79 79");
+        console.log("param: ", param);
+        console.log("this.apiUrl: ", this.apiUrl);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
+                console.log("response 83: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
                     dataArray.sort(function (a, b) {
@@ -254,35 +258,35 @@ class DowntimeShift extends Component {
                 if (item.idStation == 1){
                     downtimeShiftArray1[0] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[0] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[0] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[0] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 } else if (item.idStation == 2){
                     downtimeShiftArray1[1] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[1] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[1] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[1] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 } else if (item.idStation == 3){
                     downtimeShiftArray1[2] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[2] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[2] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[2] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 } else if (item.idStation == 4){
                     downtimeShiftArray1[3] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[3] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[3] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[3] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 } else if (item.idStation == 5){
                     downtimeShiftArray1[4] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[4] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[4] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[4] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 } else if (item.idStation == 6){
                     downtimeShiftArray1[5] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[5] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[5] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[5] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 } else if (item.idStation == 7){
                     downtimeShiftArray1[6] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[6] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[6] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[6] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 } else if (item.idStation == 8){
                     downtimeShiftArray1[7] = item.first_shift_off_sum?item.first_shift_off_sum:'-';
                     downtimeShiftArray2[7] = item.second_shift_off_sum?item.second_shift_off_sum:'-';
-                    downtimeShiftArray3[7] = item.third_shift_off_sum?item.second_shift_off_sum:'-';
+                    downtimeShiftArray3[7] = item.third_shift_off_sum?item.third_shift_off_sum:'-';
                 }
             });
         }

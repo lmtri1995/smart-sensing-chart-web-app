@@ -244,11 +244,12 @@ class ShiftStatus extends Component {
     }
 
     showShiftItem(dataArray, shiftNo) {
+        let currentShift = specifyCurrentShift();
         let total = 0;
         dataArray.forEach(item => {
             total += item;
         });
-        return <ShiftStatusItem shiftNo={shiftNo} total={total}
+        return <ShiftStatusItem shiftNo={shiftNo} total={total} currentShift={currentShift}
                                 count1={dataArray[0]}
                                 count2={dataArray[1]}
                                 count3={dataArray[2]}

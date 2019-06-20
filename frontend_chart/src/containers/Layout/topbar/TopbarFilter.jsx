@@ -507,7 +507,7 @@ class TopbarFilter extends Component {
                         <Collapse isOpen={this.state.downloadMenuOpen}
                                   className="topbar__menu-wrap">
                             <div className="bg-white container border align-content-center"
-                                 style={{marginLeft: 40, width: 220,}}>
+                                 style={{marginLeft: 100, width: 190, height: 50}}>
                                 <div className="row">
                                     <DataExporter exportType={ExportType.EXCEL}/>
                                     <DataExporter exportType={ExportType.PDF}/>

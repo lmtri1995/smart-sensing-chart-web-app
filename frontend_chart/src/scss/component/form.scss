@@ -13,13 +13,16 @@
     &::-webkit-input-placeholder {
       color: $color-additional;
     }
+
     &::-moz-placeholder {
       color: $color-additional;
     }
+
     /* Firefox 19+ */
     &:-moz-placeholder {
       color: $color-additional;
     }
+
     /* Firefox 18- */
     &:-ms-input-placeholder {
       color: $color-additional;

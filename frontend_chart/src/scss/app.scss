@@ -1,12 +1,17 @@
-@import 'settings/variable';  //themes' colors
-
+@import 'settings/variable';
+//themes' colors
 //base...
 @import 'generic/normalize.scss';
 @import 'generic/box-sizing.scss';
-@import './base/scaffolding';         // styles of base elements
-@import './base/typography';          // base styles of h1-h6, p, span
-
+@import './base/scaffolding';
+// styles of base elements
+@import './base/typography';
+// base styles of h1-h6, p, span
 //components...
+@import "component/list-group/list-group";
+@import "component/data-exporter/data-exporter.scss";
+@import 'component/style.scss';
+@import 'component/filter/date-range-picker';
 @import 'component/btn';
 @import './component/card';
 @import './component/check-box';
@@ -14,10 +19,10 @@
 @import './component/topbar';
 @import './component/load';
 @import './component/form';
-
 //pages...
 @import 'containers/account';
-
+@import 'containers/dashboard.scss';
 //objects...
 @import 'objects/layout.scss';
+
 

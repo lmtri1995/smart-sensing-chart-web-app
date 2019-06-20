@@ -34,9 +34,9 @@
     }
   }
 
-  &.layout--top-navigation{
+  &.layout--top-navigation {
 
-    & + .container__wrap{
+    & + .container__wrap {
 
       @media screen and (min-width: 576px) {
         padding-left: 0;

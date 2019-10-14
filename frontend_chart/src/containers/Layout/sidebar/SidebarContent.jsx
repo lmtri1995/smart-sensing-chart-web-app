@@ -27,6 +27,13 @@ class SidebarContent extends Component {
     }
 
     render() {
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
+        let roleList = RoleList['admin'];
+        if (loginData && loginData.data.role === 'as'){
+            roleList = RoleList['as'];
+        } else {
+            roleList = RoleList['admin'];
+        }
         return (
             <div className="sidebar__content">
                 {/* <ul className="sidebar__block">
@@ -42,7 +49,7 @@ class SidebarContent extends Component {
                 <ul className="sidebar__block">
                     <SidebarCategory title="Category" icon="diamond">
                         {
-                            (this.state.roles != null) ? RoleList['admin'].map((item, index) => {
+                            (this.state.roles != null) ? roleList.map((item, index) => {
                                 return <SidebarLink key={index} title={item.title} route={item.route}
                                                     onClick={this.hideSidebar}/>
                             }) : ''

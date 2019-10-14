@@ -31,6 +31,42 @@ export const ROUTE = {
     get Report() {
         return `${ROUTE.Pages}/report`;
     },
+    get MasterPage() {
+        return `${ROUTE.Pages}/master-page`;
+    },
+    get AlarmMaster() {
+        return `${ROUTE.Pages}/alarm-master`;
+    },
+    get MappingStitch() {
+        return `${ROUTE.Pages}/mapping-stitch`;
+    },
+    get LeadTime() {
+        return `${ROUTE.Pages}/lead-time`;
+    },
+    get LeadTimeDetail() {
+        return `${ROUTE.Pages}/lead-time-detail`;
+    },
+    get AlarmHistory() {
+        return `${ROUTE.Pages}/alarm-history`;
+    },
+    get MachineAlarmStatus() {
+        return `${ROUTE.Pages}/machine-alarm-status`;
+    },
+    get SensingValue() {
+        return `${ROUTE.Pages}/sensing-value`;
+    },
+    get LearningCurve() {
+        return `${ROUTE.Pages}/learning-curve`;
+    },
+    get DefectStatus() {
+        return `${ROUTE.Pages}/defect-status`;
+    },
+    get DefectSummary() {
+        return `${ROUTE.Pages}/defect-summary`;
+    },
+    get Overview() {
+        return `${ROUTE.Pages}/overview`;
+    },
 };
 
 // Factory Shift time rule: 3 shifts per day

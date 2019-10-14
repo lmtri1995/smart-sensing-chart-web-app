@@ -109,7 +109,9 @@ class TemperatureTrendLine extends PureComponent {
                 if (response.data.success) {
                     let dataArray = response.data.data;
 
+                    console.log("dataArray 112 112 112 112 112: ", dataArray);
                     let displayData = JSON.parse(dataArray[0].data);
+                    console.log("displayData: ", displayData);
                     if (displayData) {
                         this.graph.updateOptions( { 'file': displayData } );
                     }

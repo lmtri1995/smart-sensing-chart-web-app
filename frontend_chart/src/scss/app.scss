@@ -19,6 +19,12 @@
 @import './component/topbar';
 @import './component/load';
 @import './component/form';
+@import 'component/react-select';
+//@import './component/style';
+@import 'component/radio-btn';
+@import 'component/date-picker';
+@import 'component/progress-bar';
+@import 'component/modal';
 //pages...
 @import 'containers/account';
 @import 'containers/dashboard.scss';

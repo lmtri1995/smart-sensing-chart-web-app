@@ -209,7 +209,7 @@ class FilterRange extends Component {
 	};
 
 	handleFilterToDateChange = (value) => {
-		if (moment(value.toISOString()).isSameOrAfter(this.state.selectedFromDate)) {
+		if (moment(value.toISOString()).isSameOrAfter(this.state.selectedFromDate) && moment(value.toISOString()).isSameOrBefore(new Date())) {
 			this.props.handleFilterToDateChange(value);
 			this.setState({
 				...this.state,

@@ -22,6 +22,12 @@ class Topbar extends Component {
 
         const {changeMobileSidebarVisibility, changeSidebarVisibility} = this.props;
 
+        let loginData = JSON.parse(localStorage.getItem('logindata'));
+        let role = "";
+        if (loginData && loginData.data){
+            role = loginData.data.role;
+        }
+
         return (
             <div className="topbar">
                 <div className="topbar__wrapper">
@@ -33,12 +39,19 @@ class Topbar extends Component {
                         <Link className="topbar__logo" to={ROUTE.Dashboard}/>
                     </div>
                     <div className="topbar__right">
-
-                        <TopbarDateFilter/>
-                        <TopbarFilter/>
-                        {/*<TopbarNotification/>*/}
-                        <TopbarProfile/>
-                        <TopbarFullScreen goFull={this.click}/>
+                        {
+                            role !== 'as' ?
+                         (
+                             <div>
+                                 <TopbarDateFilter/>
+                                 <TopbarFilter/>
+                             </div>
+                         )
+                            /*<TopbarNotification/>*/
+                         : null
+                        }
+                         (<TopbarProfile/>)
+                         (<TopbarFullScreen goFull={this.click}/>)
                     </div>
                 </div>
             </div>

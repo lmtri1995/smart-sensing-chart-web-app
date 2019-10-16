@@ -11,20 +11,28 @@ import {
 
 class DataExporter extends Component {
 	exportExcelFile = (props) => {
-		let defectStatusData = null, defectSummaryData = null, alarmHistoryData = null;
+		let defectStatusData = null, defectSummaryData = null, alarmHistoryData = [["PROCESS", "DATE", "TIME", "SENSOR_TYPE", "SENSOR_NUMBER", "STANDARD", "VALUE", "ALARM", "MODEL", "ARTICLE"]];
 		let location         = props.location; //defect-status: /pages/defect-status
 		let excelData        = props.excelData;//defect-status-data: .defectStatusData
+		console.log("excelData: ", excelData);
 		switch (location.pathname) {
 			case "/pages/defect-status":
-				defectStatusData = excelData.defectStatusData;
+				if (excelData){
+					defectStatusData = excelData.defectStatusData;
+				}
 				break;
 			case "/pages/defect-summary":
-				defectSummaryData = excelData.defectSummaryData;
+				if (excelData) {
+					defectSummaryData = excelData.defectSummaryData;
+				}
 				break;
 			case "/pages/alarm-history":
-				alarmHistoryData = excelData.alarmHistoryData;
+				if (excelData && excelData.alarmHistoryData) {
+					alarmHistoryData = excelData.alarmHistoryData;
+				}
 				break;
 		}
+		console.log("35: ", alarmHistoryData);
 		let fileName            = "dataExport";
 		let workbook            = new Excel.Workbook();
 		workbook.creator        = 'truongho@snaglobal.net';

@@ -12,6 +12,14 @@ import {
     sidebarReducer,
     themeReducer,
 } from '../../redux/reducers/index';
+
+import {
+    customizerReducer,
+    excelDataReducer,
+    filterReducer,
+    //sidebarReducer,
+    //themeReducer
+}  from '../../Assembly/redux/reducers/index';
 import thunk from "redux-thunk";
 
 const reducer = combineReducers({
@@ -26,6 +34,9 @@ const reducer = combineReducers({
     globalModelFilter: globalModelFilterReducer,
     globalArticleFilter: globalArticleFilterReducer,
     globalShiftFilter: globalShiftFilterReducer,
+    customizer: customizerReducer,
+    filter    : filterReducer,
+    excelData : excelDataReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

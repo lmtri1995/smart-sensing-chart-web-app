@@ -42,12 +42,12 @@ class AlarmHistory extends Component {
 		let url                                                                    = ASSEMBLY_API + ALARM_HISTORY;
 		let params                                                                 = {
 			"factory"   : "",
-			"line"      : "",
+			"line"      : filterLine,
 			"process"   : "",
 			"model"     : "",
 			"article_no": "",
-			"from_date" : "0",
-			"to_date"   : "0"
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 		callAxios(method, url, params).then(response => {
 			try {
@@ -79,7 +79,7 @@ class AlarmHistory extends Component {
 	handleFilterToDateChange  = (newValue) => {
 		this.setState({
 			...this.state,
-			filterToDate: changeDateToUnix(newValue),
+			filterToDate:changeDateToUnix(newValue, "end"),
 		});
 	};
 	handleFilterLineChange    = (newValue) => {

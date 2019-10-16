@@ -1,23 +1,24 @@
-import React, {Component}             from "react";
-import {Col, Container, Row}          from "reactstrap";
-import MappingStitchForm              from "./components/MappingStitchForm";
-import DataTable                      from "./components/DataTable";
+import React, {Component}                                from "react";
+import {Col, Container, Row}                             from "reactstrap";
+import MappingStitchForm                                 from "./components/MappingStitchForm";
+import DataTable                                         from "./components/DataTable";
 import {ASSEMBLY_API, MAPPING_STITCH, MAPPING_STITCH_IU} from "../../constants/urlConstants";
-import callAxios                      from "../../services/api";
-import MAPPING_STITCH_CONSTANTS       from "./constants";
-import {changeDateToUnix}            from "../../shared/utils/Utilities";
+import callAxios                                         from "../../services/api";
+import MAPPING_STITCH_CONSTANTS                          from "./constants";
+import {changeDateToUnix, changeStringToDate}                                from "../../shared/utils/Utilities";
+import moment                                            from "moment";
 
 class MappingStitch extends Component {
-	constructor(props){
+	constructor(props) {
 		super(props);
-		let {initial} = MAPPING_STITCH_CONSTANTS.submissionState;
+		let {initial}     = MAPPING_STITCH_CONSTANTS.submissionState;
 		this.mainTableRef = React.createRef();
-		this.state = {
-			tableData: [],
-			formData           : {},
-			editMode           : false,
-			submissionState    : initial,    // -1: Failed, 0: Submit/Save, 1: Submitting/Saving, 2: Submitted/Saved
-			connectionError    : '',
+		this.state        = {
+			tableData      : [],
+			formData       : {},
+			editMode       : false,
+			submissionState: initial,    // -1: Failed, 0: Submit/Save, 1: Submitting/Saving, 2: Submitted/Saved
+			connectionError: '',
 		}
 	}
 
@@ -47,28 +48,30 @@ class MappingStitch extends Component {
 	};
 
 	handleSubmit = (values) => {
+		console.log("50: ", values);
 		let {failed, initial, onGoing, done} = MAPPING_STITCH_CONSTANTS.submissionState;
 		this.setState({
 			submissionState: onGoing,
 		});
 		event.preventDefault();
-		const {field}        = MAPPING_STITCH_CONSTANTS;
+		const {field} = MAPPING_STITCH_CONSTANTS;
 
 		let method = 'POST';
 		let url    = ASSEMBLY_API + MAPPING_STITCH_IU;
 		let param  = {
-			"status"            : this.state.editMode ? "UPDATE" : "INSERT",
-			[field.macAddress]      : values[field.macAddress],
-			"mapping_seq"       : "0",
-			[field.factoryCode]        : values[field.factoryCode],
-			[field.lineCode]           : values[field.lineCode],
-			[field.processCode]         : values[field.processCode],
-			[field.posittionCode]        : values[field.posittionCode],
-			[field.active]          : values[field.active]?"1":"0",
-			[field.description]        : values[field.description],
-			[field.entryDate]         : changeDateToUnix(values[field.entryDate]),
-			"rtn_value"         : ""
+			"status"             : this.state.editMode ? "UPDATE" : "INSERT",
+			[field.macAddress]   : values[field.macAddress],
+			"mapping_seq"        : "0",
+			[field.factoryCode]  : values[field.factoryCode],
+			[field.lineCode]     : values[field.lineCode],
+			[field.processCode]  : values[field.processCode],
+			[field.posittionCode]: values[field.posittionCode],
+			[field.active]       : values[field.active] ? "1" : "0",
+			[field.description]  : values[field.description],
+			[field.entryDate]    : changeDateToUnix(changeStringToDate(values[field.entryDate])),
+			"rtn_value"          : ""
 		};
+		console.log("param 72: ", param);
 		callAxios(method, url, param).then(response => {
 			this.setState({
 				formData       : {},
@@ -81,38 +84,38 @@ class MappingStitch extends Component {
 					gotError = true;
 				}
 				return {
-					[field.macAddress]       : rowData[field.macAddress],
-					"mapping_seq"       : "0",
-					[field.factoryCode]        : rowData[field.factoryCode],
-					[field.lineCode]           : rowData[field.lineCode],
-					[field.processCode]        : rowData[field.processCode],
-					[field.posittionCode]       : rowData[field.posittionCode],
-					[field.active]         : rowData[field.active]?"1":"0",
-					[field.description]       : rowData[field.description],
-					[field.entryDate]        : changeDateToUnix(rowData[field.entryDate]),
-					"rtn_value"         : ""
+					[field.macAddress]   : rowData[field.macAddress],
+					"mapping_seq"        : "0",
+					[field.factoryCode]  : rowData[field.factoryCode],
+					[field.lineCode]     : rowData[field.lineCode],
+					[field.processCode]  : rowData[field.processCode],
+					[field.posittionCode]: rowData[field.posittionCode],
+					[field.active]       : rowData[field.active] ? "1" : "0",
+					[field.description]  : rowData[field.description],
+					[field.entryDate]    : changeDateToUnix(rowData[field.entryDate]),
+					"rtn_value"          : ""
 				};
 			});
 			if (!this.state.editMode && gotError) { // Is in Insert Mode and Duplicated Mas Code found
 				this.setState({
 					formData       : {
 						...this.state.formData,
-						"status"            : this.state.editMode ? "UPDATE" : "INSERT",
-						[field.macAddress]       : values[field.macAddress],
-						"mapping_seq"       : "0",
-						[field.factoryCode]        : values[field.factoryCode],
-						[field.factoryName]        : values[field.factoryName],
-						[field.lineCode]           : values[field.lineCode],
-						[field.lineName]           : values[field.lineName],
-						[field.processCode]        : values[field.processCode],
-						[field.processName]        : values[field.processName],
-						[field.posittionCode]       : values[field.posittionCode],
-						[field.posittionName]       : values[field.posittionName],
-						[field.active]         : values[field.active]?"1":"0",
-						[field.description]       : values[field.description],
-						[field.entryDate]       : changeDateToUnix(values[field.entryDate]),
+						"status"                                 : this.state.editMode ? "UPDATE" : "INSERT",
+						[field.macAddress]                       : values[field.macAddress],
+						"mapping_seq"                            : "0",
+						[field.factoryCode]                      : values[field.factoryCode],
+						[field.factoryName]                      : values[field.factoryName],
+						[field.lineCode]                         : values[field.lineCode],
+						[field.lineName]                         : values[field.lineName],
+						[field.processCode]                      : values[field.processCode],
+						[field.processName]                      : values[field.processName],
+						[field.posittionCode]                    : values[field.posittionCode],
+						[field.posittionName]                    : values[field.posittionName],
+						[field.active]                           : values[field.active] ? "1" : "0",
+						[field.description]                      : values[field.description],
+						[field.entryDate]                        : changeDateToUnix(values[field.entryDate]),
 						[field.hiddenMacAddressDuplicatedChecker]: true,
-						"rtn_value"         : ""
+						"rtn_value"                              : ""
 					},
 					submissionState: failed,
 				});
@@ -159,14 +162,14 @@ class MappingStitch extends Component {
 		callAxios(method, url, {}).then(response => {
 			let tableData = response.data.data;
 			this.setState({
-					...this.state,
-					tableData: tableData,
+				...this.state,
+				tableData: tableData,
 			});
 		}).catch(reason => console.log("Error: ", reason));
 
 	}
 
-	render(){
+	render() {
 		let {
 			    tableData, formData, editMode, submissionState
 		    } = this.state;
@@ -178,7 +181,7 @@ class MappingStitch extends Component {
 					<MappingStitchForm
 						formData={formData}
 						onReset={this.onReset}
-					    editMode={editMode}
+						editMode={editMode}
 						onSubmit={this.handleSubmit}
 						submissionState={submissionState}
 					/>
@@ -202,4 +205,5 @@ class MappingStitch extends Component {
 		);
 	}
 }
+
 export default MappingStitch;

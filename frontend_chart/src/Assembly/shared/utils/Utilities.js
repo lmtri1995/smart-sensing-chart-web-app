@@ -10,6 +10,14 @@ export const changeDateToUnix = (inputDate, flag = "start") => {
 	return result;
 }
 
+export const changeStringToDate = (text) => {
+	let day = text.substring(0, 2);
+	let month = text.substring(3, 5);
+	let year = text.substring(6, 10);
+	let result = new Date(year, parseInt(month) - 1, day);
+	return result;
+}
+
 export const findThreeLargest = (array) => {
 	let first = 0, second = 0, third = 0;
 	for (let i = 0; i < array.length; i++){

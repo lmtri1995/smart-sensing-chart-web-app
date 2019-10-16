@@ -98,20 +98,22 @@ class Overview extends Component {
 
 
 	getComputerStichingData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_CHART_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20103",
-			"model":"",
-			"article_no":"",
-			"from_date": 1568107963,
-			"to_date": 1568107963
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20103",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
 			try {
+				console.log("116: ", response);
 				let data = response.data.data;
 				this.setState((state, props) => ({
 					computerStichingData: data,
@@ -123,16 +125,17 @@ class Overview extends Component {
 	}
 
 	getNormalStichingData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_CHART_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20104",
-			"model":"",
-			"article_no":"",
-			"from_date": 1568107963,
-			"to_date": 1568107963
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20104",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -148,16 +151,17 @@ class Overview extends Component {
 	}
 
 	getPreStichingData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_CHART_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20101",
-			"model":"",
-			"article_no":"",
-			"from_date": 1568107963,
-			"to_date": 1568107963
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20101",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -173,16 +177,17 @@ class Overview extends Component {
 	}
 
 	getStrobelData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_CHART_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20107",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20107",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -201,14 +206,14 @@ class Overview extends Component {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + DEFECT_CHART_STATUS;
-		let params = {
-			"factory": "",
-			"line": "",
-			"process": "",
-			"model":"",
-			"article_no":"",
-			"from_date": filterFromDate,
-			"to_date": filterToDate
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -224,16 +229,17 @@ class Overview extends Component {
 	}
 
 	getPackingData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_CHART_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20105",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20118",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -249,16 +255,17 @@ class Overview extends Component {
 	}
 
 	getBackPackMoldingData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_TEMP_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20105",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20105",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -275,16 +282,17 @@ class Overview extends Component {
 	}
 
 	getToeMoldingData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_TEMP_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20106",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20106",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -300,16 +308,17 @@ class Overview extends Component {
 	}
 
 	getHeatChamberData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_TEMP_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20110",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20110",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -325,16 +334,17 @@ class Overview extends Component {
 	}
 
 	getCementingData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_TEMP_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20112",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20112",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -350,16 +360,18 @@ class Overview extends Component {
 	}
 
 	getAttachSoleWithUpperData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_TEMP_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20113",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20113",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -375,16 +387,17 @@ class Overview extends Component {
 	}
 
 	getChillerData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_TEMP_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20114",
-			"model":"",
-			"article_no":"",
-			"from_date": 1562722712,
-			"to_date": 1562722712
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20114",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -400,16 +413,17 @@ class Overview extends Component {
 	}
 
 	getLineProductivityData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + LINE_PRODUCTIVITY;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20105",
-			"model":"",
-			"article_no":"",
-			"from_date": 1565233732,
-			"to_date": 1565233732
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20105",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {
@@ -425,16 +439,17 @@ class Overview extends Component {
 	}
 
 	getMetalDetectData = () => {
+		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_MACHINE_DASHBOARD;
-		let params  = {
-			"factory": "",
-			"line": "",
-			"process": "20116",
-			"model":"",
-			"article_no":"",
-			"from_date": 1564453935,
-			"to_date": 1564453935
+		let params                                                                 = {
+			"factory"   : "",
+			"line"      : filterLine,
+			"model"     : filterModel,
+			"article_no": filterArticle,
+			"process"   : "20116",
+			"from_date" : filterFromDate,
+			"to_date"   : filterToDate
 		};
 
 		callAxios(method, url, params).then(response => {

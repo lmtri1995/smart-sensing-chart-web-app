@@ -111,7 +111,7 @@ class MasterAlarm extends Component {
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + ALARM_ARTICLE;
 		let params  = {
-			"model_cd": data.model_cd?data.model_cd:''
+			"model_cd": data && data.model_cd?data.model_cd:''
 		};
 		let {field} = ALARM_MASTER_PAGE_CONSTANTS;
 
@@ -522,8 +522,11 @@ class MasterAlarm extends Component {
 						//Update parent combobox items
 						try {
 							if (response.status == 200) {
-								this.loadModelArticleTable();
-								this.loadModelTable();
+								if (!this.state.editMode){
+									this.loadModelArticleTable();
+									this.loadModelTable();
+									this.loadArticleTable({model_cd: formData[field.modelCd]});
+								}
 								this.loadAlarmSensorTable();
 
 								//reload process loading

@@ -152,17 +152,17 @@ export const handleLeftPanel = (backPackMoldingData) => {
 	    timerRed = 0;
 	backPackMoldingData.forEach(item => {
 		if (item.sensor_type.toUpperCase() === "Curing Time".toUpperCase()){
-			timerGreen  = item.sensor_no_green
-			timerYellow = item.sensor_no_red
-			timerRed    = item.sensor_no_yellow
+			timerGreen  = item.sensor_no_green;
+			timerYellow = item.sensor_no_yellow;
+			timerRed    = item.sensor_no_red;
 		} else if (item.sensor_type.toUpperCase() === "Temperature".toUpperCase()){
 			tempGreen   = item.sensor_no_green;
-			tempYellow  = item.sensor_no_red;
-			tempRed     = item.sensor_no_yellow;
+			tempYellow  = item.sensor_no_yellow;
+			tempRed     = item.sensor_no_red;
 		} else if (item.sensor_type.toUpperCase() === "Pressure".toUpperCase()){
 			presGreen   = item.sensor_no_green;
-			presYellow  = item.sensor_no_red;
-			presRed     = item.sensor_no_yellow;
+			presYellow  = item.sensor_no_yellow;
+			presRed     = item.sensor_no_red;
 		}
 	});
 	let tempPresTimeItem = {

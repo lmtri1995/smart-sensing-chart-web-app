@@ -41,7 +41,7 @@ class MiniRightBar extends Component {
 							{qty.toFixed(2)}%
 						</Col>
 					</div>
-					<Progress value={92}>
+					<Progress value={qty}>
 					</Progress>
 				</div>
 				<div className="d-flex flex-wrap">

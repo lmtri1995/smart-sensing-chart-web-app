@@ -8,7 +8,7 @@ class LeadDetailTable extends Component {
 
 	fillRow = (data, i = 0) => {
 		if (data) {
-			return (<tr>
+			return (<tr key={i}>
 				<td>{data.process_nm}</td>
 				<td style={{
 					textAlign : 'center',
@@ -119,9 +119,14 @@ class LeadDetailTable extends Component {
 			for (let i = 0; i < leadDetailData.length; i++) {
 				rowData[i] = this.fillRow(leadDetailData[i], i);
 			}
-			tableBody = <tbody>
-			{rowData}
-			</tbody>;
+			if (leadDetailData && leadDetailData.length > 0){
+				tableBody = <tbody>
+								{rowData}
+							</tbody>;
+			} else {
+				tableBody = <tbody></tbody>;
+			}
+
 
 		} catch (e) {
 			console.log("Error: ", e);

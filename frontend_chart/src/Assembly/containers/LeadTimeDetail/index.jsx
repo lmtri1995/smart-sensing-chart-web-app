@@ -97,62 +97,76 @@ class LeadTimeDetail extends Component {
 		totalLTLastRow[15] = 0;
 		totalLTLastRow[16] = 0;
 
-		for (let i = 0; i < leadDetailData.length; i++) {
-			let data          = leadDetailData[i];
-			totalQty[i]       = data.Qty_0730 + data.Qty_0830 + data.Qty_0930 + data.Qty_1030 + data.Qty_1130 +
-			                    data.Qty_1130 + data.Qty_1230 + data.Qty_1330 + data.Qty_1430 + data.Qty_1530 +
-			                    data.Qty_1630 + data.Qty_1730 + data.Qty_1830 + data.Qty_1930 + data.Qty_2030 +
-			                    data.Qty_2130 + data.Qty_2230;
-			totalLT[i]        = DAY_WORKING_SECONDS / totalQty[i];
-			leadDetailData[i] = {
-				...leadDetailData[i],
-				totalQty: totalQty[i],
-				totalLT : totalLT[i].toFixed(2)
-			};
-			this.setState({
-				leadDetailData: leadDetailData
-			});
+		console.log("100: ", leadDetailData);
+		if (leadDetailData.length > 0){
+			console.log("102");
+			for (let i = 0; i < leadDetailData.length; i++) {
+				console.log("102");
+				let data          = leadDetailData[i];
+				console.log("data 104: ", data);
+				totalQty[i]       = data.Qty_0730 + data.Qty_0830 + data.Qty_0930 + data.Qty_1030 + data.Qty_1130 +
+				                    data.Qty_1130 + data.Qty_1230 + data.Qty_1330 + data.Qty_1430 + data.Qty_1530 +
+				                    data.Qty_1630 + data.Qty_1730 + data.Qty_1830 + data.Qty_1930 + data.Qty_2030 +
+				                    data.Qty_2130 + data.Qty_2230;
+				totalLT[i]        = DAY_WORKING_SECONDS / totalQty[i];
+				leadDetailData[i] = {
+					...leadDetailData[i],
+					totalQty: totalQty[i],
+					totalLT : totalLT[i].toFixed(2)
+				};
+				this.setState({
+					leadDetailData: leadDetailData
+				});
 
-			totalLTLastRow[0] += leadDetailData[i].LT_0730;
-			totalLTLastRow[1] += leadDetailData[i].LT_0830;
-			totalLTLastRow[2] += leadDetailData[i].LT_0930;
-			totalLTLastRow[3] += leadDetailData[i].LT_1030;
-			totalLTLastRow[4] += leadDetailData[i].LT_1130;
-			totalLTLastRow[5] += leadDetailData[i].LT_1230;
-			totalLTLastRow[6] += leadDetailData[i].LT_1330;
-			totalLTLastRow[7] += leadDetailData[i].LT_1430;
-			totalLTLastRow[8] += leadDetailData[i].LT_1530;
-			totalLTLastRow[9] += leadDetailData[i].LT_1630;
-			totalLTLastRow[10] += leadDetailData[i].LT_1730;
-			totalLTLastRow[11] += leadDetailData[i].LT_1830;
-			totalLTLastRow[12] += leadDetailData[i].LT_1930;
-			totalLTLastRow[13] += leadDetailData[i].LT_2030;
-			totalLTLastRow[14] += leadDetailData[i].LT_2130;
-			totalLTLastRow[15] += leadDetailData[i].LT_2230;
-			totalLTLastRow[16] += totalLT[i];
+				totalLTLastRow[0] += leadDetailData[i].LT_0730;
+				totalLTLastRow[1] += leadDetailData[i].LT_0830;
+				totalLTLastRow[2] += leadDetailData[i].LT_0930;
+				totalLTLastRow[3] += leadDetailData[i].LT_1030;
+				totalLTLastRow[4] += leadDetailData[i].LT_1130;
+				totalLTLastRow[5] += leadDetailData[i].LT_1230;
+				totalLTLastRow[6] += leadDetailData[i].LT_1330;
+				totalLTLastRow[7] += leadDetailData[i].LT_1430;
+				totalLTLastRow[8] += leadDetailData[i].LT_1530;
+				totalLTLastRow[9] += leadDetailData[i].LT_1630;
+				totalLTLastRow[10] += leadDetailData[i].LT_1730;
+				totalLTLastRow[11] += leadDetailData[i].LT_1830;
+				totalLTLastRow[12] += leadDetailData[i].LT_1930;
+				totalLTLastRow[13] += leadDetailData[i].LT_2030;
+				totalLTLastRow[14] += leadDetailData[i].LT_2130;
+				totalLTLastRow[15] += leadDetailData[i].LT_2230;
+				totalLTLastRow[16] += totalLT[i];
+			}
+		} else {
+			console.log("140");
+			this.setState((state, props) => ({
+				leadDetailData: [],
+			}));
 		}
+
 		//Add the footer row into the array
 		//Insert lastrow
-		totalQTyLastRow[0]  = leadDetailData[leadDetailData.length - 1].Qty_0730;
-		totalQTyLastRow[1]  = leadDetailData[leadDetailData.length - 1].Qty_0830;
-		totalQTyLastRow[2]  = leadDetailData[leadDetailData.length - 1].Qty_0930;
-		totalQTyLastRow[3]  = leadDetailData[leadDetailData.length - 1].Qty_1030;
-		totalQTyLastRow[4]  = leadDetailData[leadDetailData.length - 1].Qty_1130;
-		totalQTyLastRow[5]  = leadDetailData[leadDetailData.length - 1].Qty_1230;
-		totalQTyLastRow[6]  = leadDetailData[leadDetailData.length - 1].Qty_1330;
-		totalQTyLastRow[7]  = leadDetailData[leadDetailData.length - 1].Qty_1430;
-		totalQTyLastRow[8]  = leadDetailData[leadDetailData.length - 1].Qty_1530;
-		totalQTyLastRow[9]  = leadDetailData[leadDetailData.length - 1].Qty_1630;
-		totalQTyLastRow[10] = leadDetailData[leadDetailData.length - 1].Qty_1730;
-		totalQTyLastRow[11] = leadDetailData[leadDetailData.length - 1].Qty_1830;
-		totalQTyLastRow[12] = leadDetailData[leadDetailData.length - 1].Qty_1930;
-		totalQTyLastRow[13] = leadDetailData[leadDetailData.length - 1].Qty_2030;
-		totalQTyLastRow[14] = leadDetailData[leadDetailData.length - 1].Qty_2130;
-		totalQTyLastRow[15] = leadDetailData[leadDetailData.length - 1].Qty_2230;
-		totalQTyLastRow[16] = leadDetailData[leadDetailData.length - 1].totalQty;
+		if (leadDetailData.length > 0){
+			totalQTyLastRow[0]  = leadDetailData[leadDetailData.length - 1].Qty_0730;
+			totalQTyLastRow[1]  = leadDetailData[leadDetailData.length - 1].Qty_0830;
+			totalQTyLastRow[2]  = leadDetailData[leadDetailData.length - 1].Qty_0930;
+			totalQTyLastRow[3]  = leadDetailData[leadDetailData.length - 1].Qty_1030;
+			totalQTyLastRow[4]  = leadDetailData[leadDetailData.length - 1].Qty_1130;
+			totalQTyLastRow[5]  = leadDetailData[leadDetailData.length - 1].Qty_1230;
+			totalQTyLastRow[6]  = leadDetailData[leadDetailData.length - 1].Qty_1330;
+			totalQTyLastRow[7]  = leadDetailData[leadDetailData.length - 1].Qty_1430;
+			totalQTyLastRow[8]  = leadDetailData[leadDetailData.length - 1].Qty_1530;
+			totalQTyLastRow[9]  = leadDetailData[leadDetailData.length - 1].Qty_1630;
+			totalQTyLastRow[10] = leadDetailData[leadDetailData.length - 1].Qty_1730;
+			totalQTyLastRow[11] = leadDetailData[leadDetailData.length - 1].Qty_1830;
+			totalQTyLastRow[12] = leadDetailData[leadDetailData.length - 1].Qty_1930;
+			totalQTyLastRow[13] = leadDetailData[leadDetailData.length - 1].Qty_2030;
+			totalQTyLastRow[14] = leadDetailData[leadDetailData.length - 1].Qty_2130;
+			totalQTyLastRow[15] = leadDetailData[leadDetailData.length - 1].Qty_2230;
+			totalQTyLastRow[16] = leadDetailData[leadDetailData.length - 1].totalQty;
+		}
 
 		//Does not countpre.stiching stage
-		if (leadDetailData[0].line_cd.toString() === "20101".toString()){
+		if (leadDetailData.length > 0 && leadDetailData[0].line_cd.toString() === "20101".toString()){
 			totalLTLastRow[0]  = ((parseFloat(totalLTLastRow[0]) - leadDetailData[0].LT_0730) / 60).toFixed(2);
 			totalLTLastRow[1]  = ((parseFloat(totalLTLastRow[1]) - leadDetailData[0].LT_0830) / 60).toFixed(2);
 			totalLTLastRow[2]  = ((parseFloat(totalLTLastRow[2]) - leadDetailData[0].LT_0930) / 60).toFixed(2);
@@ -249,9 +263,11 @@ class LeadTimeDetail extends Component {
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};
+		console.log("params: ", params);
 		callAxios(method, url, params).then(response => {
 			try {
 				let leadDetailData = response.data.data;
+				console.log("leadDetailData: ", leadDetailData);
 				/*this.setState((state, props) => ({
 				 test: "123"
 				 }));*/
@@ -311,6 +327,7 @@ class LeadTimeDetail extends Component {
 
 	render() {
 		let {chartData, chartLabels, leadDetailData, leadDetailFooter} = this.state;
+		console.log("leadDetailData 328: ", leadDetailData);
 		return (
 			<Container className="dashboard">
 				<h3>Dashboard/Production Lead Time Detail</h3>

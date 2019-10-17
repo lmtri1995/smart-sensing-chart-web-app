@@ -47,6 +47,7 @@ export const drawChartItem = (dataItem) => {
 						stacked: true,
 						ticks: {
 							fontColor: '#BEBEBE',
+							max: 4
 						},
 					},
 				],
@@ -62,6 +63,7 @@ export const drawChartItem = (dataItem) => {
 						ticks    : {
 							beginAtZero: true,
 							fontColor  : '#868D93',
+							max: 100
 						},
 					},
 				],

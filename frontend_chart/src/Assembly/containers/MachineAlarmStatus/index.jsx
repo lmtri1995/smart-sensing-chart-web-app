@@ -13,7 +13,7 @@ class MachineAlarmStatus extends Component {
 		this.state = {
 			machineAlarmData: [],
 			filterFromDate  : changeDateToUnix(new Date()),
-			filterToDate    : changeDateToUnix(newValue, "end"),
+			filterToDate    : changeDateToUnix(new Date(), "end"),
 			filterLine      : '',
 			filterModel     : '',
 			filterArticle   : ''

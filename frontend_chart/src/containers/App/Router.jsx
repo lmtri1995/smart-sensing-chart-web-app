@@ -52,9 +52,8 @@ class Pages extends Component {
                         <Switch>
                             <PrivateRoute exact path={ROUTE.Dashboard} component={DashBoard}/>
                             <PrivateRoute path={ROUTE.Analysis} component={Analysis}/>
-                            {/* <PrivateRoute path="/pages/one" component={ExamplePageOne}/> */}
                             <PrivateRoute path={ROUTE.Report} component={Report}/>
-                            <PrivateRoute path={ROUTE.MasterPage} component={MasterPage}/>
+                            <PrivateRoute exact path={ROUTE.MasterPage} component={MasterPage}/>
                             <PrivateRoute path={ROUTE.AlarmMaster} component={MasterAlarm}/>
                             <PrivateRoute path={ROUTE.MappingStitch} component={MappingStitch}/>
                             <PrivateRoute path={ROUTE.LeadTime} component={LeadTime}/>

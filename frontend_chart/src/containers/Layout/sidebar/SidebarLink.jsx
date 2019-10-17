@@ -6,11 +6,11 @@ import {ROUTE} from "../../../constants/constants";
 
 const SidebarLink = ({
                          title, icon, newLink, route, onClick,
-                     }) => (
-    <NavLink
+                     }) => {
+    return <NavLink
         to={route}
         onClick={onClick}
-        activeClassName="sidebar__link-active"
+        activeClassName={ window.location.pathname===route || window.location.pathname==='/pages/master-page'? "sidebar__link-active":'' }
     >
         <li className="sidebar__link">
             {icon ? <span className={`sidebar__link-icon lnr lnr-${icon}`}/> : ''}
@@ -20,7 +20,7 @@ const SidebarLink = ({
             </p>
         </li>
     </NavLink>
-);
+}
 
 SidebarLink.propTypes = {
     title: PropTypes.string.isRequired,

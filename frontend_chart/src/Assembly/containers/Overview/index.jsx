@@ -62,38 +62,33 @@ class Overview extends Component {
 	}
 
 	handleFilterFromDateChange    = (newValue) => {
-		this.setState({
-			...this.state,
+		this.setState((state, props) => ({
 			filterFromDate:changeDateToUnix(newValue, "start"),
-		});
+		}));
 	}
 
 	handleFilterToDateChange    = (newValue) => {
-		this.setState({
-			...this.state,
+		this.setState((state, props) => ({
 			filterToDate:changeDateToUnix(newValue, "end"),
-		});
+		}));
 	}
 	handleFilterModelChange   = (newValue) => {
-		this.setState({
-			...this.state,
+		this.setState((state, props) => ({
 			filterModel:newValue.value,
 			filterArticle: ""
-		});
+		}));
 	}
 	handleFilterLineChange    = (newValue) => {
-		this.setState({
-			...this.state,
+		this.setState((state, props) => ({
 			filterLine:newValue.value,
 			filterModel:"",
 			filterArticle: ""
-		});
+		}));
 	}
 	handleFilterArticleChange = (newValue) => {
-		this.setState({
-			...this.state,
+		this.setState((state, props) => ({
 			filterArticle:newValue.value,
-		});
+		}));
 	}
 
 
@@ -488,6 +483,9 @@ class Overview extends Component {
 		    || prevState.filterToDate !== this.state.filterToDate
 		    || prevState.filterLine !== this.state.filterLine || prevState.filterModel !== this.state.filterModel
 		    || prevState.filterArticle !== this.state.filterArticle){
+			console.log("491 491 491 491");
+			console.log("491 491 491 491");
+			console.log("491 491 491 491");
 			this.getComputerStichingData();
 			this.getNormalStichingData();
 			this.getPreStichingData();

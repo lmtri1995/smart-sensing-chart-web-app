@@ -199,6 +199,9 @@ class FilterRange extends Component {
 	};
 
 	handleFilterFromDateChange = (value) => {
+		console.log("202 202 202");
+		console.log("202 202 202");
+		console.log("202 202 202");
 		if (moment(value.toISOString()).isSameOrBefore(this.state.selectedToDate)) {
 			this.props.handleFilterFromDateChange(value);
 			this.setState({
@@ -209,6 +212,9 @@ class FilterRange extends Component {
 	};
 
 	handleFilterToDateChange = (value) => {
+		console.log("215 215 215");
+		console.log("215 215 215");
+		console.log("215 215 215");
 		if (moment(value.toISOString()).isSameOrAfter(this.state.selectedFromDate) && moment(value.toISOString()).isSameOrBefore(new Date())) {
 			this.props.handleFilterToDateChange(value);
 			this.setState({
@@ -254,20 +260,21 @@ class FilterRange extends Component {
 	};
 
 	onCheckboxChange = (value) => {
+		console.log("263 263 263");
 		if (parseInt(value) === 1) {
-			this.setState({
-				...this.state,
+			this.setState((state, props) => ({
 				disableFromDatePicker: true,
 				disableToDatePicker  : true,
 				selectedFromDate     : new Date(moment().startOf("day").toISOString()),
 				selectedToDate       : new Date(moment().endOf("day").toISOString()),
-			});
+			}));
+			this.props.handleFilterFromDateChange(new Date(moment().startOf("day").toISOString()));
+			this.props.handleFilterToDateChange(new Date(moment().startOf("day").toISOString()));
 		} else {
-			this.setState({
-				...this.state,
+			this.setState((state, props) => ({
 				disableFromDatePicker: false,
 				disableToDatePicker  : false,
-			});
+			}));
 		}
 	};
 

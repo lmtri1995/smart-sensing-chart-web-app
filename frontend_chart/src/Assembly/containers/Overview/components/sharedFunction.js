@@ -135,7 +135,7 @@ export const countCuring = (data) => {
 export const countQtyPercent = (data) => {
 	let result = 0;
 	if (data[5] && data[5].length > 0) {
-		result = data[5] * 100;
+		result = parseFloat(data[5]);
 	}
 	return result;
 }

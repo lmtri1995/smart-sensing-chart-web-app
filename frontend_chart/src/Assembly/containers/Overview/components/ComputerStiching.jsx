@@ -22,7 +22,6 @@ class ComputerStiching extends Component {
 
 	render(){
 		let {computerStichingData} = this.state;
-		console.log("computerStichingData: ", computerStichingData);
 		let chart   = drawChartItem(computerStichingData);
 		let prep    = countPrep(computerStichingData);
 		let curing  = countCuring(computerStichingData);

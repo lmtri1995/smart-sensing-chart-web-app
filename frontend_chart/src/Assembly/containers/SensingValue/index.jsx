@@ -106,6 +106,9 @@ class SensingValue extends Component {
 			callAxios(method, url, params).then(response => {
 				try {
 					let data = response.data.data;
+					console.log("data: ", data);
+					console.log("processData.definition_value: ", processData.definition_value);
+					console.log("processData.process_cd: ", processData.process_cd);
 					if (processData.definition_value.toString() === "244" && processData.process_cd === "20105"){
 						let chart1 = data[0]?data[0]:[];
 						let chart3 = data[2]?data[2]:[];

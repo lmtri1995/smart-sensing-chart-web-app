@@ -53,14 +53,6 @@ class Overview extends Component {
 		};
 	}
 
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		if (prevState.filterArticle !== this.state.filterArticle || prevState.filterFromDate !== this.state.filterFromDate
-		    || prevState.filterToDate !== this.state.filterToDate
-		    || prevState.filterLine !== this.state.filterLine || prevState.filterModel !== this.state.filterModel
-			|| prevState.filterArticle !== this.state.filterArticle){
-		}
-	}
-
 	handleFilterFromDateChange    = (newValue) => {
 		this.setState((state, props) => ({
 			filterFromDate:changeDateToUnix(newValue, "start"),
@@ -121,6 +113,7 @@ class Overview extends Component {
 
 	getNormalStichingData = () => {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
+
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_CHART_DASHBOARD;
 		let params                                                                 = {
@@ -132,10 +125,11 @@ class Overview extends Component {
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};
-
+		console.log("params 135: ", params);
 		callAxios(method, url, params).then(response => {
 			try {
 				let data = response.data.data;
+				console.log("data 139: ", data);
 				this.setState((state, props) => ({
 					normalStichingData: data,
 				}));
@@ -464,7 +458,7 @@ class Overview extends Component {
 	componentDidMount(){
 		this.getComputerStichingData();
 		this.getNormalStichingData();
-		this.getPreStichingData();
+		//this.getPreStichingData();
 		this.getStrobelData();
 		this.getQipDefectData();
 		this.getPackingData();
@@ -488,7 +482,7 @@ class Overview extends Component {
 			console.log("491 491 491 491");
 			this.getComputerStichingData();
 			this.getNormalStichingData();
-			this.getPreStichingData();
+			//this.getPreStichingData();
 			this.getStrobelData();
 			this.getQipDefectData();
 			this.getPackingData();
@@ -522,17 +516,18 @@ class Overview extends Component {
 						<Row>
 							<NormalStiching normalStichingData={normalStichingData}/>
 							<ComputerStiching computerStichingData={computerStichingData}/>
-							<PreStiching preStichingData={preStichingData} />
+							{/*<PreStiching preStichingData={preStichingData} />*/}
+							<BackpackMolding backPackMoldingData={backPackMoldingData}/>
 						</Row>
 						<Row>
-							<BackpackMolding backPackMoldingData={backPackMoldingData}/>
 							<ToeMolding toeMoldingData={toeMoldingData} />
 							<Strobel strobelData={strobelData}/>
+							<HeartChamber heatChamberData={heatChamberData}/>
 						</Row>
 						<Row>
-							<HeartChamber heatChamberData={heatChamberData}/>
 							<Cememting cementingData={cementingData}/>
 							<AttachSoleWithUpper attachSoleWithUpperData={attachSoleWithUpperData}/>
+							<Chiller chillerData={chillerData}/>
 						</Row>
 					</Col>
 					<Col md={3} lg={3} style={{marginBottom: 15, marginLeft: -16, color: '#FFFFFF'}}>
@@ -542,13 +537,13 @@ class Overview extends Component {
 				<Row>
 					<Col md={9} lg={9}>
 						<Row>
-							<Chiller chillerData={chillerData}/>
 							<MetalDetect metalDetectData={metalDetectData}/>
 							<QIPDefect qipDefectData={qipDefectData} chartData={qipDefectData} />
+							<Packing packingData={packingData} />
 						</Row>
 					</Col>
 					<Col md={3} lg={3} style={{marginBottom: 15, marginLeft: -16}}>
-						<Packing packingData={packingData} />
+
 					</Col>
 				</Row>
 			</Container>

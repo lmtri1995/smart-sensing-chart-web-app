@@ -46,7 +46,7 @@ class HeartChamber extends Component {
 		let {heatChamberData, tempPresTimeItem, rightPanelItem} = this.state;
 
 		return (
-			<div style={{width: '32%', height: 180, marginRight: 15, marginBottom: 15}}>
+			<div style={{width: '32%', marginLeft: 15, height: 180, marginBottom: 15}}>
 				<div className="d-flex">
 					<MiniLeftBar process="Heat Chamber" tempPressTimer="100"
 					             tempGreen = {tempPresTimeItem.tempGreen}

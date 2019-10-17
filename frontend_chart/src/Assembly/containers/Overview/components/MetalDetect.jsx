@@ -18,7 +18,6 @@ class MetalDetect extends Component {
 		}];
 		let {metalDetectData} = this.props;
 		let detectQty = 0, passQty = 0, total = 0;
-		console.log("metalDetectData 20 20 20 20: ", metalDetectData);
 		try {
 			detectQty = metalDetectData.detect_qty;
 			passQty = metalDetectData.pass_qty;

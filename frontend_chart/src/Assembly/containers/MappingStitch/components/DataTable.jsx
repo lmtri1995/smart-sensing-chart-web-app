@@ -11,7 +11,7 @@ const columns = [
 	{title: "Line No.", field: field.lineName, width: '15%', align: "center", headerFilter: "input"},
 	{title: "Line Code", field: field.lineCode, width: '10%', align: "center", headerFilter: "input"},
 	{title: "Process", field: field.processName, width: '20%', align: "center", headerFilter: "input"},
-	{title: "Posittion", field: field.posittionName, width: '10%', align: "center", headerFilter: "input"},
+	{title: "Position", field: field.posittionName, width: '10%', align: "center", headerFilter: "input"},
 	{title: "Sensor Mac Address", field: field.macAddress, width: '15%', align: "center", headerFilter: "input"},
 	{title: "Description", field: field.description, width: '15%', align: "center", headerFilter: "input"}
 ];

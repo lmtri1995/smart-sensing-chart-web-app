@@ -73,9 +73,14 @@ class SensingValue extends Component {
 		callAxios(method, url, params).then(response => {
 			try {
 				let data            = response.data.data;
-				let selectedProcess = data[0];
+				let {selectedProcess} = this.state;
+				if (Object.entries(selectedProcess).length === 0 && selectedProcess.constructor === Object){//check
+					// if state.selectedProcess is null
+					selectedProcess = data[0];
+				}
 				this.setState((state, props) => ({
 					processData: data,
+					selectedProcess: selectedProcess
 				}));
 				this.getChartData(selectedProcess);
 			} catch (e) {

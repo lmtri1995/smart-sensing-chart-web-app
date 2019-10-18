@@ -1,17 +1,22 @@
-import React, {Component}              from 'react';
+import React, {Component}            from 'react';
 import FilterRange
-                                       from "../../shared/components/filter_range/FilterRange";
-import {Col, Container, Row} from 'reactstrap';
-import {changeDateToUnix}       from "../../shared/utils/Utilities";
-import ComputerStiching    from "./components/ComputerStiching";
-import NormalStiching      from "./components/NormalStiching";
-import PreStiching         from "./components/PreStiching";
-import BackpackMolding     from "./components/BackpackMolding";
-import ToeMolding          from "./components/ToeMolding";
-import Strobel                             from "./components/Strobel";
-import HeartChamber                        from "./components/HeartChamber";
-import Cememting                           from "./components/Cememting";
-import AttachSoleWithUpper                                             from "./components/AttachSoleWithUpper";
+                                     from "../../shared/components/filter_range/FilterRange";
+import {Col, Container, Row}         from 'reactstrap';
+import {
+	changeDateToUnix,
+	findLeadTimePerformance,
+	handleLeadTimeData,
+	findLeadTimeCcrProcess
+}                                    from "../../shared/utils/Utilities";
+import ComputerStiching              from "./components/ComputerStiching";
+import NormalStiching                from "./components/NormalStiching";
+import PreStiching                   from "./components/PreStiching";
+import BackpackMolding               from "./components/BackpackMolding";
+import ToeMolding                    from "./components/ToeMolding";
+import Strobel                       from "./components/Strobel";
+import HeartChamber                  from "./components/HeartChamber";
+import Cememting                     from "./components/Cememting";
+import AttachSoleWithUpper           from "./components/AttachSoleWithUpper";
 import Chiller                       from "./components/Chiller";
 import MetalDetect                   from "./components/MetalDetect";
 import QIPDefect                     from "./components/QIPDefect";
@@ -22,10 +27,11 @@ import {
 	ASSEMBLY_API,
 	PROCESS_TEMP_DASHBOARD,
 	LINE_PRODUCTIVITY,
-	PROCESS_MACHINE_DASHBOARD, DEFECT_CHART_STATUS
-} from "../../constants/urlConstants";
+	PROCESS_MACHINE_DASHBOARD, DEFECT_CHART_STATUS, PRODUCTION_LEAD_TIME
+}                                    from "../../constants/urlConstants";
 import {ALARM_MASTER_PAGE_CONSTANTS} from "../MasterAlarm/constants";
 import callAxios                     from "../../services/api";
+import ProductivityTable             from "../LeadTime/components/ProductivityTable";
 
 class Overview extends Component {
 	constructor(props) {
@@ -50,6 +56,12 @@ class Overview extends Component {
 			chillerData:[],
 			lineProductivityData:[],
 			metalDetectData: [],
+			ccrProcess      : {
+				min_process_crr      : '', prod_qty_day: 0, prod_time_pair: 0,
+				line_balancing_stitch: 0, line_balancing_shoe_make: 0, line_balancing_all: 0,
+				productivityPairPerDay  : 0,
+				productivityMinPerPair  : 0
+			},//for lead time productivity
 		};
 	}
 
@@ -139,7 +151,7 @@ class Overview extends Component {
 		});
 	}
 
-	getPreStichingData = () => {
+	/*getPreStichingData = () => {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method  = 'POST';
 		let url     = ASSEMBLY_API + PROCESS_CHART_DASHBOARD;
@@ -163,7 +175,7 @@ class Overview extends Component {
 				console.log("Error: ", e);
 			}
 		});
-	}
+	}*/
 
 	getStrobelData = () => {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
@@ -403,24 +415,33 @@ class Overview extends Component {
 
 	getLineProductivityData = () => {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
-		let method  = 'POST';
-		let url     = ASSEMBLY_API + LINE_PRODUCTIVITY;
+		let method                                                                 = 'POST';
+		let url                                                                    = ASSEMBLY_API
+		                                                                             + PRODUCTION_LEAD_TIME;
 		let params                                                                 = {
 			"factory"   : "",
 			"line"      : filterLine,
 			"model"     : filterModel,
 			"article_no": filterArticle,
-			"process"   : "20105",
+			"process"   : "",
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};
-
+		console.log("params 430: ", params);
 		callAxios(method, url, params).then(response => {
+			let leadData   = response.data.data;
+			console.log("leadData 433: ", leadData);
+			let ccrProcess = findLeadTimeCcrProcess(leadData);
+			leadData       = handleLeadTimeData(leadData);
+			ccrProcess     = findLeadTimePerformance(leadData, ccrProcess);
+			//let workingHourItem        = findLeadTimeWorkingHour(leadData);
 			try {
-				let data = response.data.data;
-				this.setState((state, props) => ({
-					lineProductivityData: data,
-				}));
+				this.setState({
+					...this.state,
+					//leadData  : leadData,
+					ccrProcess: ccrProcess,
+					//workingHourItem: workingHourItem
+				});
 			} catch (e) {
 				console.log("Error: ", e);
 			}
@@ -498,7 +519,7 @@ class Overview extends Component {
 	}
 
 	render() {
-		let {computerStichingData, normalStichingData, preStichingData, strobelData, qipDefectData, packingData, backPackMoldingData, toeMoldingData, heatChamberData, cementingData, attachSoleWithUpperData, chillerData, lineProductivityData, metalDetectData} = this.state;
+		let {computerStichingData, normalStichingData, strobelData, qipDefectData, packingData, backPackMoldingData, toeMoldingData, heatChamberData, cementingData, attachSoleWithUpperData, chillerData, ccrProcess, metalDetectData} = this.state;
 		return (
 			<Container className="dashboard">
 				<h3>Dashboard/Overview</h3>
@@ -531,7 +552,7 @@ class Overview extends Component {
 						</Row>
 					</Col>
 					<Col md={3} lg={3} style={{marginBottom: 15, marginLeft: -16, color: '#FFFFFF'}}>
-						<LineProductivity lineProductivityData={lineProductivityData}/>
+						<LineProductivity  ccrProcess={ccrProcess} />
 					</Col>
 				</Row>
 				<Row>

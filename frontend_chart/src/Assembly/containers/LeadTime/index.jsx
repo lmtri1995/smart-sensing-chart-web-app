@@ -9,7 +9,7 @@ import ProductivityTable                                            from "./comp
 import WorkingHourTable                                             from "./components/WorkingHourTable";
 import {ASSEMBLY_API, PRODUCTION_LEAD_TIME, WORKING_HOUR_LEAD_TIME} from "../../constants/urlConstants";
 import callAxios                                                    from "../../services/api";
-import {changeDateToUnix}                                           from "../../shared/utils/Utilities";
+import {changeDateToUnix, handleLeadTimeData, findLeadTimePerformance, findLeadTimeWorkingHour, findLeadTimeCcrProcess} from "../../shared/utils/Utilities";
 
 class LeadTime extends Component {
 	constructor(props) {
@@ -18,7 +18,9 @@ class LeadTime extends Component {
 			leadData        : [],
 			ccrProcess      : {
 				min_process_crr      : '', prod_qty_day: 0, prod_time_pair: 0,
-				line_balancing_stitch: 0, line_balancing_shoe_make: 0, line_balancing_all: 0
+				line_balancing_stitch: 0, line_balancing_shoe_make: 0, line_balancing_all: 0,
+				productivityPairPerDay  : 0,
+				productivityMinPerPair  : 0
 			},
 			workingHourData : [],
 			workingHourLabel: [],
@@ -26,7 +28,14 @@ class LeadTime extends Component {
 			filterToDate    : changeDateToUnix(new Date(), "end"),
 			filterLine      : '',
 			filterModel     : '',
-			filterArticle   : ''
+			filterArticle   : '',
+			workingHourItem : {
+				workingHourData : [{
+					backgroundColor: "#2880E9",
+					data           : []
+				}],
+				workingHourLabel: []
+			},
 		};
 		/*leadData: [
 		 { mas_cd_nm:'', pair_qty: 0, lead_time: 0, prod_qty_day: 0, prod_time_pair: 0, ccr_yn: 0, min_process_crr: ''},
@@ -47,7 +56,7 @@ class LeadTime extends Component {
 			// filterModel: ""
 			// filterToDate: 1563937949
 			this.retrieveLeadTableData();
-			this.retrieveWorkingHourData();
+			//this.retrieveWorkingHourData();
 		}
 	}
 
@@ -65,14 +74,20 @@ class LeadTime extends Component {
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};
+		console.log("params 77: ", params);
 		callAxios(method, url, params).then(response => {
 			let leadData   = response.data.data;
-			let ccrProcess = this.findCcrProcess(leadData);
+			console.log("leadData 80: ", leadData);
+			let ccrProcess             = findLeadTimeCcrProcess(leadData);
+			leadData                   = handleLeadTimeData(leadData);
+			ccrProcess                 = findLeadTimePerformance(leadData, ccrProcess);
+			let workingHourItem        = findLeadTimeWorkingHour(leadData);
 			try {
 				this.setState({
 					...this.state,
 					leadData  : leadData,
 					ccrProcess: ccrProcess,
+					workingHourItem: workingHourItem
 				});
 			} catch (e) {
 				console.log("Error: ", e);
@@ -118,7 +133,7 @@ class LeadTime extends Component {
 		}
 	};
 
-	retrieveWorkingHourData = () => {
+	/*retrieveWorkingHourData = () => {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method                                                                 = 'POST';
 		let url                                                                    = ASSEMBLY_API
@@ -140,7 +155,7 @@ class LeadTime extends Component {
 				console.log("Error: ", e);
 			}
 		});
-	};
+	};*/
 
 	handleFilterFromDateChange = (newValue) => {
 		this.setState({
@@ -177,7 +192,7 @@ class LeadTime extends Component {
 		});
 	};
 
-	findCcrProcess = (leadData) => {
+	/*findLeadTimeCcrProcess = (leadData) => {
 		let ccrProcess = {
 			min_process_crr      : '', prod_qty_day: 0, prod_time_pair: 0,
 			line_balancing_stitch: 0, line_balancing_shoe_make: 0, line_balancing_all: 0
@@ -196,10 +211,10 @@ class LeadTime extends Component {
 		}
 
 		return ccrProcess;
-	};
+	};*/
 
-	handleLeadData = (leadData) => {
-		/*
+	/*handleLeadTimeData = (leadData) => {
+		/!*
 		 20102	201	Load-In Material
 		 20103	201	Computer Stitching
 		 20104	201	Normal Stitching
@@ -217,7 +232,7 @@ class LeadTime extends Component {
 		 20116	201	Metal Detector
 		 20117	201	QIP Defect
 		 20118	201	Packing
-		 */
+		 *!/
 		let newLeadDataArray = [
 			{
 				"mas_cd_nm" : "Normal Stitching",
@@ -344,7 +359,7 @@ class LeadTime extends Component {
 		return newLeadDataArray;
 	};
 
-	findPerformance = (leadData, ccrProcess) => {
+	findLeadTimePerformance = (leadData, ccrProcess) => {
 		let maxStitching      = 0, sumStitching = 0;
 		let maxShoeMaking    = 0, sumShoeMaking = 0;
 		let maxLineBalancing = 0, sumLineBalancing = 0;
@@ -372,9 +387,9 @@ class LeadTime extends Component {
 		maxShoeMaking             = maxShoeMaking > 0 ? maxShoeMaking : 1;
 		maxLineBalancing          = maxLineBalancing > 0 ? maxLineBalancing : 1;
 
-		/*let computerStitchingValue  = leadData[1].pair_qty > 0?leadData[1].pair_qty:1;
+		/!*let computerStitchingValue  = leadData[1].pair_qty > 0?leadData[1].pair_qty:1;
 		let backpackMoldingValue  = leadData[3].pair_qty?leadData[3].pair_qty:1;
-		let line_balancing_stitch = 0, line_balancing_shoe_make = 0, line_balancing_all = 0;*/
+		let line_balancing_stitch = 0, line_balancing_shoe_make = 0, line_balancing_all = 0;*!/
 		let line_balancing_all        = sumLineBalancing * 100 / (maxLineBalancing * 16);
 		let line_balancing_shoe_make  = sumShoeMaking * 100 / (maxShoeMaking * 14);
 		let line_balancing_stitch     = sumStitching * 100 / (maxStitching * 2);
@@ -397,7 +412,7 @@ class LeadTime extends Component {
 		return ccrProcess;
 	};
 
-	findWorkingHour = (leadData) => {
+	findLeadTimeWorkingHour = (leadData) => {
 		let workingHourData  = [];
 		let workingHourLabel = [];
 		for (let i = 0; i < leadData.length; i++) {
@@ -412,20 +427,15 @@ class LeadTime extends Component {
 			}],
 			workingHourLabel: workingHourLabel
 		};
-	};
+	};*/
 
 	componentDidMount(){
 		this.retrieveLeadTableData();
-		this.retrieveWorkingHourData();
+		//this.retrieveWorkingHourData();
 	}
 
 	render() {
-		let {leadData, ccrProcess} = this.state;
-		leadData                   = this.handleLeadData(leadData);
-		//let ccrProcess = this.findCcrProcess(leadData);
-		ccrProcess                 = this.findPerformance(leadData, ccrProcess);
-		let workingHourItem        = this.findWorkingHour(leadData);
-
+		let {leadData, ccrProcess, workingHourItem} = this.state;
 		return (
 			<Container className="dashboard">
 				<h3>Dashboard/Production Lead Time</h3>

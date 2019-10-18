@@ -1,7 +1,7 @@
 let hostname = window.location.hostname;
 let SERVER_URL_VAR = 'http://10.2.17.12:8888';
-if (hostname.includes("smartsensing")){
-	SERVER_URL_VAR = 'http://smartsensing.snavietnam.com:3202';
+if (hostname.includes("smart-r")){
+	SERVER_URL_VAR = 'http://smart-r.hsvina.com:8888';//factory server
 }
 export const SERVER_URL = SERVER_URL_VAR;
 

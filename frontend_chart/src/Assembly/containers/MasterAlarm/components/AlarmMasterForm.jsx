@@ -790,7 +790,7 @@ class AlarmMasterForm extends Component {
 						<Col md={3} lg={3} style={{borderRight: '3px solid #535353'}}>
 							<Row style={{paddingTop: 15}}>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">From</span>
+									<span className="form__form-group-label">&lt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -845,7 +845,7 @@ class AlarmMasterForm extends Component {
 									/>
 								</Col>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">To</span>
+									<span className="form__form-group-label">&gt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -904,7 +904,7 @@ class AlarmMasterForm extends Component {
 						<Col md={3} lg={3} style={{borderRight: '3px solid #535353'}}>
 							<Row style={{paddingTop: 15}}>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">From</span>
+									<span className="form__form-group-label">&lt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -959,7 +959,7 @@ class AlarmMasterForm extends Component {
 									/>
 								</Col>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">To</span>
+									<span className="form__form-group-label">&gt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1018,7 +1018,7 @@ class AlarmMasterForm extends Component {
 						<Col md={3} lg={3}>
 							<Row style={{paddingTop: 15}}>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">From</span>
+									<span className="form__form-group-label">&lt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1073,7 +1073,7 @@ class AlarmMasterForm extends Component {
 									/>
 								</Col>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">To</span>
+									<span className="form__form-group-label">&gt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1138,7 +1138,7 @@ class AlarmMasterForm extends Component {
 						<Col md={3} lg={3}  style={{borderRight: '3px solid #535353'}}>
 							<Row style={{paddingTop: 15}}>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">From</span>
+									<span className="form__form-group-label">&lt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1193,7 +1193,7 @@ class AlarmMasterForm extends Component {
 									/>
 								</Col>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">To</span>
+									<span className="form__form-group-label">&gt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1252,7 +1252,7 @@ class AlarmMasterForm extends Component {
 						<Col md={3} lg={3} style={{borderRight: '3px solid #535353'}}>
 							<Row style={{paddingTop: 15}}>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">From</span>
+									<span className="form__form-group-label">&lt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1307,7 +1307,7 @@ class AlarmMasterForm extends Component {
 									/>
 								</Col>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">To</span>
+									<span className="form__form-group-label">&gt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1366,7 +1366,7 @@ class AlarmMasterForm extends Component {
 						<Col md={3} lg={3}>
 							<Row style={{paddingTop: 15}}>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">From</span>
+									<span className="form__form-group-label">&lt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field
@@ -1421,7 +1421,7 @@ class AlarmMasterForm extends Component {
 									/>
 								</Col>
 								<Col md={2} lg={2}>
-									<span className="form__form-group-label">To</span>
+									<span className="form__form-group-label">&gt;</span>
 								</Col>
 								<Col md={4} lg={4} style={{marginTop:-6}}>
 									<Field

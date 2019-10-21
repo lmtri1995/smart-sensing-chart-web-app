@@ -44,9 +44,12 @@ export const countTotal = (array) => {
 }
 
 export const findLeadTimeCcrProcess = (leadData) => {
+	console.log("findLeadTimeCcrProcess");
+	console.log("leadData: ", leadData);
 	let ccrProcess = {
 		min_process_crr      : '', prod_qty_day: 0, prod_time_pair: 0,
-		line_balancing_stitch: 0, line_balancing_shoe_make: 0, line_balancing_all: 0
+		line_balancing_stitch: 0, line_balancing_shoe_make: 0, line_balancing_all: 0,
+		pph: 0, rft: 0, eff: 0,
 	};
 	try {
 		let exit = false, i = 0;
@@ -60,7 +63,17 @@ export const findLeadTimeCcrProcess = (leadData) => {
 	} catch (e) {
 		console.log("Error: ", e);
 	}
+	if (leadData && leadData.length > 0){
+		let leadDataItem = leadData[0];
+		ccrProcess = {
+			...ccrProcess,
+			pph: leadDataItem.pph_day_ratio,
+			rft: leadDataItem.rft_day_ratio,
+			eff: leadDataItem.eff_day_ratio,
+		}
 
+	}
+	console.log("ccrProcess 76: ", ccrProcess);
 	return ccrProcess;
 };
 
@@ -212,6 +225,8 @@ export const handleLeadTimeData = (leadData) => {
 };
 
 export const findLeadTimePerformance = (leadData, ccrProcess) => {
+	console.log("findLeadTimePerformance");
+	console.log("leadData: ", leadData);
 	let maxStitching      = 0, sumStitching = 0;
 	let maxShoeMaking    = 0, sumShoeMaking = 0;
 	let maxLineBalancing = 0, sumLineBalancing = 0;

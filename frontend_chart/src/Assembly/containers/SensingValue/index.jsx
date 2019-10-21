@@ -62,7 +62,7 @@ class SensingValue extends Component {
 		let url    = ASSEMBLY_API + SENSING_VALUE;
 		let params = {
 			"factory"  : "",
-			"line"     : "",
+			"line"     : filterLine,
 			"process"  : "",
 			"from_date": filterFromDate,
 			"to_date"  : filterToDate
@@ -106,7 +106,9 @@ class SensingValue extends Component {
 				"line"     : filterLine,
 				"process"  : processData.process_cd,
 				"from_date": filterFromDate,
-				"to_date"  : filterToDate
+				"to_date"  : filterToDate,
+				"model"     : filterModel,
+				"article_no": filterArticle,
 			};
 			callAxios(method, url, params).then(response => {
 				try {
@@ -209,7 +211,9 @@ class SensingValue extends Component {
 				"line"     : filterLine,
 				"process"  : processData.process_cd,
 				"from_date": filterFromDate,//1562722712
-				"to_date"  : filterToDate//1562722712
+				"to_date"  : filterToDate,//1562722712
+				"model"     : filterModel,
+				"article_no": filterArticle,
 			};
 			callAxios(method, url, params).then(response => {
 				try {

@@ -60,7 +60,8 @@ class Overview extends Component {
 				min_process_crr      : '', prod_qty_day: 0, prod_time_pair: 0,
 				line_balancing_stitch: 0, line_balancing_shoe_make: 0, line_balancing_all: 0,
 				productivityPairPerDay  : 0,
-				productivityMinPerPair  : 0
+				productivityMinPerPair  : 0,
+				pph: 0, rft: 0, eff: 0,
 			},//for lead time productivity
 		};
 	}
@@ -417,13 +418,13 @@ class Overview extends Component {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
 		let method                                                                 = 'POST';
 		let url                                                                    = ASSEMBLY_API
-		                                                                             + PRODUCTION_LEAD_TIME;
+		                                                                             + LINE_PRODUCTIVITY;
 		let params                                                                 = {
 			"factory"   : "",
 			"line"      : filterLine,
 			"model"     : filterModel,
 			"article_no": filterArticle,
-			"process"   : "",
+			"process"   : "20105",
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};

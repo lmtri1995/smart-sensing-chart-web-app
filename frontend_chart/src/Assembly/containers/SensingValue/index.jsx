@@ -163,7 +163,9 @@ class SensingValue extends Component {
 				"line"     : filterLine,
 				"process"  : processData.process_cd,
 				"from_date": filterFromDate,//1563970019
-				"to_date"  : filterToDate//1562722712
+				"to_date"  : filterToDate,//1562722712
+				"model"     : filterModel,
+				"article_no": filterArticle,
 			};
 			callAxios(method, url, params).then(response => {
 				try {

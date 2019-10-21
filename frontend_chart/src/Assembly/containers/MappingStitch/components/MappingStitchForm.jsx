@@ -109,7 +109,8 @@ class MappingStitchForm extends Component {
 		this.props.change(field.posittionName, formData[field.posittionName] ? formData[field.posittionName] : '---');
 		this.props.change(field.description, formData[field.description] ? formData[field.description] : '');
 		this.props.change(field.active, formData[field.active] ? formData[field.active] : "");
-		this.props.change(field.hiddenMacAddressDuplicatedChecker, formData[field.hiddenMacAddressDuplicatedChecker] ? formData[field.hiddenMacAddressDuplicatedChecker] : false);
+		//this.props.change(field.hiddenMacAddressDuplicatedChecker,
+		// formData[field.hiddenMacAddressDuplicatedChecker] ? formData[field.hiddenMacAddressDuplicatedChecker] : false);
 		//this.props.change(field.masCdNm.name, formData[field.masCdNm.name] ? formData[field.masCdNm.name] : '');
 	}
 

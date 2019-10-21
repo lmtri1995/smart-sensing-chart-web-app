@@ -19,7 +19,7 @@ class LineProductivity extends Component {
 		}
 	}
 
-	handleLineProductivityData = (lineProductivityData) => {
+	/*handleLineProductivityData = (lineProductivityData) => {
 		let lineBalancingAll = 0, minProcessCrr = '', prodQtyDay = 0, pairQty = 0, pph = 0, rft = 0, eff = 0;
 		if (lineProductivityData.length > 0){
 			let data = lineProductivityData[0];
@@ -40,10 +40,11 @@ class LineProductivity extends Component {
 			rft: rft,
 			eff: eff
 		}
-	}
+	}*/
 
 	render(){
 		let {ccrProcess} = this.props;
+		console.log("ccrProcess 47: ", ccrProcess);
 		//let lineItem = this.handleLineProductivityData(lineProductivityData);
 		return (
 			<div style={{height: '100%', paddingLeft: 15, paddingRight: 15, backgroundColor: '#232529'}}>
@@ -86,10 +87,10 @@ class LineProductivity extends Component {
 						<Col md={3} lg={3}>
 						</Col>
 						<Col md={2} lg={2} style={{marginLeft: 20}}>
-							{0}%
+							{parseFloat(ccrProcess.pph).toFixed(2)}%
 						</Col>
 					</div>
-					<Progress value={0}>
+					<Progress value={parseFloat(ccrProcess.pph)}>
 					</Progress>
 				</div>
 				<div className="progress-wrap progress-wrap--small progress-wrap--alarm-green progress-wrap--label-top  mt-3">
@@ -100,10 +101,10 @@ class LineProductivity extends Component {
 						<Col md={3} lg={3}>
 						</Col>
 						<Col md={2} lg={2} style={{marginLeft: 20}}>
-							{0}%
+							{parseFloat(ccrProcess.rft).toFixed(2)}%
 						</Col>
 					</div>
-					<Progress value={0}>
+					<Progress value={parseFloat(ccrProcess.rft)}>
 					</Progress>
 				</div>
 				<div className="progress-wrap progress-wrap--small progress-wrap--alarm-green progress-wrap--label-top  mt-3">
@@ -114,10 +115,10 @@ class LineProductivity extends Component {
 						<Col md={3} lg={3}>
 						</Col>
 						<Col md={2} lg={2} style={{marginLeft: 20}}>
-							{0}%
+							{parseFloat(ccrProcess.eff).toFixed(2)}%
 						</Col>
 					</div>
-					<Progress value={0}>
+					<Progress value={parseFloat(ccrProcess.eff)}>
 					</Progress>
 				</div>
 			</div>

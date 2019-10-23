@@ -60,7 +60,6 @@ class LeadTable extends Component {
 	};
 
 	fillTable = (leadData) => {
-		console.log("fillTable: ", leadData);
 		let table = null;
 		try {
 			let parentCategrories = ['STITCHING', 'ASC', 'LEAD TIME'];

@@ -424,7 +424,7 @@ class Overview extends Component {
 			"line"      : filterLine,
 			"model"     : filterModel,
 			"article_no": filterArticle,
-			"process"   : "20105",
+			"process"   : "",
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};

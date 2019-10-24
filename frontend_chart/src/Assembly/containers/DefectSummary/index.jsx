@@ -84,28 +84,32 @@ class DefectSummary extends Component {
 
 	getDataTable = () => {
 		let {filterType, selectedHour, filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
-		let method                                                                                           = 'POST';
-		let url                                                                                              = ASSEMBLY_API
-		                                                                                                       + DEFECT_SUMMARY;
+		if (filterLine != '' && filterModel != '' && filterArticle != '' && filterType != ''){
+			let method                                                                                           = 'POST';
+			let url                                                                                              = ASSEMBLY_API
+			                                                                                                       + DEFECT_SUMMARY;
 
-		let params = {
-			"factory"   : "",
-			"line"      : filterLine,
-			"process"   : "",
-			"model"     : filterModel,
-			"article_no": filterArticle,
-			"from_date" : filterFromDate,
-			"to_date"   : filterToDate,
-			"time"      : selectedHour,
-			"data_type" : filterType
-		};
-		callAxios(method, url, params).then(response => {
-			if (response && response.data && response.data.data) {
-				this.setState((state, props) => ({
-					defectData: response.data.data,
-				}));
-			}
-		});
+			let params = {
+				"factory"   : "",
+				"line"      : filterLine,
+				"process"   : "",
+				"model"     : filterModel,
+				"article_no": filterArticle,
+				"from_date" : filterFromDate,
+				"to_date"   : filterToDate,
+				"time"      : selectedHour,
+				"data_type" : filterType
+			};
+			console.log("params 102: ", params);
+			callAxios(method, url, params).then(response => {
+				console.log("response 104: ", response);
+				if (response && response.data && response.data.data) {
+					this.setState((state, props) => ({
+						defectData: response.data.data,
+					}));
+				}
+			});
+		}
 	};
 
 

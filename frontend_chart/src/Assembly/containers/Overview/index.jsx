@@ -113,7 +113,6 @@ class Overview extends Component {
 
 		callAxios(method, url, params).then(response => {
 			try {
-				console.log("116: ", response);
 				let data = response.data.data;
 				this.setState((state, props) => ({
 					computerStichingData: data,
@@ -138,11 +137,9 @@ class Overview extends Component {
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};
-		console.log("params 135: ", params);
 		callAxios(method, url, params).then(response => {
 			try {
 				let data = response.data.data;
-				console.log("data 139: ", data);
 				this.setState((state, props) => ({
 					normalStichingData: data,
 				}));
@@ -273,7 +270,6 @@ class Overview extends Component {
 		callAxios(method, url, params).then(response => {
 			try {
 				let data = response.data.data;
-				console.log("backpack molding: ", data);
 				this.setState((state, props) => ({
 					backPackMoldingData: data,
 				}));
@@ -424,14 +420,12 @@ class Overview extends Component {
 			"line"      : filterLine,
 			"model"     : filterModel,
 			"article_no": filterArticle,
-			"process"   : "20105",
+			"process"   : "",
 			"from_date" : filterFromDate,
 			"to_date"   : filterToDate
 		};
-		console.log("params 430: ", params);
 		callAxios(method, url, params).then(response => {
 			let leadData   = response.data.data;
-			console.log("leadData 433: ", leadData);
 			let ccrProcess = findLeadTimeCcrProcess(leadData);
 			leadData       = handleLeadTimeData(leadData);
 			ccrProcess     = findLeadTimePerformance(leadData, ccrProcess);
@@ -466,7 +460,6 @@ class Overview extends Component {
 		callAxios(method, url, params).then(response => {
 			try {
 				let data = response.data.data;
-				console.log("data 440: ", data);
 				let metaDetectData = data[0];
 				this.setState((state, props) => ({
 					metalDetectData: metaDetectData,
@@ -499,9 +492,6 @@ class Overview extends Component {
 		    || prevState.filterToDate !== this.state.filterToDate
 		    || prevState.filterLine !== this.state.filterLine || prevState.filterModel !== this.state.filterModel
 		    || prevState.filterArticle !== this.state.filterArticle){
-			console.log("491 491 491 491");
-			console.log("491 491 491 491");
-			console.log("491 491 491 491");
 			this.getComputerStichingData();
 			this.getNormalStichingData();
 			//this.getPreStichingData();

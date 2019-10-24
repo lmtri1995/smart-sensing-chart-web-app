@@ -62,37 +62,37 @@ class LeadTime extends Component {
 
 	retrieveLeadTableData = () => {
 		let {filterFromDate, filterToDate, filterLine, filterModel, filterArticle} = this.state;
-		let method                                                                 = 'POST';
-		let url                                                                    = ASSEMBLY_API
-		                                                                             + PRODUCTION_LEAD_TIME;
-		let params                                                                 = {
-			"factory"   : "",
-			"line"      : filterLine,
-			"model"     : filterModel,
-			"article_no": filterArticle,
-			"process"   : "",
-			"from_date" : filterFromDate,
-			"to_date"   : filterToDate
-		};
-		console.log("params 77: ", params);
-		callAxios(method, url, params).then(response => {
-			let leadData   = response.data.data;
-			console.log("leadData 80: ", leadData);
-			let ccrProcess             = findLeadTimeCcrProcess(leadData);
-			leadData                   = handleLeadTimeData(leadData);
-			ccrProcess                 = findLeadTimePerformance(leadData, ccrProcess);
-			let workingHourItem        = findLeadTimeWorkingHour(leadData);
-			try {
-				this.setState({
-					...this.state,
-					leadData  : leadData,
-					ccrProcess: ccrProcess,
-					workingHourItem: workingHourItem
-				});
-			} catch (e) {
-				console.log("Error: ", e);
-			}
-		});
+		if (filterLine != '' && filterModel != '' && filterArticle != ''){
+			let method                                                                 = 'POST';
+			let url                                                                    = ASSEMBLY_API
+			                                                                             + PRODUCTION_LEAD_TIME;
+			let params                                                                 = {
+				"factory"   : "",
+				"line"      : filterLine,
+				"model"     : filterModel,
+				"article_no": filterArticle,
+				"process"   : "",
+				"from_date" : filterFromDate,
+				"to_date"   : filterToDate
+			};
+			callAxios(method, url, params).then(response => {
+				let leadData   = response.data.data;
+				let ccrProcess             = findLeadTimeCcrProcess(leadData);
+				leadData                   = handleLeadTimeData(leadData);
+				ccrProcess                 = findLeadTimePerformance(leadData, ccrProcess);
+				let workingHourItem        = findLeadTimeWorkingHour(leadData);
+				try {
+					this.setState({
+						...this.state,
+						leadData  : leadData,
+						ccrProcess: ccrProcess,
+						workingHourItem: workingHourItem
+					});
+				} catch (e) {
+					console.log("Error: ", e);
+				}
+			});
+		}
 	};
 
 	handleWorkingData = (workingHourData) => {

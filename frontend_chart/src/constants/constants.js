@@ -25,11 +25,29 @@ export const ROUTE = {
     Logout: '/logout',
     Pages: '/pages',
     Dashboard: '/',
+    get IPDashboard() {
+        return `${ROUTE.Pages}/ip/dashboard`;
+    },
+    get OSDashboard() {
+        return `${ROUTE.Pages}/os/dashboard`;
+    },
     get Analysis() {
         return `${ROUTE.Pages}/analysis`;
     },
+    get IPAnalysis() {
+        return `${ROUTE.Pages}/ip/analysis`;
+    },
+    get OSAnalysis() {
+        return `${ROUTE.Pages}/os/analysis`;
+    },
     get Report() {
         return `${ROUTE.Pages}/report`;
+    },
+    get IPReport() {
+        return `${ROUTE.Pages}/ip/report`;
+    },
+    get OSReport() {
+        return `${ROUTE.Pages}/os/report`;
     },
     get MasterPage() {
         return `${ROUTE.Pages}/master-page`;

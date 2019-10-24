@@ -3,19 +3,22 @@ import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import Layout                                from '../Layout/index';
 import MainWrapper                           from './MainWrapper';
 import LogIn                                 from '../LogIn/index';
-import Report                                from '../Report/index';
-import LogOut       from '../LogOut/index';
-import DashBoard    from "../DashBoard/index";
-import Analysis     from "../Analysis/index";
+import IPReport                                from '../IP/Report/index';
+import OSReport                                from '../OS/Report/index';
+import LogOut                                from '../LogOut/index';
+import IPDashBoard                             from "../IP/DashBoard/index";
+import OSDashBoard                             from "../OS/DashBoard/index";
+import IPAnalysis                              from "../IP/Analysis/index";
+import OSAnalysis                              from "../OS/Analysis/index";
 /*import Assembly                              from "../../Assembly/index";*/
-import PrivateRoute from "./PrivateRoute";
-import Fullscreen   from "react-full-screen";
-import {ROUTE}      from "../../constants/constants";
-import MasterPage   from "../../Assembly/containers/MasterPage";
-import MasterAlarm   from "../../Assembly/containers/MasterAlarm";
-import MappingStitch   from "../../Assembly/containers/MappingStitch";
-import LeadTime   from "../../Assembly/containers/LeadTime";
-import LeadTimeDetail   from "../../Assembly/containers/LeadTimeDetail";
+import PrivateRoute                          from "./PrivateRoute";
+import Fullscreen                            from "react-full-screen";
+import {ROUTE}                               from "../../constants/constants";
+import MasterPage                            from "../../Assembly/containers/MasterPage";
+import MasterAlarm                           from "../../Assembly/containers/MasterAlarm";
+import MappingStitch                         from "../../Assembly/containers/MappingStitch";
+import LeadTime                              from "../../Assembly/containers/LeadTime";
+import LeadTimeDetail                        from "../../Assembly/containers/LeadTimeDetail";
 import AlarmHistory   from "../../Assembly/containers/AlarmHistory";
 import MachineAlarmStatus   from "../../Assembly/containers/MachineAlarmStatus";
 import SensingValue   from "../../Assembly/containers/SensingValue";
@@ -50,9 +53,12 @@ class Pages extends Component {
                     }
                     <div className="container__wrap">
                         <Switch>
-                            <PrivateRoute exact path={ROUTE.Dashboard} component={DashBoard}/>
-                            <PrivateRoute path={ROUTE.Analysis} component={Analysis}/>
-                            <PrivateRoute path={ROUTE.Report} component={Report}/>
+                            <PrivateRoute exact path={ROUTE.IPDashboard} component={IPDashBoard}/>
+                            <PrivateRoute path={ROUTE.IPAnalysis} component={IPAnalysis}/>
+                            <PrivateRoute path={ROUTE.IPReport} component={IPReport}/>
+                            <PrivateRoute exact path={ROUTE.OSDashboard} component={OSDashBoard}/>
+                            <PrivateRoute path={ROUTE.OSAnalysis} component={OSAnalysis}/>
+                            <PrivateRoute path={ROUTE.OSReport} component={OSReport}/>
                             <PrivateRoute exact path={ROUTE.MasterPage} component={MasterPage}/>
                             <PrivateRoute path={ROUTE.AlarmMaster} component={MasterAlarm}/>
                             <PrivateRoute path={ROUTE.MappingStitch} component={MappingStitch}/>
@@ -90,12 +96,7 @@ class Pages extends Component {
 // );
 
 const wrappedRoutes = () => {
-    let loginData = JSON.parse(localStorage.getItem('logindata'));
-
-    let pageRedirect = ROUTE.Dashboard;
-    if (loginData && loginData.data && loginData.data.role==="as"){
-        pageRedirect = ROUTE.MasterPage;
-    }
+    let pageRedirect = ROUTE.IPDashboard;
     return (<Switch>
         <Route exact path={ROUTE.Dashboard} component={Pages}/>
         <Route exact path={ROUTE.Login} render={(props) => (

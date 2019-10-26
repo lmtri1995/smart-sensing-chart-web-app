@@ -96,9 +96,8 @@ class SensingValue extends Component {
 
 		let {filterArticle, filterFromDate, filterToDate, filterLine, filterModel} = this.state;
 		let definitionValue                                                        = processData.definition_value;
-		if (definitionValue !== null && definitionValue !== undefined && parseInt(definitionValue.charAt(1)) >= 0) {
+		if (definitionValue !== null && definitionValue !== undefined && parseInt(definitionValue.toString().charAt(0)) >= 0) {
 			//Get temp data
-			let tempValue = parseInt(definitionValue.charAt(0));
 			let method = 'POST';
 			let url    = ASSEMBLY_API + SENSING_TEMP;
 			let params = {
@@ -153,7 +152,7 @@ class SensingValue extends Component {
 				}
 			});
 		}
-		if (definitionValue !== null && definitionValue !== undefined && parseInt(definitionValue.charAt(1)) >= 0) {
+		if (definitionValue !== null && definitionValue !== undefined && parseInt(definitionValue.toString().charAt(1)) >= 0) {
 			//Get pressure data
 			let method = 'POST';
 			let url    = ASSEMBLY_API + SENSING_PRESS;
@@ -203,7 +202,7 @@ class SensingValue extends Component {
 			});
 		}
 
-		if (definitionValue !== null && definitionValue !== undefined && parseInt(definitionValue.charAt(2)) >= 0) {
+		if (definitionValue !== null && definitionValue !== undefined && parseInt(definitionValue.toString().charAt(2)) >= 0) {
 			//Get curing time data
 			let method = 'POST';
 			let url    = ASSEMBLY_API + SENSING_TIME;

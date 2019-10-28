@@ -151,7 +151,6 @@ class StationStatus extends Component {
         };
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                console.log("response 115: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
                     this.displayData = dataArray;
@@ -218,7 +217,6 @@ class StationStatus extends Component {
 
         this.socket.on(this.listenEvent, (data) => {
             if (this._isMounted) {
-                console.log("data ip ip ip 219: ", data);
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
                 dataArray.sort(function (a, b) {

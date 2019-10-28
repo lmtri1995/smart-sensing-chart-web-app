@@ -22,7 +22,7 @@ class DashboardPage extends Component {
                         <StationStatus/>
                     </div>
                     <div className="col">
-                        <ShiftStatus/>
+                       {/* <ShiftStatus/>*/}
                     </div>
                 </div>
                 {/*<div className="row">

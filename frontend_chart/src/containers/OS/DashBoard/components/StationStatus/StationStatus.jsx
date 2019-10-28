@@ -5,6 +5,7 @@ import {ClipLoader}             from 'react-spinners';
 import {storeStationStatusData} from "../../../../../redux/actions/downloadDataStoreActions";
 import {connect}                from "react-redux";
 import API                      from "../../../../../services/api";
+import { hot } from 'react-hot-loader';
 
 const override = `
     position: absolute;
@@ -36,20 +37,9 @@ class StationStatus extends Component {
 
         this.apiUrl = 'api/db/machinestatus';
 
-        switch (this.role) {
-            case 'admin':
-                this.emitEvent = 'os_machine_status';
-                this.process = 'os-molding';
-                break;
-            case 'ip':
-                this.emitEvent = 'ip_machine_status';
-                this.process = 'imev';
-                break;
-            case 'os':
-                this.emitEvent = 'os_machine_status';
-                this.process = 'os-molding';
-                break;
-        }
+        this.emitEvent = 'machine_status';//emitEvent has to be the same as emitEvent on server side
+        this.process = 'os-molding';
+        this.listenEvent = "os_listen_stationStatus";
 
         this.currentSelectedArticle = '';
     }
@@ -91,7 +81,7 @@ class StationStatus extends Component {
         //Unregister event
         this.socket.emit(this.emitEvent, {
             msg: {
-                'event': 'sna_' + this.emitEvent,
+                'event': this.listenEvent,
                 'from_timedevice': 0,
                 'to_timedevice': 0,
                 'proccess': this.process,
@@ -100,7 +90,7 @@ class StationStatus extends Component {
             }
         });
 
-        this.socket.removeListener('sna_machine_status');
+        //this.socket.removeListener('sna_machine_status');
     }
 
     /*configureOptions = () => {
@@ -156,11 +146,8 @@ class StationStatus extends Component {
             "modelname": articleKey,
             "shiftno":"0"
         };
-        console.log("param 115: ", param);
-        console.log("this.apiUrl: ", this.apiUrl);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                console.log("response 115: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
                     this.displayData = dataArray;
@@ -214,9 +201,9 @@ class StationStatus extends Component {
             articleKey = newSelectededArticle[1].key;
         }
 
-        this.socket.emit('machine_status', {
+        this.socket.emit(this.emitEvent, {
             msg: {
-                'event': 'sna_machine_status',
+                'event': this.listenEvent,
                 'from_timedevice': 0,
                 'to_timedevice': 0,
                 'proccess': this.process,
@@ -225,7 +212,7 @@ class StationStatus extends Component {
             }
         });
 
-        this.socket.on('sna_machine_status', (data) => {
+        this.socket.on(this.listenEvent, (data) => {
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
@@ -252,7 +239,6 @@ class StationStatus extends Component {
         var uDateFrom = mDateFrom.unix();
         var mDateTo = moment.utc([2019, 0, 2, 10, 6, 43]);
         var uDateTo = mDateTo.unix();*/
-        console.log("componentDidMount 255");
         this.callAxiosBeforeSocket();
 
         /*

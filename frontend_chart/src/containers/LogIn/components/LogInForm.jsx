@@ -79,7 +79,7 @@ class LogInForm extends PureComponent {
                     </div>
                 </div>
                 <button className="btn btn-primary account__btn account__btn--small"
-                        to="/pages/one">Sign In
+                        to="/pages/one">Log In
                 </button>
                 {/* <Link className="btn btn-outline-primary account__btn account__btn--small"
                       to={ROUTE.Login}>Create Account</Link> */}

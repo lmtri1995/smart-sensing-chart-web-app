@@ -40,7 +40,7 @@ export default class TopbarProfile extends PureComponent {
                     <div className="topbar__setting">
                         <div className="text-center">{username}</div>
                         <div className="topbar__menu-divider"/>
-                        <TopbarMenuLink title="Sign Out" icon="exit" path={ROUTE.Logout}/>
+                        <TopbarMenuLink title="Log Out" icon="exit" path={ROUTE.Logout}/>
                     </div>
                 </Collapse>
             </div>

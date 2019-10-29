@@ -39,17 +39,10 @@ class Topbar extends Component {
                         <Link className="topbar__logo" to={ROUTE.Dashboard}/>
                     </div>
                     <div className="topbar__right">
-                        {
-                            role !== 'as' ?
-                         (
-                             <div>
-                                 <TopbarDateFilter/>
-                                 <TopbarFilter/>
-                             </div>
-                         )
-                            /*<TopbarNotification/>*/
-                         : null
-                        }
+                        <div className="d-flex flex-row">
+                            <TopbarDateFilter/>
+                            <TopbarFilter/>
+                        </div>
                          (<TopbarProfile/>)
                          (<TopbarFullScreen goFull={this.click}/>)
                     </div>

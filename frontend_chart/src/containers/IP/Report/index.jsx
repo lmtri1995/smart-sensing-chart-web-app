@@ -50,20 +50,7 @@ class ReportPage extends Component {
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
         this.role = this.loginData.data.role;
 
-        switch (this.role) {
-            case 'admin':
-                this.lineCode = 'OS001';
-                break;
-            case 'ip':
-                this.lineCode = '4B01';
-                break;
-            case 'os':
-                this.lineCode = 'OS001';
-                break;
-            default:
-                this.lineCode = 'OS001';
-                break;
-        }
+        this.lineCode = '4B01';
     }
 
     toggle(tab) {
@@ -174,26 +161,13 @@ class ReportPage extends Component {
 
     requestProductionRates = (param) => {
         let link = 'ip';
-        switch (this.role) {
-            case 'admin':
-                link = 'os';
-                break;
-            case 'ip':
-                link = 'ip';
-                break;
-            case 'os':
-                link = 'os';
-                break;
-        }
         API(`api/${link}/productionRate`, 'POST', param)
             .then((response) => {
-                console.log("response: ", response);
                 // No need to check if(response.data.success)
                 // For Model Filter to work
                 // Because if response.data.success === false
                 // => response.data.data = []   Empty Array
                 let dataArray = response.data.data;
-                console.log("dataArray: ", dataArray);
 
                 let {from_workdate, to_workdate} = param;
                 let startMoment = moment(from_workdate, "YYYYMMDD");
@@ -213,7 +187,6 @@ class ReportPage extends Component {
 
                     startMoment = startMoment.add(1, "days");
                 }
-                console.log("startMoment: ", startMoment);
 
                 let shiftDataOfCurrentDay, currentProductionRate = 0;
                 let currentDayTargetProductions;
@@ -300,7 +273,6 @@ class ReportPage extends Component {
                             break;
                     }
                 });
-                console.log("dataArray: ", dataArray);
 
                 let dateLabels = [];
                 let productionRatesShift1 = [], productionRatesShift2 = [], productionRatesShift3 = [];
@@ -358,9 +330,6 @@ class ReportPage extends Component {
                         averageProductionRate,
                     ]);
                 });
-                console.log("targetProductionsShift1: ", targetProductionsShift1);
-                console.log("targetProductionsShift2: ", targetProductionsShift2);
-                console.log("targetProductionsShift3: ", targetProductionsShift3);
                 targetProductions.push(targetProductionsShift1, targetProductionsShift2, targetProductionsShift3);
                 actualProductions.push(actualProductionsShift1, actualProductionsShift2, actualProductionsShift3);
                 productionRateDataToDownload.push([
@@ -430,26 +399,9 @@ class ReportPage extends Component {
     requestDefectByTypeOverTime = (param) => {
         let link = 'ip';
         let defectTypes = IP_DEFECT_NAME;
-        switch (this.role) {
-            case 'admin':
-                link = 'os';
-                defectTypes = OS_DEFECT_NAME;
-                break;
-            case 'ip':
-                link = 'ip';
-                defectTypes = IP_DEFECT_NAME;
-                break;
-            case 'os':
-                link = 'os';
-                defectTypes = OS_DEFECT_NAME;
-                break;
-        }
-        console.log("link 446: ", link);
-        console.log("param: ", param);
 
         API(`api/${link}/defectByTypeOverTime`, 'POST', param)
             .then((response) => {
-                console.log("response 452: ", response);
                 // No need to check if(response.data.success)
                 // For Model Filter to work
                 // Because if response.data.success === false
@@ -612,8 +564,6 @@ class ReportPage extends Component {
                 });
 
                 this.defectRateDataToDownload = defectRateDataToDownload;
-
-
             })
             .catch((err) => console.log('err:', err));
     };

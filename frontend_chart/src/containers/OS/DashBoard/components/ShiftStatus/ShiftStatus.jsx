@@ -33,28 +33,9 @@ class ShiftStatus extends Component {
             loading: true
         };
 
-        switch (this.role) {
-            case 'admin':
-                this.apiUrl = 'api/os/shiftStatus';
-                this.emitEvent = 'os_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-            case 'ip':
-                this.apiUrl = 'api/ip/shiftStatus';
-                this.emitEvent = 'ip_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-            case 'os':
-                this.apiUrl = 'api/os/shiftStatus';
-                this.emitEvent = 'os_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-            default:
-                this.apiUrl = 'api/os/shiftStatus';
-                this.emitEvent = 'os_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-        }
+        this.apiUrl = 'api/os/shiftStatus';
+        this.emitEvent = 'os_shift_status';
+        this.listenEvent = 'os_listen_' + this.emitEvent;
 
         this.currentSelectedArticle = '';
     }
@@ -152,6 +133,7 @@ class ShiftStatus extends Component {
     }
 
     callSocket = () => {
+        console.log("136: callSocket");
         let selectedArticle = this.props.globalArticleFilter.selectedArticle;
         let articleKey = '';
         if (selectedArticle) {
@@ -172,6 +154,7 @@ class ShiftStatus extends Component {
 
         this.socket.on(this.listenEvent, (data) => {
             if (this._isMounted) {
+                console.log("156 data: ", data);
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;
                 dataArray.sort(function (a, b) {
@@ -227,6 +210,7 @@ class ShiftStatus extends Component {
     }
 
     handleDisplayArray = (dataArray) => {
+        console.log("handleDisplayArray: ", dataArray);
         let shift1Array = [0, 0, 0, 0, 0, 0, 0, 0];
         let shift2Array = [0, 0, 0, 0, 0, 0, 0, 0];
         let shift3Array = [0, 0, 0, 0, 0, 0, 0, 0];

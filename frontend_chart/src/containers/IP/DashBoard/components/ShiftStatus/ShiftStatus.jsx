@@ -33,28 +33,9 @@ class ShiftStatus extends Component {
             loading: true
         };
 
-        switch (this.role) {
-            case 'admin':
-                this.apiUrl = 'api/os/shiftStatus';
-                this.emitEvent = 'os_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-            case 'ip':
-                this.apiUrl = 'api/ip/shiftStatus';
-                this.emitEvent = 'ip_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-            case 'os':
-                this.apiUrl = 'api/os/shiftStatus';
-                this.emitEvent = 'os_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-            default:
-                this.apiUrl = 'api/os/shiftStatus';
-                this.emitEvent = 'os_shift_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                break;
-        }
+        this.apiUrl = 'api/ip/shiftStatus';
+        this.emitEvent = 'ip_shift_status';
+        this.listenEvent = 'ip_listen_' + this.emitEvent;
 
         this.currentSelectedArticle = '';
     }
@@ -173,6 +154,7 @@ class ShiftStatus extends Component {
         this.socket.on(this.listenEvent, (data) => {
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
+                console.log("returnArray: ", returnArray);
                 let dataArray = returnArray.data;
                 dataArray.sort(function (a, b) {
                     if (parseInt(a.idStation) < parseInt(b.idStation)) {

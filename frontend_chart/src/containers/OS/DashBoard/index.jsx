@@ -19,10 +19,10 @@ class DashboardPage extends Component {
             <div id={DASHBOARD_CONTAINER_ID} className="container">
                 <div id={DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID} className="row">
                     <div className="col">
-                        <StationStatus/>
+                        {/*<StationStatus/>*/}
                     </div>
                     <div className="col">
-                        {/*<ShiftStatus/>*/}
+                        <ShiftStatus/>
                     </div>
                 </div>
                 {/*<div className="row">

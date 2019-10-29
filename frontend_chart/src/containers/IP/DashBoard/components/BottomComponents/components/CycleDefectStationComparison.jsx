@@ -104,35 +104,11 @@ export class CycleDefectStationComparison extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch (this.role) {
-            case 'admin':
-                this.apiUrl = `api/os/defectdata`;
-                this.emitEvent = `os_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.istatus = `0`;
-                this.process = 'os-Molding';
-                break;
-            case 'ip':
-                this.apiUrl = `api/ip/defectdata`;
-                this.emitEvent = `ip_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.istatus = `1`;
-                this.process = 'imev';
-                break;
-            case 'os':
-                this.apiUrl = `api/os/defectdata`;
-                this.emitEvent = `os_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.istatus = `0`;
-                this.process = 'os-Molding';
-                break;
-            default:
-                this.apiUrl = `api/os/defectdata`;
-                this.emitEvent = `os_swingarm_idledefect`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.istatus = `0`;
-                this.process = 'os-Molding';
-        }
+        this.apiUrl = `api/ip/defectdata`;
+        this.emitEvent = `ip_swingarm_idledefect`;
+        this.eventListen = `sna_${this.emitEvent}`;
+        this.istatus = `1`;
+        this.process = 'imev';
 
         this.state = {
             loading: true

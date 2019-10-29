@@ -30,89 +30,24 @@ class TemperatureTrendItem extends Component {
         this.currentSelectedArticle = '';
 
         let {stationIdNo} = this.props;
-        switch (this.role) {
-            case 'admin':
-                this.apiUrl = 'api/os/tempTrend';
-                this.emitEvent = `os_temp_trend_${stationIdNo}`;
-                this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom" +
-                " Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
-                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
-                // "tempB2","tempB3"];
-                this.seriesOptions = {
-                    "Setting Top Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting Mid Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting Bottom Temp": {
-                        strokeWidth: 3
-                    }
-                };
-                break;
-            case 'ip':
-                this.apiUrl = 'api/ip/tempTrend';
-                this.emitEvent = `ip_temp_trend_${stationIdNo}`;
-                this.eventListen = `ip_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
-                this.labelArray = ["Time", "Actual L.Top Temp", "Actual L.Bottom Temp", "Actual R.Top Temp", "Acutal R.Bottom Temp", "Setting L.Top Temp", "Setting L.Bottom Temp", "Setting R.Top Temp", "Setting R.Bottom Temp"];
-                this.seriesOptions = {
-                    "Setting L.Top Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting L.Bottom Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting R.Top Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting R.Bottom Temp": {
-                        strokeWidth: 3
-                    },
-                };
-                break;
-            case 'os':
-                this.apiUrl = 'api/os/tempTrend';
-                this.emitEvent = `os_temp_trend_${stationIdNo}`;
-                this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
-                // "tempB2","tempB3"];
-                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
-                this.seriesOptions = {
-                    "Setting Top Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting Mid Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting Bottom Temp": {
-                        strokeWidth: 3
-                    }
-                };
-                break;
-            default:
-                this.apiUrl = 'api/os/tempTrend';
-                this.emitEvent = `os_temp_trend_${stationIdNo}`;
-                this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
-                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
-                // "tempB2","tempB3"];
-                this.seriesOptions = {
-                    "Setting Top Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting Mid Temp": {
-                        strokeWidth: 3
-                    },
-                    "Setting Bottom Temp": {
-                        strokeWidth: 3
-                    }
-                };
-                this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
-        }
+        this.apiUrl = 'api/os/tempTrend';
+        this.emitEvent = `os_temp_trend_${stationIdNo}`;
+        this.eventListen = `os_chart_temp_trend_${stationIdNo}`;
+        this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
+        //this.labelArray = ["Time", "tempA1", "tempA2", "tempA3", "tempB1",
+        // "tempB2","tempB3"];
+        this.labelArray = ["Time", "Actual Top Temp", "Actual Mid Temp", "Actual Bottom Temp", "Setting Top Temp", "Setting Mid Temp", "Setting Bottom Temp"];
+        this.seriesOptions = {
+            "Setting Top Temp": {
+                strokeWidth: 3
+            },
+            "Setting Mid Temp": {
+                strokeWidth: 3
+            },
+            "Setting Bottom Temp": {
+                strokeWidth: 3
+            }
+        };
         this.state = {
             loading: true
         };

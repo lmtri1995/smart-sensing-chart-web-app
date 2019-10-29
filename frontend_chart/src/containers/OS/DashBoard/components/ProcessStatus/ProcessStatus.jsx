@@ -35,32 +35,10 @@ class ProcessStatus extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch (this.role) {
-            case 'admin':
-                this.apiUrl = 'api/os/processStatus';
-                this.emitEvent = 'os_process_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                this.standardCycleTimeUrl = 'api/os/std';
-                break;
-            case 'ip':
-                this.apiUrl = 'api/ip/processStatus';
-                this.emitEvent = 'ip_process_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                this.standardCycleTimeUrl = 'api/ip/std';
-                break;
-            case 'os':
-                this.apiUrl = 'api/os/processStatus';
-                this.emitEvent = 'os_process_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                this.standardCycleTimeUrl = 'api/os/std';
-                break;
-            default:
-                this.apiUrl = 'api/os/processStatus';
-                this.emitEvent = 'os_process_status';
-                this.listenEvent = 'sna_' + this.emitEvent;
-                this.standardCycleTimeUrl = 'api/os/std';
-                break;
-        }
+        this.apiUrl = 'api/os/processStatus';
+        this.emitEvent = 'os_process_status';
+        this.listenEvent = 'sna_' + this.emitEvent;
+        this.standardCycleTimeUrl = 'api/os/std';
 
         this.state = {
             dataArray: "",

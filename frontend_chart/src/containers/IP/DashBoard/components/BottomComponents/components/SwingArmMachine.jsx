@@ -87,23 +87,8 @@ export class SwingArmMachine extends Component {
         let token = this.loginData.token;
         this.socket = Singleton.getInstance(token);
 
-        switch (this.role) {
-            case 'admin':
-                this.emitEvent = `os_swingarm`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                break;
-            case 'ip':
-                this.emitEvent = `os_swingarm`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                break;
-            case 'os':
-                this.emitEvent = `os_swingarm`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                break;
-            default:
-                this.emitEvent = `os_swingarm`;
-                this.eventListen = `sna_${this.emitEvent}`;
-        }
+        this.emitEvent = `os_swingarm`;
+        this.eventListen = `sna_${this.emitEvent}`;
 
         this.state = {
             loading: true

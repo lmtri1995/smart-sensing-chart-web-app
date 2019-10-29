@@ -29,39 +29,12 @@ class BottomComponents extends Component {
 
         this.standardCycleTimeArray = 0;
 
-        switch (this.role) {
-            case 'admin':
-                this.apiUrl = `api/os/oeedata`;
-                this.emitEvent = `os_swingarm_oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.standardCycleTimeUrl = 'api/os/std';
-                this.OEEType = 0;
-                this.process = 'os-Molding';
-                break;
-            case 'ip':
-                this.apiUrl = `api/ip/oeedata`;
-                this.emitEvent = `ip_swingarm_oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.standardCycleTimeUrl = 'api/ip/std';
-                this.OEEType = 1;
-                this.process = 'imev';
-                break;
-            case 'os':
-                this.apiUrl = `api/os/oeedata`;
-                this.emitEvent = `os_swingarm_oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.standardCycleTimeUrl = 'api/os/std';
-                this.OEEType = 0;
-                this.process = 'os-Molding';
-                break;
-            default:
-                this.apiUrl = `api/os/oeedata`;
-                this.emitEvent = `os_swingarm_oeedata`;
-                this.eventListen = `sna_${this.emitEvent}`;
-                this.standardCycleTimeUrl = 'api/os/std';
-                this.OEEType = 0;
-                this.process = 'os-Molding';
-        }
+        this.apiUrl = `api/os/oeedata`;
+        this.emitEvent = `os_swingarm_oeedata`;
+        this.eventListen = `sna_${this.emitEvent}`;
+        this.standardCycleTimeUrl = 'api/os/std';
+        this.OEEType = 0;
+        this.process = 'os-Molding';
 
         this.state = {
             availabilityNumber: 0,

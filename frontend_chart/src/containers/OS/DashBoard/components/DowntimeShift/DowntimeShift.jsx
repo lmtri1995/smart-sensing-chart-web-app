@@ -56,12 +56,8 @@ class DowntimeShift extends Component {
         let param = {
             "proccess": this.process
         };
-        console.log("79 79");
-        console.log("param: ", param);
-        console.log("this.apiUrl: ", this.apiUrl);
         API(this.apiUrl, 'POST', param)
             .then((response) => {
-                console.log("response 83: ", response);
                 if (response.data.success) {
                     let dataArray = response.data.data;
                     dataArray.sort(function (a, b) {
@@ -97,6 +93,7 @@ class DowntimeShift extends Component {
         });
 
         this.socket.on('sna_down_shift', (data) => {
+            console.log("OS 96 96 96 96: ", data);
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;

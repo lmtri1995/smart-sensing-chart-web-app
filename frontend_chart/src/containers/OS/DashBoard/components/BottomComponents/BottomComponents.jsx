@@ -31,7 +31,7 @@ class BottomComponents extends Component {
 
         this.apiUrl = `api/os/oeedata`;
         this.emitEvent = `os_swingarm_oeedata`;
-        this.eventListen = `sna_${this.emitEvent}`;
+        this.eventListen = `os_${this.emitEvent}`;
         this.standardCycleTimeUrl = 'api/os/std';
         this.OEEType = 0;
         this.process = 'os-Molding';

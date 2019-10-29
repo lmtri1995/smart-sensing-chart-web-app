@@ -246,6 +246,7 @@ export class SwingArmMachine extends Component {
             });
             this.socket.on(this.eventListen, (response) => {
                 response = JSON.parse(response);
+                console.log("IP response 249: ", response);
                 let dataArray = response.data;
                 let returnData = JSON.parse(dataArray[0].data);
                 //this.handleReturnData(returnData);

@@ -43,7 +43,7 @@ class DowntimeShift extends Component {
         //Unregister event
         this.socket.emit('down_shift', {
             msg: {
-                event: 'sna_down_shift',
+                event: 'os_down_shift',
                 from_timedevice: 0,
                 to_timedevice: 0,
                 proccess: 'os-Molding',
@@ -84,7 +84,7 @@ class DowntimeShift extends Component {
     callSocket = () => {
         this.socket.emit('down_shift', {
             msg: {
-                event: 'sna_down_shift',
+                event: 'os_down_shift',
                 from_timedevice: 0,
                 to_timedevice: 0,
                 proccess: this.process,
@@ -92,8 +92,7 @@ class DowntimeShift extends Component {
             }
         });
 
-        this.socket.on('sna_down_shift', (data) => {
-            console.log("OS 96 96 96 96: ", data);
+        this.socket.on('os_down_shift', (data) => {
             if (this._isMounted) {
                 let returnArray = JSON.parse(data);
                 let dataArray = returnArray.data;

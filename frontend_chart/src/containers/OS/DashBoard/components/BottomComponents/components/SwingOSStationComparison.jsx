@@ -190,100 +190,96 @@ export class SwingArmMachine extends Component {
         if (!this.state.loading) {
             this.setState({loading: true});
         }
-        if (this.role == 'os') {
-            let timeFromStartOfShift = specifyTheShiftStartHour();
+        let timeFromStartOfShift = specifyTheShiftStartHour();
 
-            let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
-            let articleKey = '';
-            if (newSelectedArticle) {
-                articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
-            }
-
-            let param = {
-                "from_timedevice": timeFromStartOfShift[0],
-                "to_timedevice": timeFromStartOfShift[1],
-                "shiftno": 0,
-                "modelname": '',
-                "articleno": articleKey
-            };
-
-            API('api/os/stationcomparision', 'POST', param)
-                .then((response) => {
-                    console.log("response 211: ", response);
-                    try {
-                        let dataArray = response.data.data;
-                        let returnData = JSON.parse(dataArray[0].data);
-                        let displayArray = this.handleReturnData(returnData);
-                        this.myChart.data = {
-                            labels: this.labelArray,
-                            datasets: [
-                                {
-                                    label: 'Swing Arm',
-                                    backgroundColor: '#0CD0EB',
-                                    borderColor: '#0CD0EB',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[0],
-                                },
-                                {
-                                    label: 'Os Press',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: displayArray[1],
-                                }
-                            ],
-
-                        };
-                        this.myChart.update();
-                        this.setState({loading: false});
-                        if (!stopCurrentSocket) {
-                            this.callSocket();
-                        } else {
-                            this.restartSocket();
-                        }
-                    } catch (e) {
-                        console.log("Error: ", e);
-                        this.myChart.data = {
-                            labels: this.labelArray,
-                            datasets: [
-                                {
-                                    label: 'Swing Arm',
-                                    backgroundColor: '#0CD0EB',
-                                    borderColor: '#0CD0EB',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: [0, 0, 0],
-                                },
-                                {
-                                    label: 'Os Press',
-                                    backgroundColor: '#4C9EFF',
-                                    borderColor: '#4C9EFF',
-                                    borderWidth: 1,
-                                    //hoverBackgroundColor: '#FF6384',
-                                    //hoverBorderColor: '#FF6384',
-                                    data: [0, 0, 0],
-                                }
-                            ],
-
-                        };
-                        this.myChart.update();
-                        this.setState({loading: false});
-                        if (!stopCurrentSocket) {
-                            this.callSocket();
-                        } else {
-                            this.restartSocket();
-                        }
-                    }
-                })
-                .catch((err) => console.log('err:', err))
-        } else {
-            this.setState({loading: false});
+        let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
+        let articleKey = '';
+        if (newSelectedArticle) {
+            articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
+
+        let param = {
+            "from_timedevice": timeFromStartOfShift[0],
+            "to_timedevice": timeFromStartOfShift[1],
+            "shiftno": 0,
+            "modelname": '',
+            "articleno": articleKey
+        };
+
+        API('api/os/stationcomparision', 'POST', param)
+        .then((response) => {
+            console.log("response 211: ", response);
+            try {
+                let dataArray = response.data.data;
+                let returnData = JSON.parse(dataArray[0].data);
+                let displayArray = this.handleReturnData(returnData);
+                this.myChart.data = {
+                    labels: this.labelArray,
+                    datasets: [
+                        {
+                            label: 'Swing Arm',
+                            backgroundColor: '#0CD0EB',
+                            borderColor: '#0CD0EB',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[0],
+                        },
+                        {
+                            label: 'Os Press',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[1],
+                        }
+                    ],
+
+                };
+                this.myChart.update();
+                this.setState({loading: false});
+                if (!stopCurrentSocket) {
+                    this.callSocket();
+                } else {
+                    this.restartSocket();
+                }
+            } catch (e) {
+                console.log("Error: ", e);
+                this.myChart.data = {
+                    labels: this.labelArray,
+                    datasets: [
+                        {
+                            label: 'Swing Arm',
+                            backgroundColor: '#0CD0EB',
+                            borderColor: '#0CD0EB',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: [0, 0, 0],
+                        },
+                        {
+                            label: 'Os Press',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: [0, 0, 0],
+                        }
+                    ],
+
+                };
+                this.myChart.update();
+                this.setState({loading: false});
+                if (!stopCurrentSocket) {
+                    this.callSocket();
+                } else {
+                    this.restartSocket();
+                }
+            }
+        })
+        .catch((err) => console.log('err:', err))
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -312,87 +308,83 @@ export class SwingArmMachine extends Component {
         if (newSelectedArticle) {
             articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
-        if (this.role == 'os') {
-            this.socket.emit(this.emitEvent, {
-                msg: {
-                    "event": this.eventListen,
-                    "from_timedevice": 0,//1551333600
-                    "to_timedevice": 0,//1551420000
-                    "minute": 60,
-                    "status": 'start',
-                    "shiftno": 0,
-                    "modelname": '',
-                    "articleno": articleKey
-                }
-            });
-            this.socket.on(this.eventListen, (response) => {
-                try {
-                    console.log("321 321 321 321");
-                    console.log("response: ", response);
-                    response = JSON.parse(response);
-                    let dataArray = response.data;
-                    let returnData = JSON.parse(dataArray[0].data);
-                    let displayArray = this.handleReturnData(returnData);
+        this.socket.emit(this.emitEvent, {
+            msg: {
+                "event": this.eventListen,
+                "from_timedevice": 0,//1551333600
+                "to_timedevice": 0,//1551420000
+                "minute": 60,
+                "status": 'start',
+                "shiftno": 0,
+                "modelname": '',
+                "articleno": articleKey
+            }
+        });
+        this.socket.on(this.eventListen, (response) => {
+            try {
+                console.log("321 321 321 321");
+                console.log("response: ", response);
+                response = JSON.parse(response);
+                let dataArray = response.data;
+                let returnData = JSON.parse(dataArray[0].data);
+                let displayArray = this.handleReturnData(returnData);
 
-                    this.myChart.data = {
-                        labels: this.labelArray,
-                        datasets: [
-                            {
-                                label: 'Swing Arm',
-                                backgroundColor: '#0CD0EB',
-                                borderColor: '#0CD0EB',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[0],
-                            },
-                            {
-                                label: 'Os Press',
-                                backgroundColor: '#4C9EFF',
-                                borderColor: '#4C9EFF',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: displayArray[1],
-                            }
-                        ],
-                    };
-                    this.myChart.update();
-                    this.setState({loading: false});
+                this.myChart.data = {
+                    labels: this.labelArray,
+                    datasets: [
+                        {
+                            label: 'Swing Arm',
+                            backgroundColor: '#0CD0EB',
+                            borderColor: '#0CD0EB',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[0],
+                        },
+                        {
+                            label: 'Os Press',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: displayArray[1],
+                        }
+                    ],
+                };
+                this.myChart.update();
+                this.setState({loading: false});
 
-                } catch (e) {
-                    console.log("Error: ", e);
+            } catch (e) {
+                console.log("Error: ", e);
 
-                    this.myChart.data = {
-                        labels: this.labelArray,
-                        datasets: [
-                            {
-                                label: 'Swing Arm',
-                                backgroundColor: '#0CD0EB',
-                                borderColor: '#0CD0EB',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: [0, 0, 0],
-                            },
-                            {
-                                label: 'Os Press',
-                                backgroundColor: '#4C9EFF',
-                                borderColor: '#4C9EFF',
-                                borderWidth: 1,
-                                //hoverBackgroundColor: '#FF6384',
-                                //hoverBorderColor: '#FF6384',
-                                data: [0, 0, 0],
-                            }
-                        ],
-                    };
-                    this.myChart.update();
-                    this.setState({loading: false});
-                }
-            });
-        } else {
-            this.setState({loading: false});
-        }
+                this.myChart.data = {
+                    labels: this.labelArray,
+                    datasets: [
+                        {
+                            label: 'Swing Arm',
+                            backgroundColor: '#0CD0EB',
+                            borderColor: '#0CD0EB',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: [0, 0, 0],
+                        },
+                        {
+                            label: 'Os Press',
+                            backgroundColor: '#4C9EFF',
+                            borderColor: '#4C9EFF',
+                            borderWidth: 1,
+                            //hoverBackgroundColor: '#FF6384',
+                            //hoverBorderColor: '#FF6384',
+                            data: [0, 0, 0],
+                        }
+                    ],
+                };
+                this.myChart.update();
+                this.setState({loading: false});
+            }
+        });
     }
 
     restartSocket = () => {

@@ -31,7 +31,7 @@ class BottomComponents extends Component {
 
         this.apiUrl = `api/ip/oeedata`;
         this.emitEvent = `ip_swingarm_oeedata`;
-        this.eventListen = `sna_${this.emitEvent}`;
+        this.eventListen = `ip_${this.emitEvent}`;
         this.standardCycleTimeUrl = 'api/ip/std';
         this.OEEType = 1;
         this.process = 'imev';
@@ -592,19 +592,6 @@ class BottomComponents extends Component {
                     </div>
                 </div>
             </div>
-            {
-                this.role === 'ip'
-                    ? ''
-                    : <div id={DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID}
-                           className="row">
-                        <div className="col-6">
-                            <SwingArmMachine/>
-                        </div>
-                        <div className="col-6">
-                            <SwingOSStationComparison/>
-                        </div>
-                    </div>
-            }
         </div>
     }
 }

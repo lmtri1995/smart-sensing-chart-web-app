@@ -181,12 +181,8 @@ class TemperatureTrendItem extends Component {
             }
         });
 
-        console.log("184 184 184" );
-        console.log("this.eventListen: ", this.eventListen );
-        console.log("this.emitEvent: ", this.emitEvent );
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
-            console.log("IP 187 187 187 187: ", response);
             if (response.success) {
                 let returnArrayObject = response.data;
                 let returnArray = JSON.parse(returnArrayObject[0].data);

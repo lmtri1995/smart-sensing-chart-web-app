@@ -19,30 +19,30 @@ class DashboardPage extends Component {
             <div id={DASHBOARD_CONTAINER_ID} className="container">
                 <div id={DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID} className="row">
                     <div className="col">
-                        {/*<StationStatus/>*/}
+                        <StationStatus/>
                     </div>
                     <div className="col">
-                        {/*<ShiftStatus/>*/}
+                        <ShiftStatus/>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col">
-                       {/* <TemperatureTrend/>*/}
+                        <TemperatureTrend/>
                     </div>
                 </div>
                 <div id={DASHBOARD_PROCESSING_STATUS_ID} className="row">
                     <div className="col">
-                        {/*<ProcessStatus/>*/}
+                         <ProcessStatus/>
                     </div>
                 </div>
                 <div id={DASHBOARD_DOWN_TIME_BY_SHIFT_ID} className="row">
                     <div className="col">
-                        {/*<DowntimeShift/>*/}
+                         <DowntimeShift/>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col">
-                        <BottomComponents/>
+                         <BottomComponents/>
                     </div>
                 </div>
             </div>

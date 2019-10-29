@@ -183,7 +183,6 @@ class TemperatureTrendItem extends Component {
 
         this.socket.on(this.eventListen, (response) => {
             response = JSON.parse(response);
-            console.log("response 186: ", response);
             if (response.success) {
                 let returnArrayObject = response.data;
                 let returnArray = JSON.parse(returnArrayObject[0].data);

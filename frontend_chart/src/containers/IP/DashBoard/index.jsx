@@ -22,15 +22,15 @@ class DashboardPage extends Component {
                         {/*<StationStatus/>*/}
                     </div>
                     <div className="col">
-                       <ShiftStatus/>
+                      {/* <ShiftStatus/>*/}
                     </div>
                 </div>
-                {/*<div className="row">
+                <div className="row">
                     <div className="col">
                         <TemperatureTrend/>
                     </div>
                 </div>
-                <div id={DASHBOARD_PROCESSING_STATUS_ID} className="row">
+                {/*<div id={DASHBOARD_PROCESSING_STATUS_ID} className="row">
                     <div className="col">
                         <ProcessStatus/>
                     </div>

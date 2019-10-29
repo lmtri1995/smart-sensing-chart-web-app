@@ -34,25 +34,9 @@ export default class TemperatureTrend extends Component {
 
         //Specify which array in local storage to push data to and get data from
         this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
-        switch (this.role) {
-            case ROLES.ROLE_ADMIN:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
-                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "Actual Temp Top", "Actual Temp Middle", "Actual Temp Bottom", "Setting Temp Top", "Setting Temp Middle", "Setting Temp Bottom"];
-                break;
-            case ROLES.ROLE_IP:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.IP_TEMP_TREND_ARRAY;
-                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
-                this.labelArray = ["Time", "Actual Temp L.Top", "Actual Temp L.Bott", "Actual" +
-                " Temp R.Top", "Acutal Temp" +
-                " R.Bott", "Setting Temp L.Top", "Setting Temp L.Bott", "Setting Temp R.Top", "Setting Temp R.Bott"];
-                break;
-            case ROLES.ROLE_OS:
-                this.localTempArrayName = LOCAL_IP_TEMP_TREND.OS_TEMP_TREND_ARRAY;
-                this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6"];
-                this.labelArray = ["Time", "Actual Temp Top", "Actual Temp Middle", "Actual Temp Bottom", "Setting Temp Top", "Setting Temp Middle", "Setting Temp Bottom"];
-                break;
-        }
+        this.colorArray = ["#71D7BE", "#FEF7DC", "#FF9C64", "#C8DCFC", "#F575F7", "#8C67F6", "#449AFF", "#46D6EA"];
+        this.labelArray = ["Time", "Actual Temp L.Top", "Actual Temp L.Bott", "Actual Temp R.Top", "Acutal Temp" +
+                                                                                             " R.Bott", "Setting Temp L.Top", "Setting Temp L.Bott", "Setting Temp R.Top", "Setting Temp R.Bott"];
 
         this.toggle = this.toggle.bind(this);
         this.state = {

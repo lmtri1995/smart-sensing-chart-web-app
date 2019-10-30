@@ -38,9 +38,8 @@ class LogIn extends Component {
     render() {
         //console.log('LogIn state',this.state.login)
         let loginData = JSON.parse(localStorage.getItem('logindata'));
-        console.log("42 42 42 loginData42: ", loginData);
         if (loginData !== null) return <Redirect
-         to={ROUTE.IPDashboard}/>;
+         to={ROUTE.Overview}/>;
         /*if (loginData !== null && (loginData.data.role === 'as')) return <Redirect to={ROUTE.MasterPage}/>;*/
         return (
             <div className="account">

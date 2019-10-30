@@ -190,7 +190,8 @@ export class SwingArmMachine extends Component {
         if (!this.state.loading) {
             this.setState({loading: true});
         }
-        if (this.role == 'os') {
+        this.setState({loading: false});
+        /*if (this.role == 'os') {
             let timeFromStartOfShift = specifyTheShiftStartHour();
 
             let newSelectedArticle = this.props.globalArticleFilter.selectedArticle;
@@ -283,7 +284,7 @@ export class SwingArmMachine extends Component {
                 .catch((err) => console.log('err:', err))
         } else {
             this.setState({loading: false});
-        }
+        }*/
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -312,7 +313,8 @@ export class SwingArmMachine extends Component {
         if (newSelectedArticle) {
             articleKey = newSelectedArticle[0] === ARTICLE_NAMES.keys().next().value ? '' : newSelectedArticle[0];
         }
-        if (this.role == 'os') {
+        this.setState({loading: false});
+        /*if (this.role == 'os') {
             this.socket.emit(this.emitEvent, {
                 msg: {
                     "event": this.eventListen,
@@ -392,7 +394,7 @@ export class SwingArmMachine extends Component {
             });
         } else {
             this.setState({loading: false});
-        }
+        }*/
     }
 
     restartSocket = () => {

@@ -53,6 +53,7 @@ class Pages extends Component {
                     }
                     <div className="container__wrap">
                         <Switch>
+                            <PrivateRoute exact path={ROUTE.Dashboard} component={Overview}/>
                             <PrivateRoute exact path={ROUTE.IPDashboard} component={IPDashBoard}/>
                             <PrivateRoute path={ROUTE.IPAnalysis} component={IPAnalysis}/>
                             <PrivateRoute path={ROUTE.IPReport} component={IPReport}/>
@@ -96,7 +97,7 @@ class Pages extends Component {
 // );
 
 const wrappedRoutes = () => {
-    let pageRedirect = ROUTE.IPDashboard;
+    let pageRedirect = ROUTE.Overview;
     return (<Switch>
         <Route exact path={ROUTE.Dashboard} component={Pages}/>
         <Route exact path={ROUTE.Login} render={(props) => (

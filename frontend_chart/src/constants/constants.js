@@ -20,6 +20,12 @@ export const ROLES = {
     ROLE_AS: 'as',
 };
 
+export const PATH_PART = {
+    dashboard: '/dashboard',
+    analysis: '/analysis',
+    report: '/report',
+}
+
 export const ROUTE = {
     Login: '/login',
     Logout: '/logout',

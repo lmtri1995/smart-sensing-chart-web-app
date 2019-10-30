@@ -28,7 +28,8 @@ import {
     REPORT_CONTAINER_ID,
     REPORT_DEFECT_RATE_ID,
     REPORT_PRODUCTION_RATE_ID,
-    ROUTE
+    ROUTE,
+    PATH_PART
 } from "../../../constants/constants";
 import {connect} from "react-redux";
 import {withRouter} from 'react-router-dom';
@@ -41,7 +42,22 @@ class DataExporter extends Component {
         let stationStatusData = null, shiftStatusData = null,
             processStatusData = null, downTimeShiftData = null;
         let productionRateData = null, defectRateData = null;
-        switch (location.pathname) {
+        if (location.pathname.includes(PATH_PART.dashboard)){
+            fileName = 'Dashboard';
+            stationStatusData = props.downloadDataStore.stationStatusData;
+            shiftStatusData = props.downloadDataStore.shiftStatusData;
+            processStatusData = props.downloadDataStore.processStatusData;
+            downTimeShiftData = props.downloadDataStore.downTimeShiftData;
+        } else if (location.pathname.includes(PATH_PART.analysis)){
+            fileName = 'Analysis';
+            shiftStatusData = props.downloadDataStore.shiftStatusData;
+            processStatusData = props.downloadDataStore.processStatusData;
+        } else if (location.pathname.includes(PATH_PART.report)){
+            fileName = 'Report';
+            productionRateData = props.downloadDataStore.productionRateData;
+            defectRateData = props.downloadDataStore.defectRateData;
+        }
+        /*switch (location.pathname) {
             case ROUTE.Dashboard:
                 fileName = 'Dashboard';
                 stationStatusData = props.downloadDataStore.stationStatusData;
@@ -59,7 +75,7 @@ class DataExporter extends Component {
                 productionRateData = props.downloadDataStore.productionRateData;
                 defectRateData = props.downloadDataStore.defectRateData;
                 break;
-        }
+        }*/
 
         // Create new Workbook
         let workbook = new Excel.Workbook();
@@ -110,12 +126,59 @@ class DataExporter extends Component {
     }
 
     exportPDFFile(props, location) {
+        console.log("exportPDFFile");
         let fileName = '';
         let stationStatusData = null, shiftStatusData = null,
             processStatusData = null, downTimeShiftData = null;
         let productionRateData = null, defectRateData = null;
         let imageExportContainerElements = null;
-        switch (location.pathname) {
+        let pathName = location.pathname;
+        if (pathName.includes(PATH_PART.dashboard)){
+            fileName = 'Dashboard';
+            stationStatusData = props.downloadDataStore.stationStatusData;
+            shiftStatusData = props.downloadDataStore.shiftStatusData;
+            processStatusData = props.downloadDataStore.processStatusData;
+            downTimeShiftData = props.downloadDataStore.downTimeShiftData;
+            imageExportContainerElements = [];
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_STATION_STATUS_SHIFT_STATUS_ID));
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_1_2_ID));
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_3_4_ID));
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_5_6_ID));
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_TEMPERATURE_TREND_ITEM_STATION_7_8_ID));
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_PROCESSING_STATUS_ID));
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_DOWN_TIME_BY_SHIFT_ID));
+            imageExportContainerElements.push(document.getElementById(DASHBOARD_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID));
+            if (document.getElementById(DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID)){
+                imageExportContainerElements.push(document.getElementById(DASHBOARD_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID));
+            }
+        } else if (pathName.includes(PATH_PART.analysis)){
+            fileName = 'Analysis';
+            shiftStatusData = props.downloadDataStore.shiftStatusData;
+            processStatusData = props.downloadDataStore.processStatusData;
+            imageExportContainerElements = [];
+            imageExportContainerElements.push(document.getElementById(ANALYSIS_SHIFT_STATUS_ID));
+            imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_1_2_ID));
+            imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_3_4_ID));
+            imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_5_6_ID));
+            imageExportContainerElements.push(document.getElementById(ANALYSIS_TEMPERATURE_TREND_ITEM_STATION_7_8_ID));
+            imageExportContainerElements.push(document.getElementById(ANALYSIS_PROCESSING_STATUS_ID));
+            imageExportContainerElements.push(document.getElementById(ANALYSIS_OEE_CHART_OEE_GENERAL_LOSS_OF_WORK_CYCLE_DEFECT_STATION_COMPARISON_ID));
+            if (document.getElementById(ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID)){
+                imageExportContainerElements.push(document.getElementById(ANALYSIS_SWING_ARM_MACHINE_SWING_OS_STATION_COMPARISON_ID));
+            }
+        } else if (pathName.includes(PATH_PART.report)){
+            fileName = 'Report';
+            productionRateData = props.downloadDataStore.productionRateData;
+            defectRateData = props.downloadDataStore.defectRateData;
+            imageExportContainerElements = [];
+            if (productionRateData) {
+                imageExportContainerElements.push(document.getElementById(REPORT_PRODUCTION_RATE_ID));
+            }
+            if (defectRateData) {
+                imageExportContainerElements.push(document.getElementById(REPORT_DEFECT_RATE_ID));
+            }
+        }
+        /*switch (location.pathname) {
             case ROUTE.Dashboard:
                 fileName = 'Dashboard';
                 stationStatusData = props.downloadDataStore.stationStatusData;
@@ -159,7 +222,7 @@ class DataExporter extends Component {
                     imageExportContainerElements.push(document.getElementById(REPORT_DEFECT_RATE_ID));
                 }
                 break;
-        }
+        }*/
 
         // paper orientation -> landscape, unit -> pt: point, paper type -> A3
         let doc = new jsPDF('landscape', 'pt', 'a3');
@@ -176,14 +239,136 @@ class DataExporter extends Component {
             font: 'helvetica',
             cellWidth: 'wrap',
         };
-
         if (imageExportContainerElements) {
             let mapOfContainerCanvas = new Map();
             imageExportContainerElements.forEach((element, index) => {
                 html2canvas(element).then((canvas) => mapOfContainerCanvas.set(index, canvas));
             });
             var saveDocInterval = setInterval(() => {
-                switch (location.pathname) {
+                let pathName = location.pathname;
+                if (pathName.includes(PATH_PART.dashboard)){
+                    let size = 9;
+                    if (pathName.includes("/ip")){
+                        size = 8;
+                    }
+                    if (mapOfContainerCanvas.size === size) {
+                        clearInterval(saveDocInterval);
+
+                        let mapCanvasAscending = new Map([...mapOfContainerCanvas.entries()].sort());
+                        mapCanvasAscending.forEach((canvas, key, mapCanvas) => {
+                            const screenShotData = canvas.toDataURL('image/png');
+
+                            let width = doc.internal.pageSize.getWidth();
+                            let height = canvas.height > doc.internal.pageSize.getHeight()
+                                         ? doc.internal.pageSize.getHeight()
+                                         : canvas.height;
+
+                            // Add snapshot of full page
+                            doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+                            if (key !== mapCanvas.size - 1) {
+                                doc.addPage();  // Add new page
+                            }
+                        });
+                        if (stationStatusData) {
+                            doc.addPage();  // Add new page
+
+                            addStationStatusDataTablePDF(doc, tableStyle, stationStatusData);
+                        }
+                        if (shiftStatusData) {
+                            doc.addPage();  // Add new page
+
+                            addShiftStatusDataTablePDF(doc, tableStyle, shiftStatusData);
+                        }
+                        if (processStatusData) {
+                            doc.addPage();  // Add new page
+
+                            let {processingStatusLine, general} = processStatusData;
+                            addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
+                        }
+                        if (downTimeShiftData) {
+                            doc.addPage();  // Add new page
+
+                            addDownTimeShiftDataTablePDF(doc, tableStyle, downTimeShiftData);
+                        }
+
+                        doc.save(
+                            fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
+                        );
+                    }
+                } else if (pathName.includes(PATH_PART.analysis)){
+                    if (mapOfContainerCanvas.size === 8) {
+                        clearInterval(saveDocInterval);
+
+                        let mapCanvasAscending = new Map([...mapOfContainerCanvas.entries()].sort());
+                        mapCanvasAscending.forEach((canvas, key, mapCanvas) => {
+                            const screenShotData = canvas.toDataURL('image/png');
+
+                            let width = doc.internal.pageSize.getWidth();
+                            let height = canvas.height > doc.internal.pageSize.getHeight()
+                                         ? doc.internal.pageSize.getHeight()
+                                         : canvas.height;
+
+                            // Add snapshot of full page
+                            doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+                            if (key !== mapCanvas.size - 1) {
+                                doc.addPage();  // Add new page
+                            }
+                        });
+                        if (shiftStatusData) {
+                            doc.addPage();  // Add new page
+
+                            addShiftStatusDataTablePDF(doc, tableStyle, shiftStatusData);
+                        }
+                        if (processStatusData) {
+                            doc.addPage();  // Add new page
+
+                            let {processingStatusLine, general} = processStatusData;
+                            addProcessStatusDataTablePDF(doc, tableStyle, processingStatusLine, general);
+                        }
+
+                        doc.save(
+                            fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
+                        );
+                    }
+                } else if (pathName.includes(PATH_PART.report)){
+                    if (mapOfContainerCanvas.size === 1) {
+                        clearInterval(saveDocInterval);
+
+                        let mapCanvasAscending = new Map([...mapOfContainerCanvas.entries()].sort());
+                        mapCanvasAscending.forEach((canvas, key, mapCanvas) => {
+                            const screenShotData = canvas.toDataURL('image/png');
+
+                            let width = doc.internal.pageSize.getWidth();
+                            let height = canvas.height > doc.internal.pageSize.getHeight()
+                                         ? doc.internal.pageSize.getHeight()
+                                         : canvas.height;
+
+                            // Add snapshot of full page
+                            doc.addImage(screenShotData, 'PNG', 0, 0, width, height);
+
+                            if (key !== mapCanvas.size - 1) {
+                                doc.addPage();  // Add new page
+                            }
+                        });
+                        if (productionRateData) {
+                            doc.addPage();  // Add new page
+
+                            addProductionRateDataTablePDF(doc, tableStyle, productionRateData);
+                        }
+                        if (defectRateData) {
+                            doc.addPage();  // Add new page
+
+                            addDefectRateDataTablePDF(doc, tableStyle, defectRateData);
+                        }
+
+                        doc.save(
+                            fileName ? `${fileName}_Smart_Sensing_Chart_Data.pdf` : 'Smart_Sensing_Chart_Data.pdf'
+                        );
+                    }
+                }
+                /*switch (location.pathname) {
                     case ROUTE.Dashboard:
                         if (mapOfContainerCanvas.size === 9) {
                             clearInterval(saveDocInterval);
@@ -304,7 +489,7 @@ class DataExporter extends Component {
                             );
                         }
                         break;
-                }
+                }*/
             }, 1000);
         }
     }
@@ -312,7 +497,18 @@ class DataExporter extends Component {
     exportPNGFile(location) {
         let fileName = '';
         let imageExportContainerID = null;
-        switch (location.pathname) {
+        let pathName = location.pathname;
+        if (pathName.includes(PATH_PART.dashboard)){
+            fileName = 'Dashboard';
+            imageExportContainerID = document.getElementById(DASHBOARD_CONTAINER_ID);
+        } else if (pathName.includes(PATH_PART.analysis)){
+            fileName = 'Analysis';
+            imageExportContainerID = document.getElementById(ANALYSIS_CONTAINER_ID);
+        } else if (pathName.includes(PATH_PART.report)){
+            fileName = 'Report';
+            imageExportContainerID = document.getElementById(REPORT_CONTAINER_ID);
+        }
+       /* switch (location.pathname) {
             case ROUTE.Dashboard:
                 fileName = 'Dashboard';
                 imageExportContainerID = document.getElementById(DASHBOARD_CONTAINER_ID);
@@ -325,7 +521,7 @@ class DataExporter extends Component {
                 fileName = 'Report';
                 imageExportContainerID = document.getElementById(REPORT_CONTAINER_ID);
                 break;
-        }
+        }*/
 
         if (imageExportContainerID) {
             html2canvas(imageExportContainerID).then((canvas) => {

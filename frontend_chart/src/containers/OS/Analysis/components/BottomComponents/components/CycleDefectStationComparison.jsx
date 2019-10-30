@@ -217,9 +217,7 @@ export class CycleDefectStationComparison extends Component {
                 "modelname": modelName,
                 "articleno": articleKey
             };
-            console.log("param1: ", param1);
             API(`api/os/sap`, 'POST', param1).then((response1) => {
-                console.log("response1: ", response1);
                 try {
                     let responseArray = response1.data.data;
                     let sapData = [0, 0, 0];

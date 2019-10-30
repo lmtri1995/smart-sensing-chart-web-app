@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, {Component}  from 'react';
+import {Link, withRouter}  from 'react-router-dom';
+import PropTypes           from 'prop-types';
 import TopbarSidebarButton from './TopbarSidebarButton';
-import TopbarProfile from './TopbarProfile';
-import TopbarDateFilter from "./TopbarDateFilter";
-import TopbarFilter from "./TopbarFilter";
-import TopbarNotification from "./TopbarNotification";
-import TopbarFullScreen from "./TopbarFullScreen";
-import {ROUTE} from "../../../constants/constants";
+import TopbarProfile       from './TopbarProfile';
+import TopbarDateFilter    from "./TopbarDateFilter";
+import TopbarFilter        from "./TopbarFilter";
+import TopbarNotification  from "./TopbarNotification";
+import TopbarFullScreen    from "./TopbarFullScreen";
+import {ROUTE}             from "../../../constants/constants";
 
 class Topbar extends Component {
     static propTypes = {
@@ -23,11 +23,11 @@ class Topbar extends Component {
         const {changeMobileSidebarVisibility, changeSidebarVisibility} = this.props;
 
         let loginData = JSON.parse(localStorage.getItem('logindata'));
-        let role = "";
-        if (loginData && loginData.data){
-            role = loginData.data.role;
-        }
-
+        let pathName = window.location.href;
+        let filter = (pathName.includes("/ip") || pathName.includes("/os"))?<div className="d-flex flex-row">
+            <TopbarDateFilter/>
+            <TopbarFilter/>
+        </div>:null
         return (
             <div className="topbar">
                 <div className="topbar__wrapper">
@@ -39,10 +39,7 @@ class Topbar extends Component {
                         <Link className="topbar__logo" to={ROUTE.Dashboard}/>
                     </div>
                     <div className="topbar__right">
-                        <div className="d-flex flex-row">
-                            <TopbarDateFilter/>
-                            <TopbarFilter/>
-                        </div>
+                        {filter}
                          (<TopbarProfile/>)
                          (<TopbarFullScreen goFull={this.click}/>)
                     </div>
@@ -52,4 +49,4 @@ class Topbar extends Component {
     }
 }
 
-export default Topbar;
+export default withRouter(Topbar);

@@ -77,26 +77,10 @@ class MasterForm extends Component {
 		                                          : '');
 	}
 
-	render() {
-		let {
-			    handleSubmit, reset,
-			    parentCodeOptions, loadParentCodeOptions, categoryCodeOptions,
-			    onReset, submissionState, connectionError
-		    }          = this.props;
+	showSubmitPasswordField = () => {
 		let {formData} = this.state;
 		const {field}  = MASTER_FORM_CONSTANTS;
-
-		console.log("disableSubmitButton: ", this.disableSubmitButton);
-		console.log("formData[field.sysCodeYn]: ", formData[field.sysCodeYn]);
-		console.log("this.disableSubmitButton || formData[field.sysCodeYn] === 1: ", this.disableSubmitButton || formData[field.sysCodeYn] === 1);
-
-		let definitionValue = formData[field.definitionValue] ? formData[field.definitionValue] : "000";
-		let definitionArray = definitionValue.split('');
-		let temperature     = definitionArray.length > 0 ? definitionArray[0] : '0';
-		let pressure        = definitionArray.length > 1 ? definitionArray[1] : '0';
-		let timer           = definitionArray.length > 2 ? definitionArray[2] : '0';
-
-		let enableSubmitPasswordField = (this.disableSubmitButton) ? <Field
+		return  (this.disableSubmitButton) ? <Field
 			name={field.enableSubmitText}
 			component={renderField}
 			props={{
@@ -117,6 +101,28 @@ class MasterForm extends Component {
 				});
 			}}
 		/>: null;
+	}
+
+	render() {
+		let {
+			    handleSubmit, reset,
+			    parentCodeOptions, loadParentCodeOptions, categoryCodeOptions,
+			    onReset, submissionState, connectionError
+		    }          = this.props;
+		let {formData} = this.state;
+		const {field}  = MASTER_FORM_CONSTANTS;
+
+		console.log("disableSubmitButton: ", this.disableSubmitButton);
+		console.log("formData[field.sysCodeYn]: ", formData[field.sysCodeYn]);
+		console.log("this.disableSubmitButton || formData[field.sysCodeYn] === 1: ", this.disableSubmitButton || formData[field.sysCodeYn] === 1);
+
+		let definitionValue = formData[field.definitionValue] ? formData[field.definitionValue] : "000";
+		let definitionArray = definitionValue.split('');
+		let temperature     = definitionArray.length > 0 ? definitionArray[0] : '0';
+		let pressure        = definitionArray.length > 1 ? definitionArray[1] : '0';
+		let timer           = definitionArray.length > 2 ? definitionArray[2] : '0';
+
+		let enableSubmitPasswordField = this.showSubmitPasswordField();
 
 
 		return (
@@ -469,7 +475,7 @@ class MasterForm extends Component {
 									name={field.description.name}
 									wrap={true}
 									component={textAreaField}
-									style={{width: 343, height: 100}}
+									style={{width: 360, height: 100}}
 									placeholder="Description here"
 									props={{
 										disabled: formData[field.sysCodeYn] === 1,

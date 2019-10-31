@@ -1,38 +1,51 @@
 import React, {Component} from "react";
 import {Col}              from "reactstrap";
 import MixedLineBarChart  from "../../../shared/components/chart/MixedLineBarChart";
+import {ERROR_LABELS}     from "../constants";
 
 class ChartArea extends Component {
 	constructor(props) {
 		super(props);
 	}
 
+	handleChartData = (chartData) => {
+		let defectDataArray = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+		if (chartData && chartData.length > 0){
+			let typeArray = chartData[0];
+			for (let i = 0; i < typeArray.length; i++){
+				let type = typeArray[i];
+				if (type == "1"){
+					defectDataArray[0] = chartData[i + 3];
+				} else if (type == "2"){
+					defectDataArray[1] = chartData[i + 3];
+				} else if (type == "3"){
+					defectDataArray[2] = chartData[i + 3];
+				} else if (type == "4"){
+					defectDataArray[3] = chartData[i + 3];
+				} else if (type == "5"){
+					defectDataArray[4] = chartData[i + 3];
+				} else if (type == "6"){
+					defectDataArray[5] = chartData[i + 3];
+				}
+			}
+		}
+		return defectDataArray;
+	}
+
 	drawChartItem = (chartData) => {
+		let defectDataArray = this.handleChartData(chartData);
 		let bgColor   = '';
 		let chartType = 'bar';
 
-		let defectDataArray = [];
-		let chartLabels     = chartData[2] ? chartData[2] : ["7:30", "8:30", "9:30", "10:30", "11:30", "12:30", "13:30",
-		                                                     "14:30", "15:30", "16:30", "17:30", "18:30", "19:30",
-		                                                     "20:30", "21:30", "22:30"];
-		let chartTypeArray  = chartData[1] ? chartData[1] : ["HO KEO (BONDING)", "LEM KEO (OVER-CEMENT)",
-		                                                     "LEM NUOC XU LY (OVER-PRIMER)", "DO (DIRTY)",
-		                                                     "NHAN (WRINKLE)", "LOI KHAC (ETC)"];
-		defectDataArray[0]  = chartData[3] ? chartData[3] : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		defectDataArray[1]  = chartData[4] ? chartData[4] : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		defectDataArray[2]  = chartData[5] ? chartData[5] : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		defectDataArray[3]  = chartData[6] ? chartData[6] : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		defectDataArray[4]  = chartData[7] ? chartData[7] : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		defectDataArray[5]  = chartData[8] ? chartData[8] : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-		/*chartLabels = ["7:30", "8:30", "9:30", "10:30"];
-		 chartTypeArray = ["HO KEO (BONDING)", "LEM KEO (OVER-CEMENT)", "LEM NUOC XU LY(OVER-PRIMER)", "DO (DIRTY)"];
-		 defectDataArray[0] = [1, 4, 2, 4];
-		 defectDataArray[1] = [2, 3, 6, 8];
-		 defectDataArray[2] = [4, 7, 2, 5];
-		 defectDataArray[3] = [5, 1, 7, 9];
-		 defectDataArray[4] = [2, 3, 5, 8];
-		 defectDataArray[5] = [6, 8, 4, 7];*/
+		let chartLabels     = ["7:30", "8:30", "9:30", "10:30", "11:30", "12:30", "13:30",
+                             "14:30", "15:30", "16:30", "17:30", "18:30", "19:30",
+                             "20:30", "21:30", "22:30"];
+		let chartTypeArray  = ERROR_LABELS;
 		let chartOptions = {
 			legend: {
 				display : true,

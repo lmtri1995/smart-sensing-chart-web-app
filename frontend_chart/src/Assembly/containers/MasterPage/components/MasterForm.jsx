@@ -30,6 +30,7 @@ class MasterForm extends Component {
 			editMode           : false,
 			formData           : {},
 		};
+		this.disableSubmitButton = true;
 	}
 
 
@@ -69,6 +70,7 @@ class MasterForm extends Component {
 		this.props.change(field.virtualYn, formData[field.virtualYn]);
 		this.props.change(field.activeYn, formData[field.activeYn]);
 		this.props.change(field.sysCodeYn, formData[field.sysCodeYn]);
+		this.props.change(field.enableSubmitText, formData[field.enableSubmitText]);
 
 		this.props.change(field.description.name, formData[field.description.name]
 		                                          ? formData[field.description.name]
@@ -83,13 +85,39 @@ class MasterForm extends Component {
 		    }          = this.props;
 		let {formData} = this.state;
 		const {field}  = MASTER_FORM_CONSTANTS;
-		console.log("categoryCodeOptions: ", categoryCodeOptions);
+
+		console.log("disableSubmitButton: ", this.disableSubmitButton);
+		console.log("formData[field.sysCodeYn]: ", formData[field.sysCodeYn]);
+		console.log("this.disableSubmitButton || formData[field.sysCodeYn] === 1: ", this.disableSubmitButton || formData[field.sysCodeYn] === 1);
 
 		let definitionValue = formData[field.definitionValue] ? formData[field.definitionValue] : "000";
 		let definitionArray = definitionValue.split('');
 		let temperature     = definitionArray.length > 0 ? definitionArray[0] : '0';
 		let pressure        = definitionArray.length > 1 ? definitionArray[1] : '0';
 		let timer           = definitionArray.length > 2 ? definitionArray[2] : '0';
+
+		let enableSubmitPasswordField = (this.disableSubmitButton) ? <Field
+			name={field.enableSubmitText}
+			component={renderField}
+			props={{
+				value   : formData[field.enableSubmitText] ? formData[field.enableSubmitText] : ''
+			}}
+			type="text"
+			placeholder="Enter password to enable submit button"
+			className="form__form-group-field-100"
+			onChange={(event, newValue) => {
+				if (newValue === MASTER_FORM_CONSTANTS.enableSubmitPassword){
+					this.disableSubmitButton = false;
+				}
+				this.setState({
+					formData: {
+						...formData,
+						[field.enableSubmitText]: newValue,
+					}
+				});
+			}}
+		/>: null;
+
 
 		return (
 			<Col md={12} lg={12}>
@@ -466,65 +494,77 @@ class MasterForm extends Component {
 					</Col>
 					<Col md={8} lg={8}>
 					</Col>
-					<div className="form__form-group-field justify-content-center">
-						<Button color="primary" type="submit" disabled={formData[field.sysCodeYn] === 1}>
+					<Col  md={4} lg={4}>
+						<div className="form__form-group-field" style={{marginLeft: 105}}>
 							{
-								(() => {
-									let {failed, initial, onGoing, done} = MASTER_FORM_CONSTANTS.submissionState;
-									if (this.state.editMode) {
-										switch (submissionState) {
-											case failed:
-												return 'Failed';
-											case initial:
-												this.props.change(
-													field.hiddenMasCdDuplicatedChecker,
-													formData[field.hiddenMasCdDuplicatedChecker]
-												);
-												return 'Save';
-											case onGoing:
-												return 'Saving';
-											case done:
-												return 'Saved';
-											default:
-												return 'Save';
-										}
-									} else {
-										switch (submissionState) {
-											case failed:
-												this.props.change(
-													field.hiddenMasCdDuplicatedChecker,
-													formData[field.hiddenMasCdDuplicatedChecker]
-												);
-												return 'Failed';
-											case initial:
-												return 'Submit';
-											case onGoing:
-												return 'Submitting';
-											case done:
-												return 'Submitted';
-											default:
-												return 'Submit';
-										}
-									}
-								})()
+								enableSubmitPasswordField
 							}
-							{
-								submissionState === MASTER_FORM_CONSTANTS.submissionState.onGoing
-								? <LoadingSpinner/>
-								: ''
-							}
-						</Button>
-						<Button type="button" onClick={() => {
-							reset();
-							this.setState({
-								formData: {},
-								editMode: false,
-							});
-							onReset();
-						}}>
-							Cancel
-						</Button>
-					</div>
+						</div>
+					</Col>
+					<Col  md={4} lg={4}>
+						<div className="form__form-group-field justify-content-center">
+							<Button color="primary" type="submit" disabled={this.disableSubmitButton || formData[field.sysCodeYn] === 1}>
+								{
+									(() => {
+										let {failed, initial, onGoing, done} = MASTER_FORM_CONSTANTS.submissionState;
+										if (this.state.editMode) {
+											switch (submissionState) {
+												case failed:
+													return 'Failed';
+												case initial:
+													this.props.change(
+														field.hiddenMasCdDuplicatedChecker,
+														formData[field.hiddenMasCdDuplicatedChecker]
+													);
+													return 'Save';
+												case onGoing:
+													return 'Saving';
+												case done:
+													return 'Saved';
+												default:
+													return 'Save';
+											}
+										} else {
+											switch (submissionState) {
+												case failed:
+													this.props.change(
+														field.hiddenMasCdDuplicatedChecker,
+														formData[field.hiddenMasCdDuplicatedChecker]
+													);
+													return 'Failed';
+												case initial:
+													return 'Submit';
+												case onGoing:
+													return 'Submitting';
+												case done:
+													return 'Submitted';
+												default:
+													return 'Submit';
+											}
+										}
+									})()
+								}
+								{
+									submissionState === MASTER_FORM_CONSTANTS.submissionState.onGoing
+									? <LoadingSpinner/>
+									: ''
+								}
+							</Button>
+							<Button type="button" onClick={() => {
+								reset();
+								this.setState({
+									formData: {},
+									editMode: false,
+								});
+								onReset();
+							}}>
+								Cancel
+							</Button>
+						</div>
+					</Col>
+					<Col md={4} lg={4}></Col>
+
+
 					<div className="form__form-group-field justify-content-center text-light">
 						{connectionError}
 					</div>

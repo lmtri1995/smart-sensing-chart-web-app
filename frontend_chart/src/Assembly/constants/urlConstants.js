@@ -1,8 +1,8 @@
 let hostname = window.location.hostname;
 let SERVER_URL_VAR = 'http://10.2.17.12:8888';
-/*if (hostname.includes("smart-r")){
+if (hostname.includes("smart-r")){
 	SERVER_URL_VAR = 'http://smart-r.hsvina.com:8888';//factory server
-}*/
+}
 export const SERVER_URL = SERVER_URL_VAR;
 
 export const ASSEMBLY_API = '/api/asc/';

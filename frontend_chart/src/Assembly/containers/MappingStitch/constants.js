@@ -14,7 +14,8 @@ const MAPPING_STITCH_CONSTANTS = {
 		active: 'active_yn',
 		description: 'description',
 		emptyForm: 'empty_form',
-		hiddenMacAddressDuplicatedChecker: 'hiddenMacAddressDuplicatedChecker'
+		hiddenMacAddressDuplicatedChecker: 'hiddenMacAddressDuplicatedChecker',
+		enableSubmitText: 'enableSubmitText',
 	},
 	submissionState    : {
 		failed : -1,

@@ -11,6 +11,8 @@ import callAxios                          from "../../../services/api";
 import LoadingSpinner                     from "../../../shared/components/loading_spinner/LoadingSpinner";
 import {ALARM_MASTER_PAGE_CONSTANTS}      from "../constants";
 import validate                           from './validate';
+import MAPPING_STITCH_CONSTANTS           from "../../MappingStitch/constants";
+import MASTER_FORM_CONSTANTS              from "../../MasterPage/constants";
 
 class AlarmMasterForm extends Component {
 	static propTypes = {
@@ -39,6 +41,7 @@ class AlarmMasterForm extends Component {
 			selectedArticle    : '',
 			selectedProcess    : '',
 		});
+		this.disableSubmitButton = true;
 	}
 
 	loadProcessList = (params) => {
@@ -304,6 +307,32 @@ class AlarmMasterForm extends Component {
 		this.props.change(field.definitionValue, definitionValue);
 	}
 
+	showSubmitPasswordField = () => {
+		let {formData} = this.state;
+		const {field}  = ALARM_MASTER_PAGE_CONSTANTS;
+		return  (this.disableSubmitButton) ? <Field
+			name={field.enableSubmitText}
+			component={renderField}
+			props={{
+				value   : formData[field.enableSubmitText] ? formData[field.enableSubmitText] : ''
+			}}
+			type="text"
+			placeholder="Enter password to enable submit button"
+			className="form__form-group-field-100"
+			onChange={(event, newValue) => {
+				if (newValue === MASTER_FORM_CONSTANTS.enableSubmitPassword){
+					this.disableSubmitButton = false;
+				}
+				this.setState({
+					formData: {
+						...formData,
+						[field.enableSubmitText]: newValue,
+					}
+				});
+			}}
+		/>: null;
+	}
+
 	render() {
 		let {field} = ALARM_MASTER_PAGE_CONSTANTS;
 
@@ -315,6 +344,8 @@ class AlarmMasterForm extends Component {
 		let temperatureDisabled = parseInt(definitionArray[0]) === 0;
 		let pressureDisabled    = parseInt(definitionArray[1]) === 0;
 		let curingTimeDisabled  = parseInt(definitionArray[2]) === 0;
+
+		let enableSubmitPasswordField = this.showSubmitPasswordField();
 
 		return (
 			<div style={{display: "flex", marginLeft: 18}}>
@@ -1517,9 +1548,12 @@ class AlarmMasterForm extends Component {
 						</Col>
 
 						<hr style={{height: 30}}/>
-						<Col md={12} lg={12} style={{display: 'flex', justifyContent: 'flex-end', marginTop: 20}}>
-							<ButtonToolbar className="form__button-toolbar">
-								<Button color="primary" type="submit" onClick={() => {
+						<Col md={12} lg={12} style={{display: 'flex', flexDirection: 'flex-row',justifyContent: 'flex-end', marginTop: 20}}>
+							<div style={{marginLeft: 225, marginRight: 100, width: '50%'}}>
+								{enableSubmitPasswordField}
+							</div>
+							<div className="d-flex flex-row" style={{width: '50%'}}>
+								<Button color="primary" type="submit"  disabled={this.disableSubmitButton} onClick={() => {
 									if (!submitButtonClicked) {
 										this.setState({
 											submitButtonClicked: true,
@@ -1585,7 +1619,8 @@ class AlarmMasterForm extends Component {
 								}}>
 									Cancel
 								</Button>
-							</ButtonToolbar>
+							</div>
+
 						</Col>
 						<Col md={12} lg={12} style={{display: 'flex', justifyContent: 'flex-end', color: '#ad3f38'}}>
 							{submitButtonClicked && submissionError}

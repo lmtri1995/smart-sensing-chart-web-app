@@ -57,6 +57,8 @@ export const ALARM_MASTER_PAGE_CONSTANTS = {
 	submissionError    : {
 		emptyForm: 'Please select a process and fill in the form before submission.',
 	},
+
+	enableSubmitText: 'enableSubmitText',
 };
 
 export const modelArticleTableColumns = [

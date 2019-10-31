@@ -21,6 +21,7 @@ class MappingStitchForm extends Component {
 		this.state = {
 			formData           : {},
 		}
+		this.disableSubmitButton = true;
 	}
 
 	componentDidMount() {
@@ -160,10 +161,37 @@ class MappingStitchForm extends Component {
 		});
 	};
 
+	showSubmitPasswordField = () => {
+		let {formData} = this.state;
+		const {field}  = MAPPING_STITCH_CONSTANTS;
+		return  (this.disableSubmitButton) ? <Field
+			name={field.enableSubmitText}
+			component={renderField}
+			props={{
+				value   : formData[field.enableSubmitText] ? formData[field.enableSubmitText] : ''
+			}}
+			type="text"
+			placeholder="Enter password to enable submit button"
+			className="form__form-group-field-100"
+			onChange={(event, newValue) => {
+				if (newValue === MASTER_FORM_CONSTANTS.enableSubmitPassword){
+					this.disableSubmitButton = false;
+				}
+				this.setState({
+					formData: {
+						...formData,
+						[field.enableSubmitText]: newValue,
+					}
+				});
+			}}
+		/>: null;
+	}
+
 	render(){
 		let { handleSubmit, reset, onReset, editMode, submissionState}    = this.props;
 		const {field} = MAPPING_STITCH_CONSTANTS;
 		let {formData, lineCodeOptions, posittionCodeOptions, factoryCodeOptions, processCodeOptions} = this.state;
+		let enableSubmitPasswordField = this.showSubmitPasswordField();
 		return (
 			<Col md={12} lg={12}>
 				<form className="form form--horizontal" onSubmit={handleSubmit}>
@@ -442,64 +470,69 @@ class MappingStitchForm extends Component {
 									/>
 								</div>
 							</div>
-							<div className="form__form-group-field justify-content-center">
-								<Button color="primary" type="submit">
-									{
-										(() => {
-											let {failed, initial, onGoing, done} = MASTER_FORM_CONSTANTS.submissionState;
-											if (this.state.editMode) {
-												switch (submissionState) {
-													case failed:
-														return 'Failed';
-													case initial:
-														this.props.change(
-															field.hiddenMacAddressDuplicatedChecker,
-															formData[field.hiddenMacAddressDuplicatedChecker]
-														);
-														return 'Save';
-													case onGoing:
-														return 'Saving';
-													case done:
-														return 'Saved';
-													default:
-														return 'Save';
+							<div className="form__form-group-field d-flex flex-row justify-content-center">
+								<div style={{marginLeft: -15, marginRight: 100, width: '30%'}}>
+									{ enableSubmitPasswordField }
+								</div>
+								<div className="d-flex flex-row" style={{width: '70%'}}>
+									<Button color="primary" type="submit" disabled={this.disableSubmitButton}>
+										{
+											(() => {
+												let {failed, initial, onGoing, done} = MASTER_FORM_CONSTANTS.submissionState;
+												if (this.state.editMode) {
+													switch (submissionState) {
+														case failed:
+															return 'Failed';
+														case initial:
+															this.props.change(
+																field.hiddenMacAddressDuplicatedChecker,
+																formData[field.hiddenMacAddressDuplicatedChecker]
+															);
+															return 'Save';
+														case onGoing:
+															return 'Saving';
+														case done:
+															return 'Saved';
+														default:
+															return 'Save';
+													}
+												} else {
+													switch (submissionState) {
+														case failed:
+															this.props.change(
+																field.hiddenMacAddressDuplicatedChecker,
+																formData[field.hiddenMacAddressDuplicatedChecker]
+															);
+															return 'Failed';
+														case initial:
+															return 'Submit';
+														case onGoing:
+															return 'Submitting';
+														case done:
+															return 'Submitted';
+														default:
+															return 'Submit';
+													}
 												}
-											} else {
-												switch (submissionState) {
-													case failed:
-														this.props.change(
-															field.hiddenMacAddressDuplicatedChecker,
-															formData[field.hiddenMacAddressDuplicatedChecker]
-														);
-														return 'Failed';
-													case initial:
-														return 'Submit';
-													case onGoing:
-														return 'Submitting';
-													case done:
-														return 'Submitted';
-													default:
-														return 'Submit';
-												}
-											}
-										})()
-									}
-									{
-										submissionState === MASTER_FORM_CONSTANTS.submissionState.onGoing
-										? <LoadingSpinner/>
-										: ''
-									}
-								</Button>
-								<Button type="button" onClick={() => {
-									reset();
-									this.setState({
-										formData: {},
-										editMode: false,
-									});
-									onReset();
-								}}>
-									Cancel
-								</Button>
+											})()
+										}
+										{
+											submissionState === MASTER_FORM_CONSTANTS.submissionState.onGoing
+											? <LoadingSpinner/>
+											: ''
+										}
+									</Button>
+									<Button type="button" onClick={() => {
+										reset();
+										this.setState({
+											formData: {},
+											editMode: false,
+										});
+										onReset();
+									}}>
+										Cancel
+									</Button>
+								</div>
 							</div>
 						</div>
 					</div>

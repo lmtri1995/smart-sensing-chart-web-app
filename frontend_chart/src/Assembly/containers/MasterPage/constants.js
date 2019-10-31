@@ -6,6 +6,7 @@ const MASTER_FORM_CONSTANTS = {
 			maxLength              : 20,
 			processFixedNoOfSensors: [20105, 20106, 20107, 20108, 20109, 20110, 20111],
 		},
+		enableSubmitText: 'enableSubmitText',
 		hiddenMasCdDuplicatedChecker: 'hiddenMasCdDuplicatedChecker',
 		masCdNm                     : {
 			name     : 'masCdName',
@@ -39,6 +40,7 @@ const MASTER_FORM_CONSTANTS = {
 			name     : 'remark',
 			maxLength: 400,
 		},
+		enableSubmit: 'enableSubmit'
 	},
 	definitionValueRange: [0, 1, 2, 3, 4, 5, 6, 7, 8],
 	submissionState     : {
@@ -46,7 +48,8 @@ const MASTER_FORM_CONSTANTS = {
 		initial: 0,
 		onGoing: 1,
 		done   : 2,
-	}
+	},
+	enableSubmitPassword: 'hahaha',
 };
 
 export default MASTER_FORM_CONSTANTS;

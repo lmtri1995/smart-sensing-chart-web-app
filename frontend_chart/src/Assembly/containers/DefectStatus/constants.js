@@ -12,3 +12,5 @@ export const ERROR_LABELS = [
 	"NHAN (WRINKLE)",
 	"LOI KHAC (ETC)"
 ];
+
+export const COLOR_ARRAY = ["#514EEC", "#8C67F6", "#62A4F0", "#46D6EA", "#C6FCFF", "#FFFFFF"];

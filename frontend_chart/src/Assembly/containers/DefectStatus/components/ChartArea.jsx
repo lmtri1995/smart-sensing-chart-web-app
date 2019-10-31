@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Col}              from "reactstrap";
 import MixedLineBarChart  from "../../../shared/components/chart/MixedLineBarChart";
-import {ERROR_LABELS}     from "../constants";
+import {ERROR_LABELS, COLOR_ARRAY}     from "../constants";
 
 class ChartArea extends Component {
 	constructor(props) {
@@ -89,7 +89,7 @@ class ChartArea extends Component {
 				{
 					label           : chartTypeArray[0],
 					data            : defectDataArray[0],
-					backgroundColor : "#514EEC",
+					backgroundColor : COLOR_ARRAY[0],
 					fill            : true,
 					lineTension     : 0,
 					pointRadius     : 0,
@@ -98,7 +98,7 @@ class ChartArea extends Component {
 				{
 					label           : chartTypeArray[1],
 					data            : defectDataArray[1],
-					backgroundColor : "#8C67F6",
+					backgroundColor : COLOR_ARRAY[1],
 					fill            : true,
 					lineTension     : 0,
 					pointRadius     : 0,
@@ -107,7 +107,7 @@ class ChartArea extends Component {
 				{
 					label           : chartTypeArray[2],
 					data            : defectDataArray[2],
-					backgroundColor : "#62A4F0",
+					backgroundColor : COLOR_ARRAY[2],
 					fill            : true,
 					lineTension     : 0,
 					pointRadius     : 0,
@@ -116,7 +116,7 @@ class ChartArea extends Component {
 				{
 					label           : chartTypeArray[3],
 					data            : defectDataArray[3],
-					backgroundColor : "#46D6EA",
+					backgroundColor : COLOR_ARRAY[3],
 					fill            : true,
 					lineTension     : 0,
 					pointRadius     : 0,
@@ -125,7 +125,7 @@ class ChartArea extends Component {
 				{
 					label           : chartTypeArray[4],
 					data            : defectDataArray[4],
-					backgroundColor : "#C6FCFF",
+					backgroundColor : COLOR_ARRAY[4],
 					fill            : true,
 					lineTension     : 0,
 					pointRadius     : 0,
@@ -134,7 +134,7 @@ class ChartArea extends Component {
 				{
 					label           : chartTypeArray[5],
 					data            : defectDataArray[5],
-					backgroundColor : "#FFFFFF",
+					backgroundColor : COLOR_ARRAY[5],
 					fill            : true,
 					lineTension     : 0,
 					pointRadius     : 0,

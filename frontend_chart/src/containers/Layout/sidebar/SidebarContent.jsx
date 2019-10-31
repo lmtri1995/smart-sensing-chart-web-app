@@ -34,27 +34,50 @@ class SidebarContent extends Component {
         } else {
             roleList = RoleList['admin'];
         }
+
+        let ipRoleList = RoleList['ip'];
+        let ipCategoryList = <SidebarCategory title="IP" icon="diamond">
+                                    {
+                                        (this.state.roles != null) ? ipRoleList.map((item, index) => {
+                                            return <SidebarLink key={index} title={item.title} route={item.route}
+                                                                onClick={this.hideSidebar}/>
+                                        }) : ''
+                                    }
+                                </SidebarCategory>
+
+        let osRoleList = RoleList['os'];
+        let osCategoryList = <SidebarCategory title="OS" icon="diamond">
+            {
+                (this.state.roles != null) ? osRoleList.map((item, index) => {
+                    return <SidebarLink key={index} title={item.title} route={item.route}
+                                        onClick={this.hideSidebar}/>
+                }) : ''
+            }
+        </SidebarCategory>
+
+        let asRoleList = RoleList['as'];
+        let asCategoryList = <SidebarCategory title="Assembly" icon="diamond">
+                                {
+                                    (this.state.roles != null) ? asRoleList.map((item, index) => {
+                                        return <SidebarLink key={index} title={item.title} route={item.route}
+                                                            onClick={this.hideSidebar}/>
+                                    }) : ''
+                                }
+                            </SidebarCategory>
         return (
             <div className="sidebar__content">
-                {/* <ul className="sidebar__block">
-          <SidebarCategory title="Layout" icon="layers">
-            <button className="sidebar__link" onClick={this.props.changeToLight}>
-              <p className="sidebar__link-title">Light Theme</p>
-            </button>
-            <button className="sidebar__link" onClick={this.props.changeToDark}>
-              <p className="sidebar__link-title">Dark Theme</p>
-            </button>
-          </SidebarCategory>
-        </ul> */}
                 <ul className="sidebar__block">
-                    <SidebarCategory title="Category" icon="diamond">
+                    {/*<SidebarCategory title="Assembly" icon="diamond">
                         {
                             (this.state.roles != null) ? roleList.map((item, index) => {
                                 return <SidebarLink key={index} title={item.title} route={item.route}
                                                     onClick={this.hideSidebar}/>
                             }) : ''
                         }
-                    </SidebarCategory>
+                    </SidebarCategory>*/}
+                    {ipCategoryList}
+                    {osCategoryList}
+                    {asCategoryList}
                 </ul>
             </div>
         );

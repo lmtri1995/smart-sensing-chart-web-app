@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Collapse, ListGroup, ListGroupItem} from 'reactstrap';
 import DataExporter from "../../DataExporter/component/DataExporter";
-import {ARTICLE_NAMES, ExportType, MODEL_NAMES, REPORT_TABS, ROUTE, SHIFT_OPTIONS} from "../../../constants/constants";
+import {ARTICLE_NAMES, ExportType, MODEL_NAMES, REPORT_TABS, ROUTE, SHIFT_OPTIONS, PATH_PART} from "../../../constants/constants";
 import Filter from "../../../shared/img/Filter.svg";
 import {connect} from "react-redux";
 import {changeGlobalShiftFilter} from "../../../redux/actions/globalShiftFilterActions";
@@ -43,7 +43,34 @@ class TopbarFilter extends Component {
         this.handleClickOutside = this.handleClickOutside.bind(this);
 
         let param = {};
-        switch (this.props.location.pathname) {
+        let pathName = this.props.location.pathname;
+        if (pathName.includes(PATH_PART.dashboard)){
+            let currentDateDevice = specifyCurrentDateDevice();
+            this.from_workdate = currentDateDevice[0];
+            this.to_workdate = currentDateDevice[1];
+            param = {
+                from_workdate: this.from_workdate,
+                to_workdate: this.to_workdate
+            };
+            this.requestModelNamesForFiltering('modelName', param);
+        } else if (pathName.includes(PATH_PART.analysis)){
+            this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+            this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+            param = {
+                from_workdate: this.from_workdate,
+                to_workdate: this.to_workdate,
+            };
+            this.requestModelNamesForFiltering('modelName', param);
+        } else if (pathName.includes(PATH_PART.Report)){
+            this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+            this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+            param = {
+                from_workdate: this.from_workdate,
+                to_workdate: this.to_workdate,
+            };
+            this.requestModelNamesForFiltering('modelNameForReport', param);
+        }
+        /*switch (this.props.location.pathname) {
             case ROUTE.Dashboard:
                 let currentDateDevice = specifyCurrentDateDevice();
                 this.from_workdate = currentDateDevice[0];
@@ -72,7 +99,7 @@ class TopbarFilter extends Component {
                 };
                 this.requestModelNamesForFiltering('modelNameForReport', param);
                 break;
-        }
+        }*/
     }
 
     componentDidMount() {
@@ -86,8 +113,37 @@ class TopbarFilter extends Component {
         let newEndDate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD")
         if (this.props.location != prevProps.location || oldStartDate != newStartDate || oldEndDate != newEndDate) {
             let param = {};
-            switch (this.props.location.pathname) {
+            let pathName = this.props.location.pathname;
+            if (pathName.includes(PATH_PART.dashboard)){
+                let currentDate = specifyCurrentDateDevice();
+                this.from_workdate = currentDate[0];
+                this.to_workdate = currentDate[1];
+                param = {
+                    from_workdate: this.from_workdate,
+                    to_workdate: this.to_workdate,
+                }
+                this.requestModelNamesForFiltering('modelName', param);
+            } else if (pathName.includes(PATH_PART.analysis)){
+                this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+                this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+                param = {
+                    from_workdate: this.from_workdate,
+                    to_workdate: this.to_workdate,
+                };
+                this.requestModelNamesForFiltering('modelName', param);
+            } else if (pathName.includes(PATH_PART.Report)){
+                this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
+                this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
+                param = {
+                    from_workdate: this.from_workdate,
+                    to_workdate: this.to_workdate,
+                };
+                this.requestModelNamesForFiltering('modelNameForReport', param);
+            }
+            /*switch (this.props.location.pathname) {
                 case ROUTE.Dashboard:
+                    console.log("92 92 92 92 92");
+                    console.log("92 92 92 92 92");
                     let currentDate = specifyCurrentDateDevice();
                     this.from_workdate = currentDate[0];
                     this.to_workdate = currentDate[1];
@@ -98,6 +154,8 @@ class TopbarFilter extends Component {
                     this.requestModelNamesForFiltering('modelName', param);
                     break;
                 case ROUTE.Analysis:
+                    console.log("104 104 104 104");
+                    console.log("104 104 104 104");
                     this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
                     this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
                     param = {
@@ -107,6 +165,8 @@ class TopbarFilter extends Component {
                     this.requestModelNamesForFiltering('modelName', param);
                     break;
                 case ROUTE.Report:
+                    console.log("115 115 115 115 115");
+                    console.log("115 115 115 115 115");
                     this.from_workdate = moment(this.props.globalDateFilter.startDate.toISOString()).format("YYYYMMDD");
                     this.to_workdate = moment(this.props.globalDateFilter.endDate.toISOString()).format("YYYYMMDD");
                     param = {
@@ -115,7 +175,7 @@ class TopbarFilter extends Component {
                     };
                     this.requestModelNamesForFiltering('modelNameForReport', param);
                     break;
-            }
+            }*/
         }
     }
 
@@ -249,7 +309,14 @@ class TopbarFilter extends Component {
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
         this.role = this.loginData.data.role;
 
+        let pathName = this.props.location.pathname;
         let link = 'ip';
+        if (pathName.includes("ip")){
+            link = 'ip';
+        } else if (pathName.includes("os")){
+            link = 'os';
+        }
+        /*let link = 'ip';
         switch (this.role) {
             case 'admin':
                 link = 'os';
@@ -260,7 +327,7 @@ class TopbarFilter extends Component {
             case 'os':
                 link = 'os';
                 break;
-        }
+        }*/
         API(`api/${link}/${modelNameURL}`, 'POST', param ? param : {})
             .then((response) => {
                 if (response.data.success) {
@@ -302,7 +369,14 @@ class TopbarFilter extends Component {
         this.loginData = JSON.parse(localStorage.getItem('logindata'));
         this.role = this.loginData.data.role;
 
+        let pathName = this.props.location.pathname;
         let link = 'api/os/articleByModelName';
+        if (pathName.includes("ip")){
+            link = 'api/ip/articleByModelName';
+        } else if (pathName.includes("os")){
+            link = 'api/os/articleByModelName';
+        }
+        /*let link = 'api/os/articleByModelName';
         switch (this.role) {
             case 'admin':
                 link = 'api/os/articleByModelName';
@@ -313,7 +387,7 @@ class TopbarFilter extends Component {
             case 'os':
                 link = 'api/os/articleByModelName';
                 break;
-        }
+        }*/
 
         /*if (this.props.location.pathname == ROUTE.Report){
             link += 'ForReport';
@@ -408,7 +482,7 @@ class TopbarFilter extends Component {
                     <div className="topbar_filter_menu">
                         {
                             // Only show Filter by Model Menu on Report Page when Productivity Tab is selected
-                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0] || location.pathname === ROUTE.Dashboard || location.pathname === ROUTE.Analysis
+                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0] || location.pathname.includes(PATH_PART.dashboard) || location.pathname.includes(PATH_PART.analysis)
                                 ? (
                                     <span>
                                         <button className="btn btn-secondary"
@@ -440,7 +514,7 @@ class TopbarFilter extends Component {
                         }
                         {
                             // Only show Filter by Article Menu on Report Page when Productivity Tab is selected
-                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0] || location.pathname === ROUTE.Dashboard || location.pathname === ROUTE.Analysis
+                            this.props.reportSelectedTab.selectedTab === REPORT_TABS[0] || location.pathname.includes(PATH_PART.dashboard) || location.pathname.includes(PATH_PART.analysis)
                                 ? (
                                     <span>
                                         <button className="btn btn-secondary"
@@ -472,7 +546,7 @@ class TopbarFilter extends Component {
                         }
                         {
                             // Only show Filter by Shift Menu on Report & Analysis Page
-                            location.pathname === ROUTE.Report || location.pathname === ROUTE.Analysis
+                            location.pathname.includes(PATH_PART.report)|| location.pathname.includes(PATH_PART.analysis)
                                 ? (
                                     <span>
                                         <button className="btn btn-secondary"

@@ -12,8 +12,8 @@ const validate = (values) => {
 		errors[field.macAddress] = 'Mac Address field shouldn\'t be empty';
 	} else if (values[field.macAddress].length > 30) {
 		errors[field.macAddress] = 'Mac Address field shouldn\'t longer than 30 characters';
-	} else if (!/^[a-zA-Z0-9-]+$/.test(values[field.macAddress])){
-		errors[field.macAddress] = 'Only a-z, A-z, 0-9, - are permitted';
+	} else if (!/^[a-zA-Z0-9:-]+$/.test(values[field.macAddress])){
+		errors[field.macAddress] = 'Only a-z, A-Z, 0-9, :, - are permitted';
 	}
 
 

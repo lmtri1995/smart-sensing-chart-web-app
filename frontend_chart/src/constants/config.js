@@ -3,6 +3,7 @@
 //export const LOGIN_URL = 'http://10.2.17.12:8888';//gathering server
 //export const LOGIN_URL = 'http://10.101.1.185:8888';//factory server
 export const LOGIN_URL = 'http://smart-r.hsvina.com:8888';//factory server
+//export const LOGIN_URL = 'http://10.2.17.12:8888';//dev server
 //export const LOGIN_URL = 'http://10.2.13.167:4001';//anh's server
 
 //export const SERVER_URL = LOGIN_URL + '/totalCharts';

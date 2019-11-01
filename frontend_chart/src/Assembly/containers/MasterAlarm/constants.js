@@ -48,6 +48,7 @@ export const ALARM_MASTER_PAGE_CONSTANTS = {
 		definitionValue: 'definition_value',
 
 		emptyForm: 'empty_form',
+		enableSubmitText: 'enableSubmitText',
 	},
 	submissionState    : {
 		initial: -1,

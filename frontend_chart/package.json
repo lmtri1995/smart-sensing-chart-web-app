@@ -28,7 +28,7 @@
     "jest": "24.8.0",
     "jest-pnp-resolver": "1.2.1",
     "jest-resolve": "24.8.0",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "jspdf-autotable": "^3.1.2",
     "mdi-react": "^5.4.0",
     "mini-css-extract-plugin": "0.7.0",
